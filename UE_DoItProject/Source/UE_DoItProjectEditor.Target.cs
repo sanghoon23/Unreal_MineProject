@@ -9,6 +9,20 @@ public class UE_DoItProjectEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 
-		ExtraModuleNames.AddRange( new string[] { "UE_DoItProject" } );
+		ExtraModuleNames.AddRange( new string[] 
+        {
+            "UE_DoItProject",
+
+            // AI
+            "AIModule",
+
+            // Destructible
+            "ApexDestruction",
+
+            // Ability
+            "HeadMountedDisplay",
+            "GameplayAbilities",
+            "GameplayTags",
+        } );
 	}
 }
