@@ -82,6 +82,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("DoAxisTurn", EInputEvent::IE_Pressed, this, &ACPlayer::OnDoAxisTurn);
 	PlayerInputComponent->BindAction("DoAxisTurn", EInputEvent::IE_Released, this, &ACPlayer::OffDoAxisTurn);
+	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
 }
 
 void ACPlayer::OnMoveForward(float Value)
@@ -141,4 +142,10 @@ void ACPlayer::OnDoAxisTurn()
 void ACPlayer::OffDoAxisTurn()
 {
 	bAxisTurn = false;
+}
+
+void ACPlayer::OnEvade()
+{
+	IfTrueRet(bEvade);
+	bEvade = true;
 }

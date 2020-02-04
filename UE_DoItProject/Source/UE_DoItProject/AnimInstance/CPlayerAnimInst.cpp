@@ -21,8 +21,8 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	IfNullRet(Player);
 	Speed = Player->GetVelocity().Size();
 	bInAir = Player->GetCharacterMovement()->IsFalling();
+	bEvade = Player->GetEvade();
 	Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
-	// Direction = CalculateDirection(Player->GetVelocity(), Player->GetMesh()->);
 
 	//IfNullRet(Charactor);
 	//CurrentWeaponNum = Charactor->GetEquipmentComp()->GetCurrentWeaponNum();

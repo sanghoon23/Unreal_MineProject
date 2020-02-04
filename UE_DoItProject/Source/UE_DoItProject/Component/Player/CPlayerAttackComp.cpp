@@ -16,6 +16,11 @@ void UCPlayerAttackComp::BeginPlay()
 	
 }
 
+IIC_BaseAttack * UCPlayerAttackComp::GetAttackStateMember(uint8 Num)
+{
+	return nullptr;
+}
+
 
 void UCPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

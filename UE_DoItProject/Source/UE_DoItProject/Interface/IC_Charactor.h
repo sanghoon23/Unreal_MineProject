@@ -25,15 +25,16 @@ public:
 
 public:
 	virtual bool IsDeath() { return false; }
+	virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) {}
+	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) {}
 
+public:
+	virtual void OffEvade() {}
+
+public:
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const { return nullptr; }
 
 	// virtual IIC_AttackComp* GetIAttackComp() { return nullptr; }
 	// virtual IIC_MontageComp* GetIMontageComp() { return nullptr; }
 	virtual class UCEquipmentComponent* GetEquipmentComp() { return nullptr; }
-
-
-public:
-	virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) {}
-	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) {}
 };

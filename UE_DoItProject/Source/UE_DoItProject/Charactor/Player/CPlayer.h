@@ -55,14 +55,14 @@ private:
 public:
 	ACPlayer();
 
-protected:
-	virtual void BeginPlay() override;
-
-public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	virtual void BeginPlay() override;
+
 public:
+	virtual void OffEvade() override { bEvade = false; }
 
 private:
 	// Axis Mapping
@@ -76,11 +76,17 @@ private:
 	// Action Mapping
 	void OnDoAxisTurn();
 	void OffDoAxisTurn();
+	void OnEvade();
 
 	#pragma	region Member
+public:
+	bool GetEvade() const { return bEvade; }
+
 private:
 	bool bCanMove = true;
+
 	bool bAxisTurn = false;
+	bool bEvade = false;
 
 	#pragma endregion
 

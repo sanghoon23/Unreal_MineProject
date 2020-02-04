@@ -15,6 +15,9 @@ class UE_DOITPROJECT_API UCPlayerAnimInst
 	
 	#pragma region Reflection
 public:
+	UPROPERTY(BlueprintReadWrite, Category = "Evade")
+		bool bEvade;
+
 	UPROPERTY(BlueprintReadOnly)
 		float Speed;
 
@@ -24,8 +27,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		float Direction;
 
-	UPROPERTY(BlueprintReadOnly)
-		int CurrentWeaponNum;
+	//UPROPERTY(BlueprintReadOnly)
+	//	int CurrentWeaponNum;
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bArmed;
