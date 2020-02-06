@@ -2,9 +2,12 @@
 #include "Global.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Interface/IC_Charactor.h"
+#include "Interface/IC_EquipComp.h"
+#include "Component/Player/CPlayerEquipComp.h"
+
 UCPlayerAnimInst::UCPlayerAnimInst()
 {
-
 }
 
 void UCPlayerAnimInst::NativeBeginPlay()
@@ -24,9 +27,9 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	bEvade = Player->GetEvade();
 	Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
 
-	//IfNullRet(Charactor);
-	//CurrentWeaponNum = Charactor->GetEquipmentComp()->GetCurrentWeaponNum();
-	//bArmed = Charactor->GetEquipmentComp()->GetArmed();
+	IfNullRet(Charactor);
+	CurrentStateType = Charactor->GetCurrentStateType();
+	bArmed = Charactor->GetIEquipComp()->GetArmed();
 
 	//IfNullRet(BaseAttack);
 	//bAttackMode = BaseAttack->GetAttackMode();

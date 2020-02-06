@@ -8,6 +8,7 @@ UCPL_MageBaseAttack::UCPL_MageBaseAttack()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	StateType = StateType::MAGE;
 }
 
 
@@ -16,6 +17,11 @@ void UCPL_MageBaseAttack::BeginPlay()
 	Super::BeginPlay();
 
 	
+}
+
+IIC_BaseAttack * UCPL_MageBaseAttack::GetIBaseAttack()
+{
+	return Cast<IIC_BaseAttack>(this);
 }
 
 

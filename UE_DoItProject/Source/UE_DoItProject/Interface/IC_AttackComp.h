@@ -17,6 +17,6 @@ class UE_DOITPROJECT_API IIC_AttackComp
 	GENERATED_BODY()
 
 public:
-	virtual IIC_BaseAttack* GetCurrentAttackState() { return nullptr; }
-	virtual IIC_BaseAttack* GetAttackStateMember(uint8 Num) { return nullptr; }
+	virtual IIC_BaseAttack* GetCurrentIBaseAttack() { return nullptr; }
+	// virtual IIC_BaseAttack* GetAttackStateMember(uint8 Num) { return nullptr; }
 };

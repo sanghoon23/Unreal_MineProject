@@ -2,13 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CPL_BaseAttack.h"
+#include "CPL_BaseState.h"
 #include "Interface/IC_BaseAttack.h"
 
 #include "CPL_SwordBaseAttack.generated.h"
 
 UENUM()
-enum class USwordMontageType : uint8
+enum class USwordMontageType : uint8 // @SwordMontageType - Sword 상태일 때의 공격 Type
 {
 	BASIC = 1,
 	END = 2,
@@ -16,7 +16,7 @@ enum class USwordMontageType : uint8
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_SwordBaseAttack
-	: public UCPL_BaseAttack, public IIC_BaseAttack
+	: public UCPL_BaseState, public IIC_BaseAttack
 {
 	GENERATED_BODY()
 

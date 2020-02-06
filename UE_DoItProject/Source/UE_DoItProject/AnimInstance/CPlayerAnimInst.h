@@ -27,8 +27,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		float Direction;
 
-	//UPROPERTY(BlueprintReadOnly)
-	//	int CurrentWeaponNum;
+	UPROPERTY(BlueprintReadOnly)
+		int CurrentStateType;
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bArmed;

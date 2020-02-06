@@ -3,8 +3,12 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Interface/IC_AttackComp.h"
+#include "Interface/IC_BaseState.h"
 #include "Interface/IC_BaseAttack.h"
-#include "State/Player/Base/CPL_BaseAttack.h"
+#include "State/Player/Base/CPL_BaseState.h"
+
+#include "State/Player/Base/CPL_MageBaseAttack.h"
+#include "State/Player/Base/CPL_SwordBaseAttack.h"
 
 #include "CPlayerAttackComp.generated.h"
 
@@ -18,13 +22,13 @@ class UE_DOITPROJECT_API UCPlayerAttackComp
 	#pragma	region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
-		UCPL_BaseAttack* CurrnetAttackState;
+		UCPL_BaseState* CurrentAttackState;
 
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
-		TArray<UCPL_BaseAttack*> MagicStateArray;
+		TArray<UCPL_BaseState*> MagicStateArray;
 
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
-		TArray<UCPL_BaseAttack*> SwordStateArray;
+		TArray<UCPL_BaseState*> SwordStateArray;
 
 	#pragma endregion
 
@@ -35,14 +39,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:	
-
-		
+public:
 
 	#pragma	region Member
 public:
-	virtual IIC_BaseAttack* GetCurrentAttackState() override { return Cast<IIC_BaseAttack>(CurrnetAttackState); }
-	virtual IIC_BaseAttack* GetAttackStateMember(uint8 Num) override;
+	virtual IIC_BaseAttack* GetCurrentIBaseAttack() override;
+	// virtual IIC_BaseAttack* GetAttackStateMember(uint8 Num) override;
 
 private:
 
