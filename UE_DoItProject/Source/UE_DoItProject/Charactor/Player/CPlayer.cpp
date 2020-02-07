@@ -106,7 +106,7 @@ void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CLog::Print(static_cast<int>(CurrentStateType));
+	// CLog::Print(static_cast<int>(CurrentStateType));
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

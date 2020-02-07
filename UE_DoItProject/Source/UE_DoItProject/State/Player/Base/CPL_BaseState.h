@@ -36,6 +36,9 @@ public:
 	virtual IIC_BaseAttack* GetIBaseAttack() override;
 
 	#pragma	region Member
+public:
+	const StateType GetStateType() const { return StateType; }
+
 protected:
 	StateType StateType = StateType::END;
 
