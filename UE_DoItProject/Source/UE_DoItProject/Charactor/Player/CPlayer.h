@@ -3,14 +3,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_StateManager.h"
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_MontageComp.h"
 #include "Interface/IC_EquipComp.h"
 
-#include "Component/Player/CPlayerAttackComp.h"
+#include "Component/CPL_StateMachine.h"
 #include "Component/Player/CPlayerMontageComp.h"
 #include "Component/Player/CPlayerEquipComp.h"
-#include "State/Player/Base/CPL_BaseState.h"
 
 #include "CPlayer.generated.h"
 
@@ -38,9 +38,6 @@ private:
 		class UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCPlayerAttackComp* AttackComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCPlayerMontageComp* MontageComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
@@ -60,6 +57,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 		TArray<class UAnimMontage*> HitMontages;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCPL_StateMachine* StateMachine;
 
 private:
 	//UFUNCTION()
@@ -92,7 +92,8 @@ public:
 public:
 	virtual int GetCurrentStateType() const { return static_cast<int>(CurrentStateType); }
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const override { return CurrentMontage; }
-	virtual IIC_AttackComp* GetIAttackComp() override { return Cast<IIC_AttackComp>(AttackComponent); }
+	virtual IIC_StateManager* GetIStateManager() override { return Cast<IIC_StateManager>(StateMachine); }
+	virtual IIC_AttackComp* GetIAttackComp() override;
 	virtual IIC_MontageComp* GetIMontageComp() override { return Cast<IIC_MontageComp>(MontageComponent); }
 	virtual IIC_EquipComp* GetIEquipComp() { return Cast<IIC_EquipComp>(EquipComponent); }
 
@@ -118,7 +119,7 @@ public:
 
 private:
 	// State
-	StateType CurrentStateType = StateType::MAGE;
+	PlayerStateType CurrentStateType = PlayerStateType::MAGE;
 	bool bChangeStateSwap = false;
 
 	// Move

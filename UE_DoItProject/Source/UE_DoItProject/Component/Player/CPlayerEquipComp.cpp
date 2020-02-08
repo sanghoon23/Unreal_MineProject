@@ -1,7 +1,9 @@
 #include "CPlayerEquipComp.h"
 #include "Global.h"
 
-#include "Charactor/Player/CPlayer.h"
+#include "GameFramework/Character.h"
+#include "Interface/IC_Charactor.h"
+#include "Interface/IC_StateManager.h"
 #include "Item/Base/CItem_Hand.h"
 #include "Item/CPL_Sword.h"
 
@@ -21,9 +23,9 @@ void UCPlayerEquipComp::BeginPlay()
 
 	#pragma region Create DisplayItem List
 	// Spawn Sword
+	ACPL_Sword* Sword;
 	{
-		ACPL_Sword* Sword 
-			= GetWorld()->SpawnActor<ACPL_Sword>(ACPL_Sword::StaticClass(), transform, params);
+		Sword = GetWorld()->SpawnActor<ACPL_Sword>(ACPL_Sword::StaticClass(), transform, params);
 
 		Sword->AttachToComponent
 		(
@@ -47,6 +49,21 @@ void UCPlayerEquipComp::BeginPlay()
 	{
 		bEquiping = false;
 	});
+
+	IIC_StateManager* IC_State = IC_Charactor->GetIStateManager();
+	check(IC_State);
+	IC_State->OnSwordState.AddLambda([&]()
+	{
+		Cast<ACItem_Hand>(DisplayList[0])->OnEquip();
+		DisplayList[0]->GetStaticMeshComp()->SetVisibility(true);
+	});
+
+	IC_State->UnSwordState.AddLambda([&]()
+	{
+		Cast<ACItem_Hand>(DisplayList[0])->UnEquip();
+		DisplayList[0]->GetStaticMeshComp()->SetVisibility(false);
+	});
+
 }
 
 void UCPlayerEquipComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

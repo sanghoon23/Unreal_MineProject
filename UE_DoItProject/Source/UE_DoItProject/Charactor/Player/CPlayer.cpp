@@ -5,7 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
-#include "Component/Player/CPlayerAttackComp.h"
+#include "Component/CPL_StateMachine.h"
 #include "Component/Player/CPlayerMontageComp.h"
 #include "Component/Player/CPlayerEquipComp.h"
 
@@ -52,7 +52,7 @@ ACPlayer::ACPlayer()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Create Component
 	{
-		AttackComponent = CreateDefaultSubobject<UCPlayerAttackComp>("AttackComp");
+		// AttackComponent = CreateDefaultSubobject<UCPlayerAttackComp>("AttackComp");
 		MontageComponent = CreateDefaultSubobject<UCPlayerMontageComp>("MontageComp");
 		EquipComponent = CreateDefaultSubobject<UCPlayerEquipComp>("EquipmentComponent");
 	}
@@ -89,24 +89,47 @@ ACPlayer::ACPlayer()
 			RightParticle->SetTemplate(rightParticle.Object);
 		RightParticle->SetRelativeLocation(FVector(0.0f));
 	}
+
+	// Test Code
+	// Create State
+	{
+		StateMachine = CreateDefaultSubobject<UCPL_StateMachine>("StateMachine");
+	}
 }
 
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	EquipComponent->GetDisplayItem(0)->GetStaticMeshComp()->SetVisibility(false);
 
 	// Scaling
 	LeftParticle->SetWorldScale3D(FVector(3.f));
 	RightParticle->SetWorldScale3D(FVector(3.f));
+
+	// Delegate
+	{
+		// @OnMageState
+		StateMachine->OnMageState.AddLambda([&]()
+		{
+			LeftParticle->SetVisibility(true); // MageHandEffect
+			RightParticle->SetVisibility(true); // MageHandEffect
+		});
+		// @UnMageState
+		StateMachine->UnMageState.AddLambda([&]()
+		{
+			LeftParticle->SetVisibility(false); // MageHandEffect
+			RightParticle->SetVisibility(false); // MageHandEffect
+		});
+	}
 }
 
 void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// CLog::Print(static_cast<int>(CurrentStateType));
+	// @StateMachine 에서 StateType 값 받아옴.
+	CurrentStateType = StateMachine->GetCurrentStateType();
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -126,6 +149,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("DoAxisTurn", EInputEvent::IE_Pressed, this, &ACPlayer::OnDoAxisTurn);
 	PlayerInputComponent->BindAction("DoAxisTurn", EInputEvent::IE_Released, this, &ACPlayer::OffDoAxisTurn);
 	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
+
+	// OtherClass Action
 	PlayerInputComponent->BindAction("SwapState", EInputEvent::IE_Pressed, this, &ACPlayer::OnSwapState);
 }
 
@@ -205,38 +230,6 @@ void ACPlayer::OnEvade()
 	// @회피동작 방향
 	EvadeDirection = GetActorForwardVector();
 
-	// 회피 4 방향 동작하게하기 ( 추후 Test )
-	// 지금은 앞구르기만으로 바꿈
-	#pragma region Test Evade 4Way 
-	//// @Forward
-	//if (GetInputAxisValue(L"MoveForward") > 0.0f)
-	//{
-	//	PlayAnimNum = 0;
-	//	EvadeDirection = GetActorForwardVector();
-	//	// CLog::Print(L"Forward In!!");
-	//}
-	//// @Back
-	//else if (GetInputAxisValue(L"MoveForward") < 0.0f)
-	//{
-	//	PlayAnimNum = 1;
-	//	EvadeDirection = (-1) * GetActorForwardVector();
-	//	// CLog::Print(L"Back In!!");
-	//}
-	//// @Left
-	//else if (GetInputAxisValue(L"MoveRight") < 0.0f)
-	//{
-	//	PlayAnimNum = 2;
-	//	EvadeDirection = (-1) * GetActorRightVector();
-	//}
-	//// @Right
-	//else if (GetInputAxisValue(L"MoveRight") > 0.0f)
-	//{
-	//	PlayAnimNum = 3;
-	//	EvadeDirection = GetActorRightVector();
-	//}
-	#pragma endregion	
-
-
 	// Montage 실행
 	MontageComponent->PlayAnimation
 	(
@@ -256,38 +249,40 @@ void ACPlayer::OnSwapState()
 	IfTrueRet(GetCharacterMovement()->IsFalling()); //@Jump Check
 	IfTrueRet(EquipComponent->GetEquiping()); //@Equping Check
 
-	// @Equping Set 'False' From Notify
-	EquipComponent->SetEquiping(true);
+	StateMachine->OnSwapState();
 
-	// State Swap
-	int Type = static_cast<int>(CurrentStateType);
-	++Type;
-	(Type == static_cast<int>(StateType::END))
-		? CurrentStateType = static_cast<StateType>(0)
-		: CurrentStateType = static_cast<StateType>(Type);
+	//// @Equping Set 'False' From Notify
+	//EquipComponent->SetEquiping(true);
 
-	ACPL_Sword* Sword = Cast<ACPL_Sword>(EquipComponent->GetDisplayItem(0));
-	check(Sword);
+	//// State Swap
+	//int Type = static_cast<int>(CurrentStateType);
+	//++Type;
+	//(Type == static_cast<int>(PlayerStateType::END))
+	//	? CurrentStateType = static_cast<PlayerStateType>(0)
+	//	: CurrentStateType = static_cast<PlayerStateType>(Type);
 
-	// @Mage State
-	if (CurrentStateType == StateType::MAGE)
-	{
-		ActorAnimMonPlay(MageStateCastMontage, 1.5f, false);
-		// Sword->UnEquip(); - UnEquip 은 필요없음. Attach, DeathPosition 이 같음.
-		Sword->GetStaticMeshComp()->SetVisibility(false);
+	//ACPL_Sword* Sword = Cast<ACPL_Sword>(EquipComponent->GetDisplayItem(0));
+	//check(Sword);
 
-		LeftParticle->SetVisibility(true); // MageHandEffect
-		RightParticle->SetVisibility(true); // MageHandEffect
-	}
-	// @Sword State
-	else if (CurrentStateType == StateType::SWORD)
-	{
-		Sword->OnEquip();
-		Sword->GetStaticMeshComp()->SetVisibility(true);
+	//// @Mage State
+	//if (CurrentStateType == PlayerStateType::MAGE)
+	//{
+	//	ActorAnimMonPlay(MageStateCastMontage, 1.5f, false);
+	//	// Sword->UnEquip(); - UnEquip 은 필요없음. Attach, DeathPosition 이 같음.
+	//	Sword->GetStaticMeshComp()->SetVisibility(false);
 
-		LeftParticle->SetVisibility(false); // MageHandEffect
-		RightParticle->SetVisibility(false); // MageHandEffect
-	}
+	//	LeftParticle->SetVisibility(true); // MageHandEffect
+	//	RightParticle->SetVisibility(true); // MageHandEffect
+	//}
+	//// @Sword State
+	//else if (CurrentStateType == PlayerStateType::SWORD)
+	//{
+	//	Sword->OnEquip();
+	//	Sword->GetStaticMeshComp()->SetVisibility(true);
+
+	//	LeftParticle->SetVisibility(false); // MageHandEffect
+	//	RightParticle->SetVisibility(false); // MageHandEffect
+	//}
 }
 
 void ACPlayer::OffEvade()
@@ -330,3 +325,13 @@ void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlway
 	PlayAnimMontage(Montage, Speed);
 	CurrentMontage = Montage;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Get, Set
+
+IIC_AttackComp * ACPlayer::GetIAttackComp()
+{
+	int Type = static_cast<int>(CurrentStateType);
+	return StateMachine->GetIAttackComp();
+}
+

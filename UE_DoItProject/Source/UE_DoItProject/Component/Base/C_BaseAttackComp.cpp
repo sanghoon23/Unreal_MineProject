@@ -1,0 +1,24 @@
+#include "C_BaseAttackComp.h"
+#include "Global.h"
+
+UC_BaseAttackComp::UC_BaseAttackComp()
+{
+	PrimaryComponentTick.bCanEverTick = true;
+
+	// ...
+}
+
+
+void UC_BaseAttackComp::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
+}
+
+
+void UC_BaseAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+

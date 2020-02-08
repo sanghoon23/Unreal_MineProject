@@ -110,7 +110,7 @@ void UCPlayerMontageComp::PlayAnimation(UINT MontageType, UINT PlayAnimNum, UINT
 	// * Mage
 	else if (static_cast<MontageSort>(Sort) == MontageSort::Mage)
 	{
-		UMageMontageType Type = static_cast<UMageMontageType>(MontageType);
+		MageAttackType Type = static_cast<MageAttackType>(MontageType);
 
 		TArray<UAnimMontage*>* MontageList = MageMontageMap.Find(Type);
 		check(MontageList);
@@ -126,7 +126,7 @@ void UCPlayerMontageComp::PlayAnimation(UINT MontageType, UINT PlayAnimNum, UINT
 	// *Sword
 	else if (static_cast<MontageSort>(Sort) == MontageSort::Sword)
 	{
-		USwordMontageType Type = static_cast<USwordMontageType>(MontageType);
+		SwordAttackType Type = static_cast<SwordAttackType>(MontageType);
 
 		TArray<UAnimMontage*>* MontageList = SwordMontageMap.Find(Type);
 		check(MontageList);
@@ -154,7 +154,7 @@ void UCPlayerMontageComp::MontageAddInMap(UINT MontageType, UINT Sort, UAnimMont
 	// * Insert MageMap
 	if (static_cast<MontageSort>(Sort) == MontageSort::Mage)
 	{
-		UMageMontageType Type = static_cast<UMageMontageType>(MontageType);
+		MageAttackType Type = static_cast<MageAttackType>(MontageType);
 		TArray<UAnimMontage*>* ArrayValue = MageMontageMap.Find(Type);
 		if (ArrayValue == nullptr) // TArray 持失.
 		{
@@ -171,7 +171,7 @@ void UCPlayerMontageComp::MontageAddInMap(UINT MontageType, UINT Sort, UAnimMont
 	// * Insert SwordMap
 	else if (static_cast<MontageSort>(Sort) == MontageSort::Sword)
 	{
-		USwordMontageType Type = static_cast<USwordMontageType>(MontageType);
+		SwordAttackType Type = static_cast<SwordAttackType>(MontageType);
 		TArray<UAnimMontage*>* ArrayValue = SwordMontageMap.Find(Type);
 		if (ArrayValue == nullptr) // TArray 持失.
 		{

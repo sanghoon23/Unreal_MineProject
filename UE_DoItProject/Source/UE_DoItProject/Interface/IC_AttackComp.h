@@ -20,3 +20,4 @@ public:
 	virtual IIC_BaseAttack* GetCurrentIBaseAttack() { return nullptr; }
 	// virtual IIC_BaseAttack* GetAttackStateMember(uint8 Num) { return nullptr; }
 };
+

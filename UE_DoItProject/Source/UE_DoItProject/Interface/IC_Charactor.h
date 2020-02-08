@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "Interface/IC_StateManager.h"
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_MontageComp.h"
 #include "Interface/IC_EquipComp.h"
@@ -55,6 +56,7 @@ public:
 	virtual int GetCurrentStateType() const { return -1; } // @BaseState - StateType(Enum)
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const { return nullptr; } // @현재 적용된, 혹은 적용된 후의 애니메이션
 
+	virtual IIC_StateManager* GetIStateManager() { return nullptr; }
 	virtual IIC_AttackComp* GetIAttackComp() { return nullptr; }
 	virtual IIC_MontageComp* GetIMontageComp() { return nullptr; }
 	virtual IIC_EquipComp* GetIEquipComp() { return nullptr; }

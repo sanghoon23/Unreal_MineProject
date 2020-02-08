@@ -6,9 +6,6 @@
 UCPL_SwordBaseAttack::UCPL_SwordBaseAttack()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
-	StateType = StateType::SWORD;
 }
 
 

@@ -6,9 +6,6 @@
 UCPL_MageBaseAttack::UCPL_MageBaseAttack()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
-	StateType = StateType::MAGE;
 }
 
 
@@ -18,12 +15,6 @@ void UCPL_MageBaseAttack::BeginPlay()
 
 	
 }
-
-IIC_BaseAttack * UCPL_MageBaseAttack::GetIBaseAttack()
-{
-	return Cast<IIC_BaseAttack>(this);
-}
-
 
 void UCPL_MageBaseAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

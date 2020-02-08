@@ -22,6 +22,7 @@ public:
 
 public:
 	virtual class ACDisplayItem* GetCurrentWeaponDisplay() { return nullptr; }
+	virtual class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) { return nullptr; }
 
 	virtual bool GetEquiping() const { return false; }
 	virtual void SetEquiping(bool bValue) {}

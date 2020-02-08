@@ -3,8 +3,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Interface/IC_MontageComp.h"
-#include "State/Player/Base/CPL_MageBaseAttack.h"
-#include "State/Player/Base/CPL_SwordBaseAttack.h"
+#include "Component/Player/CPL_MageAttackComp.h"
+#include "Component/Player/CPL_SwordAttackComp.h"
 
 #include "CPlayerMontageComp.generated.h"
 
@@ -78,7 +78,7 @@ private:
 
 	#pragma	region Member
 private:
-	TMap<UMageMontageType, TArray<class UAnimMontage*> > MageMontageMap;
-	TMap<USwordMontageType, TArray<class UAnimMontage*> > SwordMontageMap;
+	TMap<MageAttackType, TArray<class UAnimMontage*> > MageMontageMap;
+	TMap<SwordAttackType, TArray<class UAnimMontage*> > SwordMontageMap;
 	#pragma endregion
 };

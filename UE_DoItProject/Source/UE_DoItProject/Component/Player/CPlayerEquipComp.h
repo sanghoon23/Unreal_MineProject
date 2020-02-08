@@ -8,7 +8,7 @@
 #include "CPlayerEquipComp.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS()
 class UE_DOITPROJECT_API UCPlayerEquipComp 
 	: public UActorComponent, public IIC_EquipComp
 {
@@ -39,6 +39,7 @@ public:
 	virtual int GetCurrentWeaponNum() const override { return CurrentWeaponNum; }
 
 	virtual class ACDisplayItem* GetCurrentWeaponDisplay() override { return CurrentWeapon; }
+	virtual class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) override { return DisplayList[WeaponArrayNum]; }
 
 private:
 	void ItemMapAdd(UItemType Type, class ACDisplayItem* CItem);
@@ -46,7 +47,6 @@ private:
 
 	#pragma	region Member
 public:
-	class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) { return DisplayList[WeaponArrayNum]; }
 
 private:
 	bool					bEquiping = false;
