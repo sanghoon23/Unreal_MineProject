@@ -45,7 +45,7 @@ void UCPlayerEquipComp::BeginPlay()
 	// Set Delegate "On Hit" - IIC_Charactor
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
 	check(IC_Charactor);
-	IC_Charactor->OnHitResetState.AddLambda([&](AActor*)
+	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
 		bEquiping = false;
 	});

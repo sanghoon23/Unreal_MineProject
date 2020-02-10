@@ -15,6 +15,10 @@ class UE_DOITPROJECT_API UCPL_SwordBaseAttack
 	#pragma	region Reflection
 private:
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+		TArray<class UAnimMontage*> SwordAttackMontages;
+
 	#pragma endregion
 
 public:	
@@ -25,11 +29,11 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void BeginAttack(AActor * Actor) override;
-	virtual void EndAttack(AActor * Actor) override;
-	virtual void OnComboSet(AActor * Actor) override;
+	virtual void BeginAttack(AActor * DoingActor) override;
+	virtual void EndAttack(AActor * DoingActor) override;
+	virtual void OnComboSet(AActor * DoingActor) override;
 
-	virtual void CheckAttack(AActor* Actor) override;
+	virtual void CheckAttack(AActor* DoingActor) override;
 	virtual void AttackImpulse(AActor* DoingActor, float intensity) override;
 	virtual void CheckProcedural(AActor* DoingActor) override;
 

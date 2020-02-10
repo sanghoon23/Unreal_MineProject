@@ -4,7 +4,6 @@
 #include "UObject/Interface.h"
 #include "Interface/IC_StateManager.h"
 #include "Interface/IC_AttackComp.h"
-#include "Interface/IC_MontageComp.h"
 #include "Interface/IC_EquipComp.h"
 
 #include "IC_Charactor.generated.h"
@@ -37,27 +36,34 @@ public:
 	// @CharactorDestroy - 상태가 완전히 끝나고 사라질 때
 	FOnCharactorDestroy		OnCharactorDestroy;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Pure Virtual Function */
 public:
-	virtual bool IsDeath() { return false; }
-	virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) {}
+	virtual bool IsDeath() = 0; // 캐릭터의 죽음 여부.
+	virtual void CanMove() = 0; // 이동 가능.
+	virtual void CanNotMove() = 0;// 이동 불가.
+
+	// @ Charactor 의 현재상태. (AnimInst 에서 쓰임)
+	virtual int GetCurrentStateType() const = 0;
 
 	// @Montage - 실행할 Montage
 	// @Speed - Montage 속도
 	// @bAlways - Montage 실행성 보장
-	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) {}
+	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) = 0;
 
-	virtual void CanMove() {} // 이동 가능.
-	virtual void CanNotMove() {} // 이동 불가.
-	virtual void OffEvade() {} // 회피
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Virtual Function */
+public:
+	virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) {}
+
+	virtual void OnEvade() {}
+	virtual void OffEvade() {} // 회피 해제
 	virtual float GetEvadeSpeed() { return 0.0f; } // 회피 동작의 ActorLocation 속도
 	virtual FVector GetEvadeDirection() { return FVector(1.f, 0.0f, 0.0f); } // 회피방향
 
 public:
-	virtual int GetCurrentStateType() const { return -1; } // @BaseState - StateType(Enum)
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const { return nullptr; } // @현재 적용된, 혹은 적용된 후의 애니메이션
-
 	virtual IIC_StateManager* GetIStateManager() { return nullptr; }
 	virtual IIC_AttackComp* GetIAttackComp() { return nullptr; }
-	virtual IIC_MontageComp* GetIMontageComp() { return nullptr; }
 	virtual IIC_EquipComp* GetIEquipComp() { return nullptr; }
 };

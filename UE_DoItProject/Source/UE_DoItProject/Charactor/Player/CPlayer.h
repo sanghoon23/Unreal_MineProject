@@ -5,11 +5,10 @@
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_StateManager.h"
 #include "Interface/IC_AttackComp.h"
-#include "Interface/IC_MontageComp.h"
 #include "Interface/IC_EquipComp.h"
+#include "Interface/IC_BaseAttack.h"
 
 #include "Component/CPL_StateMachine.h"
-#include "Component/Player/CPlayerMontageComp.h"
 #include "Component/Player/CPlayerEquipComp.h"
 
 #include "CPlayer.generated.h"
@@ -38,7 +37,7 @@ private:
 		class UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCPlayerMontageComp* MontageComponent;
+		class UCPL_StateMachine* StateMachine;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCPlayerEquipComp* EquipComponent;
@@ -52,14 +51,8 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		class UAnimMontage* CurrentMontage;
 
-	UPROPERTY(VisibleInstanceOnly, Category = "Montage")
-		class UAnimMontage* MageStateCastMontage;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 		TArray<class UAnimMontage*> HitMontages;
-
-	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCPL_StateMachine* StateMachine;
 
 private:
 	//UFUNCTION()
@@ -78,26 +71,31 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	/* Pure Virtual Function */
 public:
-	virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) override;
+	virtual bool IsDeath() override { return bDeath; }
+	virtual void CanMove() override { bCanMove = true; } // 이동 가능.
+	virtual void CanNotMove() override { bCanMove = false; } // 이동 불가.
+	virtual int GetCurrentStateType() const override { return static_cast<int>(CurrentStateType); }
+
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
 
+	/* Virtual */
+public:
+	virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) override;
 	
-	virtual void CanMove() { bCanMove = true; } // 이동 가능.
-	virtual void CanNotMove() { bCanMove = false; } // 이동 불가.
-	virtual void OffEvade() override; // 회피 해제
+	virtual void OnEvade() override;
+	virtual void OffEvade() override;
 	virtual float GetEvadeSpeed() { return EvadeSpeed; } // 회피
 	virtual FVector GetEvadeDirection() override { return EvadeDirection; } // 회피 방향
 
 public:
-	virtual int GetCurrentStateType() const { return static_cast<int>(CurrentStateType); }
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const override { return CurrentMontage; }
 	virtual IIC_StateManager* GetIStateManager() override { return Cast<IIC_StateManager>(StateMachine); }
 	virtual IIC_AttackComp* GetIAttackComp() override;
-	virtual IIC_MontageComp* GetIMontageComp() override { return Cast<IIC_MontageComp>(MontageComponent); }
 	virtual IIC_EquipComp* GetIEquipComp() { return Cast<IIC_EquipComp>(EquipComponent); }
 
-
+	/* Function */
 private:
 	// Axis Mapping
 	void OnMoveForward(float Value);
@@ -110,14 +108,22 @@ private:
 	// Action Mapping
 	void OnDoAxisTurn();
 	void OffDoAxisTurn();
-	void OnEvade();
 	void OnSwapState();
+	void OnBasicAttack();
 
 	#pragma	region Member
 public:
+	// Move
+	bool GetCanMove() const { return bCanMove; }
+
+	// Evade
 	bool GetEvade() const { return bEvade; }
+	void SetEvadeDirection(FVector Direction) { EvadeDirection = Direction; }
+	void SetEvadeSpeed(float Speed) { EvadeSpeed = Speed; }
 
 private:
+	bool bDeath = false;
+
 	// State
 	PlayerStateType CurrentStateType = PlayerStateType::MAGE;
 	bool bChangeStateSwap = false;
@@ -133,7 +139,6 @@ private:
 
 	// Ability
 	float Health = 30.0f;
-	bool bDeath = false;
 
 	#pragma endregion
 

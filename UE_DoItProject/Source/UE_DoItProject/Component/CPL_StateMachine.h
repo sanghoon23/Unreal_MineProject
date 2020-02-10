@@ -3,8 +3,13 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Interface/IC_StateManager.h"
+
+#include "Interface/IC_Charactor.h"
 #include "Interface/IC_AttackComp.h"
+#include "Interface/IC_ActionComp.h"
+
 #include "Component/Base/C_BaseAttackComp.h"
+#include "Component/Base/C_BaseActionComp.h"
 
 #include "CPL_StateMachine.generated.h"
 
@@ -27,6 +32,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		TArray<class UC_BaseAttackComp*> AttackCompArray;
 
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		TArray<class UC_BaseActionComp*> ActionCompArray;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
+		class UAnimMontage* MageStateCastMontage;
+
 	#pragma endregion
 
 public:	
@@ -38,6 +49,7 @@ protected:
 
 public:
 	IIC_AttackComp* GetIAttackComp();
+	IIC_ActionComp* GetIActionComp();
 		
 public:
 	void OnSwapState();
@@ -47,6 +59,7 @@ public:
 	PlayerStateType GetCurrentStateType() { return CurrentStateType; }
 
 private:
+	IIC_Charactor* Charactor;
 	PlayerStateType CurrentStateType = PlayerStateType::MAGE;
 
 	#pragma endregion

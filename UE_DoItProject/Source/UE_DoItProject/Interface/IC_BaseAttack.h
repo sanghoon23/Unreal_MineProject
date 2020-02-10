@@ -18,28 +18,35 @@ class UE_DOITPROJECT_API IIC_BaseAttack
 	GENERATED_BODY()
 
 public:
-	virtual void BeginAttack(AActor* Actor) {}
-	virtual void EndAttack(AActor* Actor) {}
-	virtual void OnComboSet(AActor* Actor) {}
-
-	virtual void CheckAttack(AActor* Actor) {}
-	virtual void AttackImpulse(AActor* Actor, float intensity) {}
-	virtual void CheckProcedural(AActor* Actor) {}
-
-	virtual bool GetAttacking() { return false; }
-	virtual void SetAttacking(bool bValue) {};
-
-	virtual bool GetAttackMode() { return false; }
-	virtual void SetAttackMode(bool bValue) {};
-
-	virtual bool GetComboCheck() { return false; }
-
-public:
-	void SetOwnerPawn(APawn* Owner) { OwnerPawn = Owner; }
-
-public:
 	FDele_BeginAttack	BeginAttackDeleFunc;
 	FDele_EndAttack		EndAttackDeleFunc;
+
+	/* Pure Function */
+public:
+	// @DoingActor - 공격하는 Actor(주체)
+	virtual void BeginAttack(AActor* DoingActor) = 0;
+	virtual void EndAttack(AActor* DoingActor) = 0;
+	virtual void OnComboSet(AActor* DoingActor) = 0;
+
+	virtual bool GetAttacking() = 0;
+	virtual void SetAttacking(bool bValue) = 0;
+
+	virtual bool GetAttackMode() = 0;
+	virtual void SetAttackMode(bool bValue) = 0;
+
+	virtual bool GetComboCheck() = 0;
+
+	/* Virtual */
+public:
+	virtual void CheckAttack(AActor* DoingActor) {}
+	virtual void AttackImpulse(AActor* DoingActor, float intensity) {}
+	virtual void CheckProcedural(AActor* DoingActor) {}
+
+public:
+	// @Onwer - 공격하는 Pawn (주체)
+	// Protected - OwnerPawn 에 넣어짐.
+	// 좀 더 편하게 Owner 로 접근하기 위해 만듬.
+	void SetOwnerPawn(APawn* Owner) { OwnerPawn = Owner; }
 
 protected:
 	APawn* OwnerPawn;

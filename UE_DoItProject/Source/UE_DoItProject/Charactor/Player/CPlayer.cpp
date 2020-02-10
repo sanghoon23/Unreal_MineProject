@@ -5,23 +5,42 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
-#include "Component/CPL_StateMachine.h"
-#include "Component/Player/CPlayerMontageComp.h"
-#include "Component/Player/CPlayerEquipComp.h"
-
-#include "Item/CPL_Sword.h"
-
 ACPlayer::ACPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Default Setting
+	FString strPath = L"";
+	// Set Skeletal Mesh
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+		strPath = L"SkeletalMesh'/Game/_Mine/Mesh/Player/Yin_WindGauntlet.Yin_WindGauntlet'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> skeletalMesh(*strPath);
+		if (skeletalMesh.Succeeded())
+			GetMesh()->SkeletalMesh = skeletalMesh.Object;
+	}
 
-		bUseControllerRotationYaw = false;
-		GetCharacterMovement()->bOrientRotationToMovement = true;
-		GetCapsuleComponent()->SetGenerateOverlapEvents(true);
+	// Mage State
+	{
+		// Left Hand Particle
+		LeftParticle = CreateDefaultSubobject<UParticleSystemComponent>("LeftParticle", true);
+		LeftParticle->bAutoActivate = true;
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/P_LightingHand.P_LightingHand'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> leftParticle(*strPath);
+		if (leftParticle.Succeeded())
+			LeftParticle->SetTemplate(leftParticle.Object);
+
+		LeftParticle->SetupAttachment(GetMesh(), L"hand_l");
+		LeftParticle->SetWorldScale3D(FVector(3.0f));
+
+		// Right Hand Particle
+		RightParticle = CreateDefaultSubobject<UParticleSystemComponent>("RightParticle", true);
+		RightParticle->bAutoActivate = true;
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/P_LightingHand.P_LightingHand'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> rightParticle(*strPath);
+		if (rightParticle.Succeeded())
+			RightParticle->SetTemplate(rightParticle.Object);
+
+		RightParticle->SetupAttachment(GetMesh(), L"hand_r");
+		RightParticle->SetWorldScale3D(FVector(3.0f));
 	}
 
 	// Camera
@@ -33,7 +52,16 @@ ACPlayer::ACPlayer()
 		CameraComp->SetupAttachment(SpringArmComp);
 	}
 
-	// Setting
+	// Setting CharacterMovement
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCapsuleComponent()->SetGenerateOverlapEvents(true);
+	}
+
+	// Setting Camera
 	{
 		// SpringArm
 		SpringArmComp->bUsePawnControlRotation = true;
@@ -52,48 +80,8 @@ ACPlayer::ACPlayer()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Create Component
 	{
-		// AttackComponent = CreateDefaultSubobject<UCPlayerAttackComp>("AttackComp");
-		MontageComponent = CreateDefaultSubobject<UCPlayerMontageComp>("MontageComp");
-		EquipComponent = CreateDefaultSubobject<UCPlayerEquipComp>("EquipmentComponent");
-	}
-
-	// State Cast Montage
-	// @딱히 둘데가 없어서 여기뒀다..
-	FString strPath;
-	{
-		strPath = L"AnimMontage'/Game/_Mine/Montages/Player/Mage/Mage_Cast_Montage.Mage_Cast_Montage'";
-		ConstructorHelpers::FObjectFinder<UAnimMontage> cast(*strPath);
-		if (cast.Succeeded())
-			MageStateCastMontage = cast.Object;
-	}
-
-	// Mage State
-	{
-		// Left Hand Particle
-		LeftParticle = CreateDefaultSubobject<UParticleSystemComponent>("LeftParticle");
-		LeftParticle->SetupAttachment(GetMesh());
-		LeftParticle->bAutoActivate = true;
-		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/P_LightingHand.P_LightingHand'";
-		ConstructorHelpers::FObjectFinder<UParticleSystem> leftParticle(*strPath);
-		if (leftParticle.Succeeded())
-			LeftParticle->SetTemplate(leftParticle.Object);
-		LeftParticle->SetRelativeLocation(FVector(0.0f));
-
-		// Right Hand Particle
-		RightParticle = CreateDefaultSubobject<UParticleSystemComponent>("RightParticle");
-		RightParticle->SetupAttachment(GetMesh());
-		RightParticle->bAutoActivate = true;
-		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/P_LightingHand.P_LightingHand'";
-		ConstructorHelpers::FObjectFinder<UParticleSystem> rightParticle(*strPath);
-		if (rightParticle.Succeeded())
-			RightParticle->SetTemplate(rightParticle.Object);
-		RightParticle->SetRelativeLocation(FVector(0.0f));
-	}
-
-	// Test Code
-	// Create State
-	{
 		StateMachine = CreateDefaultSubobject<UCPL_StateMachine>("StateMachine");
+		EquipComponent = CreateDefaultSubobject<UCPlayerEquipComp>("EquipmentComponent");
 	}
 }
 
@@ -101,21 +89,21 @@ void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/* Sword Visibility False - 처음 상태는 MAGE 이기 때문, */
 	EquipComponent->GetDisplayItem(0)->GetStaticMeshComp()->SetVisibility(false);
 
-	// Scaling
-	LeftParticle->SetWorldScale3D(FVector(3.f));
-	RightParticle->SetWorldScale3D(FVector(3.f));
+	//LeftParticle->SetVisibility(false); // MageHandEffect
+	//RightParticle->SetVisibility(false); // MageHandEffect
 
 	// Delegate
 	{
-		// @OnMageState
+		// @'On' MageState
 		StateMachine->OnMageState.AddLambda([&]()
 		{
 			LeftParticle->SetVisibility(true); // MageHandEffect
 			RightParticle->SetVisibility(true); // MageHandEffect
 		});
-		// @UnMageState
+		// @'Un' MageState
 		StateMachine->UnMageState.AddLambda([&]()
 		{
 			LeftParticle->SetVisibility(false); // MageHandEffect
@@ -136,7 +124,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// In APlayer BindAction
+	// Axis
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACPlayer::OnMoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACPlayer::OnMoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &ACPlayer::OnTurn);
@@ -149,9 +137,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("DoAxisTurn", EInputEvent::IE_Pressed, this, &ACPlayer::OnDoAxisTurn);
 	PlayerInputComponent->BindAction("DoAxisTurn", EInputEvent::IE_Released, this, &ACPlayer::OffDoAxisTurn);
 	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
-
-	// OtherClass Action
 	PlayerInputComponent->BindAction("SwapState", EInputEvent::IE_Pressed, this, &ACPlayer::OnSwapState);
+	PlayerInputComponent->BindAction("BasicAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnBasicAttack);
 }
 
 void ACPlayer::OnMoveForward(float Value)
@@ -195,9 +182,19 @@ void ACPlayer::OnZoom(float Value)
 
 void ACPlayer::OnJump()
 {
+	IIC_BaseAttack* BaseAttack = StateMachine->GetIAttackComp()->GetCurrentIBaseAttack();
+	if (BaseAttack != nullptr)
+	{
+		IfTrueRet(BaseAttack->GetAttacking()); // @IF TRUE RETURN
+	}
+
+	// @IF TRUE RETURN
+	IfTrueRet(bEvade); //@Evade Check
+	IfTrueRet(EquipComponent->GetEquiping()); //@Equping Check
+
+	// @IF FALSE RETURN
 	IfFalseRet(bCanMove);
 
-	// ACharacter
 	Jump();
 }
 
@@ -211,83 +208,36 @@ void ACPlayer::OffDoAxisTurn()
 	bAxisTurn = false;
 }
 
+/* @도주기 실행 */
 void ACPlayer::OnEvade()
 {
-	// @IF TRUE
-	IfTrueRet(bEvade);
-	IfTrueRet(GetCharacterMovement()->IsFalling());
-	IfTrueRet(EquipComponent->GetEquiping()); //@Equping Check
-
-	// @IF FALSE
-	IfFalseRet(bCanMove);
-
-	bEvade = true;
-
-	// Montage Sort & PlayNum
-	UINT Sort = static_cast<UINT>(MontageSort::Move);
-	// @회피동작의 기본 Anim = 0 - (앞쪽 회피)
-	UINT PlayAnimNum = 0;
-	// @회피동작 방향
-	EvadeDirection = GetActorForwardVector();
-
-	// Montage 실행
-	MontageComponent->PlayAnimation
-	(
-		0,
-		PlayAnimNum,
-		Sort,
-		1.0f,
-		false
-	);
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	StateMachine->GetIActionComp()->GetIBaseAction(0)->OnAction(this);
 }
 
-// @Player 공격 상태를 바꾸는 함수
-void ACPlayer::OnSwapState()
-{
-	// @IF TRUE
-	IfTrueRet(bEvade); //@Evade Check
-	IfTrueRet(GetCharacterMovement()->IsFalling()); //@Jump Check
-	IfTrueRet(EquipComponent->GetEquiping()); //@Equping Check
-
-	StateMachine->OnSwapState();
-
-	//// @Equping Set 'False' From Notify
-	//EquipComponent->SetEquiping(true);
-
-	//// State Swap
-	//int Type = static_cast<int>(CurrentStateType);
-	//++Type;
-	//(Type == static_cast<int>(PlayerStateType::END))
-	//	? CurrentStateType = static_cast<PlayerStateType>(0)
-	//	: CurrentStateType = static_cast<PlayerStateType>(Type);
-
-	//ACPL_Sword* Sword = Cast<ACPL_Sword>(EquipComponent->GetDisplayItem(0));
-	//check(Sword);
-
-	//// @Mage State
-	//if (CurrentStateType == PlayerStateType::MAGE)
-	//{
-	//	ActorAnimMonPlay(MageStateCastMontage, 1.5f, false);
-	//	// Sword->UnEquip(); - UnEquip 은 필요없음. Attach, DeathPosition 이 같음.
-	//	Sword->GetStaticMeshComp()->SetVisibility(false);
-
-	//	LeftParticle->SetVisibility(true); // MageHandEffect
-	//	RightParticle->SetVisibility(true); // MageHandEffect
-	//}
-	//// @Sword State
-	//else if (CurrentStateType == PlayerStateType::SWORD)
-	//{
-	//	Sword->OnEquip();
-	//	Sword->GetStaticMeshComp()->SetVisibility(true);
-
-	//	LeftParticle->SetVisibility(false); // MageHandEffect
-	//	RightParticle->SetVisibility(false); // MageHandEffect
-	//}
-}
-
+/* @도주기 끝남 - Notify 에서 호출 */
 void ACPlayer::OffEvade()
 {
 	bEvade = false;
+}
+
+/* @Player 공격 상태를 바꾸는 함수 */
+void ACPlayer::OnSwapState()
+{
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	StateMachine->OnSwapState();
+}
+
+void ACPlayer::OnBasicAttack()
+{
+	//// @IF TRUE RETURN
+	//IfTrueRet(bEvade); //@Evade Check
+	//IfTrueRet(GetCharacterMovement()->IsFalling()); //@Jump Check
+	//IfTrueRet(EquipComponent->GetEquiping()); //@Equping Check
+
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	IIC_BaseAttack* BaseAttack = StateMachine->GetIAttackComp()->SetAttackTypeRetIBaseAttack(0);
+	BaseAttack->BeginAttack(this);
 }
 
 void ACPlayer::OnHit(AActor * AttackActor, UINT HitAnimNum, float AnimSpeed)
