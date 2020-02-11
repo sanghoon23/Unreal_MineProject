@@ -9,7 +9,7 @@
 #include "Interface/IC_BaseAttack.h"
 
 #include "Component/CPL_StateMachine.h"
-#include "Component/Player/CPlayerEquipComp.h"
+#include "Component/Player/CPL_EquipComp.h"
 
 #include "CPlayer.generated.h"
 
@@ -40,7 +40,7 @@ private:
 		class UCPL_StateMachine* StateMachine;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCPlayerEquipComp* EquipComponent;
+		class UCPL_EquipComp* EquipComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* LeftParticle;
@@ -54,12 +54,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 		TArray<class UAnimMontage*> HitMontages;
 
-private:
-	//UFUNCTION()
-	//void OnBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-
-	//UFUNCTION()
-	//void OnEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	#pragma endregion
 
 public:
@@ -125,20 +119,20 @@ private:
 	bool bDeath = false;
 
 	// State
-	PlayerStateType CurrentStateType = PlayerStateType::MAGE;
-	bool bChangeStateSwap = false;
+	PlayerStateType CurrentStateType	= PlayerStateType::MAGE;
+	bool bChangeStateSwap				= false;
 
 	// Move
-	bool bCanMove	= true;
-	bool bAxisTurn	= false;
+	bool bCanMove		= true;
+	bool bAxisTurn		= false;
 
 	// Evade
-	bool bEvade		= false;
-	float EvadeSpeed = 15.0f;
+	bool bEvade			= false;
+	float EvadeSpeed	= 15.0f;
 	FVector EvadeDirection;
 
 	// Ability
-	float Health = 30.0f;
+	float Health		= 30.0f;
 
 	#pragma endregion
 

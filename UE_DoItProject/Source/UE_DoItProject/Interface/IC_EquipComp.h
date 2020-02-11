@@ -21,13 +21,20 @@ public:
 	virtual void WeaponNextSwap(bool AscendingOrder) {}
 
 public:
-	virtual class ACDisplayItem* GetCurrentWeaponDisplay() { return nullptr; }
-	virtual class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) { return nullptr; }
 
-	virtual bool GetEquiping() const { return false; }
-	virtual void SetEquiping(bool bValue) {}
+	/*@현재 착용하고 있는 DisplayItem 을 가져옴. */
+	virtual class ACDisplayItem* GetCurrentWeaponDisplay() = 0;
 
-	virtual bool GetArmed() const { return false; }
-	virtual int GetCurrentWeaponNum() const { return -1; }
+	// 
+	// @WeaponArrayNum - 가져올 Item 의 Array Number
+	// @Return - Item 의 최상위 부모
+	// @Warning - DisplayList Size 체크해주어야함.
+	virtual class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) = 0;
+
+	virtual bool GetEquiping() const = 0;
+	virtual void SetEquiping(bool bValue) = 0;
+
+	virtual bool GetArmed() const = 0;
+	virtual int GetCurrentWeaponNum() const = 0;
 
 };

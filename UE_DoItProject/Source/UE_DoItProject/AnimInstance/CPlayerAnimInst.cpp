@@ -4,7 +4,7 @@
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_EquipComp.h"
-#include "Component/Player/CPlayerEquipComp.h"
+#include "Component/Player/CPL_EquipComp.h"
 
 UCPlayerAnimInst::UCPlayerAnimInst()
 {

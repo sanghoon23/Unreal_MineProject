@@ -11,8 +11,8 @@ ACDisplayItem::ACDisplayItem()
 		Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule");
 		RootComponent = Capsule;
 
-		StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-		StaticMesh->SetupAttachment(Capsule);
+		//StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+		//StaticMesh->SetupAttachment(Capsule);
 	}
 
 	// Setting
@@ -21,9 +21,9 @@ ACDisplayItem::ACDisplayItem()
 		Capsule->SetEnableGravity(false);
 		Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-		StaticMesh->SetSimulatePhysics(false);
-		StaticMesh->SetEnableGravity(false);
-		StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		//StaticMesh->SetSimulatePhysics(false);
+		//StaticMesh->SetEnableGravity(false);
+		//StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		// StaticMesh->SetCollisionObjectType(ECollisionChannel::
 	}
 }

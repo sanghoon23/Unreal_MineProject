@@ -54,7 +54,7 @@ ACPlayer::ACPlayer()
 
 	// Setting CharacterMovement
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -81,7 +81,7 @@ ACPlayer::ACPlayer()
 	// Create Component
 	{
 		StateMachine = CreateDefaultSubobject<UCPL_StateMachine>("StateMachine");
-		EquipComponent = CreateDefaultSubobject<UCPlayerEquipComp>("EquipmentComponent");
+		EquipComponent = CreateDefaultSubobject<UCPL_EquipComp>("EquipmentComponent");
 	}
 }
 
@@ -91,9 +91,6 @@ void ACPlayer::BeginPlay()
 
 	/* Sword Visibility False - 처음 상태는 MAGE 이기 때문, */
 	EquipComponent->GetDisplayItem(0)->GetStaticMeshComp()->SetVisibility(false);
-
-	//LeftParticle->SetVisibility(false); // MageHandEffect
-	//RightParticle->SetVisibility(false); // MageHandEffect
 
 	// Delegate
 	{
@@ -230,11 +227,6 @@ void ACPlayer::OnSwapState()
 
 void ACPlayer::OnBasicAttack()
 {
-	//// @IF TRUE RETURN
-	//IfTrueRet(bEvade); //@Evade Check
-	//IfTrueRet(GetCharacterMovement()->IsFalling()); //@Jump Check
-	//IfTrueRet(EquipComponent->GetEquiping()); //@Equping Check
-
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_BaseAttack* BaseAttack = StateMachine->GetIAttackComp()->SetAttackTypeRetIBaseAttack(0);
 	BaseAttack->BeginAttack(this);
@@ -279,6 +271,7 @@ void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlway
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Get, Set
 
+/* 현재 CurrentStateType 에 해당하는 Inteface AttackComp 를 가져옴 */
 IIC_AttackComp * ACPlayer::GetIAttackComp()
 {
 	int Type = static_cast<int>(CurrentStateType);

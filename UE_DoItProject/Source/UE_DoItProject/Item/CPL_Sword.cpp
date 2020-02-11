@@ -3,14 +3,34 @@
 
 ACPL_Sword::ACPL_Sword()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	// @FALSE
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Super
 	HandItemType = UHandItemType::SWORD;
 	ItemAttachName = L"middle_02_r";
 	ItemEquipName = L"middle_02_r";
 
-	// Create
+	// @Create Component
+	{
+		StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
+		StaticMesh->SetupAttachment(Capsule);
+	}
+
+	// @Setting
+	{
+		Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		Capsule->SetGenerateOverlapEvents(true);
+		// Capsule->SetCollisionProfileName("BlockAll");
+		Capsule->SetVisibility(true);
+
+		StaticMesh->SetSimulatePhysics(false);
+		StaticMesh->SetEnableGravity(false);
+		StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+
+	// @Mesh
 	{
 		// Before Code
 		FString path = L"StaticMesh'/Game/_Mine/Mesh/Item/Player_Sword.Player_Sword'";
@@ -19,7 +39,7 @@ ACPL_Sword::ACPL_Sword()
 			StaticMesh->SetStaticMesh(mesh.Object);
 	}
 
-	// Montage
+	// @Montage
 	{
 		// AttachMontage
 		FString path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/Sword_Equip_Montage.Sword_Equip_Montage'";
@@ -32,14 +52,6 @@ ACPL_Sword::ACPL_Sword()
 		//ConstructorHelpers::FObjectFinder<UAnimMontage> detachMontage(*path);
 		//if (detachMontage.Succeeded())
 		//	DetachMontage = detachMontage.Object;
-	}
-
-	// Setting
-	{
-		Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		Capsule->SetGenerateOverlapEvents(true);
-		// Capsule->SetCollisionProfileName("BlockAll");
-		Capsule->SetVisibility(true);
 	}
 }
 

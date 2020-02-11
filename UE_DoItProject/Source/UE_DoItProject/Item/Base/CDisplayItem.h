@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Attribute")
 		class UStaticMeshComponent* StaticMesh;
 
+	UPROPERTY(VisibleAnywhere, Category = "Attribute")
+		class USkeletalMeshComponent* SkeletalMesh;
+
 	UPROPERTY(EditAnywhere, Category = "Attachment")
 		FString ItemAttachName = "";
 
