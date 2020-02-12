@@ -23,19 +23,17 @@ void UCNS_ComboCheck::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequence
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	IIC_BaseAttack* BaseAttackState = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
-	check(BaseAttackState);
+	IfNullRet(BaseAttackState);
 	bool bDoNextCombo = BaseAttackState->GetComboCheck();
 
 	if (bDoNextCombo == true)
 	{
-		// CLog::Print(L"ComboCheck Start!!");
 		BaseAttackState->OnComboSet(MeshComp->GetOwner());
 	}
 	else
 	{
-		// CLog::Print(L"ComboCheck End!!");
 		BaseAttackState->EndAttackDeleFunc.Broadcast();
-		BaseAttackState->EndAttack(MeshComp->GetOwner());
+		// BaseAttackState->EndAttack(MeshComp->GetOwner());
 	}
 
 }

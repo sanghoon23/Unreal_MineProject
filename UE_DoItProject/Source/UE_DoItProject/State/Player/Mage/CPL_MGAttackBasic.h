@@ -1,13 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "State/Player/Base/CPL_SwordBaseAttack.h"
+#include "State/Player/Base/CPL_MageBaseAttack.h"
 #include "Interface/IC_BaseAttack.h"
 
-#include "CPL_SDBasicAttack.generated.h"
+#include "CPL_MGAttackBasic.generated.h"
 
 UENUM()
-enum class USD_BasicAttack : uint8
+enum class UMG_BasicAttack : uint8
 {
 	COMBO_ONE = 0,
 	COMBO_TWO = 1,
@@ -16,13 +16,13 @@ enum class USD_BasicAttack : uint8
 };
 
 UCLASS()
-class UE_DOITPROJECT_API UCPL_SDBasicAttack 
-	: public UCPL_SwordBaseAttack
+class UE_DOITPROJECT_API UCPL_MGAttackBasic
+	: public UCPL_MageBaseAttack
 {
 	GENERATED_BODY()
 	
 public:
-	UCPL_SDBasicAttack();
+	UCPL_MGAttackBasic();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
@@ -32,4 +32,5 @@ protected:
 public:
 	virtual void BeginAttack(AActor * DoingActor) override;
 	virtual void OnComboSet(AActor * DoingActor) override;
+	virtual bool IsLastCombo() const override;
 };

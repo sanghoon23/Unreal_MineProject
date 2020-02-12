@@ -8,8 +8,8 @@ ACPL_Sword::ACPL_Sword()
 
 	// Super
 	HandItemType = UHandItemType::SWORD;
-	ItemAttachName = L"middle_02_r";
-	ItemEquipName = L"middle_02_r";
+	ItemAttachName = L"hand_r";
+	ItemEquipName = L"hand_r";
 
 	// @Create Component
 	{

@@ -1,15 +1,17 @@
-#include "CPL_MageBaseAttack.h"
+#include "CHM_BasicBaseAttack.h"
 #include "Global.h"
 
 #include "Interface/IC_Charactor.h"
 
-UCPL_MageBaseAttack::UCPL_MageBaseAttack()
+UCHM_BasicBaseAttack::UCHM_BasicBaseAttack()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	// ...
 }
 
 
-void UCPL_MageBaseAttack::BeginPlay()
+void UCHM_BasicBaseAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -39,20 +41,22 @@ void UCPL_MageBaseAttack::BeginPlay()
 		bComboCheck = false;
 		CurrentComboNum = 0;
 	});
+	
 }
 
-void UCPL_MageBaseAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+
+void UCHM_BasicBaseAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCPL_MageBaseAttack::BeginAttack(AActor * DoingActor)
+void UCHM_BasicBaseAttack::BeginAttack(AActor * DoingActor)
 {
 	IfNullRet(DoingActor);
 	check(DoingActor);
 }
 
-void UCPL_MageBaseAttack::EndAttack(AActor * DoingActor)
+void UCHM_BasicBaseAttack::EndAttack(AActor * DoingActor)
 {
 	IfNullRet(DoingActor);
 	check(DoingActor);
@@ -62,27 +66,28 @@ void UCPL_MageBaseAttack::EndAttack(AActor * DoingActor)
 	CurrentComboNum = 0;
 }
 
-void UCPL_MageBaseAttack::OnComboSet(AActor * DoingActor)
-{
-	check(DoingActor);
-	IfNullRet(DoingActor);
-}
-
-void UCPL_MageBaseAttack::CheckAttack(AActor * DoingActor)
+void UCHM_BasicBaseAttack::OnComboSet(AActor * DoingActor)
 {
 	IfNullRet(DoingActor);
 	check(DoingActor);
 }
 
-void UCPL_MageBaseAttack::AttackImpulse(AActor * DoingActor, float intensity)
+void UCHM_BasicBaseAttack::CheckAttack(AActor * DoingActor)
 {
 	IfNullRet(DoingActor);
 	check(DoingActor);
 }
 
-void UCPL_MageBaseAttack::CheckProcedural(AActor * DoingActor)
+void UCHM_BasicBaseAttack::AttackImpulse(AActor * DoingActor, float intensity)
 {
 	IfNullRet(DoingActor);
 	check(DoingActor);
 }
+
+void UCHM_BasicBaseAttack::CheckProcedural(AActor * DoingActor)
+{
+	IfNullRet(DoingActor);
+	check(DoingActor);
+}
+
 

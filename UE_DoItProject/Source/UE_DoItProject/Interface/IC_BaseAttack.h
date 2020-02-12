@@ -28,13 +28,18 @@ public:
 	virtual void EndAttack(AActor* DoingActor) = 0;
 	virtual void OnComboSet(AActor* DoingActor) = 0;
 
-	virtual bool GetAttacking() = 0;
+	virtual bool GetAttacking() const = 0;
 	virtual void SetAttacking(bool bValue) = 0;
 
-	virtual bool GetAttackMode() = 0;
+	virtual bool GetAttackMode() const = 0;
 	virtual void SetAttackMode(bool bValue) = 0;
 
-	virtual bool GetComboCheck() = 0;
+	virtual bool GetComboCheck() const = 0;
+
+	// @Combo 의 마지막 구간을 정확히 알기 위해서.
+	// AI 부분에서 BeginAttack 을 계속 호출하게 될때,
+	// Combo 마지막 구간의 타이밍이 너무 빨라서 EndAttack 이 재대로 동작 않음.
+	virtual bool IsLastCombo() const = 0;
 
 	/* Virtual */
 public:

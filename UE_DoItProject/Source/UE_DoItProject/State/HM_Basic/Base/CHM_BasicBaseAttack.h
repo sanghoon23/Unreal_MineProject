@@ -4,10 +4,11 @@
 #include "Components/ActorComponent.h"
 #include "Interface/IC_BaseAttack.h"
 
-#include "CPL_SwordBaseAttack.generated.h"
+#include "CHM_BasicBaseAttack.generated.h"
 
-UCLASS()
-class UE_DOITPROJECT_API UCPL_SwordBaseAttack
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class UE_DOITPROJECT_API UCHM_BasicBaseAttack 
 	: public UActorComponent, public IIC_BaseAttack
 {
 	GENERATED_BODY()
@@ -17,16 +18,18 @@ private:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
-		TArray<class UAnimMontage*> SwordAttackMontages;
+		TArray<class UAnimMontage*> AttackMontages;
 
 	#pragma endregion
 
 public:	
-	UCPL_SwordBaseAttack();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UCHM_BasicBaseAttack();
 
 protected:
 	virtual void BeginPlay() override;
+
+public:	
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
 	virtual void BeginAttack(AActor * DoingActor) override;
@@ -37,14 +40,12 @@ public:
 	virtual void AttackImpulse(AActor* DoingActor, float intensity) override;
 	virtual void CheckProcedural(AActor* DoingActor) override;
 
-public:
-
-	#pragma	region Member
+#pragma	region Member
 public:
 	virtual bool GetAttacking() const override { return bAttacking; }
 	virtual void SetAttacking(bool bValue) override { bAttacking = bValue; };
 
-	virtual bool GetAttackMode()const  override { return bAttackMode; }
+	virtual bool GetAttackMode() const override { return bAttackMode; }
 	virtual void SetAttackMode(bool bValue) override { bAttackMode = bValue; };
 
 	virtual bool GetComboCheck() const override { return bComboCheck; }
@@ -54,10 +55,10 @@ protected:
 	UINT				CurrentComboNum = 0;
 	UINT				MaxComboNum = 0;
 
-	bool bAttackMode	= false;
+	bool bAttackMode = false;
 
-	bool bAttacking		= false;
-	bool bComboCheck	= false;
+	bool bAttacking = false;
+	bool bComboCheck = false;
 
 #pragma endregion
 };

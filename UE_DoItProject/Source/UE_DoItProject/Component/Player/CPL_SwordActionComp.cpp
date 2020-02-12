@@ -1,7 +1,7 @@
 #include "CPL_SwordActionComp.h"
 #include "Global.h"
 
-#include "State/Player/Sword/CPL_SDRollAction.h"
+#include "State/Player/Sword/CPL_SDActionRoll.h"
 
 UCPL_SwordActionComp::UCPL_SwordActionComp()
 {
@@ -9,7 +9,7 @@ UCPL_SwordActionComp::UCPL_SwordActionComp()
 
 	// Create Roll Action
 	{
-		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_SDRollAction>("RollAction");
+		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_SDActionRoll>("RollAction");
 		BaseActionArray.Emplace(RollAction);
 	}
 }

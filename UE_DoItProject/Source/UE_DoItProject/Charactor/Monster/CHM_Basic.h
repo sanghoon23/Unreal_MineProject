@@ -4,6 +4,9 @@
 #include "Charactor/Monster/Base/CHumanoidMonster.h"
 #include "Interface/IC_Charactor.h"
 
+#include "Component/HM_Basic/CHM_BasicAttackComp.h"
+#include "Component/HM_Basic/CHM_BasicEquipComp.h"
+
 #include "CHM_Basic.generated.h"
 
 UCLASS()
@@ -14,6 +17,11 @@ class UE_DOITPROJECT_API ACHM_Basic
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCHM_BasicAttackComp* AttackComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCHM_BasicEquipComp* EquipComp;
 
 	#pragma endregion
 
@@ -28,6 +36,7 @@ public:
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Pure Virtual Function In Interface */
 public:
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void CanMove() override { bCanMove = true; }
@@ -36,8 +45,10 @@ public:
 
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
 
-
-	// virtual IIC_AttackComp* GetIAttackComp() override;
+	/* Virtual In Interface */
+public:
+	virtual IIC_AttackComp* GetIAttackComp() override;
+	virtual IIC_EquipComp* GetIEquipComp() override;
 
 public:
 	//virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) override;
@@ -52,7 +63,6 @@ private:
 
 	#pragma region Member
 private:
-	bool bCanMove = true;
 
 	#pragma endregion
 };

@@ -80,8 +80,8 @@ ACPlayer::ACPlayer()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Create Component
 	{
-		StateMachine = CreateDefaultSubobject<UCPL_StateMachine>("StateMachine");
-		EquipComponent = CreateDefaultSubobject<UCPL_EquipComp>("EquipmentComponent");
+		StateManager = CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
+		EquipComp = CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
 	}
 }
 
@@ -90,18 +90,18 @@ void ACPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	/* Sword Visibility False - 처음 상태는 MAGE 이기 때문, */
-	EquipComponent->GetDisplayItem(0)->GetStaticMeshComp()->SetVisibility(false);
+	EquipComp->GetDisplayItem(0)->GetStaticMeshComp()->SetVisibility(false);
 
 	// Delegate
 	{
 		// @'On' MageState
-		StateMachine->OnMageState.AddLambda([&]()
+		StateManager->OnMageState.AddLambda([&]()
 		{
 			LeftParticle->SetVisibility(true); // MageHandEffect
 			RightParticle->SetVisibility(true); // MageHandEffect
 		});
 		// @'Un' MageState
-		StateMachine->UnMageState.AddLambda([&]()
+		StateManager->UnMageState.AddLambda([&]()
 		{
 			LeftParticle->SetVisibility(false); // MageHandEffect
 			RightParticle->SetVisibility(false); // MageHandEffect
@@ -114,7 +114,7 @@ void ACPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// @StateMachine 에서 StateType 값 받아옴.
-	CurrentStateType = StateMachine->GetCurrentStateType();
+	CurrentStateType = StateManager->GetCurrentStateType();
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -179,7 +179,7 @@ void ACPlayer::OnZoom(float Value)
 
 void ACPlayer::OnJump()
 {
-	IIC_BaseAttack* BaseAttack = StateMachine->GetIAttackComp()->GetCurrentIBaseAttack();
+	IIC_BaseAttack* BaseAttack = StateManager->GetIAttackComp()->GetCurrentIBaseAttack();
 	if (BaseAttack != nullptr)
 	{
 		IfTrueRet(BaseAttack->GetAttacking()); // @IF TRUE RETURN
@@ -187,7 +187,7 @@ void ACPlayer::OnJump()
 
 	// @IF TRUE RETURN
 	IfTrueRet(bEvade); //@Evade Check
-	IfTrueRet(EquipComponent->GetEquiping()); //@Equping Check
+	IfTrueRet(EquipComp->GetEquiping()); //@Equping Check
 
 	// @IF FALSE RETURN
 	IfFalseRet(bCanMove);
@@ -209,7 +209,7 @@ void ACPlayer::OffDoAxisTurn()
 void ACPlayer::OnEvade()
 {
 	// @해당 함수에 IFRet 조건 들어가 있음.
-	StateMachine->GetIActionComp()->GetIBaseAction(0)->OnAction(this);
+	StateManager->GetIActionComp()->GetIBaseAction(0)->OnAction(this);
 }
 
 /* @도주기 끝남 - Notify 에서 호출 */
@@ -222,35 +222,14 @@ void ACPlayer::OffEvade()
 void ACPlayer::OnSwapState()
 {
 	// @해당 함수에 IFRet 조건 들어가 있음.
-	StateMachine->OnSwapState();
+	StateManager->OnSwapState();
 }
 
 void ACPlayer::OnBasicAttack()
 {
 	// @해당 함수에 IFRet 조건 들어가 있음.
-	IIC_BaseAttack* BaseAttack = StateMachine->GetIAttackComp()->SetAttackTypeRetIBaseAttack(0);
+	IIC_BaseAttack* BaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(0);
 	BaseAttack->BeginAttack(this);
-}
-
-void ACPlayer::OnHit(AActor * AttackActor, UINT HitAnimNum, float AnimSpeed)
-{
-	IfTrueRet(bDeath);
-
-	// Delegate 실행 - 상태값 초기화.
-	OnHitResetState.Broadcast(this);
-
-	FVector Location = GetActorLocation();
-	FVector OtherLocation = AttackActor->GetActorLocation();
-
-	// Hit Animation 실행
-	ActorAnimMonPlay(HitMontages[HitAnimNum], AnimSpeed, true);
-
-	// 우선 공격한 방향으로 돌리기.
-	if (Controller != nullptr)
-	{
-		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(Location, OtherLocation);
-		GetController()->SetControlRotation(Rotation);
-	}
 }
 
 void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlways)
@@ -271,10 +250,19 @@ void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlway
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Get, Set
 
+IIC_StateManager * ACPlayer::GetIStateManager()
+{
+	return Cast<IIC_StateManager>(StateManager);
+}
+
 /* 현재 CurrentStateType 에 해당하는 Inteface AttackComp 를 가져옴 */
 IIC_AttackComp * ACPlayer::GetIAttackComp()
 {
-	int Type = static_cast<int>(CurrentStateType);
-	return StateMachine->GetIAttackComp();
+	return StateManager->GetIAttackComp();
+}
+
+IIC_EquipComp * ACPlayer::GetIEquipComp()
+{
+	return Cast<IIC_EquipComp>(EquipComp);
 }
 

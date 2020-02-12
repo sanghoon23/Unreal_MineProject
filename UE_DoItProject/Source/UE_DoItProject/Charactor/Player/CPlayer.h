@@ -37,10 +37,10 @@ private:
 		class UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCPL_StateMachine* StateMachine;
+		class UCPL_StateMachine* StateManager;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCPL_EquipComp* EquipComponent;
+		class UCPL_EquipComp* EquipComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* LeftParticle;
@@ -76,8 +76,6 @@ public:
 
 	/* Virtual */
 public:
-	virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) override;
-	
 	virtual void OnEvade() override;
 	virtual void OffEvade() override;
 	virtual float GetEvadeSpeed() { return EvadeSpeed; } // È¸ÇÇ
@@ -85,9 +83,9 @@ public:
 
 public:
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const override { return CurrentMontage; }
-	virtual IIC_StateManager* GetIStateManager() override { return Cast<IIC_StateManager>(StateMachine); }
+	virtual IIC_StateManager* GetIStateManager() override;
 	virtual IIC_AttackComp* GetIAttackComp() override;
-	virtual IIC_EquipComp* GetIEquipComp() { return Cast<IIC_EquipComp>(EquipComponent); }
+	virtual IIC_EquipComp* GetIEquipComp() override;
 
 	/* Function */
 private:

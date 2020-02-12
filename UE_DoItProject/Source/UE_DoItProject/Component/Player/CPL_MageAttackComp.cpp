@@ -1,7 +1,7 @@
 #include "CPL_MageAttackComp.h"
 #include "Global.h"
 
-#include "State/Player/Mage/CPL_MGBasicAttack.h"
+#include "State/Player/Mage/CPL_MGAttackBasic.h"
 
 UCPL_MageAttackComp::UCPL_MageAttackComp()
 {
@@ -12,7 +12,7 @@ UCPL_MageAttackComp::UCPL_MageAttackComp()
 	{
 		UCPL_MageBaseAttack* MG_BasicAttack;
 
-		MG_BasicAttack = CreateDefaultSubobject<UCPL_MGBasicAttack>("BasicAttack");
+		MG_BasicAttack = CreateDefaultSubobject<UCPL_MGAttackBasic>("BasicAttack");
 		MG_BasicAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
 
 		MageStateArray.Emplace(MG_BasicAttack);
@@ -51,7 +51,8 @@ IIC_BaseAttack * UCPL_MageAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 }
 
 // - IC_AttackComp 참고.
-// @현재 설정된 AttackType 의 Interface_BaseAttack 을 가져옴.
+// @Type - AttackStateArray 에서 가져올 AttackType
+// @Return - @Type 에 해당하는 IBaseAttack
 IIC_BaseAttack * UCPL_MageAttackComp::GetCurrentIBaseAttack()
 {
 	int CurrentType = static_cast<int>(AttackType);

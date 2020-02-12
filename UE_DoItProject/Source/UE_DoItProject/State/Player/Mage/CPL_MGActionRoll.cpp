@@ -1,4 +1,4 @@
-#include "CPL_MGRollAction.h"
+#include "CPL_MGActionRoll.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -6,7 +6,7 @@
 #include "Interface/IC_Charactor.h"
 #include "Charactor/Player/CPlayer.h"
 
-UCPL_MGRollAction::UCPL_MGRollAction()
+UCPL_MGActionRoll::UCPL_MGActionRoll()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	//..
@@ -22,17 +22,17 @@ UCPL_MGRollAction::UCPL_MGRollAction()
 	}
 }
 
-void UCPL_MGRollAction::BeginPlay()
+void UCPL_MGActionRoll::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void UCPL_MGRollAction::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+void UCPL_MGActionRoll::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCPL_MGRollAction::OnAction(AActor * DoingActor)
+void UCPL_MGActionRoll::OnAction(AActor * DoingActor)
 {
 	check(DoingActor);
 

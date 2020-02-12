@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "State/Base/C_BaseActionState.h"
-#include "CPL_MGRollAction.generated.h"
+#include "CPL_MGActionRoll.generated.h"
 
 UCLASS()
-class UE_DOITPROJECT_API UCPL_MGRollAction
+class UE_DOITPROJECT_API UCPL_MGActionRoll
 	: public UC_BaseActionState
 {
 	GENERATED_BODY()
@@ -18,7 +18,7 @@ private:
 	#pragma endregion
 
 public:
-	UCPL_MGRollAction();
+	UCPL_MGActionRoll();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:

@@ -26,14 +26,14 @@ void UCPL_SwordBaseAttack::BeginPlay()
 	});
 
 	// Set Delegate "Begin Attack" - IIC_BaseAttack
-	BeginAttackDeleFunc.AddLambda([this]()->void
+	BeginAttackDeleFunc.AddLambda([&]()
 	{
 		bAttacking = true;
 		bAttackMode = true;
 	});
 
 	// Set Delegate "End Attack" - IIC_BaseAttack
-	EndAttackDeleFunc.AddLambda([this]()->void
+	EndAttackDeleFunc.AddLambda([&]()
 	{
 		// bAttackMode = false;
 		bAttacking = false;

@@ -5,7 +5,8 @@
 #include "BTTask_FindPatrol.generated.h"
 
 UCLASS()
-class UE_DOITPROJECT_API UBTTask_FindPatrol : public UBTTaskNode
+class UE_DOITPROJECT_API UBTTask_FindPatrol 
+	: public UBTTaskNode
 {
 	GENERATED_BODY()
 	

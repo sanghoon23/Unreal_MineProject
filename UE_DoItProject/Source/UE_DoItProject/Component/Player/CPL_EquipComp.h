@@ -19,6 +19,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Display")
 		TArray<ACDisplayItem*> DisplayList;
 
+
+
 	#pragma endregion
 
 public:	

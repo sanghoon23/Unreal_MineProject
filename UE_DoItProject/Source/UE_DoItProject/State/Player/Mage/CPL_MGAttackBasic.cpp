@@ -1,14 +1,11 @@
-#include "CPL_MGBasicAttack.h"
+#include "CPL_MGAttackBasic.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Charactor/Player/CPlayer.h"
-#include "Interface/IC_Charactor.h"
 
-#include "Component/Player/CPL_SwordAttackComp.h"
-
-UCPL_MGBasicAttack::UCPL_MGBasicAttack()
+UCPL_MGAttackBasic::UCPL_MGAttackBasic()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -47,17 +44,17 @@ UCPL_MGBasicAttack::UCPL_MGBasicAttack()
 	#pragma endregion
 }
 
-void UCPL_MGBasicAttack::BeginPlay()
+void UCPL_MGAttackBasic::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void UCPL_MGBasicAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+void UCPL_MGAttackBasic::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCPL_MGBasicAttack::BeginAttack(AActor * DoingActor)
+void UCPL_MGAttackBasic::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
 
@@ -68,6 +65,8 @@ void UCPL_MGBasicAttack::BeginAttack(AActor * DoingActor)
 	IfTrueRet(Player->GetEvade()); //@Evade Check
 	IfTrueRet(Player->GetCharacterMovement()->IsFalling()); //@Jump Check
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
+
+	IfTrueRet(IsLastCombo()); //@IsLastCombo
 
 	if (bAttacking == false)
 	{
@@ -83,7 +82,7 @@ void UCPL_MGBasicAttack::BeginAttack(AActor * DoingActor)
 	}
 }
 
-void UCPL_MGBasicAttack::OnComboSet(AActor * DoingActor)
+void UCPL_MGAttackBasic::OnComboSet(AActor * DoingActor)
 {
 	Super::OnComboSet(DoingActor);
 
@@ -107,4 +106,13 @@ void UCPL_MGBasicAttack::OnComboSet(AActor * DoingActor)
 	{
 		EndAttack(DoingActor);
 	}
+}
+
+// @Combo 의 마지막 구간을 정확히 알기 위해서.
+bool UCPL_MGAttackBasic::IsLastCombo() const
+{
+	if (CurrentComboNum == static_cast<uint8>(UMG_BasicAttack::COMBO_THREE))
+		return true;
+
+	return false;
 }

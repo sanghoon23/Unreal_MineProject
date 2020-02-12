@@ -1,4 +1,4 @@
-#include "CPL_SDRollAction.h"
+#include "CPL_SDActionRoll.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -6,7 +6,7 @@
 #include "Interface/IC_Charactor.h"
 #include "Charactor/Player/CPlayer.h"
 
-UCPL_SDRollAction::UCPL_SDRollAction()
+UCPL_SDActionRoll::UCPL_SDActionRoll()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	//..
@@ -22,17 +22,17 @@ UCPL_SDRollAction::UCPL_SDRollAction()
 	}
 }
 
-void UCPL_SDRollAction::BeginPlay()
+void UCPL_SDActionRoll::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void UCPL_SDRollAction::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+void UCPL_SDActionRoll::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCPL_SDRollAction::OnAction(AActor * DoingActor)
+void UCPL_SDActionRoll::OnAction(AActor * DoingActor)
 {
 	check(DoingActor);
 

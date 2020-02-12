@@ -39,13 +39,14 @@ public:
 
 	#pragma	region Member
 public:
-	virtual bool GetAttacking() override { return bAttacking; }
+	virtual bool GetAttacking() const override { return bAttacking; }
 	virtual void SetAttacking(bool bValue) override { bAttacking = bValue; };
 
-	virtual bool GetAttackMode() override { return bAttackMode; }
+	virtual bool GetAttackMode() const override { return bAttackMode; }
 	virtual void SetAttackMode(bool bValue) override { bAttackMode = bValue; };
 
-	virtual bool GetComboCheck() override { return bComboCheck; }
+	virtual bool GetComboCheck() const override { return bComboCheck; }
+	virtual bool IsLastCombo() const override { return false; }
 
 protected:
 	UINT				CurrentComboNum = 0;

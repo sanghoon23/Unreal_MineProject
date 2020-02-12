@@ -1,7 +1,7 @@
 #include "CPL_SwordAttackComp.h"
 #include "Global.h"
 
-#include "State/Player/Sword/CPL_SDBasicAttack.h"
+#include "State/Player/Sword/CPL_SDAttackBasic.h"
 
 UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 {
@@ -12,7 +12,7 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 	{
 		UCPL_SwordBaseAttack* SD_BasicAttack;
 
-		SD_BasicAttack = CreateDefaultSubobject<UCPL_SDBasicAttack>("BasicAttack");
+		SD_BasicAttack = CreateDefaultSubobject<UCPL_SDAttackBasic>("BasicAttack");
 		SD_BasicAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
 
 		SwordStateArray.Emplace(SD_BasicAttack);
@@ -35,8 +35,8 @@ void UCPL_SwordAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, F
 }
 
 // - IC_AttackComp 참고.
-// @Ref
-// @Type - 바꿀 AttackType 을 넘겨줌.
+// @Type - AttackStateArray 에서 가져올 AttackType
+// @Return - @Type 에 해당하는 IBaseAttack
 IIC_BaseAttack*  UCPL_SwordAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 {
 	IfTureRetResult

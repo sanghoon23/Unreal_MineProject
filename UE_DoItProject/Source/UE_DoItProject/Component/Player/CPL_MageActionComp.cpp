@@ -1,7 +1,7 @@
 #include "CPL_MageActionComp.h"
 #include "Global.h"
 
-#include "State/Player/Mage/CPL_MGRollAction.h"
+#include "State/Player/Mage/CPL_MGActionRoll.h"
 
 UCPL_MageActionComp::UCPL_MageActionComp()
 {
@@ -9,7 +9,7 @@ UCPL_MageActionComp::UCPL_MageActionComp()
 
 	// Create Roll Action
 	{
-		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGRollAction>("RollAction");
+		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionRoll>("RollAction");
 		BaseActionArray.Emplace(RollAction);
 	}
 }

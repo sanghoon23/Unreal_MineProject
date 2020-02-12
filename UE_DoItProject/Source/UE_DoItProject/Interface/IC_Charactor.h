@@ -27,9 +27,6 @@ public:
 	// @Action(Key Input 등) 으로 인해 행동이 시작됐을 때, 진행중인 상태값을 되돌리는
 	FOnActionResetState		OnActionResetState;
 
-	// @Hit 됐을 때, 기존 상태값들을 원래로 되돌리는 Delegate
-	FOnHitResetState		OnHitResetState;
-
 	// @Death - 죽음 상태 실행 시작할 때
 	FOnDeath				OnDeath;
 
@@ -54,8 +51,6 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Virtual Function */
 public:
-	virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) {}
-
 	virtual void OnEvade() {}
 	virtual void OffEvade() {} // 회피 해제
 	virtual float GetEvadeSpeed() { return 0.0f; } // 회피 동작의 ActorLocation 속도

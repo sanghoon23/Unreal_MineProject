@@ -19,6 +19,12 @@ ACHM_Basic::ACHM_Basic()
 		GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
 		GetCapsuleComponent()->SetGenerateOverlapEvents(true);
 	}
+
+	// Create Component
+	{
+		AttackComp = CreateDefaultSubobject<UCHM_BasicAttackComp>("AttackComp");
+		EquipComp = CreateDefaultSubobject<UCHM_BasicEquipComp>("EquipComponent");
+	}
 }
 
 void ACHM_Basic::BeginPlay()
@@ -56,6 +62,20 @@ void ACHM_Basic::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlw
 
 	PlayAnimMontage(Montage, Speed);
 	CurrentMontage = Montage;
+}
+
+IIC_AttackComp * ACHM_Basic::GetIAttackComp()
+{
+	IfTureRetResult(AttackComp == nullptr, nullptr); // @Return Null
+
+	return Cast<IIC_AttackComp>(AttackComp);
+}
+
+IIC_EquipComp * ACHM_Basic::GetIEquipComp()
+{
+	IfTureRetResult(EquipComp == nullptr, nullptr); // @Return Null
+
+	return Cast<IIC_EquipComp>(EquipComp);
 }
 
 void ACHM_Basic::OnDestroy()

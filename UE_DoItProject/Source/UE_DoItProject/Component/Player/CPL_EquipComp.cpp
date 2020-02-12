@@ -10,7 +10,7 @@
 UCPL_EquipComp::UCPL_EquipComp()
 {
 	// @FALSE
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
@@ -24,9 +24,8 @@ void UCPL_EquipComp::BeginPlay()
 
 	#pragma region Create DisplayItem List
 	// Spawn Sword
-	ACPL_Sword* Sword;
 	{
-		Sword = GetWorld()->SpawnActor<ACPL_Sword>(ACPL_Sword::StaticClass(), transform, params);
+		ACPL_Sword* Sword = GetWorld()->SpawnActor<ACPL_Sword>(ACPL_Sword::StaticClass(), transform, params);
 
 		Sword->AttachToComponent
 		(
@@ -141,7 +140,8 @@ void UCPL_EquipComp::WeaponNextSwap(bool AscendingOrder)
 /* DisplayList Size 체크해주어야함. */
 ACDisplayItem * UCPL_EquipComp::GetDisplayItem(int WeaponArrayNum)
 {
-	if (WeaponArrayNum > DisplayList.Num() - 1)
+	if (WeaponArrayNum < 0
+		&& WeaponArrayNum > DisplayList.Num() - 1)
 		return nullptr;
 
 	return DisplayList[WeaponArrayNum];
