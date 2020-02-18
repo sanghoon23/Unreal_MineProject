@@ -2,14 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Component/Base/C_BaseAttackComp.h"
-#include "State/HM_Basic/Base/CHM_BasicBaseAttack.h"
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAttack.h"
 
 #include "CHM_BasicAttackComp.generated.h"
 
 UENUM()
-enum class HM_BasicAttackType // @MageType - Mage 상태일 때의 공격 Type
+enum class HM_BasicAttackType
 {
 	BASIC = 0,
 	END = 1,
@@ -24,7 +23,7 @@ class UE_DOITPROJECT_API UCHM_BasicAttackComp
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
-		TArray<UCHM_BasicBaseAttack*> AttackStateArray;
+		TArray<class UCHM_BasicBaseAttack*> BasicAttackStateArray;
 
 	#pragma endregion
 
@@ -38,8 +37,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	virtual IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
-	virtual IIC_BaseAttack* GetCurrentIBaseAttack() override;
+	IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
+	IIC_BaseAttack* GetCurrentIBaseAttack() override;
 
 #pragma	region Member
 private:

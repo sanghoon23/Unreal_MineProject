@@ -22,9 +22,6 @@ public:
 		float Speed;
 
 	UPROPERTY(BlueprintReadOnly)
-		bool bInAir;
-
-	UPROPERTY(BlueprintReadOnly)
 		float Direction;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -35,6 +32,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bAttackMode;
+
+	//UPROPERTY(BlueprintReadOnly)
+	//	bool bInAir;
+
 	#pragma endregion
 
 public:

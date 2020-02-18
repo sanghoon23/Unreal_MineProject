@@ -30,29 +30,39 @@ protected:
 
 public:
 	virtual void BeginAttack(AActor * DoingActor) override;
-	virtual void EndAttack(AActor * DoingActor) override;
+	virtual void EndAttack() override;
 	virtual void OnComboSet(AActor * DoingActor) override;
 
-	virtual void CheckAttack(AActor* DoingActor) override;
-	virtual void AttackImpulse(AActor* DoingActor, float intensity) override;
-	virtual void CheckProcedural(AActor* DoingActor) override;
+	virtual void AttackOtherPawn() override;
+	virtual void ImpulseAttack(float intensity) override;
+	virtual void CheckProcedural() override;
 
 public:
 
 	#pragma	region Member
 public:
-	virtual bool GetAttacking() const override { return bAttacking; }
-	virtual void SetAttacking(bool bValue) override { bAttacking = bValue; };
+	bool GetAttacking() const override { return bAttacking; }
+	void SetAttacking(bool bValue) override { bAttacking = bValue; };
 
-	virtual bool GetAttackMode()const  override { return bAttackMode; }
-	virtual void SetAttackMode(bool bValue) override { bAttackMode = bValue; };
+	bool GetAttackMode()const  override { return bAttackMode; }
+	void SetAttackMode(bool bValue) override { bAttackMode = bValue; };
 
-	virtual bool GetComboCheck() const override { return bComboCheck; }
-	virtual bool IsLastCombo() const override { return false; }
+	bool GetComboCheck() const override { return bComboCheck; }
+	bool IsLastCombo() const override { return false; }
+
+	virtual void SetAttackPossible() { bAttackPossible = true; }
+	virtual bool IsAttackPossible() const { return bAttackPossible; }
 
 protected:
+	class ACPlayer*		Player;
+
 	UINT				CurrentComboNum = 0;
 	UINT				MaxComboNum = 0;
+
+	/* @공격범위, Target과 이 범위 안에 들어와야지만 공격가능 */
+	float AttackRange = 200.0f;
+	bool bAttackCall = false;
+	bool bAttackPossible = false; // 공격가능한지.
 
 	bool bAttackMode	= false;
 

@@ -57,13 +57,11 @@ void UCPL_MGAttackBasic::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UCPL_MGAttackBasic::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
-
-	ACPlayer* Player = Cast<ACPlayer>(DoingActor);
-	check(Player);
+	check(DoingActor);
 
 	// @IF TRUE RETURN
 	IfTrueRet(Player->GetEvade()); //@Evade Check
-	IfTrueRet(Player->GetCharacterMovement()->IsFalling()); //@Jump Check
+	IfTrueRet(Player->IsJumping()); //@Jump Check
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
 
 	IfTrueRet(IsLastCombo()); //@IsLastCombo
@@ -73,7 +71,7 @@ void UCPL_MGAttackBasic::BeginAttack(AActor * DoingActor)
 		Player->ActorAnimMonPlay
 		(
 			MageAttackMontages[0], /* @FirstMontage == Combo1 */
-			1.5f, false
+			1.0f, false
 		);
 	}
 	else if (bAttacking == true)
@@ -85,9 +83,10 @@ void UCPL_MGAttackBasic::BeginAttack(AActor * DoingActor)
 void UCPL_MGAttackBasic::OnComboSet(AActor * DoingActor)
 {
 	Super::OnComboSet(DoingActor);
+	check(DoingActor);
 
-	IIC_Charactor* Player = Cast<IIC_Charactor>(DoingActor);
-	check(Player);
+	IIC_Charactor* Charactor = Cast<IIC_Charactor>(DoingActor);
+	check(Charactor);
 
 	bComboCheck = false;
 	++CurrentComboNum;
@@ -99,12 +98,12 @@ void UCPL_MGAttackBasic::OnComboSet(AActor * DoingActor)
 		Player->ActorAnimMonPlay
 		(
 			MageAttackMontages[CurrentComboNum], 
-			1.5f, false
+			1.0f, false
 		);
 	}
 	else
 	{
-		EndAttack(DoingActor);
+		EndAttack();
 	}
 }
 

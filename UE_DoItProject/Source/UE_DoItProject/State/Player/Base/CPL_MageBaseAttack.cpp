@@ -1,6 +1,7 @@
 #include "CPL_MageBaseAttack.h"
 #include "Global.h"
 
+#include "Charactor/Player/CPlayer.h"
 #include "Interface/IC_Charactor.h"
 
 UCPL_MageBaseAttack::UCPL_MageBaseAttack()
@@ -12,6 +13,10 @@ UCPL_MageBaseAttack::UCPL_MageBaseAttack()
 void UCPL_MageBaseAttack::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// @Set Player
+	Player = Cast<ACPlayer>(OwnerPawn);
+	check(Player);
 
 	// Set Delegate "On Hit" - IIC_Charactor
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
@@ -52,11 +57,8 @@ void UCPL_MageBaseAttack::BeginAttack(AActor * DoingActor)
 	check(DoingActor);
 }
 
-void UCPL_MageBaseAttack::EndAttack(AActor * DoingActor)
+void UCPL_MageBaseAttack::EndAttack()
 {
-	IfNullRet(DoingActor);
-	check(DoingActor);
-
 	bAttacking = false;
 	bComboCheck = false;
 	CurrentComboNum = 0;
@@ -68,21 +70,15 @@ void UCPL_MageBaseAttack::OnComboSet(AActor * DoingActor)
 	IfNullRet(DoingActor);
 }
 
-void UCPL_MageBaseAttack::CheckAttack(AActor * DoingActor)
+void UCPL_MageBaseAttack::AttackOtherPawn()
 {
-	IfNullRet(DoingActor);
-	check(DoingActor);
 }
 
-void UCPL_MageBaseAttack::AttackImpulse(AActor * DoingActor, float intensity)
+void UCPL_MageBaseAttack::ImpulseAttack(float intensity)
 {
-	IfNullRet(DoingActor);
-	check(DoingActor);
 }
 
-void UCPL_MageBaseAttack::CheckProcedural(AActor * DoingActor)
+void UCPL_MageBaseAttack::CheckProcedural()
 {
-	IfNullRet(DoingActor);
-	check(DoingActor);
 }
 

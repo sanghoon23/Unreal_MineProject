@@ -2,6 +2,7 @@
 #include "Global.h"
 
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_HitComp.h"
 
 UCHM_BasicBaseAttack::UCHM_BasicBaseAttack()
 {
@@ -15,7 +16,7 @@ void UCHM_BasicBaseAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Set Delegate "On Hit" - IIC_Charactor
+	// Set Delegate "OnAction ResetState" - IIC_Charactor
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
 	check(IC_Charactor);
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
@@ -56,11 +57,8 @@ void UCHM_BasicBaseAttack::BeginAttack(AActor * DoingActor)
 	check(DoingActor);
 }
 
-void UCHM_BasicBaseAttack::EndAttack(AActor * DoingActor)
+void UCHM_BasicBaseAttack::EndAttack()
 {
-	IfNullRet(DoingActor);
-	check(DoingActor);
-
 	bAttacking = false;
 	bComboCheck = false;
 	CurrentComboNum = 0;
@@ -72,22 +70,16 @@ void UCHM_BasicBaseAttack::OnComboSet(AActor * DoingActor)
 	check(DoingActor);
 }
 
-void UCHM_BasicBaseAttack::CheckAttack(AActor * DoingActor)
+void UCHM_BasicBaseAttack::AttackOtherPawn()
 {
-	IfNullRet(DoingActor);
-	check(DoingActor);
 }
 
-void UCHM_BasicBaseAttack::AttackImpulse(AActor * DoingActor, float intensity)
+void UCHM_BasicBaseAttack::ImpulseAttack(float intensity)
 {
-	IfNullRet(DoingActor);
-	check(DoingActor);
 }
 
-void UCHM_BasicBaseAttack::CheckProcedural(AActor * DoingActor)
+void UCHM_BasicBaseAttack::CheckProcedural()
 {
-	IfNullRet(DoingActor);
-	check(DoingActor);
 }
 
 

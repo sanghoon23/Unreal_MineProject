@@ -23,6 +23,7 @@ ACHM_Basic::ACHM_Basic()
 	// Create Component
 	{
 		AttackComp = CreateDefaultSubobject<UCHM_BasicAttackComp>("AttackComp");
+		HitComp = CreateDefaultSubobject<UCHM_BasicHitComp>("HitComp");
 		EquipComp = CreateDefaultSubobject<UCHM_BasicEquipComp>("EquipComponent");
 	}
 }
@@ -47,6 +48,21 @@ void ACHM_Basic::BeginPlay()
 void ACHM_Basic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACHM_Basic::OnGravity()
+{
+	GetCharacterMovement()->GravityScale = 1.0f;
+}
+
+void ACHM_Basic::OffGravity()
+{
+	GetCharacterMovement()->GravityScale = 0.0f;
+}
+
+bool ACHM_Basic::IsJumping()
+{
+	return GetCharacterMovement()->IsFalling();
 }
 
 void ACHM_Basic::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlways)
@@ -76,6 +92,13 @@ IIC_EquipComp * ACHM_Basic::GetIEquipComp()
 	IfTureRetResult(EquipComp == nullptr, nullptr); // @Return Null
 
 	return Cast<IIC_EquipComp>(EquipComp);
+}
+
+IIC_HitComp * ACHM_Basic::GetIHitComp()
+{
+	IfTureRetResult(HitComp == nullptr, nullptr); // @Return Null
+
+	return Cast<IIC_HitComp>(HitComp);
 }
 
 void ACHM_Basic::OnDestroy()

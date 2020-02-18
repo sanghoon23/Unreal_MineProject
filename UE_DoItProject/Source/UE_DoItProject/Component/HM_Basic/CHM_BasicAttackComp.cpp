@@ -1,6 +1,7 @@
 #include "CHM_BasicAttackComp.h"
 #include "Global.h"
 
+#include "State/HM_Basic/Base/CHM_BasicBaseAttack.h"
 #include "State/HM_Basic/CHM_BasicFirstCombo.h"
 
 UCHM_BasicAttackComp::UCHM_BasicAttackComp()
@@ -10,10 +11,10 @@ UCHM_BasicAttackComp::UCHM_BasicAttackComp()
 	#pragma region Create State
 	// Create State
 	{
-		UCHM_BasicBaseAttack* FirstCombo = CreateDefaultSubobject<UCHM_BasicFirstCombo>("BasicAttack");
+		UCHM_BasicBaseAttack* FirstCombo = CreateDefaultSubobject<UCHM_BasicFirstCombo>("HM_Basic_FirstCombo");
 		FirstCombo->SetOwnerPawn(Cast<APawn>(GetOwner()));
 
-		AttackStateArray.Emplace(FirstCombo);
+		BasicAttackStateArray.Add(FirstCombo);
 	}
 	#pragma endregion
 }
@@ -21,8 +22,14 @@ UCHM_BasicAttackComp::UCHM_BasicAttackComp()
 void UCHM_BasicAttackComp::BeginPlay()
 {
 	Super::BeginPlay();
-}
 
+	//// @SetOwnerPawn - IBaseAttack
+	//for (UCHM_BasicBaseAttack* BaseAttack : AttackStateArray)
+	//{
+	//	if (BaseAttack == nullptr) continue;
+	//	BaseAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
+	//}
+}
 
 void UCHM_BasicAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -44,7 +51,7 @@ IIC_BaseAttack * UCHM_BasicAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	HM_BasicAttackType SetType = static_cast<HM_BasicAttackType>(Type);
 	AttackType = SetType;
 
-	return Cast<IIC_BaseAttack>(AttackStateArray[Type]);
+	return Cast<IIC_BaseAttack>(BasicAttackStateArray[Type]);
 }
 
 // - IC_AttackComp Âü°í.
@@ -52,12 +59,12 @@ IIC_BaseAttack * UCHM_BasicAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 IIC_BaseAttack * UCHM_BasicAttackComp::GetCurrentIBaseAttack()
 {
 	int CurrentType = static_cast<int>(AttackType);
-	if (CurrentType > AttackStateArray.Num() - 1)
+	if (CurrentType > BasicAttackStateArray.Num() - 1)
 	{
 		CLog::Print(L"MGAttackComp IBaseAttack Array Excess!!");
 		return nullptr; /*@Return*/
 	}
 
-	return Cast<IIC_BaseAttack>(AttackStateArray[CurrentType]);
+	return Cast<IIC_BaseAttack>(BasicAttackStateArray[CurrentType]);
 }
 

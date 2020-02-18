@@ -11,7 +11,8 @@ UENUM()
 enum class ActionType
 {
 	ROLL = 0,
-	END = 1,
+	JUMP = 1,
+	END = 2,
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

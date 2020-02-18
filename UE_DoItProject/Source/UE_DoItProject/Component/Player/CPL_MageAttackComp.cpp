@@ -1,6 +1,7 @@
 #include "CPL_MageAttackComp.h"
 #include "Global.h"
 
+#include "State/Player/Base/CPL_MageBaseAttack.h"
 #include "State/Player/Mage/CPL_MGAttackBasic.h"
 
 UCPL_MageAttackComp::UCPL_MageAttackComp()
@@ -10,12 +11,9 @@ UCPL_MageAttackComp::UCPL_MageAttackComp()
 	#pragma region Create State
 	// Create State
 	{
-		UCPL_MageBaseAttack* MG_BasicAttack;
-
-		MG_BasicAttack = CreateDefaultSubobject<UCPL_MGAttackBasic>("BasicAttack");
-		MG_BasicAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
-		MageStateArray.Emplace(MG_BasicAttack);
+		UCPL_MageBaseAttack* MG_AttackFirst = CreateDefaultSubobject<UCPL_MGAttackBasic>("Mage_AttackFrist");
+		MG_AttackFirst->SetOwnerPawn(Cast<APawn>(GetOwner()));
+		MageAttackStateArray.Add(MG_AttackFirst);
 	}
 	#pragma endregion
 }
@@ -46,8 +44,7 @@ IIC_BaseAttack * UCPL_MageAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	MageAttackType SetType = static_cast<MageAttackType>(Type);
 	AttackType = SetType;
 
-	int CurrentType = static_cast<int>(AttackType);
-	return Cast<IIC_BaseAttack>(MageStateArray[CurrentType]);
+	return Cast<IIC_BaseAttack>(MageAttackStateArray[Type]);
 }
 
 // - IC_AttackComp Âü°í.
@@ -56,13 +53,13 @@ IIC_BaseAttack * UCPL_MageAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 IIC_BaseAttack * UCPL_MageAttackComp::GetCurrentIBaseAttack()
 {
 	int CurrentType = static_cast<int>(AttackType);
-	if (CurrentType > MageStateArray.Num() - 1)
+	if (CurrentType > MageAttackStateArray.Num() - 1)
 	{
 		CLog::Print(L"MGAttackComp IBaseAttack Array Excess!!");
 		return nullptr; /*@Return*/
 	}
 
 
-	return Cast<IIC_BaseAttack>(MageStateArray[CurrentType]);
+	return Cast<IIC_BaseAttack>(MageAttackStateArray[CurrentType]);
 }
 

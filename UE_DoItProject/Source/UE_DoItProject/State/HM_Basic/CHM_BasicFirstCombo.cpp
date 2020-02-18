@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Charactor/Monster/CHM_Basic.h"
+#include "Interface/IC_Charactor.h"
 
 UCHM_BasicFirstCombo::UCHM_BasicFirstCombo()
 {
@@ -58,6 +59,7 @@ void UCHM_BasicFirstCombo::TickComponent(float DeltaTime, ELevelTick TickType, F
 void UCHM_BasicFirstCombo::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
+	check(DoingActor);
 
 	ACHM_Basic* Pawn = Cast<ACHM_Basic>(DoingActor);
 	check(Pawn);
@@ -67,7 +69,10 @@ void UCHM_BasicFirstCombo::BeginAttack(AActor * DoingActor)
 	IfTrueRet(Pawn->GetCharacterMovement()->IsFalling()); //@Jump Check
 	IfTrueRet(Pawn->GetIEquipComp()->GetEquiping()); //@Equping Check
 
-	IfTrueRet(IsLastCombo()); //@IsLastCombo
+	//@IsLastCombo - 
+	// AI 에서 BeginAttack 을 계속 호출하기 때문에,
+	// Player 랑 다르게 제어가 필요하다.
+	IfTrueRet(IsLastCombo());
 
 	if (bAttacking == false)
 	{
@@ -86,6 +91,7 @@ void UCHM_BasicFirstCombo::BeginAttack(AActor * DoingActor)
 void UCHM_BasicFirstCombo::OnComboSet(AActor * DoingActor)
 {
 	Super::OnComboSet(DoingActor);
+	check(DoingActor);
 
 	IIC_Charactor* Pawn = Cast<IIC_Charactor>(DoingActor);
 	check(Pawn);
@@ -105,7 +111,7 @@ void UCHM_BasicFirstCombo::OnComboSet(AActor * DoingActor)
 	}
 	else
 	{
-		EndAttack(DoingActor);
+		EndAttack();
 	}
 }
 

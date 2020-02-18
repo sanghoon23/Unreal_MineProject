@@ -16,7 +16,6 @@ void UC_BaseHitComp::BeginPlay()
 	
 }
 
-
 void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

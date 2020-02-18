@@ -31,14 +31,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	virtual bool GetEquiping() const override { return bEquiping; }
-	virtual void SetEquiping(bool bValue) override { bEquiping = bValue; }
+	bool GetEquiping() const override { return bEquiping; }
+	void SetEquiping(bool bValue) override { bEquiping = bValue; }
 		
-	virtual bool GetArmed() const override { return bArmed; }
-	virtual int GetCurrentWeaponNum() const override { return CurrentWeaponNum; }
+	bool GetArmed() const override { return bArmed; }
+	int GetCurrentWeaponNum() const override { return CurrentWeaponNum; }
 
-	virtual class ACDisplayItem* GetCurrentWeaponDisplay() override { return CurrentWeapon; }
-	virtual class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) override;
+	class ACDisplayItem* GetCurrentWeaponDisplay() override { return CurrentWeapon; }
+	class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) override;
 
 	#pragma	region Member
 private:

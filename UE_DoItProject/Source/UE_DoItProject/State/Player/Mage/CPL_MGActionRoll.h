@@ -25,5 +25,5 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void OnAction(AActor* DoingActor) override;
+	void OnAction(AActor* DoingActor) override;
 };

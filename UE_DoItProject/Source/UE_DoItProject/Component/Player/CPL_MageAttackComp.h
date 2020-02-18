@@ -6,7 +6,6 @@
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAttack.h"
 
-#include "State/Player/Base/CPL_MageBaseAttack.h"
 #include "CPL_MageAttackComp.generated.h"
 
 UENUM()
@@ -25,7 +24,7 @@ class UE_DOITPROJECT_API UCPL_MageAttackComp
 	#pragma	region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
-		TArray<UCPL_MageBaseAttack*> MageStateArray;
+		TArray<class UCPL_MageBaseAttack*> MageAttackStateArray;
 
 	#pragma endregion
 
@@ -39,8 +38,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	virtual IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
-	virtual IIC_BaseAttack* GetCurrentIBaseAttack() override;
+	IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
+	IIC_BaseAttack* GetCurrentIBaseAttack() override;
 
 	#pragma	region Member
 public:

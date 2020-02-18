@@ -19,8 +19,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Display")
 		TArray<ACDisplayItem*> DisplayList;
 
-
-
 	#pragma endregion
 
 public:	
@@ -31,17 +29,17 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void WeaponRelease() override;
-	virtual void WeaponNextSwap(bool AscendingOrder) override;
+	void WeaponRelease() override;
+	void WeaponNextSwap(bool AscendingOrder) override;
 
-	virtual bool GetEquiping() const override { return bEquiping; }
-	virtual void SetEquiping(bool bValue) override { bEquiping = bValue; }
+	bool GetEquiping() const override { return bEquiping; }
+	void SetEquiping(bool bValue) override { bEquiping = bValue; }
 
-	virtual bool GetArmed() const override { return bArmed; }
-	virtual int GetCurrentWeaponNum() const override { return CurrentWeaponNum; }
+	bool GetArmed() const override { return bArmed; }
+	int GetCurrentWeaponNum() const override { return CurrentWeaponNum; }
 
-	virtual class ACDisplayItem* GetCurrentWeaponDisplay() override { return CurrentWeapon; }
-	virtual class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) override;
+	class ACDisplayItem* GetCurrentWeaponDisplay() override { return CurrentWeapon; }
+	class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) override;
 
 private:
 	void ItemMapAdd(UItemType Type, class ACDisplayItem* CItem);

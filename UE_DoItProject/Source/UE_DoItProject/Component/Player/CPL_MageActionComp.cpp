@@ -2,6 +2,7 @@
 #include "Global.h"
 
 #include "State/Player/Mage/CPL_MGActionRoll.h"
+#include "State/Player/Mage/CPL_MGActionJump.h"
 
 UCPL_MageActionComp::UCPL_MageActionComp()
 {
@@ -10,7 +11,15 @@ UCPL_MageActionComp::UCPL_MageActionComp()
 	// Create Roll Action
 	{
 		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionRoll>("RollAction");
+		RollAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		BaseActionArray.Emplace(RollAction);
+	}
+
+	// Create Jump Action
+	{
+		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_MGActionJump>("JumpAction");
+		JumpAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
+		BaseActionArray.Emplace(JumpAction);
 	}
 }
 

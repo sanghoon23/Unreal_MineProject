@@ -30,7 +30,7 @@ protected:
 
 	//
 public:
-	virtual void BeginAttack(AActor * DoingActor) override;
-	virtual void OnComboSet(AActor * DoingActor) override;
-	virtual bool IsLastCombo() const override;
+	void BeginAttack(AActor * DoingActor) override;
+	void OnComboSet(AActor * DoingActor) override;
+	bool IsLastCombo() const override;
 };

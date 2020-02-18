@@ -4,6 +4,10 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Charactor/Player/CPlayer.h"
+
+#include "Component/Base/C_BaseAttackComp.h"
+#include "Component/Base/C_BaseActionComp.h"
+
 #include "Component/Player/CPL_MageAttackComp.h"
 #include "Component/Player/CPL_SwordAttackComp.h"
 #include "Component/Player/CPL_MageActionComp.h"
@@ -97,7 +101,7 @@ void UCPL_StateMachine::OnSwapState()
 	check(Player);
 
 	IfTrueRet(Player->GetEvade()); //@Evade Check
-	IfTrueRet(Player->GetCharacterMovement()->IsFalling()); //@Jump Check
+	IfTrueRet(Player->IsJumping()); //@Jump Check
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
 
 	// @Reset

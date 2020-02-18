@@ -5,6 +5,7 @@
 #include "Interface/IC_Charactor.h"
 
 #include "Component/HM_Basic/CHM_BasicAttackComp.h"
+#include "Component/HM_Basic/CHM_BasicHitComp.h"
 #include "Component/HM_Basic/CHM_BasicEquipComp.h"
 
 #include "CHM_Basic.generated.h"
@@ -19,6 +20,9 @@ class UE_DOITPROJECT_API ACHM_Basic
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_BasicAttackComp* AttackComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCHM_BasicHitComp* HitComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_BasicEquipComp* EquipComp;
@@ -41,6 +45,11 @@ public:
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void CanMove() override { bCanMove = true; }
 	virtual void CanNotMove() override { bCanMove = false; }
+	virtual void OnGravity() override;
+	virtual void OffGravity() override;
+	virtual bool IsJumping() override;
+	virtual void OffJumping() override {} //@CharactorMovement 를 써서 따로 정의하지않음.
+
 	virtual int GetCurrentStateType() const override { return -1; }
 
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
@@ -49,6 +58,7 @@ public:
 public:
 	virtual IIC_AttackComp* GetIAttackComp() override;
 	virtual IIC_EquipComp* GetIEquipComp() override;
+	virtual IIC_HitComp* GetIHitComp() override;
 
 public:
 	//virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) override;

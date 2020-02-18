@@ -2,6 +2,7 @@
 #include "Global.h"
 
 #include "State/Player/Sword/CPL_SDActionRoll.h"
+#include "State/Player/Sword/CPL_SDActionJump.h"
 
 UCPL_SwordActionComp::UCPL_SwordActionComp()
 {
@@ -10,7 +11,15 @@ UCPL_SwordActionComp::UCPL_SwordActionComp()
 	// Create Roll Action
 	{
 		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_SDActionRoll>("RollAction");
+		RollAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		BaseActionArray.Emplace(RollAction);
+	}
+
+	// Create Jump Action
+	{
+		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_SDActionJump>("JumpAction");
+		JumpAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
+		BaseActionArray.Emplace(JumpAction);
 	}
 }
 

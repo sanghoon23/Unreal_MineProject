@@ -1,9 +1,15 @@
 #include "CPlayer.h"
 #include "Global.h"
+#include "GameFramework/Controller.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+
+#include "Component/CPL_StateMachine.h"
+
+#include "Component/Player/CPL_EquipComp.h"
+#include "_GameController/CPL_TargetingSystem.h"
 
 ACPlayer::ACPlayer()
 {
@@ -65,29 +71,47 @@ ACPlayer::ACPlayer()
 	{
 		// SpringArm
 		SpringArmComp->bUsePawnControlRotation = true;
-		SpringArmComp->SetRelativeLocation(FVector(0, 0, 140.0f));
-		SpringArmComp->SetRelativeRotation(FRotator(0, 90.0f, 0));
+		SpringArmComp->SetRelativeLocation(FVector(0.f, 0.f, 140.f));
+		SpringArmComp->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
 		SpringArmComp->TargetArmLength = 1100.0f;
 
-		SpringArmComp->SocketOffset = FVector(0, 40, 50);
+		SpringArmComp->SocketOffset = FVector(0.f, 0.f, 70.f);
 
 		// Camera
 		//CameraCompo->SetWorldLocation(FVector(0, 0, 33));
 		CameraComp->bUsePawnControlRotation = true;
-		CameraComp->SetRelativeRotation(FRotator(-25, -10, 0));
+		CameraComp->SetRelativeRotation(FRotator(0.0f, -50.0f, 0.f));
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Jump Montage - 임시
+	{
+		//@Sword
+		strPath = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/SwordMon_Jump.SwordMon_Jump'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> jumpMon(*strPath);
+		if (jumpMon.Succeeded())
+			JumpMontage = jumpMon.Object;
+	}
+
 	// Create Component
 	{
 		StateManager = CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
 		EquipComp = CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
 	}
+
+	// Create Targeting System
+	TargetingSystem = CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
 }
 
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// @CurrentStateType - 현재 상태 MAGE
+	CurrentStateType = PlayerStateType::MAGE;
+
+	// Initailize Setting
+	AddControllerPitchInput(13.f);
 
 	/* Sword Visibility False - 처음 상태는 MAGE 이기 때문, */
 	EquipComp->GetDisplayItem(0)->GetStaticMeshComp()->SetVisibility(false);
@@ -113,6 +137,10 @@ void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Test Code
+	//FRotator ControllerRot = GetControlRotation();
+	//CLog::Print(ControllerRot.ToString());
+
 	// @StateMachine 에서 StateType 값 받아옴.
 	CurrentStateType = StateManager->GetCurrentStateType();
 }
@@ -121,21 +149,24 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// Axis
+	// @Axis
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACPlayer::OnMoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACPlayer::OnMoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &ACPlayer::OnTurn);
 	PlayerInputComponent->BindAxis("LookUp", this, &ACPlayer::OnLookUp);
-	PlayerInputComponent->BindAxis("Zoom", this, &ACPlayer::OnZoom);
+	// PlayerInputComponent->BindAxis("Zoom", this, &ACPlayer::OnZoom);
 
-	// Action
+	// @Action
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACPlayer::OnJump);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("DoAxisTurn", EInputEvent::IE_Pressed, this, &ACPlayer::OnDoAxisTurn);
 	PlayerInputComponent->BindAction("DoAxisTurn", EInputEvent::IE_Released, this, &ACPlayer::OffDoAxisTurn);
 	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
 	PlayerInputComponent->BindAction("SwapState", EInputEvent::IE_Pressed, this, &ACPlayer::OnSwapState);
+	PlayerInputComponent->BindAction("FindTarget", EInputEvent::IE_Pressed, this, &ACPlayer::OnLookAround);
+
 	PlayerInputComponent->BindAction("BasicAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnBasicAttack);
+	PlayerInputComponent->BindAction("SecondAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnSecondAttack);
 }
 
 void ACPlayer::OnMoveForward(float Value)
@@ -157,6 +188,7 @@ void ACPlayer::OnMoveRight(float Value)
 	FRotator temp = FRotator(0, rotation.Yaw, 0);
 	FVector right = FQuat(temp).GetRightVector();
 
+	// 캐릭터 회전
 	AddMovementInput(right, Value);
 }
 
@@ -179,20 +211,12 @@ void ACPlayer::OnZoom(float Value)
 
 void ACPlayer::OnJump()
 {
-	IIC_BaseAttack* BaseAttack = StateManager->GetIAttackComp()->GetCurrentIBaseAttack();
-	if (BaseAttack != nullptr)
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	IIC_BaseAction* BaseAction = StateManager->GetIActionComp()->GetIBaseAction(1);
+	if (BaseAction != nullptr)
 	{
-		IfTrueRet(BaseAttack->GetAttacking()); // @IF TRUE RETURN
+		BaseAction->OnAction(this);
 	}
-
-	// @IF TRUE RETURN
-	IfTrueRet(bEvade); //@Evade Check
-	IfTrueRet(EquipComp->GetEquiping()); //@Equping Check
-
-	// @IF FALSE RETURN
-	IfFalseRet(bCanMove);
-
-	Jump();
 }
 
 void ACPlayer::OnDoAxisTurn()
@@ -209,7 +233,11 @@ void ACPlayer::OffDoAxisTurn()
 void ACPlayer::OnEvade()
 {
 	// @해당 함수에 IFRet 조건 들어가 있음.
-	StateManager->GetIActionComp()->GetIBaseAction(0)->OnAction(this);
+	IIC_BaseAction* BaseAction = StateManager->GetIActionComp()->GetIBaseAction(0);
+	if (BaseAction != nullptr)
+	{
+		BaseAction->OnAction(this);
+	}
 }
 
 /* @도주기 끝남 - Notify 에서 호출 */
@@ -225,11 +253,40 @@ void ACPlayer::OnSwapState()
 	StateManager->OnSwapState();
 }
 
+/* @Player 위치 반경으로 공격 대상 찾기 */
+void ACPlayer::OnLookAround()
+{
+	TargetingSystem->OnFindTargets();
+}
+
 void ACPlayer::OnBasicAttack()
 {
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_BaseAttack* BaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(0);
-	BaseAttack->BeginAttack(this);
+	if (BaseAttack != nullptr)
+	{
+		BaseAttack->BeginAttack(this);
+	}
+}
+
+void ACPlayer::OnSecondAttack()
+{
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	IIC_BaseAttack* BaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(1);
+	if (BaseAttack != nullptr)
+	{
+		BaseAttack->BeginAttack(this);
+	}
+}
+
+void ACPlayer::OnGravity()
+{
+	GetCharacterMovement()->GravityScale = 1.0f;
+}
+
+void ACPlayer::OffGravity()
+{
+	GetCharacterMovement()->GravityScale = 0.0f;
 }
 
 void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlways)
@@ -249,6 +306,12 @@ void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlway
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Get, Set
+
+/* TargetingSystem 에서 Player 가 Tab 을 눌렀을 때, 설정된 Pawn 을 가져옴 */
+APawn * ACPlayer::GetFindAttackTarget()
+{
+	return TargetingSystem->GetCurrentFindAttackTarget();
+}
 
 IIC_StateManager * ACPlayer::GetIStateManager()
 {

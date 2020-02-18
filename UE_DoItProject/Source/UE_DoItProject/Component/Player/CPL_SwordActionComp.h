@@ -23,5 +23,5 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual IIC_BaseAction* GetIBaseAction(uint8 Type) override;
+	IIC_BaseAction* GetIBaseAction(uint8 Type) override;
 };

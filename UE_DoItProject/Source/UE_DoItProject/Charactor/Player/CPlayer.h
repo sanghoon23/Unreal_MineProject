@@ -8,10 +8,9 @@
 #include "Interface/IC_EquipComp.h"
 #include "Interface/IC_BaseAttack.h"
 
-#include "Component/CPL_StateMachine.h"
-#include "Component/Player/CPL_EquipComp.h"
-
 #include "CPlayer.generated.h"
+
+enum class PlayerStateType : uint8;
 
 UCLASS()
 class UE_DOITPROJECT_API ACPlayer 
@@ -48,11 +47,17 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* RightParticle;
 
+	UPROPERTY(VisibleAnywhere, Category = "Controller")
+		class UCPL_TargetingSystem* TargetingSystem;
+
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		class UAnimMontage* CurrentMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 		TArray<class UAnimMontage*> HitMontages;
+
+	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
+		class UAnimMontage* JumpMontage;
 
 	#pragma endregion
 
@@ -70,6 +75,11 @@ public:
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void CanMove() override { bCanMove = true; } // 이동 가능.
 	virtual void CanNotMove() override { bCanMove = false; } // 이동 불가.
+	virtual void OnGravity() override;
+	virtual void OffGravity() override;
+	virtual bool IsJumping() override { return bJumping; };
+	virtual void OffJumping() override { bJumping = false; }
+
 	virtual int GetCurrentStateType() const override { return static_cast<int>(CurrentStateType); }
 
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
@@ -100,13 +110,23 @@ private:
 	// Action Mapping
 	void OnDoAxisTurn();
 	void OffDoAxisTurn();
-	void OnSwapState();
-	void OnBasicAttack();
+
+	void OnSwapState(); //@무기스왑 ( 검 / 마법 )
+	void OnLookAround(); //@공격대상 찾기
+
+	void OnBasicAttack(); // @1번 공격 - 기본공격
+	void OnSecondAttack(); // @2번 공격
 
 	#pragma	region Member
 public:
+	// @TargetSystem
+	APawn* GetFindAttackTarget();
+
 	// Move
 	bool GetCanMove() const { return bCanMove; }
+
+	// Jump
+	void SetJumping(bool bValue) { bJumping = bValue; }
 
 	// Evade
 	bool GetEvade() const { return bEvade; }
@@ -117,12 +137,15 @@ private:
 	bool bDeath = false;
 
 	// State
-	PlayerStateType CurrentStateType	= PlayerStateType::MAGE;
+	PlayerStateType CurrentStateType;
 	bool bChangeStateSwap				= false;
 
 	// Move
 	bool bCanMove		= true;
 	bool bAxisTurn		= false;
+
+	// Jump
+	bool bJumping		= false;
 
 	// Evade
 	bool bEvade			= false;

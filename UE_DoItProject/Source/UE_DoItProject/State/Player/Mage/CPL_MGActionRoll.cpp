@@ -37,11 +37,11 @@ void UCPL_MGActionRoll::OnAction(AActor * DoingActor)
 	check(DoingActor);
 
 	ACPlayer* Player = Cast<ACPlayer>(DoingActor);
-	IfNullRetResult(Player, CLog::Print(L"OnAction Charactor Null!!"));
+	IfNullRetResult(Player, CLog::Print(L"Roll OnAction Charactor Null!!"));
 
 	// @IF TRUE RETURN
 	IfTrueRet(Player->GetEvade());
-	IfTrueRet(Player->GetCharacterMovement()->IsFalling());
+	IfTrueRet(Player->IsJumping());
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping());
 
 	// @IF FALSE RETURN

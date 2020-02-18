@@ -7,7 +7,7 @@
 #include "CHM_BasicBaseAttack.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS()
 class UE_DOITPROJECT_API UCHM_BasicBaseAttack 
 	: public UActorComponent, public IIC_BaseAttack
 {
@@ -33,12 +33,12 @@ public:
 
 public:
 	virtual void BeginAttack(AActor * DoingActor) override;
-	virtual void EndAttack(AActor * DoingActor) override;
+	virtual void EndAttack() override;
 	virtual void OnComboSet(AActor * DoingActor) override;
 
-	virtual void CheckAttack(AActor* DoingActor) override;
-	virtual void AttackImpulse(AActor* DoingActor, float intensity) override;
-	virtual void CheckProcedural(AActor* DoingActor) override;
+	virtual void AttackOtherPawn() override;
+	virtual void ImpulseAttack(float intensity) override;
+	virtual void CheckProcedural() override;
 
 #pragma	region Member
 public:

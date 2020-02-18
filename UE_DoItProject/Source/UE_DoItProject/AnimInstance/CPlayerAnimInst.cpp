@@ -22,10 +22,19 @@ void UCPlayerAnimInst::NativeBeginPlay()
 void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 {
 	IfNullRet(Player);
-	Speed = Player->GetVelocity().Size();
-	bInAir = Player->GetCharacterMovement()->IsFalling();
-	bEvade = Player->GetEvade();
+	// @Move
 	Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
+	Speed = Player->GetVelocity().Size();
+
+	//// @공중에 떠있으면서, Gravity 가 0.0f 이 아닐 때,
+	//if (Player->GetCharacterMovement()->IsFalling()
+	//	&& Player->GetCharacterMovement()->GravityScale > 0.0f)
+	//{
+	//	bInAir = true;
+	//}
+
+	// @Evade
+	bEvade = Player->GetEvade();
 
 	IfNullRet(Charactor);
 	CurrentStateType = Charactor->GetCurrentStateType();

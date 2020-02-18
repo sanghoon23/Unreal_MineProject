@@ -7,7 +7,8 @@
 #include "CAIC_HM_Basic.generated.h"
 
 UCLASS()
-class UE_DOITPROJECT_API ACAIC_HM_Basic : public AAIController
+class UE_DOITPROJECT_API ACAIC_HM_Basic 
+	: public AAIController
 {
 	GENERATED_BODY()
 
