@@ -4,6 +4,7 @@
 #include "Animation/AnimInstance.h"
 #include "Interface/IC_Charactor.h"
 #include "Charactor/Player/CPlayer.h"
+#include "Component/CInverseKinematics.h"
 
 #include "CPlayerAnimInst.generated.h"
 
@@ -33,9 +34,13 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool bInAir;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		FInverseKinematics Effector;
+
 private:
-	UFUNCTION()
-		void Test(UAnimMontage* Montage, bool bInterrupted);
+	// Test Code
+	//UFUNCTION()
+	//	void Test(UAnimMontage* Montage, bool bInterrupted);
 
 	#pragma endregion
 
@@ -50,5 +55,6 @@ protected:
 private:
 	ACPlayer* Player;
 	IIC_Charactor* Charactor;
+	class UCInverseKinematics* FootIK;
 
 };

@@ -6,6 +6,7 @@
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_HitComp.h"
 #include "Interface/IC_EquipComp.h"
+#include "Interface/IC_InteractActor.h"
 
 #include "IC_Charactor.generated.h"
 
@@ -47,7 +48,7 @@ public:
 	virtual bool IsJumping() = 0;
 	virtual void OffJumping() = 0;
 
-	// @ Charactor 의 현재상태. (AnimInst 에서 쓰임)
+	// @Charactor 의 현재상태. (AnimInst 에서 쓰임)
 	virtual int GetCurrentStateType() const = 0;
 
 	// @Montage - 실행할 Montage
@@ -58,6 +59,9 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Virtual Function */
 public:
+	virtual void OnCollision() {}
+	virtual void OffCollision() {}
+
 	virtual void OffEvade() {} // 회피 해제
 	virtual float GetEvadeSpeed() { return 0.0f; } // 회피 동작의 ActorLocation 속도
 	virtual FVector GetEvadeDirection() { return FVector(1.f, 0.0f, 0.0f); } // 회피방향
@@ -68,4 +72,19 @@ public:
 	virtual IIC_AttackComp* GetIAttackComp() { return nullptr; }
 	virtual IIC_HitComp* GetIHitComp() { return nullptr; }
 	virtual IIC_EquipComp* GetIEquipComp() { return nullptr; }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Function */
+public :
+	/* 현재 상호작용 하고 있는 Actor 'Get' */
+	IIC_InteractActor* GetCurrentInteractActor() { return CurrentInteractActor; }
+	/* 현재 상호작용 하고 있는 Actor 'Set' */
+	void SetCurrentInteractActor(IIC_InteractActor* IC_Interact) { CurrentInteractActor = IC_Interact; }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Member */
+private:
+	IIC_InteractActor* CurrentInteractActor;
 };

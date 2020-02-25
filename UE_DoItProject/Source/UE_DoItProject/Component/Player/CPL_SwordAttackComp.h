@@ -7,7 +7,7 @@
 #include "CPL_SwordAttackComp.generated.h"
 
 UENUM()
-enum class SwordAttackType // @SwordType - Sword 상태일 때의 공격 Type
+enum class SwordAttackType : uint8// @SwordType - Sword 상태일 때의 공격 Type
 {
 	BASIC = 0,
 	UPPER = 1,

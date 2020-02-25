@@ -10,16 +10,16 @@ UCPL_SwordActionComp::UCPL_SwordActionComp()
 
 	// Create Roll Action
 	{
-		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_SDActionRoll>("RollAction");
+		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_SDActionRoll>("SD_RollAction");
 		RollAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
-		BaseActionArray.Emplace(RollAction);
+		SD_ActionArray.Emplace(RollAction);
 	}
 
 	// Create Jump Action
 	{
-		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_SDActionJump>("JumpAction");
+		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_SDActionJump>("SD_JumpAction");
 		JumpAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
-		BaseActionArray.Emplace(JumpAction);
+		SD_ActionArray.Emplace(JumpAction);
 	}
 }
 
@@ -36,11 +36,11 @@ void UCPL_SwordActionComp::BeginPlay()
 /* @Type - BaseActionArray 에 속해 있는 IBaseAction Enum. 즉, Array[Type] */
 IIC_BaseAction * UCPL_SwordActionComp::GetIBaseAction(uint8 Type)
 {
-	if (Type > BaseActionArray.Num() - 1)
+	if (Type > SD_ActionArray.Num() - 1)
 	{
 		CLog::Print(L"SwordActionComp GetIBaseAction Array Excess!!");
 		return nullptr;
 	}
 
-	return Cast<IIC_BaseAction>(BaseActionArray[Type]);
+	return Cast<IIC_BaseAction>(SD_ActionArray[Type]);
 }

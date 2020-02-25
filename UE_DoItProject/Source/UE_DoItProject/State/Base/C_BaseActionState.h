@@ -7,7 +7,7 @@
 #include "C_BaseActionState.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS()
 class UE_DOITPROJECT_API UC_BaseActionState 
 	: public UActorComponent, public IIC_BaseAction
 {

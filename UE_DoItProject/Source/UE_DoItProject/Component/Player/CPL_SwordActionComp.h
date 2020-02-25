@@ -12,6 +12,8 @@ class UE_DOITPROJECT_API UCPL_SwordActionComp
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "BaseAction")
+		TArray<UC_BaseActionState*> SD_ActionArray;
 
 	#pragma endregion
 

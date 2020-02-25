@@ -12,7 +12,7 @@ class UE_DOITPROJECT_API UCPL_SDActionRoll
 	
 	#pragma region Reflection
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* RollMontage;
 
 	#pragma endregion

@@ -17,7 +17,7 @@ class UE_DOITPROJECT_API UCHM_BasicBaseAttack
 private:
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> AttackMontages;
 
 	#pragma endregion

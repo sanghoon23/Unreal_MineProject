@@ -6,10 +6,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
-#include "Component/CPL_StateMachine.h"
-
-#include "Component/Player/CPL_EquipComp.h"
 #include "_GameController/CPL_TargetingSystem.h"
+#include "Component/CPL_StateMachine.h"
+#include "Component/Player/CPL_EquipComp.h"
+#include "Component/CPL_ActionInteractSystem.h"
+#include "Component/CInverseKinematics.h"
 
 ACPlayer::ACPlayer()
 {
@@ -73,7 +74,7 @@ ACPlayer::ACPlayer()
 		SpringArmComp->bUsePawnControlRotation = true;
 		SpringArmComp->SetRelativeLocation(FVector(0.f, 0.f, 140.f));
 		SpringArmComp->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
-		SpringArmComp->TargetArmLength = 1100.0f;
+		SpringArmComp->TargetArmLength = 1000.0f;
 
 		SpringArmComp->SocketOffset = FVector(0.f, 0.f, 70.f);
 
@@ -97,10 +98,11 @@ ACPlayer::ACPlayer()
 	{
 		StateManager = CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
 		EquipComp = CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
-	}
+		TargetingSystem = CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
+		IneverseKinematics = CreateDefaultSubobject<UCInverseKinematics>("IKComp");
+		InteractSystem = CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
 
-	// Create Targeting System
-	TargetingSystem = CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
+	}
 }
 
 void ACPlayer::BeginPlay()
@@ -169,6 +171,8 @@ void ACPlayer::Tick(float DeltaTime)
 	//CLog::Print(ControllerRot.ToString());
 	// FRotator TestRot = GetSpringArmRotation();
 	// CLog::Print(TestRot.ToString());
+	//FVector Right = GetActorRightVector();
+	//CLog::Print(Right.ToString());
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -180,7 +184,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACPlayer::OnMoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &ACPlayer::OnTurn);
 	PlayerInputComponent->BindAxis("LookUp", this, &ACPlayer::OnLookUp);
-	// PlayerInputComponent->BindAxis("Zoom", this, &ACPlayer::OnZoom);
+	PlayerInputComponent->BindAxis("Zoom", this, &ACPlayer::OnZoom);
 
 	// @Action
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACPlayer::OnJump);
@@ -191,7 +195,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Dash", EInputEvent::IE_DoubleClick, this, &ACPlayer::OnDash);
 	PlayerInputComponent->BindAction("SwapState", EInputEvent::IE_Pressed, this, &ACPlayer::OnSwapState);
 	PlayerInputComponent->BindAction("FindTarget", EInputEvent::IE_Pressed, this, &ACPlayer::OnLookAround);
-
+	PlayerInputComponent->BindAction("InteractAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnInteractAction);
 
 	PlayerInputComponent->BindAction("BasicAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnBasicAttack);
 	PlayerInputComponent->BindAction("SecondAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnSecondAttack);
@@ -240,7 +244,10 @@ void ACPlayer::OnZoom(float Value)
 void ACPlayer::OnJump()
 {
 	// @해당 함수에 IFRet 조건 들어가 있음.
-	IIC_BaseAction* BaseAction = StateManager->GetIActionComp()->GetIBaseAction(1);
+	IIC_ActionComp* ActionComp = StateManager->GetIActionComp();
+	IfNullRet(ActionComp);
+	IIC_BaseAction* BaseAction = ActionComp->GetIBaseAction(1);
+	IfNullRet(BaseAction);
 	if (BaseAction != nullptr)
 	{
 		BaseAction->OnAction();
@@ -260,7 +267,10 @@ void ACPlayer::OffDoAxisTurn()
 void ACPlayer::OnEvade()
 {
 	// @해당 함수에 IFRet 조건 들어가 있음.
-	IIC_BaseAction* BaseAction = StateManager->GetIActionComp()->GetIBaseAction(0);
+	IIC_ActionComp* ActionComp = StateManager->GetIActionComp();
+	IfNullRet(ActionComp);
+	IIC_BaseAction* BaseAction = ActionComp->GetIBaseAction(0);
+	IfNullRet(BaseAction);
 	if (BaseAction != nullptr)
 	{
 		BaseAction->OnAction();
@@ -284,6 +294,12 @@ void ACPlayer::OnSwapState()
 void ACPlayer::OnLookAround()
 {
 	TargetingSystem->OnFindTargets();
+}
+
+/* @Player ActionKey - E (상호작용하기) */
+void ACPlayer::OnInteractAction()
+{
+	InteractSystem->InteractInput();
 }
 
 // #Edit *0220
@@ -339,6 +355,16 @@ void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlway
 
 	PlayAnimMontage(Montage, Speed);
 	CurrentMontage = Montage;
+}
+
+void ACPlayer::OnCollision()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void ACPlayer::OffCollision()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ACPlayer::OffEvade()

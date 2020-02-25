@@ -5,9 +5,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Charactor/Player/CPlayer.h"
 
-#include "Component/Base/C_BaseAttackComp.h"
-#include "Component/Base/C_BaseActionComp.h"
-
 #include "Component/Player/CPL_MageAttackComp.h"
 #include "Component/Player/CPL_SwordAttackComp.h"
 #include "Component/Player/CPL_MageActionComp.h"
@@ -132,6 +129,8 @@ IIC_ActionComp * UCPL_StateMachine::GetIActionComp()
 {
 	int Type = static_cast<int>(CurrentStateType);
 	return Cast<IIC_ActionComp>(ActionCompArray[Type]);
+
+	return nullptr;
 }
 
 // Swap State
@@ -209,6 +208,7 @@ void UCPL_StateMachine::OnDash()
 			SetAngleWithControlRot(0.0f);
 			Player->SetEvadeDirection(ControlQuat.GetForwardVector());
 
+			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);
 		}
 		else if (Controller->IsInputKeyDown(EKeys::S))
@@ -216,6 +216,7 @@ void UCPL_StateMachine::OnDash()
 			SetAngleWithControlRot(180.0f);
 			Player->SetEvadeDirection((-1) * ControlQuat.GetForwardVector());
 
+			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);
 		}
 		else if (Controller->IsInputKeyDown(EKeys::A))
@@ -223,6 +224,7 @@ void UCPL_StateMachine::OnDash()
 			SetAngleWithControlRot(0.0f);
 			Player->SetEvadeDirection((-1) * ControlQuat.GetRightVector());
 
+			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[2], 1.0f, true);
 		}
 		else if (Controller->IsInputKeyDown(EKeys::D))
@@ -230,6 +232,7 @@ void UCPL_StateMachine::OnDash()
 			SetAngleWithControlRot(0.0f);
 			Player->SetEvadeDirection(ControlQuat.GetRightVector());
 
+			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[3], 1.0f, true);
 		}
 	}

@@ -14,6 +14,8 @@ UCHM_BasicAttackComp::UCHM_BasicAttackComp()
 		UCHM_BasicBaseAttack* FirstCombo = CreateDefaultSubobject<UCHM_BasicFirstCombo>("HM_Basic_FirstCombo");
 		FirstCombo->SetOwnerPawn(Cast<APawn>(GetOwner()));
 
+		// UGameplayStatics::getpawn
+
 		BasicAttackStateArray.Add(FirstCombo);
 	}
 	#pragma endregion
@@ -22,13 +24,6 @@ UCHM_BasicAttackComp::UCHM_BasicAttackComp()
 void UCHM_BasicAttackComp::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//// @SetOwnerPawn - IBaseAttack
-	//for (UCHM_BasicBaseAttack* BaseAttack : AttackStateArray)
-	//{
-	//	if (BaseAttack == nullptr) continue;
-	//	BaseAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
-	//}
 }
 
 void UCHM_BasicAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

@@ -12,7 +12,7 @@ class UE_DOITPROJECT_API UCPL_MGActionRoll
 
 	#pragma region Reflection
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* RollMontage;
 
 	#pragma endregion
@@ -24,7 +24,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/* Pure Virtual Function */
+	/* Pure Virtual Function - Interface */
 public:
 	void OnAction() override;
 

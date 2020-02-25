@@ -10,16 +10,16 @@ UCPL_MageActionComp::UCPL_MageActionComp()
 
 	// Create Roll Action
 	{
-		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionRoll>("RollAction");
+		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionRoll>("MG_RollAction");
 		RollAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
-		BaseActionArray.Emplace(RollAction);
+		MG_ActionArray.Emplace(RollAction);
 	}
 
 	// Create Jump Action
 	{
-		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_MGActionJump>("JumpAction");
+		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_MGActionJump>("MG_JumpAction");
 		JumpAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
-		BaseActionArray.Emplace(JumpAction);
+		MG_ActionArray.Emplace(JumpAction);
 	}
 }
 
@@ -33,14 +33,14 @@ void UCPL_MageActionComp::BeginPlay()
 	Super::BeginPlay();
 }
 
-/* @Type - BaseActionArray 에 속해 있는 IBaseAction Enum. 즉, Array[Type] */
+/* @Type - MG_ActionArray 에 속해 있는 IBaseAction Enum. 즉, Array[Type] */
 IIC_BaseAction * UCPL_MageActionComp::GetIBaseAction(uint8 Type)
 {
-	if (Type > BaseActionArray.Num() - 1)
+	if (Type > MG_ActionArray.Num() - 1)
 	{
 		CLog::Print(L"MageActionComp GetIBaseAction Array Excess!!");
 		return nullptr;
 	}
 
-	return Cast<IIC_BaseAction>(BaseActionArray[Type]);
+	return Cast<IIC_BaseAction>(MG_ActionArray[Type]);
 }

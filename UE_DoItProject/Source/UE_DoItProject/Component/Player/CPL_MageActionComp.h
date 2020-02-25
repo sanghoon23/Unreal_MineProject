@@ -19,6 +19,8 @@ class UE_DOITPROJECT_API UCPL_MageActionComp
 
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "BaseAction")
+	TArray<UC_BaseActionState*> MG_ActionArray;
 
 	#pragma endregion
 

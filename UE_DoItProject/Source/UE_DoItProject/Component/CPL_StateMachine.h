@@ -3,10 +3,11 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Interface/IC_StateManager.h"
-
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_ActionComp.h"
+#include "Component/Base/C_BaseAttackComp.h"
+#include "Component/Base/C_BaseActionComp.h"
 
 #include "CPL_StateMachine.generated.h"
 

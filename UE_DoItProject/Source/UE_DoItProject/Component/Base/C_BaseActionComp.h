@@ -22,8 +22,8 @@ class UE_DOITPROJECT_API UC_BaseActionComp
 	GENERATED_BODY()
 
 	#pragma	region Reflection
-protected:
-	TArray<UC_BaseActionState*> BaseActionArray;
+private:
+
 
 	#pragma endregion
 

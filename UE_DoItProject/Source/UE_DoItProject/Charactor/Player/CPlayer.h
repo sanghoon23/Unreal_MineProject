@@ -41,11 +41,17 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCPL_EquipComp* EquipComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Component")
+		class UCPL_ActionInteractSystem* InteractSystem;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* LeftParticle;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* RightParticle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Component")
+		class UCInverseKinematics* IneverseKinematics;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCPL_TargetingSystem* TargetingSystem;
@@ -86,6 +92,9 @@ public:
 
 	/* Virtual */
 public:
+	virtual void OnCollision() override;
+	virtual void OffCollision() override;
+
 	virtual void OffEvade() override;
 	virtual float GetEvadeSpeed() { return EvadeSpeed; } // 회피
 	virtual FVector GetEvadeDirection() override { return EvadeDirection; } // 회피 방향
@@ -114,6 +123,7 @@ private:
 	void OnSwapState(); //@무기스왑 ( 검 / 마법 )
 	void OnLookAround(); //@공격대상 찾기
 
+	void OnInteractAction();
 	void OnBasicAttack(); // @1번 공격 - 기본공격
 	void OnSecondAttack(); // @2번 공격
 

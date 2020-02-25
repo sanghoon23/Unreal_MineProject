@@ -39,8 +39,8 @@ void UCNS_EvadeMove::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequenceB
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
 	IfNullRet(Charactor);
 
-	// @EvadeEnd
 	Charactor->CanMove();
 	Charactor->OffEvade();
+	Charactor->OnCollision();
 }
 

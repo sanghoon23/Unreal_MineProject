@@ -16,7 +16,7 @@ class UE_DOITPROJECT_API UCPL_MageBaseAttack
 private:
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> MageAttackMontages;
 
 	#pragma endregion

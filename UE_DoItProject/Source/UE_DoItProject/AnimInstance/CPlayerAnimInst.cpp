@@ -4,7 +4,6 @@
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_EquipComp.h"
-#include "Component/Player/CPL_EquipComp.h"
 
 UCPlayerAnimInst::UCPlayerAnimInst()
 {
@@ -18,7 +17,13 @@ void UCPlayerAnimInst::NativeBeginPlay()
 	Charactor = Cast<IIC_Charactor>(Player);
 	IfNullRet(Charactor);
 
-	OnMontageBlendingOut.AddDynamic(this, &UCPlayerAnimInst::Test);
+	UActorComponent* ActorComp = Player->GetComponentByClass(UCInverseKinematics::StaticClass());
+	if (ActorComp != nullptr)
+	{
+		FootIK = Cast<UCInverseKinematics>(ActorComp);
+	}
+
+	// OnMontageBlendingOut.AddDynamic(this, &UCPlayerAnimInst::Test);
 }
 
 void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
@@ -45,10 +50,13 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 
 	//IfNullRet(BaseAttack);
 	//bAttackMode = BaseAttack->GetAttackMode();
+
+	IfNullRet(FootIK);
+	Effector = FootIK->GetEffector();
 }
 
-void UCPlayerAnimInst::Test(UAnimMontage * Montage, bool bInterrupted)
-{
-	//CLog::Print(Montage->GetName());
-	//CLog::Print(bInterrupted);
-}
+//void UCPlayerAnimInst::Test(UAnimMontage * Montage, bool bInterrupted)
+//{
+//	//CLog::Print(Montage->GetName());
+//	//CLog::Print(bInterrupted);
+//}
