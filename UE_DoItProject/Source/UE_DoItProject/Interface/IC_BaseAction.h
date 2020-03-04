@@ -14,8 +14,15 @@ class UE_DOITPROJECT_API IIC_BaseAction
 {
 	GENERATED_BODY()
 
+	/* Pure Virtual Function */
 public:
 	virtual void OnAction() = 0;
+
+	/* Virtual Function */
+public:
+	virtual void BeginActionState() {}
+	virtual void TickActionState() {}
+	virtual void EndActionState() {}
 
 public:
 	// @Onwer - Action 하는 Pawn (주체)

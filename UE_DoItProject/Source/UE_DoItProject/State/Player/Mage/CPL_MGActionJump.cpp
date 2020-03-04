@@ -15,7 +15,7 @@ UCPL_MGActionJump::UCPL_MGActionJump()
 
 	// Set Roll Action
 	{
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Mage/MageMon_Jump.MageMon_Jump'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Mage/MageMon_JumpStart.MageMon_JumpStart'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> jumpMon(*Path);
 		if (jumpMon.Succeeded())
 			JumpMontage = jumpMon.Object;
@@ -46,6 +46,7 @@ void UCPL_MGActionJump::OnAction()
 	// @IF TRUE RETURN
 	IfTrueRet(Player->GetEvade()); //@Evade Check
 	IfTrueRet(Player->IsJumping());
+	IfTrueRet(Player->GetCharacterMovement()->IsFalling()); //@IsFalling
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping());
 
 	// @IF FALSE RETURN
@@ -57,6 +58,6 @@ void UCPL_MGActionJump::OnAction()
 	//@ ½ÇÇà
 	Player->SetJumping(true);
 	Player->Jump();
-	Player->ActorAnimMonPlay(JumpMontage, 0.8f, false);
+	Player->ActorAnimMonPlay(JumpMontage, 0.5f, false);
 }
 

@@ -6,7 +6,7 @@
 
 ACInteractActor_JumpOver::ACInteractActor_JumpOver()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// @IIC_InteractActor Value
 	{
@@ -32,36 +32,36 @@ void ACInteractActor_JumpOver::BeginInteract(AActor * InteractedActor)
 	Super::BeginInteract(InteractedActor);
 	check(InteractedActor);
 
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(InteractedActor);
-	if (Charactor != nullptr)
-	{
-		// @중력 해제
-		Charactor->OffGravity();
-	}
+	//IIC_Charactor* Charactor = Cast<IIC_Charactor>(InteractedActor);
+	//if (Charactor != nullptr)
+	//{
+	//	// @중력 해제
+	//	Charactor->OffGravity();
+	//}
 
-	// 1.1 Mesh Min Max 구하기 - GetLocalBounds
-	FVector Min;
-	FVector Max;
-	StaticMesh->GetLocalBounds(Min, Max);
+	//// 1.1 Mesh Min Max 구하기 - GetLocalBounds
+	//FVector Min;
+	//FVector Max;
+	//StaticMesh->GetLocalBounds(Min, Max);
 
-	// 1.2 Mesh Scale
-	float MeshScale = StaticMesh->GetComponentScale().Y;
+	//// 1.2 Mesh Scale
+	//float MeshScale = StaticMesh->GetComponentScale().Y;
 
-	// 1.3 Half Height
-	float HalfHeight = 0.0f;
-	APawn* InteractedPawn = Cast<APawn>(InteractedActor);
-	if (InteractedPawn != nullptr)
-	{
-		HalfHeight = InteractedPawn->GetDefaultHalfHeight();
-	}
+	//// 1.3 Half Height
+	//float HalfHeight = 0.0f;
+	//APawn* InteractedPawn = Cast<APawn>(InteractedActor);
+	//if (InteractedPawn != nullptr)
+	//{
+	//	HalfHeight = InteractedPawn->GetDefaultHalfHeight();
+	//}
 
-	// 2. 높이 맞추기
-	FVector StaticMeshLocation = StaticMesh->GetComponentLocation();
-	FVector ActorLocation = InteractedActor->GetActorLocation();
-	ActorLocation.Z = (StaticMeshLocation.Z + (Max.Y * MeshScale) + HalfHeight);
+	//// 2. 높이 맞추기
+	//FVector StaticMeshLocation = StaticMesh->GetComponentLocation();
+	//FVector ActorLocation = InteractedActor->GetActorLocation();
+	//ActorLocation.Z = (StaticMeshLocation.Z + (Max.Y * MeshScale) + HalfHeight);
 
-	// 3. Setting
-	InteractedActor->SetActorLocation(ActorLocation);
+	//// 3. Setting
+	//InteractedActor->SetActorLocation(ActorLocation);
 }
 
 // @param Actor - 상호작용 '당할' Actor
@@ -70,34 +70,32 @@ void ACInteractActor_JumpOver::BeginInteract(AActor * InteractedActor)
 void ACInteractActor_JumpOver::TickInteract(AActor * InteractedActor)
 {
 	Super::TickInteract(InteractedActor);
+	check(InteractedActor);
 
-	// @계속 충돌 중이 아니면 리턴, Mesh 를 벗어낫기 때문에
-	IfFalseRet(bCollisioning);
+	//// @계속 충돌 중이 아니면 리턴, Mesh 를 벗어낫기 때문에
+	//IfFalseRet(bCollisioning);
 
-	CLog::Print(L"Tick In");
+	//// 1.1 Mesh Min Max 구하기 - GetLocalBounds
+	//FVector Min;
+	//FVector Max;
+	//StaticMesh->GetLocalBounds(Min, Max);
 
-	// 1.1 Mesh Min Max 구하기 - GetLocalBounds
-	FVector Min;
-	FVector Max;
-	StaticMesh->GetLocalBounds(Min, Max);
+	//// 1.2 Mesh Scale
+	//float MeshScale = StaticMesh->GetComponentScale().X;
 
-	// 1.2 Mesh Scale
-	float MeshScale = StaticMesh->GetComponentScale().X;
+	//// 2. 앞으로 나아가기. - MeshScale * MeshScale (대략적인 수치 맞추기 위해)
+	//float Speed = InteractiveData.JumpOverSpeed;
+	//FVector ActorLocation = InteractedActor->GetActorLocation();
+	//FVector ActorForwardDir = InteractedActor->GetActorForwardVector();
+	//ActorLocation += (ActorForwardDir * Speed * (MeshScale * MeshScale));
 
-	// 2. 앞으로 나아가기. - MeshScale * MeshScale (대략적인 수치 맞추기 위해)
-	float Speed = InteractiveData.JumpOverSpeed;
-	FVector ActorLocation = InteractedActor->GetActorLocation();
-	FVector ActorForwardDir = InteractedActor->GetActorForwardVector();
-	ActorLocation += (ActorForwardDir * Speed * (MeshScale * MeshScale));
-	// ActorLocation += (ActorForwardDir * Speed * MeshScale);
+	//// 3. Setting
+	//InteractedActor->SetActorLocation(ActorLocation);
 
-	// 3. Setting
-	InteractedActor->SetActorLocation(ActorLocation);
-
-	// Test Code
-	//CLog::Print(MeshScale);
-	//CLog::Print(L"Min : " + Min.ToString());
-	//CLog::Print(L"Max : " + Max.ToString());
+	//// Test Code
+	////CLog::Print(MeshScale);
+	////CLog::Print(L"Min : " + Min.ToString());
+	////CLog::Print(L"Max : " + Max.ToString());
 }
 
 void ACInteractActor_JumpOver::EndInteract(AActor * InteractedActor)
@@ -105,10 +103,10 @@ void ACInteractActor_JumpOver::EndInteract(AActor * InteractedActor)
 	Super::EndInteract(InteractedActor);
 	check(InteractedActor);
 
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(InteractedActor);
-	if (Charactor != nullptr)
-	{
-		// @중력 원상 복구
-		Charactor->OnGravity();
-	}
+	//IIC_Charactor* Charactor = Cast<IIC_Charactor>(InteractedActor);
+	//if (Charactor != nullptr)
+	//{
+	//	// @중력 원상 복구
+	//	Charactor->OnGravity();
+	//}
 }

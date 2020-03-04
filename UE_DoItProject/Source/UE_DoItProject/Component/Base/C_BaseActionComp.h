@@ -2,22 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Interface/IC_ActionComp.h"
-#include "State/Base/C_BaseActionState.h"
 
 #include "C_BaseActionComp.generated.h"
 
-UENUM()
-enum class ActionType
-{
-	ROLL = 0,
-	JUMP = 1,
-	END = 2,
-};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UE_DOITPROJECT_API UC_BaseActionComp 
-	: public UActorComponent, public IIC_ActionComp
+	: public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -34,9 +25,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/* Interface Virtual */
-public:
-	virtual IIC_BaseAction* GetIBaseAction(uint8 Type) override { return nullptr; }
 
 	#pragma	region Member
 private:

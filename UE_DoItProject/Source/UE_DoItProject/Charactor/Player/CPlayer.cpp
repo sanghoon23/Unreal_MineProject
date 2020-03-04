@@ -85,23 +85,14 @@ ACPlayer::ACPlayer()
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Jump Montage - 임시
-	{
-		//@Sword
-		strPath = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/SwordMon_Jump.SwordMon_Jump'";
-		ConstructorHelpers::FObjectFinder<UAnimMontage> jumpMon(*strPath);
-		if (jumpMon.Succeeded())
-			JumpMontage = jumpMon.Object;
-	}
 
 	// Create Component
 	{
-		StateManager = CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
-		EquipComp = CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
-		TargetingSystem = CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
-		IneverseKinematics = CreateDefaultSubobject<UCInverseKinematics>("IKComp");
-		InteractSystem = CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
-
+		StateManager		= CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
+		EquipComp			= CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
+		TargetingSystem		= CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
+		IneverseKinematics	= CreateDefaultSubobject<UCInverseKinematics>("IKComp");
+		InteractSystem		= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
 	}
 }
 
@@ -129,7 +120,8 @@ void ACPlayer::BeginPlay()
 		// @IC_Charactor
 		OnActionResetState.AddLambda([&](AActor*)
 		{
-			bEvade = false;
+			bEvade = false;		//@Evade
+			bJumping = false;	//@Jumping
 		});
 
 		// @'On' MageState
@@ -153,18 +145,20 @@ void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//// @Montage 실행 중일 때, Input 값막아버리자.
-	//if (GetMesh()->GetAnimInstance()->Montage_IsPlaying(CurrentMontage))
-	//{
-	//	InputComponent->bBlockInput = true;
-	//}
-	//else
-	//{
-	//	InputComponent->bBlockInput = false;
-	//}
-
 	// @StateMachine 에서 StateType 값 받아옴.
 	CurrentStateType = StateManager->GetCurrentStateType();
+
+	// Test Code
+	//InputComponent->bBlockInput = false;
+	//APlayerController* TestController = Cast<APlayerController>(GetController());
+	//if (TestController != nullptr)
+	//{
+	//	if (TestController->IsInputKeyDown(EKeys::W))
+	//	{
+	//		EnableInput(TestController);
+	//		CLog::Print(L"KeyDown!!");
+	//	}
+	//}
 
 	// Test Code
 	//FRotator ControllerRot = GetControlRotation();
@@ -199,6 +193,26 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("BasicAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnBasicAttack);
 	PlayerInputComponent->BindAction("SecondAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnSecondAttack);
+}
+
+/* Player 의 KeyInput 을 Block -  Move & Action 이 실행되지 않도록 */
+void ACPlayer::OnBlockKeyInput()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController != nullptr)
+	{
+		DisableInput(PlayerController);
+	}
+}
+
+/* Player 의 KeyInput Release */
+void ACPlayer::OffBlockKeyInput()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController != nullptr)
+	{
+		EnableInput(PlayerController);
+	}
 }
 
 void ACPlayer::OnMoveForward(float Value)
@@ -335,11 +349,13 @@ void ACPlayer::OnSecondAttack()
 void ACPlayer::OnGravity()
 {
 	GetCharacterMovement()->GravityScale = 1.0f;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void ACPlayer::OffGravity()
 {
 	GetCharacterMovement()->GravityScale = 0.0f;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 }
 
 void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlways)
@@ -355,6 +371,12 @@ void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlway
 
 	PlayAnimMontage(Montage, Speed);
 	CurrentMontage = Montage;
+}
+
+/* 현재 적용된 CurrentMontage Stop */
+void ACPlayer::ActorStopCurrentAnimMon()
+{
+	StopAnimMontage(CurrentMontage);
 }
 
 void ACPlayer::OnCollision()
@@ -374,6 +396,13 @@ void ACPlayer::OffEvade()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Get, Set
+
+/* I_Charactor 에 CurrentBaseAction Setting */
+void ACPlayer::SetCurrentBaseAction(IIC_BaseAction * IBaseAction)
+{
+	check(IBaseAction);
+	CurrentIBaseAction = IBaseAction;
+}
 
 /* TargetingSystem 에서 Player 가 Tab 을 눌렀을 때, 설정된 Pawn 을 가져옴 */
 APawn * ACPlayer::GetFindAttackTarget()

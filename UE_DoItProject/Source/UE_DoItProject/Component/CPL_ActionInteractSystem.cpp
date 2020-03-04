@@ -3,19 +3,16 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-#include "Interface/IC_InteractActor.h"
 #include "Actor/Base/CBaseInteractActor.h"
 #include "Charactor/Player/CPlayer.h"
-#include "State/Player/CPL_ActionJumpOver.h"
+#include "Component/Player/CPL_PakrouActionComp.h"
 
 UCPL_ActionInteractSystem::UCPL_ActionInteractSystem()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	JumpOver = CreateDefaultSubobject<UCPL_ActionJumpOver>("JumpOver");
-	JumpOver->SetOwnerPawn(Cast<APawn>(GetOwner()));
+	PakrouActionComp = CreateDefaultSubobject<UCPL_PakrouActionComp>("PakrouActionComp");
 }
-
 
 void UCPL_ActionInteractSystem::BeginPlay()
 {
@@ -34,15 +31,12 @@ void UCPL_ActionInteractSystem::InteractInput()
 {
 	// @IF TRUE RETURN
 	IfTrueRet(Player->GetEvade()); //@Evade Check
-	IfTrueRet(Player->IsJumping());
-	IfTrueRet(Player->GetCharacterMovement()->IsFalling());
+	// IfTrueRet(Player->IsJumping());
+	// IfTrueRet(Player->GetCharacterMovement()->IsFalling());
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping());
 
 	// @IF FALSE RETURN
 	IfFalseRet(Player->GetCanMove());
-
-	// @Reset
-	Player->OnActionResetState.Broadcast(Player);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -76,77 +70,131 @@ void UCPL_ActionInteractSystem::InteractInput()
 	{
 		// CLog::Print(HitResult.GetActor()->GetName());
 
+		// @Reset
+		Player->OnActionResetState.Broadcast(Player);
+
 		IIC_InteractActor* InteractActor = Cast<IIC_InteractActor>(HitResult.GetActor());
 		if (InteractActor != nullptr)
 		{
 			// @Set InteractActor
 			Player->SetCurrentInteractActor(InteractActor);
 
-			// 1.JUMPOVER
+			// JUMPOVER
 			if (InteractActor->GetInteractType() == InteractType::JUMPOVER)
 			{
-				// @Set Interactive Data
-				FInteractiveData Data;
-				Data.JumpOverSpeed = 0.3f;
-				InteractActor->SetInteractiveData(Data);
-
-				// @Player 회전
-				FVector LookDir = HitResult.GetActor()->GetActorLocation() - Player->GetActorLocation();
-				LookDir.Z = 0.0f;
-				LookDir.Normalize();
-
-				FVector CrossVec = FVector::CrossProduct(FVector(1.0f, 0.0f, 0.0f), LookDir);
-				CrossVec.Normalize();
-				// CLog::Print(CrossVec.ToString());
-				if (CrossVec.Z >= 0)
-				{
-					float RidAngle = FVector::DotProduct(FVector(1.0f, 0.0f, 0.0f), LookDir);
-					// CLog::Print(RidAngle);
-					RidAngle = acosf(RidAngle);
-					// CLog::Print(RidAngle);
-
-					float DegAngle = FMath::RadiansToDegrees(RidAngle);
-					if (DegAngle >= 0.0f && DegAngle < 45.f)
-					{
-						Player->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-					}
-					else if (DegAngle >= 45.f && DegAngle < 135.f)
-					{
-						Player->SetActorRotation(FRotator(0.0f, 90.0f, 0.0f));
-					}
-					else
-					{
-						Player->SetActorRotation(FRotator(0.0f, 180.0f, 0.0f));
-					}
-				}
-				else
-				{
-					float RidAngle = FVector::DotProduct(FVector(1.0f, 0.0f, 0.0f), LookDir);
-					// CLog::Print(RidAngle);
-					RidAngle = acosf(RidAngle);
-					// CLog::Print(RidAngle);
-
-					float DegAngle = FMath::RadiansToDegrees(RidAngle);
-					if (DegAngle >= 0.0f && DegAngle < 45.f)
-					{
-						Player->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-					}
-					else if (DegAngle >= 45.f && DegAngle < 135.f)
-					{
-						Player->SetActorRotation(FRotator(0.0f, -90.0f, 0.0f));
-					}
-					else
-					{
-						Player->SetActorRotation(FRotator(0.0f, -180.0f, 0.0f));
-					}
-				}
-
-
-				// CLog::Print(L"InteractActor In OnAction");
-				JumpOver->OnAction(); // @실행 시, CNS_Interact Notify
+				JumpOverInterFunc(HitResult);
+			}
+			// CLIMB
+			else if (InteractActor->GetInteractType() == InteractType::CLIMB)
+			{
+				ClimbInterFunc(HitResult);
 			}
 		}
+	}//(bResult == true)
+}
 
+/* InteractActor Type 이 'JUMPOVER' 일 때 실행되는 함수 */
+void UCPL_ActionInteractSystem::JumpOverInterFunc(FHitResult& HitResult)
+{
+	// @Horizontal Rotation
+	PlayerHorizontalAtTarget(HitResult.GetActor());
+
+	// @StartAction
+	PakrouActionComp->StartAction(PakrouStartActionType::JUMPOVER, HitResult.GetActor());
+}
+
+/* InteractActor Type 이 'CLIMB' 일 때 실행되는 함수 */
+void UCPL_ActionInteractSystem::ClimbInterFunc(FHitResult& HitResult)
+{
+	// @대상(InteractActor) 와 Player Vector
+	FVector LookDir = HitResult.GetActor()->GetActorLocation() - Player->GetActorLocation();
+	LookDir.Normalize();
+
+	// @UpVector 와 각도 구하기
+	float RidAngle = FVector::DotProduct(FVector(0.0f, 0.0f, 1.0f), LookDir);
+	RidAngle = acosf(RidAngle);
+	float DegAngle = FMath::RadiansToDegrees(RidAngle);
+
+	if (DegAngle > 90.0f)
+	{
+		// CLog::Print(L"Upper");
+		Player->StopJumping();
+		PlayerHorizontalAtTarget(HitResult.GetActor());
+
+		PakrouActionComp->StartAction(PakrouStartActionType::IDLE, HitResult.GetActor());
+	}
+	else
+	{
+		// CLog::Print(L"Downer");
+		PlayerHorizontalAtTarget(HitResult.GetActor());
+
+		PakrouActionComp->StartAction(PakrouStartActionType::WALLCLIMBRUN, HitResult.GetActor());
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/* Player 가 Target 을 바라보도록 하는 함수 */
+void UCPL_ActionInteractSystem::PlayerLookAtTarget(AActor * Target)
+{
+	check(Target);
+	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
+	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
+	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
+}
+
+/* 대상으로부터 수평하게 회전 (4면) */
+// Ex) 만약 Cube 라면 Player 의 회전이 어떻든 
+// 그 위치에 따라 면의 직선과 동일하게 회전시키는 함수
+// @param Target - 대상
+void UCPL_ActionInteractSystem::PlayerHorizontalAtTarget(AActor * Target)
+{
+	// @1. 대상(InteractActor) 와 Player Vector 구하기
+	FVector LookDir = Target->GetActorLocation() - Player->GetActorLocation();
+	LookDir.Z = 0.0f;
+	LookDir.Normalize();
+
+	// @2. 외적 구해서 어느 방향에 있는지 확인
+	FVector CrossVec = FVector::CrossProduct(FVector(1.0f, 0.0f, 0.0f), LookDir);
+	CrossVec.Normalize();
+
+	// @3. 내적해서 각도 구하기
+	float RidAngle = FVector::DotProduct(FVector(1.0f, 0.0f, 0.0f), LookDir);
+	RidAngle = acosf(RidAngle);
+	float DegAngle = FMath::RadiansToDegrees(RidAngle);
+
+	// @2.1 반시계 방향이므로, 대상(InteractActor) 이 오른쪽에 존재한다면
+	if (CrossVec.Z >= 0)
+	{
+		if (DegAngle >= 0.0f && DegAngle < 45.f)
+		{
+			Player->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+		}
+		else if (DegAngle >= 45.f && DegAngle < 135.f)
+		{
+			Player->SetActorRotation(FRotator(0.0f, 90.0f, 0.0f));
+		}
+		else
+		{
+			Player->SetActorRotation(FRotator(0.0f, 180.0f, 0.0f));
+		}
+	}
+	// @2.2 반시계 방향이므로, 대상(InteractActor) 이 왼쪽에 존재한다면
+	else
+	{
+		if (DegAngle >= 0.0f && DegAngle < 45.f)
+		{
+			Player->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+		}
+		else if (DegAngle >= 45.f && DegAngle < 135.f)
+		{
+			Player->SetActorRotation(FRotator(0.0f, -90.0f, 0.0f));
+		}
+		else
+		{
+			Player->SetActorRotation(FRotator(0.0f, -180.0f, 0.0f));
+		}
+	}
+}
+
 

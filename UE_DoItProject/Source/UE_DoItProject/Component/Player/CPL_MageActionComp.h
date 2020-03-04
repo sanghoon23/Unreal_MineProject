@@ -2,6 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Component/Base/C_BaseActionComp.h"
+#include "Interface/IC_ActionComp.h"
+#include "State/Base/C_BaseActionState.h"
+
 #include "CPL_MageActionComp.generated.h"
 
 UENUM()
@@ -13,7 +16,7 @@ enum class MageActionType
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_MageActionComp 
-	: public UC_BaseActionComp
+	: public UC_BaseActionComp, public IIC_ActionComp
 {
 	GENERATED_BODY()
 

@@ -53,6 +53,7 @@ public:
 	virtual int GetCurrentStateType() const override { return -1; }
 
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
+	virtual void ActorStopCurrentAnimMon() override;
 
 	/* Virtual In Interface */
 public:

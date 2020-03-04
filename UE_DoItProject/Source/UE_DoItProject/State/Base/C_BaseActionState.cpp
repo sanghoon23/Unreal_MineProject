@@ -4,8 +4,6 @@
 UC_BaseActionState::UC_BaseActionState()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -15,7 +13,6 @@ void UC_BaseActionState::BeginPlay()
 
 	
 }
-
 
 void UC_BaseActionState::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

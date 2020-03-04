@@ -32,6 +32,13 @@ public:
 		bool bAttackMode;
 
 	UPROPERTY(BlueprintReadOnly)
+		bool bCharactorJumping;
+
+	// @착지에 필요한 땅과의 거리
+	UPROPERTY(BlueprintReadOnly)
+		float FindFloorDistance;
+
+	UPROPERTY(BlueprintReadOnly)
 		bool bInAir;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -50,6 +57,9 @@ public:
 protected:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+private:
+	float FootTraceDistance();
 
 	// Member
 private:

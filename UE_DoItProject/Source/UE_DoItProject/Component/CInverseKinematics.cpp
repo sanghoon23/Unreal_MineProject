@@ -24,9 +24,13 @@ void UCInverseKinematics::BeginPlay()
 }
 
 
+// 1. Kinematic 을 위한 Left, Right Foot 회전 값을 계산 - FInverseKinematics
 void UCInverseKinematics::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// @Kinematics Calc
 
 	FVector leftNormal, rightNormal;
 	float leftTraceDistance = Trace(LeftFootSocket, leftNormal);
@@ -54,7 +58,6 @@ void UCInverseKinematics::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// Rotator
 	Ik.Rotation_Left = UKismetMathLibrary::RInterpTo(Ik.Rotation_Left, NormalToRotator(leftNormal), DeltaTime, FeetInterpSpeed);
 	Ik.Rotation_Right = UKismetMathLibrary::RInterpTo(Ik.Rotation_Right, NormalToRotator(rightNormal), DeltaTime, FeetInterpSpeed);
-
 }
 
 float UCInverseKinematics::Trace(FName Socket, FVector & OutImpactNormal)

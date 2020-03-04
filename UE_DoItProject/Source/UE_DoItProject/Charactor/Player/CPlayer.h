@@ -59,12 +59,6 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		class UAnimMontage* CurrentMontage;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
-		TArray<class UAnimMontage*> HitMontages;
-
-	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
-		class UAnimMontage* JumpMontage;
-
 	#pragma endregion
 
 public:
@@ -89,6 +83,7 @@ public:
 	virtual int GetCurrentStateType() const override { return static_cast<int>(CurrentStateType); }
 
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
+	virtual void ActorStopCurrentAnimMon() override;
 
 	/* Virtual */
 public:
@@ -106,6 +101,10 @@ public:
 	virtual IIC_EquipComp* GetIEquipComp() override;
 
 	/* Function */
+public:
+	void OnBlockKeyInput();
+	void OffBlockKeyInput();
+
 private:
 	// Axis Mapping
 	void OnMoveForward(float Value);
@@ -123,12 +122,15 @@ private:
 	void OnSwapState(); //@무기스왑 ( 검 / 마법 )
 	void OnLookAround(); //@공격대상 찾기
 
-	void OnInteractAction();
+	void OnInteractAction(); //  @E - 상호작용
 	void OnBasicAttack(); // @1번 공격 - 기본공격
 	void OnSecondAttack(); // @2번 공격
 
 	#pragma	region Member
 public:
+	// @Interface Value
+	void SetCurrentBaseAction(IIC_BaseAction* IBaseAction);
+
 	// @TargetSystem
 	APawn* GetFindAttackTarget();
 
@@ -138,6 +140,7 @@ public:
 	// Jump
 	void SetJumping(bool bValue) { bJumping = bValue; }
 
+
 	// Evade
 	bool GetEvade() const { return bEvade; }
 	void SetEvade(bool bValue) { bEvade = bValue; }
@@ -145,22 +148,22 @@ public:
 	void SetEvadeSpeed(float Speed) { EvadeSpeed = Speed; }
 
 private:
-	bool bDeath			= false;
+	bool bDeath				= false;
 
 	// State
 	PlayerStateType CurrentStateType;
 	bool bChangeStateSwap	= false;
 
 	// Move
-	bool bCanMove		= true;
-	bool bAxisTurn		= false;
+	bool bCanMove			= true;
+	bool bAxisTurn			= false;
 
 	// Jump
-	bool bJumping		= false;
+	bool bJumping			= false;
 
 	// Evade
-	bool bEvade			= false;
-	float EvadeSpeed	= 15.0f;
+	bool bEvade				= false;
+	float EvadeSpeed		= 15.0f;
 	FVector EvadeDirection;
 
 	// Attack

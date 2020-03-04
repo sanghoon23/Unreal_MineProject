@@ -28,7 +28,8 @@ public:
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class UE_DOITPROJECT_API UCInverseKinematics : public UActorComponent
+class UE_DOITPROJECT_API UCInverseKinematics 
+	: public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -74,13 +75,14 @@ private:
 	FRotator NormalToRotator(FVector Normal);
 
 	#pragma	region Member
+public:
+	FInverseKinematics& GetEffector() { return Ik; }
+
 private:
 	class ACharacter* Character;
 
 	float CapsuleHalfHeight;
 	FInverseKinematics Ik;
 
-public:
-	FInverseKinematics& GetEffector() { return Ik; }
 	#pragma endregion
 };

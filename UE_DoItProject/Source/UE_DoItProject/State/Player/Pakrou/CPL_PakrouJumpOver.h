@@ -1,15 +1,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "State/Base/C_BaseActionState.h"
-#include "CPL_ActionJumpOver.generated.h"
+#include "State/Player/Base/CPL_PakrouBaseAction.h"
+
+#include "CPL_PakrouJumpOver.generated.h"
 
 UCLASS()
-class UE_DOITPROJECT_API UCPL_ActionJumpOver 
-	: public UC_BaseActionState
+class UE_DOITPROJECT_API UCPL_PakrouJumpOver 
+	: public UCPL_PakrouBaseAction
 {
 	GENERATED_BODY()
-	
+
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
@@ -18,7 +19,7 @@ private:
 	#pragma endregion
 
 public:
-	UCPL_ActionJumpOver();
+	UCPL_PakrouJumpOver();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
@@ -28,8 +29,13 @@ protected:
 public:
 	virtual void OnAction() override;
 
+	/* Virtual Function */
+public:
+	virtual void BeginActionState() override;
+	virtual void TickActionState() override;
+	virtual void EndActionState() override;
+
 	/* Member */
 private:
-	class ACPlayer* Player;
-
+	float JumpOverSpeed = 0.3f;
 };

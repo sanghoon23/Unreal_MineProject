@@ -4,6 +4,7 @@
 #include "UObject/Interface.h"
 #include "Interface/IC_StateManager.h"
 #include "Interface/IC_AttackComp.h"
+#include "Interface/IC_BaseAction.h"
 #include "Interface/IC_HitComp.h"
 #include "Interface/IC_EquipComp.h"
 #include "Interface/IC_InteractActor.h"
@@ -56,6 +57,9 @@ public:
 	// @bAlways - Montage 실행성 보장
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) = 0;
 
+	// @현재 실행중인 Montage Stop ( CurrentApplyedMontage )
+	virtual void ActorStopCurrentAnimMon() = 0;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Virtual Function */
 public:
@@ -82,9 +86,12 @@ public :
 	/* 현재 상호작용 하고 있는 Actor 'Set' */
 	void SetCurrentInteractActor(IIC_InteractActor* IC_Interact) { CurrentInteractActor = IC_Interact; }
 
+	/* 현재 동작할 BaseAction */
+	IIC_BaseAction* GetCurrentIBaseAction() { return CurrentIBaseAction; }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Member */
-private:
+protected:
 	IIC_InteractActor* CurrentInteractActor;
+	IIC_BaseAction* CurrentIBaseAction;
 };

@@ -32,6 +32,16 @@ private:
 	//UPROPERTY(VisibleAnywhere, Category = "DamageType")
 	//	TSubclassOf<UCDamageType_Normal> DT_Normal;
 
+	// @DamageType
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_Air*			DT_Air;
+
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_AirAttack*		DT_AirAttack;
+
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_StrongAttack*	DT_StrongAttack;
+
 	#pragma endregion
 
 public:
@@ -61,9 +71,5 @@ private:
 private:
 	float AttackRadius = 100.0f;
 
-	// @DamageType
-	UCDamageType_Air*			DT_Air;
-	UCDamageType_AirAttack*		DT_AirAttack;
-	UCDamageType_StrongAttack*	DT_StrongAttack;
 	#pragma endregion
 };

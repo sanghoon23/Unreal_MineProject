@@ -25,9 +25,14 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	/* Interface Pure Function */
 public:
 	virtual void OnAction() override {}
-		
+
+public:
+	virtual void BeginActionState() override {}
+	virtual void TickActionState() override {}
+	virtual void EndActionState() override {}
 
 	#pragma	region Member
 private:

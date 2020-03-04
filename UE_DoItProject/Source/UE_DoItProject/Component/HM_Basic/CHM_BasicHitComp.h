@@ -39,7 +39,7 @@ public:
 
 	/* Pure Virtual Function */
 public:
-	void OnHit(AActor* AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount) override;
+	void OnHit(AActor* AttackingActor, UCDamageType_Base * DamageType, float DamageAmount) override;
 
 	//
 	/* Function */

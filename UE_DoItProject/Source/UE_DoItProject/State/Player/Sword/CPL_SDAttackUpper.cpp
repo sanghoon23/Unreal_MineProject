@@ -129,7 +129,7 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
-	AttackMoveSpeed = 1.1f;
+	AttackMoveSpeed = 0.7f;
 
 	if (bAttacking == false)
 	{

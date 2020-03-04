@@ -34,7 +34,7 @@ void UCPL_EquipComp::BeginPlay()
 			, *(Sword->GetItemAttachName())
 		);
 		Sword->SetActorRelativeRotation(FRotator(180.f, 17.f, -1.f));
-		Sword->SetActorRelativeLocation(FVector(2.75f, 2.5f, -1.16f));
+		Sword->SetActorRelativeLocation(FVector(-2.3f, 1.5f, -1.16f));
 
 		// @Add - 우선 DisplayList 사용
 		DisplayList.Add(Sword);

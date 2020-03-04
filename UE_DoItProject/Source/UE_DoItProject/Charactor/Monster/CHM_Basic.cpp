@@ -53,11 +53,13 @@ void ACHM_Basic::Tick(float DeltaTime)
 void ACHM_Basic::OnGravity()
 {
 	GetCharacterMovement()->GravityScale = 1.0f;
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void ACHM_Basic::OffGravity()
 {
 	GetCharacterMovement()->GravityScale = 0.0f;
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 }
 
 bool ACHM_Basic::IsJumping()
@@ -78,6 +80,12 @@ void ACHM_Basic::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlw
 
 	PlayAnimMontage(Montage, Speed);
 	CurrentMontage = Montage;
+}
+
+/* 현재 적용된 CurrentMontage Stop */
+void ACHM_Basic::ActorStopCurrentAnimMon()
+{
+	StopAnimMontage(CurrentMontage);
 }
 
 IIC_AttackComp * ACHM_Basic::GetIAttackComp()

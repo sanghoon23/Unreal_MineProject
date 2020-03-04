@@ -50,7 +50,13 @@ public:
 	virtual void TickInteract(AActor* InteractedActor) override {}
 	virtual void EndInteract(AActor* InteractedActor) override {}
 
+	/* Function */
+public:
+	UStaticMeshComponent* GetStaticMeshComponent();
+
 	#pragma	region Member
+public:
+	bool GetIsMeshCollisioning() const { return bCollisioning; }
 
 protected:
 	/* @InteractActor Collision 되고 있는지 - BeginOverlap */

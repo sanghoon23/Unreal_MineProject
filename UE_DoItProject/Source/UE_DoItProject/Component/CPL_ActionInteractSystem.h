@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "State/Base/C_BaseActionState.h"
+#include "Interface/IC_InteractActor.h"
 
 #include "CPL_ActionInteractSystem.generated.h"
 
@@ -16,8 +17,7 @@ class UE_DOITPROJECT_API UCPL_ActionInteractSystem
 	#pragma	region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Pakrou")
-		UC_BaseActionState* JumpOver;
-
+		class UCPL_PakrouActionComp* PakrouActionComp;
 	#pragma endregion
 
 public:	
@@ -34,7 +34,11 @@ public:
 	void InteractInput();
 
 private:
-	// void 
+	void JumpOverInterFunc(FHitResult& HitResult);
+	void ClimbInterFunc(FHitResult& HitResult);
+
+	void PlayerLookAtTarget(AActor* Target);
+	void PlayerHorizontalAtTarget(AActor* Target);
 
 	#pragma	region Member
 private:

@@ -2,11 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "Component/Base/C_BaseActionComp.h"
+#include "Interface/IC_ActionComp.h"
+#include "State/Base/C_BaseActionState.h"
+
 #include "CPL_SwordActionComp.generated.h"
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_SwordActionComp 
-	: public UC_BaseActionComp
+	: public UC_BaseActionComp, public IIC_ActionComp
 {
 	GENERATED_BODY()
 	

@@ -26,7 +26,7 @@ ACBaseInteractActor::ACBaseInteractActor()
 void ACBaseInteractActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ACBaseInteractActor::OnBegin);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ACBaseInteractActor::OnEnd);
 }
@@ -43,7 +43,7 @@ void ACBaseInteractActor::OnBegin(UPrimitiveComponent* OverlappedComponent, AAct
 	if (OtherActor == this) return;
 	if (GetOwner() == OtherActor) return;
 
-	CLog::Print(L"Begin Overlap");
+	// CLog::Print(L"Begin Overlap");
 	bCollisioning = true;
 }
 
@@ -54,7 +54,14 @@ void ACBaseInteractActor::OnEnd(UPrimitiveComponent * OverlappedComponent, AActo
 	if (OtherActor == this) return;
 	if (GetOwner() == OtherActor) return;
 
-	CLog::Print(L"End Overlap");
+	// CLog::Print(L"End Overlap");
 	bCollisioning = false;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// *Get, *Set
+
+UStaticMeshComponent * ACBaseInteractActor::GetStaticMeshComponent()
+{
+	return StaticMesh;
+}

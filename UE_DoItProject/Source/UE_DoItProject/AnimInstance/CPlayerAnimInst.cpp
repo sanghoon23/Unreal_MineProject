@@ -33,9 +33,26 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
 	Speed = Player->GetVelocity().Size();
 
+	// @FindFloorDistance - Jump 동작 자연스럽게 하기 위해서
+	// *Case 1
+	{
+		//FVector CapsuleLocation = Player->GetActorLocation();
+		//FFindFloorResult FloorResult;
+		//Player->GetCharacterMovement()->FindFloor(CapsuleLocation, FloorResult, true);
+		//FindFloorDistance = FloorResult.GetDistanceToFloor();
+		// FloorResult.GetDistanceToFloor();
+	}
+
+	FindFloorDistance = FootTraceDistance();
+	// CLog::Print(FindFloorDistance);
+
+	// @Jumping
+	bCharactorJumping = Player->IsJumping();
+
 	// @공중에 떠있으면서, Gravity 가 0.0f 이 아닐 때,
 	if (Player->GetCharacterMovement()->IsFalling()
-		&& Player->GetCharacterMovement()->GravityScale > 0.0f)
+		&& Player->GetCharacterMovement()->GravityScale > 0.0f
+		/*&& Player->IsJumping() == true*/)
 	{
 		bInAir = true;
 	}
@@ -43,6 +60,8 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		bInAir = false;
 	}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 	IfNullRet(Charactor);
 	CurrentStateType = Charactor->GetCurrentStateType();
@@ -54,6 +73,39 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	IfNullRet(FootIK);
 	Effector = FootIK->GetEffector();
 }
+
+float UCPlayerAnimInst::FootTraceDistance()
+{
+	FVector start = Player->GetActorLocation();
+
+	float CapsuleHalfHeight = Player->GetDefaultHalfHeight();
+	float TraceDistance = 400.0f;
+
+	float z = start.Z - CapsuleHalfHeight - TraceDistance;
+	FVector end = FVector(start.X, start.Y, z);
+
+	TArray<AActor *> ignore;
+	ignore.Add(Player);
+
+	FHitResult hit;
+	EDrawDebugTrace::Type debug = EDrawDebugTrace::None;
+
+	bool bHit = UKismetSystemLibrary::LineTraceSingle
+	(
+		GetWorld(), start, end, UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		true, ignore, debug, hit, true
+	);
+
+	if (hit.IsValidBlockingHit())
+	{
+		float length = (hit.ImpactPoint - hit.TraceEnd).Size();
+		return length;
+	}
+
+	return 0.0f;
+}
+
+
 
 //void UCPlayerAnimInst::Test(UAnimMontage * Montage, bool bInterrupted)
 //{

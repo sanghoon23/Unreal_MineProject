@@ -12,19 +12,6 @@ enum class InteractType : uint8
 	END = 2,
 };
 
-/* 상호작용(Interactive) 에 쓰일 Data 모음 */
-// @Waring -
-// 특정 InteractType 마다 해당 Type 에서 쓰는 값들은 Setting 해주어야 함.
-USTRUCT()
-struct FInteractiveData
-{
-	GENERATED_USTRUCT_BODY()
-
-	float JumpOverSpeed = 0.0f;
-
-	//...
-};
-
 UINTERFACE(MinimalAPI)
 class UIC_InteractActor : public UInterface
 {
@@ -48,10 +35,7 @@ public:
 
 public:
 	InteractType GetInteractType() { return Type; }
-	void SetInteractiveData(const FInteractiveData& FData) { InteractiveData = FData; }
 
 protected:
 	InteractType Type = InteractType::END;
-
-	FInteractiveData InteractiveData;
 };

@@ -69,7 +69,7 @@ void UCHM_BasicHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount)
+void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * DamageType, float DamageAmount)
 {
 	Super::OnHit(AttackingActor, DamageType, DamageAmount);
 	check(AttackingActor);
@@ -81,7 +81,7 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const
 
 	//1. Delegate 실행.
 	// @ResetState
-	ICharactor->OnActionResetState.Broadcast(HM_Basic);
+	HM_Basic->OnActionResetState.Broadcast(HM_Basic);
 
 	// @NORMAL - 일반 공격
 	if (DamageType->GetConditionType() == FConditionType::NORMAL)
@@ -96,7 +96,9 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const
 
 
 		//1.4 애니메이션 실행 - (무조건 실행)
-		ICharactor->ActorAnimMonPlay(NormalHit, 0.8f, true);
+		HM_Basic->ActorAnimMonPlay(NormalHit, 0.8f, true);
+
+		CLog::Print(L"TYPE - NORMAL");
 	}
 	
 	// @AIR - 띄우기
@@ -114,11 +116,16 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const
 		Location.Z += 200.0f;
 		Charactor->SetActorLocation(Location);
 
+		// @속력 줄이기 - 중력끄고 바로 해줘야함
+		HM_Basic->GetCharacterMovement()->Velocity = FVector(0.0f);
+
 		// @중력 끄기.
-		ICharactor->OffGravity();
+		HM_Basic->OffGravity();
 
 		//1.6 애니메이션 실행 - (무조건 실행)
-		ICharactor->ActorAnimMonPlay(AirHit, 0.8f, true);
+		HM_Basic->ActorAnimMonPlay(AirHit, 0.8f, true);
+
+		CLog::Print(L"TYPE - AIR");
 	}
 
 	// @AIR ATTACK
@@ -129,11 +136,16 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const
 
 		//1.3 TakeDamage
 
+		// @속력 줄이기 - 중력끄고 바로 해줘야함
+		HM_Basic->GetCharacterMovement()->Velocity = FVector(0.0f);
+
 		// @중력 끄기.
-		ICharactor->OffGravity();
+		HM_Basic->OffGravity();
 
 		//1.5 애니메이션 실행 - (무조건 실행)
-		ICharactor->ActorAnimMonPlay(AirAttackHit, 0.8f, true);
+		HM_Basic->ActorAnimMonPlay(AirAttackHit, 0.8f, true);
+
+		CLog::Print(L"TYPE - AIRATTACK");
 	}
 
 	// @STRONG ATTACK
@@ -142,11 +154,8 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const
 		// @때린 대상 바라보기
 		LookAtActor(AttackingActor);
 
-		// @중력 끄기.
-		ICharactor->OffGravity();
-
 		//1.5 애니메이션 실행 - (무조건 실행)
-		ICharactor->ActorAnimMonPlay(StrongAttackHit, 0.8f, true);
+		HM_Basic->ActorAnimMonPlay(StrongAttackHit, 0.8f, true);
 	}
 
 }

@@ -141,6 +141,7 @@ void UCPL_StateMachine::OnSwapState()
 {
 	// @IF TRUE RETURN
 	IfTrueRet(Player->IsJumping()); //@Jump Check
+	IfTrueRet(Player->GetCharacterMovement()->IsFalling()); //@IsFalling - JUMP
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
 
 	// @Reset
