@@ -87,7 +87,7 @@ void UCPL_PakrouClimbingIdle::BeginActionState()
 		// 4. 높이 맞추기
 		FVector StaticMeshLocation = ClimbActor->GetStaticMeshComponent()->GetComponentLocation();
 		FVector ActorLocation = Player->GetActorLocation();
-		ActorLocation.Z = (StaticMeshLocation.Z + (Max.Z * MeshScale) - 80.0f);
+		ActorLocation.Z = (StaticMeshLocation.Z + (Max.Z * MeshScale) - 90.0f);
 
 		// 5. Setting
 		Player->SetActorLocation(ActorLocation);
@@ -103,7 +103,8 @@ void UCPL_PakrouClimbingIdle::BeginActionState()
 void UCPL_PakrouClimbingIdle::TickActionState()
 {
 	Super::TickActionState();
-
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Convert
 	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 	if (PlayerController != nullptr)
@@ -122,16 +123,22 @@ void UCPL_PakrouClimbingIdle::TickActionState()
 		// @ClimbOver
 		else if (PlayerController->IsInputKeyDown(EKeys::W))
 		{
+			Player->OffHandIK(0);
+			Player->OffHandIK(1);
 			PakrouActionComp->DoLinkAction(PakrouLinkActionType::CLIMBOVER, PakrouObject);
 		}
 		// @Left Move
 		else if (PlayerController->IsInputKeyDown(EKeys::A))
 		{
+			Player->OffHandIK(0);
+			Player->OffHandIK(1);
 			PakrouActionComp->DoLinkAction(PakrouLinkActionType::LEFT, PakrouObject);
 		}
 		// @Right Move
 		else if (PlayerController->IsInputKeyDown(EKeys::D))
 		{
+			Player->OffHandIK(0);
+			Player->OffHandIK(1);
 			PakrouActionComp->DoLinkAction(PakrouLinkActionType::RIGHT, PakrouObject);
 		}
 	}

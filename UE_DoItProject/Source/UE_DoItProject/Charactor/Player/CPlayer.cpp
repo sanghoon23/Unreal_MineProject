@@ -215,6 +215,28 @@ void ACPlayer::OffBlockKeyInput()
 	}
 }
 
+/* CInverseKinematic HandIK Mapping */
+// LeftHand == 0, RightHand == 1
+void ACPlayer::OnHandIK(uint8 HandNumber)
+{
+	IfTrueRet(HandNumber > 1);
+	if(HandNumber == 0)
+		IneverseKinematics->OnLeftHandIK();
+	else if(HandNumber == 1)
+		IneverseKinematics->OnRightHandIK();
+}
+
+/* CInverseKinematic HandIK Mapping */
+// LeftHand == 0, RightHand == 1
+void ACPlayer::OffHandIK(uint8 HandNumber)
+{
+	IfTrueRet(HandNumber > 1);
+	if (HandNumber == 0)
+		IneverseKinematics->OffLeftHandIK();
+	else if (HandNumber == 1)
+		IneverseKinematics->OffRightHandIK();
+}
+
 void ACPlayer::OnMoveForward(float Value)
 {
 	IfFalseRet(bCanMove);

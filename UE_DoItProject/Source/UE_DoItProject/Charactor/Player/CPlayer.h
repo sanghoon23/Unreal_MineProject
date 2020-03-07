@@ -105,6 +105,12 @@ public:
 	void OnBlockKeyInput();
 	void OffBlockKeyInput();
 
+	/* LeftHand == 0, RightHand == 1, 로 설정되어있음 그 이외의 값은 return*/
+	void OnHandIK(uint8 HandNumber);
+
+	/* LeftHand == 0, RightHand == 1, 로 설정되어있음 그 이외의 값은 return*/
+	void OffHandIK(uint8 HandNumber);
+
 private:
 	// Axis Mapping
 	void OnMoveForward(float Value);

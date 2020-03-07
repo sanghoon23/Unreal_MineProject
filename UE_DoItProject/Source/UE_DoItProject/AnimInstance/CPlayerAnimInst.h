@@ -42,7 +42,10 @@ public:
 		bool bInAir;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		FInverseKinematics Effector;
+		FFeetInverseKinematics FeetEffector;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		FHandsInverseKinematics HandEffector;
 
 private:
 	// Test Code

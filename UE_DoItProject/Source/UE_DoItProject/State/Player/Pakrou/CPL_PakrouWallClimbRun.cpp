@@ -115,7 +115,7 @@ void UCPL_PakrouWallClimbRun::TickActionState()
 		// 3. StaticMesh 구하기.
 		// @다 올라갔다면? -> NextAction 실행 ( Climbing Idle )
 		FVector StaticMeshLocation = ClimbActor->GetStaticMeshComponent()->GetComponentLocation();
-		if (ActorLocation.Z > (StaticMeshLocation.Z + (Max.Z * MeshScale) - 80.0f))
+		if (ActorLocation.Z > (StaticMeshLocation.Z + (Max.Z * MeshScale) - 90.0f))
 		{
 			Player->ActorStopCurrentAnimMon();
 			PakrouActionComp->DoLinkAction(PakrouLinkActionType::IDLE, PakrouObject);
@@ -152,7 +152,7 @@ void UCPL_PakrouWallClimbRun::EndActionState()
 		// 3. StaticMesh 구하기.
 		// @아직이라면? -> Montage 다시 실행
 		FVector StaticMeshLocation = ClimbActor->GetStaticMeshComponent()->GetComponentLocation();
-		if (ActorLocation.Z < (StaticMeshLocation.Z + (Max.Z * MeshScale) - 80.0f))
+		if (ActorLocation.Z < (StaticMeshLocation.Z + (Max.Z * MeshScale) - 95.0f))
 		{
 			// @SetCurrentBaseAction
 			Player->SetCurrentBaseAction(this);

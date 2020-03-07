@@ -44,7 +44,7 @@ void UCPL_PakrouBaseAction::SetTargetDistance()
 	FVector PlayerLocation = Player->GetActorLocation();
 
 	// Radius
-	float CollisionRadius = Player->GetSimpleCollisionRadius() + 10.0f;
+	float CollisionRadius = Player->GetSimpleCollisionRadius() + 12.0f;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

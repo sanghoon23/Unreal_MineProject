@@ -34,22 +34,23 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	Speed = Player->GetVelocity().Size();
 
 	// @FindFloorDistance - Jump 동작 자연스럽게 하기 위해서
-	// *Case 1
 	{
+		// *Case 1
 		//FVector CapsuleLocation = Player->GetActorLocation();
 		//FFindFloorResult FloorResult;
 		//Player->GetCharacterMovement()->FindFloor(CapsuleLocation, FloorResult, true);
 		//FindFloorDistance = FloorResult.GetDistanceToFloor();
 		// FloorResult.GetDistanceToFloor();
-	}
 
-	FindFloorDistance = FootTraceDistance();
-	// CLog::Print(FindFloorDistance);
+		// *Case 2
+		// FindFloorDistance = FootTraceDistance();
+		// CLog::Print(FindFloorDistance);
+	}
 
 	// @Jumping
 	bCharactorJumping = Player->IsJumping();
 
-	// @공중에 떠있으면서, Gravity 가 0.0f 이 아닐 때,
+	// @bInAir - 공중에 떠있으면서, Gravity 가 0.0f 이 아닐 때,
 	if (Player->GetCharacterMovement()->IsFalling()
 		&& Player->GetCharacterMovement()->GravityScale > 0.0f
 		/*&& Player->IsJumping() == true*/)
@@ -71,9 +72,15 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	//bAttackMode = BaseAttack->GetAttackMode();
 
 	IfNullRet(FootIK);
-	Effector = FootIK->GetEffector();
+	FeetEffector = FootIK->GetFeetIKEffector();
+	HandEffector = FootIK->GetHandIKEffector();
 }
 
+/*  
+#Edit 0306 - Jump 동작
+Jump 동작을 자연스럽게 하려했는데,
+InAir 체크로 판단하는게 맞았음;;
+*/
 float UCPlayerAnimInst::FootTraceDistance()
 {
 	FVector start = Player->GetActorLocation();
