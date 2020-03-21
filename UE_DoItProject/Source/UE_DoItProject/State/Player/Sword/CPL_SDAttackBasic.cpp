@@ -50,6 +50,7 @@ UCPL_SDAttackBasic::UCPL_SDAttackBasic()
 	#pragma endregion
 
 	#pragma region Create DamageType
+
 	DT_Noraml = NewObject<UCDamageType_Normal>();
 
 	#pragma endregion

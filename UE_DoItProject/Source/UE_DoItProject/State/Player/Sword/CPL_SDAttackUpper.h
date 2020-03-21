@@ -29,9 +29,6 @@ class UE_DOITPROJECT_API UCPL_SDAttackUpper
 	
 	#pragma region Reflection
 private:
-	//UPROPERTY(VisibleAnywhere, Category = "DamageType")
-	//	TSubclassOf<UCDamageType_Normal> DT_Normal;
-
 	// @DamageType
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_Air*			DT_Air;
@@ -63,13 +60,27 @@ public:
 	void ImpulseAttack(float intensity) override {}
 	void CheckProcedural() override {}
 
+	/* Function */
 private:
+	// AttackFunc
 	void LookAtTarget(AActor* Target);
 	void ActorLocateFrontTarget(AActor* Target);
+
+	// BlendCameraActorFunc
+	void BlendCameraFunc();
+	void EndAttackBlendCameraFunc();
+	void TimerFunc();
 
 	#pragma region Member
 private:
 	float AttackRadius = 100.0f;
+
+	APlayerController* PlayerController;
+
+	FTimerHandle EndBlendTimerHandle;
+
+	FDelegateHandle	CutOutBlendCameraFunc;
+	FDelegateHandle	LastOutBlendCameraFunc;
 
 	#pragma endregion
 };

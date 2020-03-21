@@ -6,7 +6,8 @@
 
 
 UCLASS()
-class UE_DOITPROJECT_API ACPL_Sword : public ACItem_Hand
+class UE_DOITPROJECT_API ACPL_Sword 
+	: public ACItem_Hand
 {
 	GENERATED_BODY()
 

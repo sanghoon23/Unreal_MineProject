@@ -11,6 +11,7 @@ enum class FConditionType
 	AIR = 1,
 	AIRATTACK = 2,
 	STRONGATTACK = 3,
+	STUN = 4,
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDamageFunc, AActor*)

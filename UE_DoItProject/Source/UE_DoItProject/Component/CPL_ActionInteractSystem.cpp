@@ -5,13 +5,12 @@
 
 #include "Actor/Base/CBaseInteractActor.h"
 #include "Charactor/Player/CPlayer.h"
-#include "Component/Player/CPL_PakrouActionComp.h"
 
 UCPL_ActionInteractSystem::UCPL_ActionInteractSystem()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	PakrouActionComp = CreateDefaultSubobject<UCPL_PakrouActionComp>("PakrouActionComp");
+	PakrouActionComp = CreateDefaultSubobject<UCPL_PakrouActionComp>("PakrouActionComponent");
 }
 
 void UCPL_ActionInteractSystem::BeginPlay()

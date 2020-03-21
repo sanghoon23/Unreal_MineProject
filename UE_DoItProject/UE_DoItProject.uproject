@@ -14,14 +14,18 @@
 			]
 		}
 	],
-	"Plugins": [
-		{
-			"Name": "ApexDestruction",
-			"Enabled": true
-		},
-		{
-			"Name": "GameplayAbilities",
-			"Enabled": true
-		}
-	]
+  "Plugins": [
+    {
+      "Name": "ApexDestruction",
+      "Enabled": true
+    },
+    {
+      "Name": "GameplayAbilities",
+      "Enabled": true
+    },
+    {
+      "Name": "CableComponent",
+      "Enabled": true
+    }
+  ]
 }

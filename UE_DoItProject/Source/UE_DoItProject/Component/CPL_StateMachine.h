@@ -12,7 +12,7 @@
 #include "CPL_StateMachine.generated.h"
 
 UENUM()
-enum class PlayerStateType : uint8
+enum class EPlayerStateType : uint8
 {
 	MAGE = 0,
 	SWORD = 1,
@@ -39,6 +39,10 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		TArray<class UAnimMontage*> DashMontages;
 
+	/* Cable PullAction */
+	UPROPERTY(VisibleAnywhere, Category = "CommonAction")
+		class UCPL_ActionPullActorWithCable* PullActorAction;
+
 	#pragma endregion
 
 public:	
@@ -57,17 +61,18 @@ public:
 public:
 	void OnSwapState();
 	void OnDash();
+	void OnPullActorWithCable();
 
 private:
 	void SetAngleWithControlRot(float Angle);
 
 	#pragma	region Member
 public:
-	PlayerStateType GetCurrentStateType() { return CurrentStateType; }
+	EPlayerStateType GetCurrentStateType() { return CurrentStateType; }
 
 private:
 	class ACPlayer* Player;
-	PlayerStateType CurrentStateType = PlayerStateType::MAGE;
+	EPlayerStateType CurrentStateType = EPlayerStateType::MAGE;
 
 	#pragma endregion
 };

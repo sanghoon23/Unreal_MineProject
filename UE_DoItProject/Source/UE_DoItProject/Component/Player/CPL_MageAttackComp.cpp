@@ -39,7 +39,7 @@ IIC_BaseAttack * UCPL_MageAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 {
 	IfTureRetResult
 	(
-		Type >= static_cast<uint8>(MageAttackType::END), 
+		Type >= static_cast<uint8>(EMageAttackType::END), 
 		nullptr
 	);
 
@@ -47,7 +47,7 @@ IIC_BaseAttack * UCPL_MageAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	uint8 BeforeTypeNum = static_cast<uint8>(AttackType);
 
 	// @µé¾î¿Â Type
-	MageAttackType SetType = static_cast<MageAttackType>(Type);
+	EMageAttackType SetType = static_cast<EMageAttackType>(Type);
 	if (AttackType == SetType)
 	{
 		return Cast<IIC_BaseAttack>(MageAttackStateArray[Type]);

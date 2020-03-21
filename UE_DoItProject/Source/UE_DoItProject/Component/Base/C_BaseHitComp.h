@@ -7,6 +7,27 @@
 
 #include "C_BaseHitComp.generated.h"
 
+USTRUCT()
+struct FHitUpsetConditionData
+{
+	GENERATED_USTRUCT_BODY()
+
+	float ApplyTime = 0.0f;
+	class UAnimMontage* UpsetConditionMon;
+};
+
+USTRUCT()
+struct FHitNonActionConditionData
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FHitNonActionConditionData() {}
+
+public:
+	float ApplyTime = 0.0f;
+	class UAnimMontage* NonActionMon = nullptr;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UE_DOITPROJECT_API UC_BaseHitComp 
@@ -16,8 +37,11 @@ class UE_DOITPROJECT_API UC_BaseHitComp
 
 	#pragma	region Reflection
 private:
-	//UPROPERTY(VisibleAnywhere, Category = "Montages")
-	//	TArray<class UAnimMontage*> HitMontages;
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		TArray<FHitUpsetConditionData> UpsetConditionDatas;
+
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		FHitNonActionConditionData NonActionConditionData;
 
 	#pragma endregion
 
@@ -34,8 +58,14 @@ public:
 public:
 	virtual void OnHit(AActor* AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount) override {}
 
+	/* Function */
+public:
+	void AddUpsetCondition(const FHitUpsetConditionData& ConditionData);
+	void AddNonActionCondition(const FHitNonActionConditionData& ConditionData);
+
 	#pragma	region Member
 private:
+	bool bNonAction = false;
 
 	#pragma endregion
 };

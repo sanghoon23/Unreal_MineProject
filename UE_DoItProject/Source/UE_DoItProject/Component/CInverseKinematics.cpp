@@ -22,7 +22,7 @@ void UCInverseKinematics::BeginPlay()
 	CapsuleHalfHeight = Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
 	// @LineTrace Debug
-	bDebugDraw = true;
+	bDebugDraw = false;
 }
 
 

@@ -81,17 +81,11 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Function */
 public :
-	/* 현재 상호작용 하고 있는 Actor 'Get' */
-	IIC_InteractActor* GetCurrentInteractActor() { return CurrentInteractActor; }
-	/* 현재 상호작용 하고 있는 Actor 'Set' */
-	void SetCurrentInteractActor(IIC_InteractActor* IC_Interact) { CurrentInteractActor = IC_Interact; }
-
 	/* 현재 동작할 BaseAction */
 	IIC_BaseAction* GetCurrentIBaseAction() { return CurrentIBaseAction; }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Member */
 protected:
-	IIC_InteractActor* CurrentInteractActor;
 	IIC_BaseAction* CurrentIBaseAction;
 };

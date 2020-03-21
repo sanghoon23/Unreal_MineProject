@@ -7,6 +7,7 @@
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
 #include "Component/Player/CPL_SwordAttackComp.h"
+#include "Component/Player/CPL_BlendCameraComp.h"
 
 UCPL_SDAttackUpper::UCPL_SDAttackUpper()
 {
@@ -78,8 +79,8 @@ UCPL_SDAttackUpper::UCPL_SDAttackUpper()
 
 	#pragma region DamageType
 
-	DT_Air = NewObject<UCDamageType_Air>();
-	DT_AirAttack = NewObject<UCDamageType_AirAttack>();
+	DT_Air			= NewObject<UCDamageType_Air>();
+	DT_AirAttack	= NewObject<UCDamageType_AirAttack>();
 	DT_StrongAttack = NewObject<UCDamageType_StrongAttack>();
 
 	#pragma endregion
@@ -94,14 +95,29 @@ void UCPL_SDAttackUpper::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UCPL_SDAttackUpper::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerController = Cast<APlayerController>(Player->GetController());
+	check(PlayerController);
+
+	// @EndAttack Delegate - BlendCamera
+	EndAttackDeleFunc.AddLambda([&]()
+	{
+		//@세계 시간 원상복구.
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+	});
+
+	CutOutBlendCameraFunc	= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::BlendCameraFunc);
+	LastOutBlendCameraFunc	= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::EndAttackBlendCameraFunc);
 }
 
 // - IBaseAttack 참고.
 // @param DoingActor - 공격하는 주체
-// #Edit *0220
-// @Warning - 공격 Anim 은 무조건 true 로 실행
-// 연속적으로 InputKey 가 들어올때,
-// 이전의 몽타주가 현재의 몽타주의 bAttacking == false 로 만듬.(ComboNotify 의 EndAttack 이)
+/* 
+@Warning 
+ #Edit *0220 - 공격 Anim 은 무조건 true 로 실행
+연속적으로 InputKey 가 들어올때, 이전의 몽타주가 현재의 몽타주의 bAttacking == false 로 만듬.(ComboNotify 의 EndAttack 이)
+ #Edit *0312, CameraActor Blend 하기 위해서 Delegate - CutOutBlendCameraFunc(추가), LastOutBlendCameraFunc(삭제)
+*/
 void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
@@ -116,7 +132,6 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 	// @IF TRUE RETURN
 	IfTrueRet(Player->IsJumping()); //@Jump Check
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
-
 	IfTrueRet(IsLastCombo()); //@IsLastCombo
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,9 +159,24 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 		bComboCheck = true;
 	}
 
+	//@Delegate 삽입
+	if (CutOutBlendCameraFunc.IsValid() == false)
+	{
+		CutOutBlendCameraFunc = EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::BlendCameraFunc);
+	}
+
+	//@Delegate 제거
+	EndAttackDeleFunc.Remove(LastOutBlendCameraFunc);
+	LastOutBlendCameraFunc.Reset();
+
 }
 
 // - IBaseAttack 참고.
+/*
+@Warning
+ #Edit *0312, CameraActor Blend 하기 위해서 
+마지막 공격 COMBO_SIX 부분에 Delegate - CutOutBlendCameraFunc(삭제), LastOutBlendCameraFunc(추가)
+*/
 void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 {
 	Super::OnComboSet(DoingActor);
@@ -163,12 +193,49 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 	bComboCheck = false;
 	++CurrentComboNum;
 
-	// @Combo 시 Target 위치 앞에서 공격하기
-	// 2번째 콤보일 때만,
-	// #Edit *0220 - 가까이서 올려버리면, 높이을 맞추다가 Pawn 끼리 충돌 나서 공중에 뜨질 못함.
+	//COMBO_TWO
 	if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_TWO))
 	{
-		ActorLocateFrontTarget(Target); // @거리 벌리고, 높이 맞추기
+		// @거리 벌리고, 높이 맞추기 - Combo 시 Target 위치 앞에서 공격하기
+		ActorLocateFrontTarget(Target);
+
+		//@카메라 전환
+		AActor* BlendCameraActor = Player->GetBlendCameraComp()->GetBlendCamera(EBlendCameraPositionType::BottomFace);
+		if (BlendCameraActor != nullptr)
+		{
+			PlayerController->SetViewTargetWithBlend(BlendCameraActor);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, L"UpperAttack ComboSet(COMBO_TWO) - BlendCamera Null!!")
+		}
+	}
+	//COMBO_SIX
+	else if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
+	{
+		//@세계 시간 조정.
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.4f);
+
+		//@카메라 전환
+		AActor* BlendCameraActor = Player->GetBlendCameraComp()->GetBlendCamera(EBlendCameraPositionType::ForwardFace);
+		if (BlendCameraActor != nullptr)
+		{
+			PlayerController->SetViewTargetWithBlend(BlendCameraActor, 2.0f);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, L"UpperAttack ComboSet(COMBO_SIX) - BlendCamera Null!!")
+		}
+
+		//@Delegate 삭제
+		EndAttackDeleFunc.Remove(CutOutBlendCameraFunc);
+		CutOutBlendCameraFunc.Reset();
+
+		//@Delegate 추가
+		if (LastOutBlendCameraFunc.IsValid() == false)
+		{
+			LastOutBlendCameraFunc = EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::EndAttackBlendCameraFunc);
+		}
 	}
 
 	// @Input 고정
@@ -182,7 +249,7 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
-	AttackMoveSpeed = 1.1f;
+	AttackMoveSpeed = 0.2f;
 
 	// 조건 검사.( CurrentComboNum = 0 ~ MaxCombo 까지 )
 	CurrentComboNum = FMath::Clamp<UINT>(CurrentComboNum, 0, MaxComboNum);
@@ -314,5 +381,25 @@ void UCPL_SDAttackUpper::ActorLocateFrontTarget(AActor * Target)
 
 	// @Setting Location
 	Player->SetActorLocation(SettingLocation);
+}
+
+/* COMBO 마지막을 제외한 공격 CameraBlend 처리 */
+void UCPL_SDAttackUpper::BlendCameraFunc()
+{
+	PlayerController->SetViewTargetWithBlend(Player);
+}
+
+/* COMBO 맨 마지막 공격의 CameraBlend 처리 */
+void UCPL_SDAttackUpper::EndAttackBlendCameraFunc()
+{
+	Player->OnBlockKeyInput();
+	GetWorld()->GetTimerManager().SetTimer(EndBlendTimerHandle, this, &UCPL_SDAttackUpper::TimerFunc, 2.0f);
+}
+
+/* COMBO 맨 마지막 공격 SetTimer Binding Function.*/
+void UCPL_SDAttackUpper::TimerFunc()
+{
+	Player->OffBlockKeyInput();
+	PlayerController->SetViewTargetWithBlend(Player);
 }
 

@@ -25,8 +25,9 @@ class UE_DOITPROJECT_API UCPL_SDAttackBasic
 	
 	#pragma region Reflection
 private:
-	//UPROPERTY(VisibleAnywhere, Category = "DamageType")
-	//	TSubclassOf<UCDamageType_Normal> DT_Normal;
+	// @DamageType
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_Normal*	DT_Noraml;
 
 	#pragma endregion
 
@@ -54,9 +55,6 @@ private:
 	#pragma region Member
 private:
 	float AttackRadius = 100.0f;
-
-	// @DamageType
-	UCDamageType_Normal* DT_Noraml;
 
 	#pragma endregion
 };

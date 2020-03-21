@@ -9,6 +9,7 @@
 #include "Component/Player/CPL_SwordAttackComp.h"
 #include "Component/Player/CPL_MageActionComp.h"
 #include "Component/Player/CPL_SwordActionComp.h"
+#include "State/Player/CPL_ActionPullActorWithCable.h"
 
 
 UCPL_StateMachine::UCPL_StateMachine()
@@ -95,6 +96,16 @@ UCPL_StateMachine::UCPL_StateMachine()
 	}
 	#pragma endregion
 
+	#pragma region Create PullActorWithCable Action
+	// Create PullActorWithCable Action
+	{
+		PullActorAction = CreateDefaultSubobject<UCPL_ActionPullActorWithCable>("ActionPullActor");
+		//@Set OwnerPawn 해줘야함.
+		PullActorAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
+	}
+
+	#pragma endregion
+
 	// Setting
 	Player = Cast<ACPlayer>(GetOwner());
 }
@@ -150,29 +161,29 @@ void UCPL_StateMachine::OnSwapState()
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 	// @Mage State
-	if (CurrentStateType == PlayerStateType::MAGE)
+	if (CurrentStateType == EPlayerStateType::MAGE)
 	{
 		UnMageState.Broadcast();
 	}
 	// @Sword State
-	else if (CurrentStateType == PlayerStateType::SWORD)
+	else if (CurrentStateType == EPlayerStateType::SWORD)
 	{
 		UnSwordState.Broadcast();
 	}
 
 	int Type = static_cast<int>(CurrentStateType);
 	++Type;
-	(Type == static_cast<int>(PlayerStateType::END))
-		? CurrentStateType = static_cast<PlayerStateType>(0)
-		: CurrentStateType = static_cast<PlayerStateType>(Type);
+	(Type == static_cast<int>(EPlayerStateType::END))
+		? CurrentStateType = static_cast<EPlayerStateType>(0)
+		: CurrentStateType = static_cast<EPlayerStateType>(Type);
 
 	// @Mage State
-	if (CurrentStateType == PlayerStateType::MAGE)
+	if (CurrentStateType == EPlayerStateType::MAGE)
 	{
 		OnMageState.Broadcast();
 	}
 	// @Sword State
-	else if (CurrentStateType == PlayerStateType::SWORD)
+	else if (CurrentStateType == EPlayerStateType::SWORD)
 	{
 		OnSwordState.Broadcast();
 	}
@@ -237,6 +248,12 @@ void UCPL_StateMachine::OnDash()
 			Player->ActorAnimMonPlay(DashMontages[3], 1.0f, true);
 		}
 	}
+}
+
+/* Cable 을 사용해서 Actor 끌어오는 Action */
+void UCPL_StateMachine::OnPullActorWithCable()
+{
+	PullActorAction->OnAction();
 }
 
 void UCPL_StateMachine::SetAngleWithControlRot(float Angle)

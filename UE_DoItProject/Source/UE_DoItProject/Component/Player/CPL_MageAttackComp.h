@@ -9,7 +9,7 @@
 #include "CPL_MageAttackComp.generated.h"
 
 UENUM()
-enum class MageAttackType : uint8// @MageType - Mage 상태일 때의 공격 Type
+enum class EMageAttackType : uint8// @MageType - Mage 상태일 때의 공격 Type
 {
 	BASIC = 0,
 	END = 1,
@@ -45,7 +45,7 @@ public:
 public:
 
 private:
-	MageAttackType AttackType = MageAttackType::BASIC;
+	EMageAttackType AttackType = EMageAttackType::BASIC;
 
 	#pragma endregion
 };

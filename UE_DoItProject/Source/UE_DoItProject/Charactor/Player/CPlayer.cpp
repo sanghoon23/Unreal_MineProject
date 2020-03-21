@@ -11,6 +11,9 @@
 #include "Component/Player/CPL_EquipComp.h"
 #include "Component/CPL_ActionInteractSystem.h"
 #include "Component/CInverseKinematics.h"
+#include "Component/Player/CPL_BlendCameraComp.h"
+
+#include "Actor/Cable/CPL_CableObject.h"
 
 ACPlayer::ACPlayer()
 {
@@ -88,6 +91,7 @@ ACPlayer::ACPlayer()
 
 	// Create Component
 	{
+		BlendCameraComp		= CreateDefaultSubobject<UCPL_BlendCameraComp>("BlendCameraComp");
 		StateManager		= CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
 		EquipComp			= CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
 		TargetingSystem		= CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
@@ -103,7 +107,7 @@ void ACPlayer::BeginPlay()
 	//Player Setting
 	{
 		// @CurrentStateType - 현재 상태 MAGE
-		CurrentStateType = PlayerStateType::MAGE;
+		CurrentStateType = EPlayerStateType::MAGE;
 
 		/* ControllerRot - 처음 Controller 위치를 조정하기 위해서, */
 		AddControllerPitchInput(13.f);
@@ -114,6 +118,23 @@ void ACPlayer::BeginPlay()
 		/* 다른 공격 Key Input 들이 막 들어올 때, AttackCount 가 꼬이지 않기 위해서 만든 CurrentBaseAttack 초기화 */
 		CurrentBaseAttack = StateManager->GetIAttackComp()->GetCurrentIBaseAttack();
 	}
+
+	#pragma region Set Attach Actor
+	//@Calbe Object Player 에 붙이기
+	{
+		FTransform transform = FTransform::Identity;
+		FActorSpawnParameters params;
+		params.Owner = this;
+
+		CableObject = GetWorld()->SpawnActor<ACPL_CableObject>(ACPL_CableObject::StaticClass(), transform, params);
+		CableObject->AttachToComponent
+		(
+			GetMesh() //@Charactor Mesh
+			, FAttachmentTransformRules(EAttachmentRule::KeepRelative, true)
+			, *(CableObject->GetAttachName())
+		);
+	}
+	#pragma endregion
 
 	// Set Delegate
 	{
@@ -193,6 +214,9 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("BasicAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnBasicAttack);
 	PlayerInputComponent->BindAction("SecondAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnSecondAttack);
+	PlayerInputComponent->BindAction("ThirdAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnThirdAttack);
+
+	PlayerInputComponent->BindAction("PullActorWithCableAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnPullActorWithCableAction);
 }
 
 /* Player 의 KeyInput 을 Block -  Move & Action 이 실행되지 않도록 */
@@ -279,6 +303,8 @@ void ACPlayer::OnZoom(float Value)
 
 void ACPlayer::OnJump()
 {
+	IfTrueRet(bBlockAction);
+
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_ActionComp* ActionComp = StateManager->GetIActionComp();
 	IfNullRet(ActionComp);
@@ -302,6 +328,8 @@ void ACPlayer::OffDoAxisTurn()
 
 void ACPlayer::OnEvade()
 {
+	IfTrueRet(bBlockAction);
+
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_ActionComp* ActionComp = StateManager->GetIActionComp();
 	IfNullRet(ActionComp);
@@ -313,15 +341,23 @@ void ACPlayer::OnEvade()
 	}
 }
 
-/* Dash 에도 Evade Value 사용 */
+void ACPlayer::OffEvade()
+{
+	bEvade = false;
+}
+
+/* @Warning - Dash 에도 Evade Value 사용 */
 void ACPlayer::OnDash()
 {
+	IfTrueRet(bBlockAction);
 	StateManager->OnDash();
 }
 
 /* @Player 공격 상태를 바꾸는 함수 */
 void ACPlayer::OnSwapState()
 {
+	IfTrueRet(bBlockAction);
+
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	StateManager->OnSwapState();
 }
@@ -345,6 +381,8 @@ void ACPlayer::OnInteractAction()
 // Ex) Player->ActorAnimMonPlay(SwordAttackMontages[0], 1.8f, true)
 void ACPlayer::OnBasicAttack()
 {
+	IfTrueRet(bBlockAction);
+
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_BaseAttack* SwitchBaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(0);
 	// check(SwitchBaseAttack);
@@ -358,6 +396,8 @@ void ACPlayer::OnBasicAttack()
 /* Attack 동일 */
 void ACPlayer::OnSecondAttack()
 {
+	IfTrueRet(bBlockAction);
+
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_BaseAttack* SwitchBaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(1);
 	// check(SwitchBaseAttack);
@@ -366,6 +406,30 @@ void ACPlayer::OnSecondAttack()
 		// BeginAttack
 		SwitchBaseAttack->BeginAttack(this);
 	}
+}
+
+/* Attack 동일 */
+void ACPlayer::OnThirdAttack()
+{
+	IfTrueRet(bBlockAction);
+
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	IIC_BaseAttack* SwitchBaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(2);
+	// check(SwitchBaseAttack);
+	IfNullRet(SwitchBaseAttack);
+	{
+		// BeginAttack
+		SwitchBaseAttack->BeginAttack(this);
+	}
+}
+
+/* Cable Object 를 사용해서 Actor 를 끌어오는 Action 실행 */
+void ACPlayer::OnPullActorWithCableAction()
+{
+	IfTrueRet(bBlockAction);
+
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	StateManager->OnPullActorWithCable();
 }
 
 void ACPlayer::OnGravity()
@@ -409,11 +473,6 @@ void ACPlayer::OnCollision()
 void ACPlayer::OffCollision()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
-
-void ACPlayer::OffEvade()
-{
-	bEvade = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

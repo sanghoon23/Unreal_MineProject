@@ -6,6 +6,7 @@
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
 #include "State/Player/Sword/CPL_SDAttackBasic.h"
 #include "State/Player/Sword/CPL_SDAttackUpper.h"
+#include "State/Player/Sword/CPL_SDAttackFinish.h"
 
 UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 {
@@ -32,6 +33,16 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		SwordAttackStateArray.Emplace(SD_UpperAttack);
 	}
 
+	// Create Thrid Attack (Finish Attack)
+	{
+		UCPL_SwordBaseAttack* SD_FinishAttack = nullptr;
+
+		SD_FinishAttack = CreateDefaultSubobject<UCPL_SDAttackFinish>("Sword_AttackThird");
+		SD_FinishAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
+
+		SwordAttackStateArray.Emplace(SD_FinishAttack);
+	}
+
 	#pragma endregion
 }
 
@@ -55,7 +66,7 @@ IIC_BaseAttack*  UCPL_SwordAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 {
 	IfTureRetResult
 	(
-		Type >= static_cast<uint8>(SwordAttackType::END),
+		Type >= static_cast<uint8>(ESwordAttackType::END),
 		nullptr
 	);
 
@@ -63,7 +74,7 @@ IIC_BaseAttack*  UCPL_SwordAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	uint8 BeforeTypeNum = static_cast<uint8>(AttackType);
 
 	// @µé¾î¿Â Type
-	SwordAttackType SetType = static_cast<SwordAttackType>(Type);
+	ESwordAttackType SetType = static_cast<ESwordAttackType>(Type);
 	if (AttackType == SetType)
 	{
 		return Cast<IIC_BaseAttack>(SwordAttackStateArray[Type]);

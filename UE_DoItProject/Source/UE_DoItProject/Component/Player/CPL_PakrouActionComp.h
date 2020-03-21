@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Component/Base/C_BaseActionComp.h"
-#include "State/Player/Base/CPL_PakrouBaseAction.h"
 
 #include "CPL_PakrouActionComp.generated.h"
 
@@ -32,10 +31,10 @@ class UE_DOITPROJECT_API UCPL_PakrouActionComp
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "PakrouBaseAction")
-		TArray<UCPL_PakrouBaseAction*> StartActionArray;
+		TArray<class UCPL_PakrouBaseAction*> StartActionArray;
 
 	UPROPERTY(VisibleAnywhere, Category = "PakrouBaseAction")
-		TArray<UCPL_PakrouBaseAction*> PakrouLinkAction;
+		TArray<class UCPL_PakrouBaseAction*> PakrouLinkAction;
 
 	#pragma endregion
 

@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Interface/IC_Player.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_InteractActor.h"
 
@@ -19,7 +20,10 @@ void UCNS_Interactive::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSeque
 	// 이동 불가.
 	I_Charactor->CanNotMove();
 
-	IIC_InteractActor* I_InteractActor = I_Charactor->GetCurrentInteractActor();
+	IIC_Player* I_Player = Cast<IIC_Player>(MeshComp->GetOwner());
+	IfNullRet(I_Player);
+
+	IIC_InteractActor* I_InteractActor = I_Player->GetCurrentInteractActor();
 	if (I_InteractActor != nullptr)
 	{
 		I_InteractActor->BeginInteract(Charactor);
@@ -33,10 +37,10 @@ void UCNS_Interactive::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequen
 	ACharacter* Charactor = Cast<ACharacter>(MeshComp->GetOwner());
 	IfNullRet(Charactor);
 
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
-	IfNullRet(I_Charactor);
+	IIC_Player* I_Player = Cast<IIC_Player>(MeshComp->GetOwner());
+	IfNullRet(I_Player);
 
-	IIC_InteractActor* I_InteractActor = I_Charactor->GetCurrentInteractActor();
+	IIC_InteractActor* I_InteractActor = I_Player->GetCurrentInteractActor();
 	if (I_InteractActor != nullptr)
 	{
 		I_InteractActor->TickInteract(Charactor);
@@ -56,7 +60,10 @@ void UCNS_Interactive::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequenc
 	// 이동 불가 해제.
 	I_Charactor->CanMove();
 
-	IIC_InteractActor* I_InteractActor = I_Charactor->GetCurrentInteractActor();
+	IIC_Player* I_Player = Cast<IIC_Player>(MeshComp->GetOwner());
+	IfNullRet(I_Player);
+
+	IIC_InteractActor* I_InteractActor = I_Player->GetCurrentInteractActor();
 	if (I_InteractActor != nullptr)
 	{
 		I_InteractActor->EndInteract(Charactor);

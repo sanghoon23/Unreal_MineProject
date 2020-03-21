@@ -78,7 +78,7 @@ void UCHM_BasicFirstCombo::BeginAttack(AActor * DoingActor)
 		Pawn->ActorAnimMonPlay
 		(
 			AttackMontages[0], /* @FirstMontage == Combo1 */
-			1.3f, false
+			0.9f, false
 		);
 	}
 	else if (bAttacking == true)
@@ -105,7 +105,7 @@ void UCHM_BasicFirstCombo::OnComboSet(AActor * DoingActor)
 		Pawn->ActorAnimMonPlay
 		(
 			AttackMontages[CurrentComboNum],
-			1.3f, true
+			0.9f, true
 		);
 	}
 	else

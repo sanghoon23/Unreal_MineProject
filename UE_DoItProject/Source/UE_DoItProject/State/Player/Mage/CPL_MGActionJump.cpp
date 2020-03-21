@@ -45,7 +45,7 @@ void UCPL_MGActionJump::OnAction()
 
 	// @IF TRUE RETURN
 	IfTrueRet(Player->GetEvade()); //@Evade Check
-	IfTrueRet(Player->IsJumping());
+	IfTrueRet(Player->IsJumping()); //@Jumping
 	IfTrueRet(Player->GetCharacterMovement()->IsFalling()); //@IsFalling
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping());
 

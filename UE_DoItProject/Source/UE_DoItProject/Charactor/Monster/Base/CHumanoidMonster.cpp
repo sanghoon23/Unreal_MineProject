@@ -31,7 +31,6 @@ void ACHumanoidMonster::BeginPlay()
 void ACHumanoidMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ACHumanoidMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

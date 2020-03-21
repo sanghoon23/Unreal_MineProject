@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "State/Base/C_BaseActionState.h"
 #include "Interface/IC_InteractActor.h"
+#include "Component/Player/CPL_PakrouActionComp.h"
 
 #include "CPL_ActionInteractSystem.generated.h"
 

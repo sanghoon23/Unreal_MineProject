@@ -54,7 +54,7 @@ protected:
 	class ACPlayer*		Player;
 
 	UINT				CurrentComboNum = 0;
-	UINT				MaxComboNum = 0;
+	UINT				MaxComboNum		= 0;
 
 	float AttackRange = 200.0f; // @공격범위, Target과 이 범위 안에 들어와야지만 공격가능
 	bool bAttackCall = false; // @Attack Input

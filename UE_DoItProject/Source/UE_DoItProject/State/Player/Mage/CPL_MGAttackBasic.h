@@ -24,6 +24,17 @@ class UE_DOITPROJECT_API UCPL_MGAttackBasic
 {
 	GENERATED_BODY()
 	
+	#pragma region Reflection
+private:
+	// @DamageType
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_Normal*		DT_Noraml;
+
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_StrongAttack*	DT_StrongAttack;
+
+	#pragma endregion
+
 public:
 	UCPL_MGAttackBasic();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -47,10 +58,6 @@ private:
 	#pragma region Member
 private:
 	float AttackRadius = 100.0f;
-
-	// @DamageType
-	UCDamageType_Normal*		DT_Noraml;
-	UCDamageType_StrongAttack*	DT_StrongAttack;
 
 	#pragma endregion
 };

@@ -7,11 +7,12 @@
 #include "CPL_SwordAttackComp.generated.h"
 
 UENUM()
-enum class SwordAttackType : uint8// @SwordType - Sword 상태일 때의 공격 Type
+enum class ESwordAttackType : uint8// @SwordType - Sword 상태일 때의 공격 Type
 {
-	BASIC = 0,
-	UPPER = 1,
-	END = 2,
+	BASIC	= 0,
+	UPPER	= 1,
+	FINISH	= 2,
+	END		= 3,
 };
 
 UCLASS()
@@ -42,7 +43,7 @@ public:
 
 	#pragma	region Member
 private:
-	SwordAttackType AttackType = SwordAttackType::BASIC;
+	ESwordAttackType AttackType = ESwordAttackType::BASIC;
 
 	#pragma endregion
 };

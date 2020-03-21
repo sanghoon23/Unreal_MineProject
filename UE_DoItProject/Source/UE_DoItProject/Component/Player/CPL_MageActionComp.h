@@ -7,13 +7,6 @@
 
 #include "CPL_MageActionComp.generated.h"
 
-UENUM()
-enum class MageActionType
-{
-	ROLL = 0,
-	END = 1,
-};
-
 UCLASS()
 class UE_DOITPROJECT_API UCPL_MageActionComp 
 	: public UC_BaseActionComp, public IIC_ActionComp

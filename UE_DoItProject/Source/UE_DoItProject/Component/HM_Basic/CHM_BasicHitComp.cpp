@@ -5,7 +5,8 @@
 
 #include "Interface/IC_Charactor.h"
 #include "Charactor/Monster/CHM_Basic.h"
-#include "DamageType/CDamageType_Normal.h"
+#include "DamageType/Base/CDamageType_Base.h"
+#include "DamageType/CDamageType_Stun.h"
 
 UCHM_BasicHitComp::UCHM_BasicHitComp()
 {
@@ -44,6 +45,15 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 		if (strongAttackHit.Succeeded())
 			StrongAttackHit = strongAttackHit.Object;
 	}
+
+	// 'Stun' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_Stun_.HM_Basic_Stun_'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> stunHit(*Path);
+		if (stunHit.Succeeded())
+			StunHit = stunHit.Object;
+	}
+
 
 	#pragma endregion
 }
@@ -96,9 +106,9 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 
 
 		//1.4 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(NormalHit, 0.8f, true);
+		HM_Basic->ActorAnimMonPlay(NormalHit, 0.6f, true);
 
-		CLog::Print(L"TYPE - NORMAL");
+		//CLog::Print(L"TYPE - NORMAL");
 	}
 	
 	// @AIR - 띄우기
@@ -123,9 +133,9 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 		HM_Basic->OffGravity();
 
 		//1.6 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(AirHit, 0.8f, true);
+		HM_Basic->ActorAnimMonPlay(AirHit, 0.6f, true);
 
-		CLog::Print(L"TYPE - AIR");
+		//CLog::Print(L"TYPE - AIR");
 	}
 
 	// @AIR ATTACK
@@ -143,9 +153,9 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 		HM_Basic->OffGravity();
 
 		//1.5 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(AirAttackHit, 0.8f, true);
+		HM_Basic->ActorAnimMonPlay(AirAttackHit, 0.6f, true);
 
-		CLog::Print(L"TYPE - AIRATTACK");
+		//CLog::Print(L"TYPE - AIRATTACK");
 	}
 
 	// @STRONG ATTACK
@@ -154,10 +164,29 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 		// @때린 대상 바라보기
 		LookAtActor(AttackingActor);
 
-		//1.5 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(StrongAttackHit, 0.8f, true);
+		//@애니메이션 실행 - (무조건 실행)
+		HM_Basic->ActorAnimMonPlay(StrongAttackHit, 0.6f, true);
 	}
 
+	// @STUN ATTACK
+	else if (DamageType->GetConditionType() == FConditionType::STUN)
+	{
+		//@때린 대상 바라보기
+		LookAtActor(AttackingActor);
+
+		//@StunType 캐스팅
+		UCDamageType_Stun* StunType = Cast<UCDamageType_Stun>(DamageType);
+		check(StunType);
+
+		//@상태이상 추가 - BaseHitComp
+		FHitNonActionConditionData ConditionData;
+		ConditionData.ApplyTime = StunType->GetStunTime();
+		ConditionData.NonActionMon = StunHit;
+		AddNonActionCondition(ConditionData);
+
+		//@애니메이션 실행 - (무조건 실행)
+		HM_Basic->ActorAnimMonPlay(StunHit, 0.6f, true);
+	}
 }
 
 // @param Target - 바라볼 대상

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Charactor/Monster/Base/CHumanoidMonster.h"
+#include "Interface/IC_Monster.h"
 #include "Interface/IC_Charactor.h"
 
 #include "Component/HM_Basic/CHM_BasicAttackComp.h"
@@ -12,7 +13,7 @@
 
 UCLASS()
 class UE_DOITPROJECT_API ACHM_Basic
-	: public ACHumanoidMonster, public IIC_Charactor
+	: public ACHumanoidMonster, public IIC_Monster, public IIC_Charactor
 {
 	GENERATED_BODY()
 	

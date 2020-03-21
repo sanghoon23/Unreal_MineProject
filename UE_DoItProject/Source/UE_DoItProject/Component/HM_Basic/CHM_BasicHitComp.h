@@ -26,6 +26,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* StrongAttackHit;
 
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		class UAnimMontage* StunHit;
+
 	#pragma endregion
 
 public:

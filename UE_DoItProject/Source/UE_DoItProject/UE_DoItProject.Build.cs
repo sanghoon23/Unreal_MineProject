@@ -41,7 +41,8 @@ public class UE_DoItProject : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
         {
-
+             // Cable
+            "CableComponent",
         });
 	}
 }

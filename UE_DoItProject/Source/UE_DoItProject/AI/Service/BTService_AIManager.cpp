@@ -4,12 +4,13 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Interface/IC_Monster.h"
 #include "Interface/IC_Charactor.h"
 
 UBTService_AIManager::UBTService_AIManager()
 {
 	NodeName = L"AIManager";
-	Interval = 0.1f;
+	Interval = 0.02f;
 }
 
 // #Edit *0219
@@ -27,6 +28,9 @@ void UBTService_AIManager::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * 
 		IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Charactor);
 		check(I_Charactor);
 
+		IIC_Monster* I_Monster = Cast<IIC_Monster>(Charactor);
+		check(I_Monster);
+
 		// @IF TRUE
 		// 1. Montage 가 실행중이면, retrun
 		if (Charactor->GetMesh()->GetAnimInstance()->Montage_IsPlaying(I_Charactor->GetCurrentApplyedMontage()) == true)
@@ -36,14 +40,15 @@ void UBTService_AIManager::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * 
 		}
 
 		// @IF FALSE
+		if(I_Monster->GetAIRunningPossible() == false)
 		{
-
+			SetPossibleToBlackboardValue(OwnerComp, false);
+			return;
 		}
 
+		// @통과
+		SetPossibleToBlackboardValue(OwnerComp, true);
 	}
-
-	// @통과
-	SetPossibleToBlackboardValue(OwnerComp, true);
 }
 
 void UBTService_AIManager::SetPossibleToBlackboardValue(UBehaviorTreeComponent & OwnerComp, bool bValue)

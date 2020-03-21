@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/IC_Player.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_StateManager.h"
 #include "Interface/IC_AttackComp.h"
@@ -10,11 +11,11 @@
 
 #include "CPlayer.generated.h"
 
-enum class PlayerStateType : uint8;
+enum class EPlayerStateType : uint8;
 
 UCLASS()
 class UE_DOITPROJECT_API ACPlayer 
-	: public ACharacter, public IIC_Charactor
+	: public ACharacter, public IIC_Player, public IIC_Charactor
 {
 	GENERATED_BODY()
 
@@ -36,6 +37,9 @@ private:
 		class UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCPL_BlendCameraComp* BlendCameraComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCPL_StateMachine* StateManager;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
@@ -55,6 +59,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCPL_TargetingSystem* TargetingSystem;
+
+	UPROPERTY(VisibleAnywhere, Category = "AttachActor")
+		class ACPL_CableObject* CableObject;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		class UAnimMontage* CurrentMontage;
@@ -102,8 +109,15 @@ public:
 
 	/* Function */
 public:
+	// Block Input
 	void OnBlockKeyInput();
 	void OffBlockKeyInput();
+
+	//#Edit 0320 - 보류,
+	// Block Action
+	void OnBlockAction()	{ bBlockAction = true; }
+	void OffBlockAction()	{ bBlockAction = false; }
+	
 
 	/* LeftHand == 0, RightHand == 1, 로 설정되어있음 그 이외의 값은 return*/
 	void OnHandIK(uint8 HandNumber);
@@ -128,9 +142,12 @@ private:
 	void OnSwapState(); //@무기스왑 ( 검 / 마법 )
 	void OnLookAround(); //@공격대상 찾기
 
-	void OnInteractAction(); //  @E - 상호작용
-	void OnBasicAttack(); // @1번 공격 - 기본공격
-	void OnSecondAttack(); // @2번 공격
+	void OnInteractAction();	//  @E - 상호작용
+	void OnBasicAttack();		// @1번 공격 - 기본공격
+	void OnSecondAttack();		// @2번 공격
+	void OnThirdAttack();		// @3번 공격
+
+	void OnPullActorWithCableAction();
 
 	#pragma	region Member
 public:
@@ -140,12 +157,18 @@ public:
 	// @TargetSystem
 	APawn* GetFindAttackTarget();
 
+	// @Blend Camera
+	class UCPL_BlendCameraComp* GetBlendCameraComp() { return BlendCameraComp; }
+
+	// @Cable Object;
+	class ACPL_CableObject* GetCableObject() { return CableObject; }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Move
 	bool GetCanMove() const { return bCanMove; }
 
 	// Jump
 	void SetJumping(bool bValue) { bJumping = bValue; }
-
 
 	// Evade
 	bool GetEvade() const { return bEvade; }
@@ -156,8 +179,11 @@ public:
 private:
 	bool bDeath				= false;
 
+	// Block
+	bool bBlockAction		= false;
+
 	// State
-	PlayerStateType CurrentStateType;
+	EPlayerStateType CurrentStateType;
 	bool bChangeStateSwap	= false;
 
 	// Move
