@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "Perception/AIPerceptionTypes.h"
 
 #include "CAIC_HM_Basic.generated.h"
 
@@ -14,14 +13,20 @@ class UE_DOITPROJECT_API ACAIC_HM_Basic
 
 	#pragma region Reflection
 private:
-	UPROPERTY(VisibleAnywhere, Category = "AIControl")
-		class UAIPerceptionComponent* Perception;
+	//UPROPERTY(VisibleAnywhere, Category = "AIControl")
+	//	class UAIPerceptionComponent* Perception;
 
-	UPROPERTY(VisibleAnywhere, Category = "AIControl")
-		class UAISenseConfig_Sight* Sight;
+	//UPROPERTY(VisibleAnywhere, Category = "AIControl")
+	//	class UAISenseConfig_Sight* Sight;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
 		float PatrolRadius = 600.0f;
+
+	//UPROPERTY(VisibleAnywhere, Category = "Behavior")
+	//	class UBehaviorTree* BT;
+
+	//UPROPERTY(VisibleAnywhere, Category = "Behavior")
+	//	class UBlackboardData* BB;
 
 	#pragma endregion
 
@@ -34,8 +39,8 @@ protected:
 	virtual void OnUnPossess() override;
 
 private:
-	UFUNCTION()
-		void OnSensingTarget(AActor* Actor, FAIStimulus Stimulus);
+	//UFUNCTION()
+	//	void OnSensingTarget(AActor* Actor, FAIStimulus Stimulus);
 
 private:
 	class UBehaviorTree* BT;

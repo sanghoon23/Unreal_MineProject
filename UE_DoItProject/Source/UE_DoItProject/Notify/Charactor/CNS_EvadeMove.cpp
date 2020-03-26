@@ -23,13 +23,14 @@ void UCNS_EvadeMove::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequence
 	AActor* Actor = MeshComp->GetOwner();
 	IfNullRet(Actor);
 	
+	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
+	IfNullRet(Charactor);
+	Speed = Charactor->GetEvadeSpeed();
+
 	// @Evade Tick
 	FVector Vec = Actor->GetActorLocation();
 	Vec = Vec + (Direction * Speed);
 	Actor->SetActorLocation(Vec);
-
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
-	IfNullRet(Charactor);
 }
 
 void UCNS_EvadeMove::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation)

@@ -6,6 +6,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+
 #include "_GameController/CPL_TargetingSystem.h"
 #include "Component/CPL_StateMachine.h"
 #include "Component/Player/CPL_EquipComp.h"
@@ -53,6 +57,7 @@ ACPlayer::ACPlayer()
 		RightParticle->SetWorldScale3D(FVector(3.0f));
 	}
 
+	#pragma region Setting Player Value
 	// Camera
 	{
 		SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
@@ -87,23 +92,47 @@ ACPlayer::ACPlayer()
 		CameraComp->SetRelativeRotation(FRotator(0.0f, -50.0f, 0.f));
 	}
 
+	//NiagaraComp_ImageAfter = CreateDefaultSubobject<UNiagaraComponent>("NiaComponent");
+	//NiagaraComp_ImageAfter->SetupAttachment(GetMesh());
+
+	#pragma endregion
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	#pragma region Create Other Component / Difference To Charactor
 	// Create Component
 	{
-		BlendCameraComp		= CreateDefaultSubobject<UCPL_BlendCameraComp>("BlendCameraComp");
-		StateManager		= CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
-		EquipComp			= CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
-		TargetingSystem		= CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
-		IneverseKinematics	= CreateDefaultSubobject<UCInverseKinematics>("IKComp");
-		InteractSystem		= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
+		BlendCameraComp			= CreateDefaultSubobject<UCPL_BlendCameraComp>("BlendCameraComp");
+		StateManager			= CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
+		EquipComp				= CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
+		TargetingSystem			= CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
+		IneverseKinematics		= CreateDefaultSubobject<UCInverseKinematics>("IKComp");
+		InteractSystem			= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
 	}
+	#pragma endregion
+
+	//strPath = L"NiagaraSystem'/Game/_Mine/UseParticle/Nia/NiaSystem_ImageAfter.NiaSystem_ImageAfter'";
+	//ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiaSystem(*strPath);
 }
 
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	#pragma region Component Setting
+	//Component Setting
+	{
+		//@Niagara Component
+		//NiagaraComp_ImageAfter->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+
+		//@WeakPtr
+		//TSharedRef<UNiagaraComponent> NiaCompOwner = MakeShared<UNiagaraComponent>();
+		//TWeakObjectPtr<class UNiagaraComponent> InsertPtr(NiagaraComp_AfterImage);
+		//StateManager->SetNiaComp_Dash(InsertPtr);
+	}
+	#pragma endregion
+
+	#pragma region Player Setting
 	//Player Setting
 	{
 		// @CurrentStateType - 현재 상태 MAGE
@@ -118,6 +147,7 @@ void ACPlayer::BeginPlay()
 		/* 다른 공격 Key Input 들이 막 들어올 때, AttackCount 가 꼬이지 않기 위해서 만든 CurrentBaseAttack 초기화 */
 		CurrentBaseAttack = StateManager->GetIAttackComp()->GetCurrentIBaseAttack();
 	}
+	#pragma endregion
 
 	#pragma region Set Attach Actor
 	//@Calbe Object Player 에 붙이기
@@ -136,6 +166,7 @@ void ACPlayer::BeginPlay()
 	}
 	#pragma endregion
 
+	#pragma region Set Delegate
 	// Set Delegate
 	{
 		// @IC_Charactor
@@ -158,6 +189,7 @@ void ACPlayer::BeginPlay()
 			RightParticle->SetVisibility(false); // MageHandEffect
 		});
 	}
+	#pragma endregion
 }
 
 // #Edit * 0219
@@ -218,6 +250,18 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("PullActorWithCableAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnPullActorWithCableAction);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//@Implementable Event
+
+//void ACPlayer::CallDashNiagaraEffect()
+//{
+//	CLog::Print(L"Call Implementable Event!!");
+//}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//@Custom
 
 /* Player 의 KeyInput 을 Block -  Move & Action 이 실행되지 않도록 */
 void ACPlayer::OnBlockKeyInput()

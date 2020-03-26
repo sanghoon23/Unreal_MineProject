@@ -36,7 +36,7 @@ UCPL_StateMachine::UCPL_StateMachine()
 		UAnimMontage* R_DashMontage = nullptr;
 
 		// @Forward
-		strPath = L"AnimMontage'/Game/_Mine/Montages/Player/Common/CommonMon_Dash_F.CommonMon_Dash_F'";
+		strPath = L"AnimMontage'/Game/_Mine/Montages/Player/Common/CommonMon_CustomDash_Montage.CommonMon_CustomDash_Montage'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> F_Dash(*strPath);
 		if (F_Dash.Succeeded())
 			F_DashMontage = F_Dash.Object;
@@ -64,6 +64,21 @@ UCPL_StateMachine::UCPL_StateMachine()
 		DashMontages.Emplace(L_DashMontage);
 		DashMontages.Emplace(R_DashMontage);
 	}
+
+	#pragma endregion
+
+	#pragma region Dash Niagara Particle
+
+	strPath = L"NiagaraSystem'/Game/_Mine/UseParticle/Nia/Nia_AfterTest.Nia_AfterTest'";
+	//Dash_NiaAfterImage = LoadObject<UNiagaraSystem>(NULL, *strPath);
+	//UNiagaraFunctionLibrary::
+	//ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashNia(*strPath);
+	//if (DashNia.Succeeded())
+	//{
+	//	Dash_NiaAfterImage = DashNia.Object;
+	//}
+
+	//UGameplayStatics::object
 
 	#pragma endregion
 
@@ -106,6 +121,12 @@ UCPL_StateMachine::UCPL_StateMachine()
 
 	#pragma endregion
 
+	#pragma region Create Niagara Component
+	{
+		//NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>("NiaComponent");
+	}
+	#pragma endregion
+
 	// Setting
 	Player = Cast<ACPlayer>(GetOwner());
 }
@@ -114,6 +135,14 @@ UCPL_StateMachine::UCPL_StateMachine()
 void UCPL_StateMachine::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//@Set NiagaraComp Attach
+	{
+		//NiagaraComp->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+		//NiagaraComp->SetAsset(Dash_NiaAfterImage);
+		//NiagaraComp->bAutoManageAttachment = true;
+		//NiagaraComp->SetAutoAttachmentParameters(Player->GetMesh(), NAME_None, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative);
+	}
 
 	// @MageState 로 전환될 때, CastMontage 실행.
 	OnMageState.AddLambda([&]()
@@ -206,6 +235,7 @@ void UCPL_StateMachine::OnDash()
 
 	// @Set Evade
 	Player->SetEvade(true);
+	Player->SetEvadeSpeed(20.0f);
 
 	APlayerController* Controller = Cast<APlayerController>(Player->GetController());
 	if (Controller != nullptr)
@@ -213,8 +243,6 @@ void UCPL_StateMachine::OnDash()
 		FRotator ControlRotation = Player->GetControlRotation();
 		FRotator Yaw = FRotator(0.0f, ControlRotation.Yaw, 0.0f);
 		FQuat ControlQuat = FQuat(Yaw);
-
-		Player->SetEvadeSpeed(10.0f);
 		if (Controller->IsInputKeyDown(EKeys::W))
 		{
 			SetAngleWithControlRot(0.0f);
@@ -233,21 +261,24 @@ void UCPL_StateMachine::OnDash()
 		}
 		else if (Controller->IsInputKeyDown(EKeys::A))
 		{
-			SetAngleWithControlRot(0.0f);
+			SetAngleWithControlRot(-90.0f);
 			Player->SetEvadeDirection((-1) * ControlQuat.GetRightVector());
 
 			Player->OffCollision();
-			Player->ActorAnimMonPlay(DashMontages[2], 1.0f, true);
+			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);
 		}
 		else if (Controller->IsInputKeyDown(EKeys::D))
 		{
-			SetAngleWithControlRot(0.0f);
+			SetAngleWithControlRot(90.0f);
 			Player->SetEvadeDirection(ControlQuat.GetRightVector());
 
 			Player->OffCollision();
-			Player->ActorAnimMonPlay(DashMontages[3], 1.0f, true);
+			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);
 		}
 	}
+
+	//@잔상 효과 - NiaComp(WeakPtr)
+	//NiaComp_Dash->Activate(true);
 }
 
 /* Cable 을 사용해서 Actor 끌어오는 Action */

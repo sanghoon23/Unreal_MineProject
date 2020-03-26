@@ -20,6 +20,10 @@ class UE_DOITPROJECT_API ACPlayer
 	GENERATED_BODY()
 
 	#pragma	region Reflection
+public:
+	//UFUNCTION(BlueprintCallable, Category = "Niagara")
+	//	void CallDashNiagaraEffect();
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movements")
 		float WalkSpeed = 400.0f;
@@ -45,9 +49,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCPL_EquipComp* EquipComp;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Component")
-		class UCPL_ActionInteractSystem* InteractSystem;
-
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* LeftParticle;
 
@@ -55,7 +56,16 @@ private:
 		class UParticleSystemComponent* RightParticle;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Component")
+		class UCPL_ActionInteractSystem* InteractSystem;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Component")
 		class UCInverseKinematics* IneverseKinematics;
+
+	//UPROPERTY(EditDefaultsOnly, Category = "Component")
+	//	class UNiagaraComponent* NiagaraComp_ImageAfter;
+
+	//UPROPERTY(EditDefaultsOnly, Category = "Niagara")
+	//	class UNiagaraSystem* Nia_DashImageAfter;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCPL_TargetingSystem* TargetingSystem;
@@ -195,7 +205,7 @@ private:
 
 	// Evade
 	bool bEvade				= false;
-	float EvadeSpeed		= 15.0f;
+	float EvadeSpeed		= 15.0f; //@Default
 	FVector EvadeDirection;
 
 	// Attack

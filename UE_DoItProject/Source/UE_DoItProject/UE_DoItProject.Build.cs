@@ -20,6 +20,8 @@ public class UE_DoItProject : ModuleRules
             "SlateCore",
             "RenderCore",
             "UnrealEd",
+            "LevelEditor",
+            "EditorStyle",
 
             // AI
             "AIModule",
@@ -43,6 +45,9 @@ public class UE_DoItProject : ModuleRules
         {
              // Cable
             "CableComponent",
+
+            // Niagara
+            "Niagara",
         });
 	}
 }
