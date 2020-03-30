@@ -48,6 +48,8 @@ public class UE_DoItProject : ModuleRules
 
             // Niagara
             "Niagara",
+            "NiagaraCore",
+            "NiagaraEditor",
         });
 	}
 }

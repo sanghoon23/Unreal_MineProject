@@ -8,7 +8,8 @@
 
 ACAIC_HM_Basic::ACAIC_HM_Basic()
 {
-	SetGenericTeamId(FGenericTeamId(1));
+	//SetGenericTeamId(FGenericTeamId(1));
+
 	FString path = L"";
 
 	path = L"BlackboardData'/Game/_Mine/_MyBlueprint/AI/Blackboard/BB_HM_Basic.BB_HM_Basic'";

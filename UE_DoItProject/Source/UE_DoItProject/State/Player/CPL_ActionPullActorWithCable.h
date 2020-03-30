@@ -51,7 +51,7 @@ private:
 	float UsingActionRange = 1700.0f;
 
 	FVector PulledDirection = FVector(0.0f);
-	float PulledSpeed = 15.0f;
+	float PulledSpeed = 5.0f;
 	float PullRange = 200.0f; //@앞까지 당겨질 거리
 	float LerpValue = 0.0f;
 	bool bNextMontage = false;

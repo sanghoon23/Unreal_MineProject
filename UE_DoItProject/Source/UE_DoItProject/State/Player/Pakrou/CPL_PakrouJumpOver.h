@@ -37,5 +37,5 @@ public:
 
 	/* Member */
 private:
-	float JumpOverSpeed = 0.3f;
+	float JumpOverSpeed = 0.1f;
 };

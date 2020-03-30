@@ -1,6 +1,10 @@
 #include "CPL_StateMachine.h"
 #include "Global.h"
 
+#include "NiagaraActor.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Charactor/Player/CPlayer.h"
@@ -67,21 +71,6 @@ UCPL_StateMachine::UCPL_StateMachine()
 
 	#pragma endregion
 
-	#pragma region Dash Niagara Particle
-
-	strPath = L"NiagaraSystem'/Game/_Mine/UseParticle/Nia/Nia_AfterTest.Nia_AfterTest'";
-	//Dash_NiaAfterImage = LoadObject<UNiagaraSystem>(NULL, *strPath);
-	//UNiagaraFunctionLibrary::
-	//ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashNia(*strPath);
-	//if (DashNia.Succeeded())
-	//{
-	//	Dash_NiaAfterImage = DashNia.Object;
-	//}
-
-	//UGameplayStatics::object
-
-	#pragma endregion
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	#pragma region Create AttackComp
@@ -123,8 +112,20 @@ UCPL_StateMachine::UCPL_StateMachine()
 
 	#pragma region Create Niagara Component
 	{
-		//NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>("NiaComponent");
+		NiagaraComp_ImageAfter = CreateDefaultSubobject<UNiagaraComponent>("NiaComponent");
+		NiagaraComp_ImageAfter->bAutoActivate = false;
 	}
+	#pragma endregion
+
+	#pragma region Dash Niagara Particle
+
+	strPath = L"NiagaraSystem'/Game/_Mine/UseParticle/Nia/NiaSystem_ImageAfter.NiaSystem_ImageAfter'";
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> DashNia(*strPath);
+	if (DashNia.Succeeded())
+	{
+		Nia_DashImageAfter = DashNia.Object;
+	}
+
 	#pragma endregion
 
 	// Setting
@@ -138,10 +139,8 @@ void UCPL_StateMachine::BeginPlay()
 
 	//@Set NiagaraComp Attach
 	{
-		//NiagaraComp->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
-		//NiagaraComp->SetAsset(Dash_NiaAfterImage);
-		//NiagaraComp->bAutoManageAttachment = true;
-		//NiagaraComp->SetAutoAttachmentParameters(Player->GetMesh(), NAME_None, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative);
+		NiagaraComp_ImageAfter->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+		NiagaraComp_ImageAfter->SetAsset(Nia_DashImageAfter);
 	}
 
 	// @MageState 로 전환될 때, CastMontage 실행.
@@ -233,10 +232,6 @@ void UCPL_StateMachine::OnDash()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-	// @Set Evade
-	Player->SetEvade(true);
-	Player->SetEvadeSpeed(20.0f);
-
 	APlayerController* Controller = Cast<APlayerController>(Player->GetController());
 	if (Controller != nullptr)
 	{
@@ -277,8 +272,25 @@ void UCPL_StateMachine::OnDash()
 		}
 	}
 
+	// @Set Evade
+	Player->SetEvade(true);
+	Player->SetEvadeSpeed(5.0f);
+
 	//@잔상 효과 - NiaComp(WeakPtr)
-	//NiaComp_Dash->Activate(true);
+	//@Case1
+	UNiagaraFunctionLibrary::SpawnSystemAttached
+	(
+		Nia_DashImageAfter,
+		Player->GetMesh(),
+		NAME_None,
+		FVector(0.0f),
+		FRotator(0.0f),
+		EAttachLocation::KeepRelativeOffset,
+		true
+	);
+
+	//@Case2
+	//NiagaraComp_ImageAfter->Activate(true);
 }
 
 /* Cable 을 사용해서 Actor 끌어오는 Action */

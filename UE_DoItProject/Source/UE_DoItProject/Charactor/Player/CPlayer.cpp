@@ -6,10 +6,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
-#include "NiagaraFunctionLibrary.h"
-#include "NiagaraComponent.h"
-#include "NiagaraSystem.h"
-
 #include "_GameController/CPL_TargetingSystem.h"
 #include "Component/CPL_StateMachine.h"
 #include "Component/Player/CPL_EquipComp.h"
@@ -92,9 +88,6 @@ ACPlayer::ACPlayer()
 		CameraComp->SetRelativeRotation(FRotator(0.0f, -50.0f, 0.f));
 	}
 
-	//NiagaraComp_ImageAfter = CreateDefaultSubobject<UNiagaraComponent>("NiaComponent");
-	//NiagaraComp_ImageAfter->SetupAttachment(GetMesh());
-
 	#pragma endregion
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,26 +104,11 @@ ACPlayer::ACPlayer()
 	}
 	#pragma endregion
 
-	//strPath = L"NiagaraSystem'/Game/_Mine/UseParticle/Nia/NiaSystem_ImageAfter.NiaSystem_ImageAfter'";
-	//ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiaSystem(*strPath);
 }
 
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	#pragma region Component Setting
-	//Component Setting
-	{
-		//@Niagara Component
-		//NiagaraComp_ImageAfter->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
-
-		//@WeakPtr
-		//TSharedRef<UNiagaraComponent> NiaCompOwner = MakeShared<UNiagaraComponent>();
-		//TWeakObjectPtr<class UNiagaraComponent> InsertPtr(NiagaraComp_AfterImage);
-		//StateManager->SetNiaComp_Dash(InsertPtr);
-	}
-	#pragma endregion
 
 	#pragma region Player Setting
 	//Player Setting
@@ -254,10 +232,13 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //@Implementable Event
 
-//void ACPlayer::CallDashNiagaraEffect()
-//{
-//	CLog::Print(L"Call Implementable Event!!");
-//}
+void ACPlayer::CallDashNiagaraEffect()
+{
+	CLog::Print(L"Call Implementable Event!!");
+
+	//Nia_Dash->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+	//Nia_Dash->GetNiagaraComponent()->Activate(true);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

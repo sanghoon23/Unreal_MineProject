@@ -21,8 +21,8 @@ class UE_DOITPROJECT_API ACPlayer
 
 	#pragma	region Reflection
 public:
-	//UFUNCTION(BlueprintCallable, Category = "Niagara")
-	//	void CallDashNiagaraEffect();
+	UFUNCTION(BlueprintCallable, Category = "Niagara")
+		void CallDashNiagaraEffect();
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movements")
@@ -60,12 +60,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Component")
 		class UCInverseKinematics* IneverseKinematics;
-
-	//UPROPERTY(EditDefaultsOnly, Category = "Component")
-	//	class UNiagaraComponent* NiagaraComp_ImageAfter;
-
-	//UPROPERTY(EditDefaultsOnly, Category = "Niagara")
-	//	class UNiagaraSystem* Nia_DashImageAfter;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCPL_TargetingSystem* TargetingSystem;

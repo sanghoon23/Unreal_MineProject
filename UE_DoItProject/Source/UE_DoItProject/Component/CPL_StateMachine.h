@@ -33,15 +33,22 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		TArray<class UC_BaseActionComp*> ActionCompArray;
 
-	/* Cable PullAction */
-	UPROPERTY(VisibleAnywhere, Category = "CommonAction")
-		class UCPL_ActionPullActorWithCable* PullActorAction;
-
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		class UAnimMontage* MageStateCastMontage;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		TArray<class UAnimMontage*> DashMontages;
+
+	/* Cable PullAction */
+	UPROPERTY(VisibleAnywhere, Category = "CommonAction")
+		class UCPL_ActionPullActorWithCable* PullActorAction;
+
+	/* Niagara */
+	UPROPERTY(EditDefaultsOnly, Category = "Niagara")
+		class UNiagaraComponent* NiagaraComp_ImageAfter;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Niagara")
+		class UNiagaraSystem* Nia_DashImageAfter;
 
 	#pragma endregion
 
@@ -69,13 +76,10 @@ private:
 	#pragma	region Member
 public:
 	EPlayerStateType GetCurrentStateType() { return CurrentStateType; }
-	//void SetNiaComp_Dash(TWeakObjectPtr<class UNiagaraComponent> Input) { NiaComp_Dash = Input; }
 
 private:
 	class ACPlayer* Player;
 	EPlayerStateType CurrentStateType = EPlayerStateType::MAGE;
-
-	//TWeakObjectPtr<class UNiagaraComponent> NiaComp_Dash;
 
 	#pragma endregion
 };

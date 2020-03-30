@@ -35,5 +35,5 @@ public:
 	virtual void EndActionState() override;
 
 private:
-	float ClimbingLeftMoveSpeed = 1.0f;
+	float ClimbingLeftMoveSpeed = 0.2f;
 };

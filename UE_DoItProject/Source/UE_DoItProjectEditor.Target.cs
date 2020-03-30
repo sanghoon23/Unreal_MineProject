@@ -23,6 +23,11 @@ public class UE_DoItProjectEditorTarget : TargetRules
             "HeadMountedDisplay",
             "GameplayAbilities",
             "GameplayTags",
+
+            // Niagara
+            "Niagara",
+            "NiagaraCore",
+            "NiagaraEditor",
         } );
 	}
 }

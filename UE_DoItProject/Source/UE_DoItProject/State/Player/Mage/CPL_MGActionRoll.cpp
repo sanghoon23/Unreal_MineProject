@@ -77,7 +77,7 @@ void UCPL_MGActionRoll::OnAction()
 	}
 
 	/* 우선 charactor Forward 방향으로 */
-	Player->SetEvadeSpeed(15.0f);
+	Player->SetEvadeSpeed(5.0f);
 	Player->SetEvadeDirection(Player->GetActorForwardVector());
 	Player->ActorAnimMonPlay(RollMontage, 1.5f, true);
 }
