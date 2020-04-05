@@ -59,6 +59,9 @@ private:
 	void LookAtTarget(AActor* Target);
 	void ActorLocateFrontTarget(AActor* Target);
 
+	void DelegateBeginAttack();
+	void DelegateEndAttack();
+
 	#pragma region Member
 private:
 	float AttackRadius = 100.0f;

@@ -13,8 +13,6 @@ UCPL_MGAttackBasic::UCPL_MGAttackBasic()
 	{
 		CurrentComboNum = static_cast<UINT>(UMG_BasicAttack::COMBO_ONE);
 		MaxComboNum = static_cast<UINT>(UMG_BasicAttack::END);
-
-		AttackRange = 230.0f;
 	}
 
 	FString Path = L"";
@@ -82,7 +80,6 @@ void UCPL_MGAttackBasic::BeginAttack(AActor * DoingActor)
 	// @IF TRUE RETURN
 	IfTrueRet(Player->IsJumping()); //@Jump Check
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
-
 	IfTrueRet(IsLastCombo()); //@IsLastCombo
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,10 +213,10 @@ void UCPL_MGAttackBasic::AttackOtherPawn()
 
 			}//(HitComp != nullptr)
 			else
-				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
+				UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - HitComp Null!!");
 		}//(Charactor != nullptr)
 		else
-			UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
+			UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - Charactor Null!!");
 	}//(bHit == true)
 }
 

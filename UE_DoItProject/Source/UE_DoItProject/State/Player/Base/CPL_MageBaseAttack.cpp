@@ -60,7 +60,7 @@ void UCPL_MageBaseAttack::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		if (FindAttackTarget != nullptr)
 		{
 			// @AttackRange 보다 크면, Controller Input Vec
-			if (FindAttackTarget->GetHorizontalDistanceTo(Player) > AttackRange)
+			if (Player->GetHorizontalDistanceTo(FindAttackTarget) > AttackRange)
 			{
 				FVector MoveDir = FindAttackTarget->GetActorLocation() - Player->GetActorLocation();
 				MoveDir.Z = 0.0f;
@@ -102,7 +102,7 @@ void UCPL_MageBaseAttack::BeginAttack(AActor * DoingActor)
 	if (FindAttackTarget != nullptr)
 	{
 		// @AttackRange 보다 크면, Controller Input Vec
-		if (FindAttackTarget->GetHorizontalDistanceTo(Player) <= AttackRange)
+		if (Player->GetHorizontalDistanceTo(FindAttackTarget) <= AttackRange)
 		{
 			bAttackPossible = true;
 		}
@@ -111,6 +111,7 @@ void UCPL_MageBaseAttack::BeginAttack(AActor * DoingActor)
 
 void UCPL_MageBaseAttack::EndAttack()
 {
+	bAttackMode = false;
 	bAttacking = false;
 	bComboCheck = false;
 	CurrentComboNum = 0;

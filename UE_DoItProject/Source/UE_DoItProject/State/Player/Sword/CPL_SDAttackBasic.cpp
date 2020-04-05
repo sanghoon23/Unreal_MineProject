@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "System/CS_AttackDecision.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
@@ -13,11 +14,13 @@ UCPL_SDAttackBasic::UCPL_SDAttackBasic()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ComboSetting
+	#pragma region Super
+	// Super Setting
 	{
 		CurrentComboNum = static_cast<UINT>(USD_BasicAttack::COMBO_ONE);
 		MaxComboNum = static_cast<UINT>(USD_BasicAttack::END);
 	}
+	#pragma endregion
 
 	FString Path = L"";
 
@@ -64,6 +67,13 @@ void UCPL_SDAttackBasic::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UCPL_SDAttackBasic::BeginPlay()
 {
 	Super::BeginPlay();
+
+	#pragma region Super
+
+	//@Auto AttackDecision System
+	AttackDecision->OnAble(Player, AttackRange);
+
+	#pragma endregion
 }
 
 // - IBaseAttack 참고.
@@ -78,8 +88,7 @@ void UCPL_SDAttackBasic::BeginAttack(AActor * DoingActor)
 
 	// Super
 	{
-		bAttackCall = true;
-		IfFalseRet(bAttackPossible); // @Super::Tick 에서 처리 중.
+		IfFalseRet(GetAttackPossible()); // @Super::Tick 에서 처리 중.
 	}
 
 	// @IF TRUE RETURN
@@ -122,11 +131,13 @@ void UCPL_SDAttackBasic::OnComboSet(AActor * DoingActor)
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(DoingActor);
 	check(Charactor);
 
-	bComboCheck = false;
-	++CurrentComboNum;
-
 	APawn* Target = Player->GetFindAttackTarget();
 	check(Target);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	bComboCheck = false;
+	++CurrentComboNum;
 
 	//@ 타겟 바라보게 하기
 	LookAtTarget(Target);

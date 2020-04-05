@@ -20,10 +20,6 @@ class UE_DOITPROJECT_API ACPlayer
 	GENERATED_BODY()
 
 	#pragma	region Reflection
-public:
-	UFUNCTION(BlueprintCallable, Category = "Niagara")
-		void CallDashNiagaraEffect();
-
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movements")
 		float WalkSpeed = 400.0f;

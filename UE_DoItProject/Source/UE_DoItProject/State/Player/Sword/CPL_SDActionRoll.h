@@ -31,8 +31,11 @@ public:
 	/* Function */
 private:
 	void SetAngleWithControlRot(float Angle);
+	void LookAtTarget(AActor* Target);
 
 	/* Member */
 private:
 	class ACPlayer* Player;
+
+	float UsingActionRange = 200.0f;
 };

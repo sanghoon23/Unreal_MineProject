@@ -45,6 +45,12 @@ void UCPL_PakrouClimbingLeftMove::OnAction()
 
 	// @¸ùÅ¸ÁÖ ½ÇÇà
 	Player->ActorAnimMonPlay(ClimbingLeftMoveMontage, 1.0f, true);
+
+	//@Looping
+	Player->GetMesh()->GetAnimInstance()->Montage_JumpToSection
+	(
+		FName("Loop"), ClimbingLeftMoveMontage
+	);
 }
 
 void UCPL_PakrouClimbingLeftMove::BeginActionState()

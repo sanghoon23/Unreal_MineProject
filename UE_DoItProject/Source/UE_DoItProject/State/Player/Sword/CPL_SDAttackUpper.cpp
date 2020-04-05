@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "System/CS_AttackDecision.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
@@ -13,6 +14,7 @@ UCPL_SDAttackUpper::UCPL_SDAttackUpper()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	#pragma region Super
 	// Super Setting
 	{
 		CurrentComboNum = static_cast<UINT>(USD_UpperAttack::COMBO_ONE);
@@ -20,6 +22,7 @@ UCPL_SDAttackUpper::UCPL_SDAttackUpper()
 
 		AttackRange = 230.0f;
 	}
+	#pragma endregion
 
 	FString Path = L"";
 	#pragma region Sword UpperAttack Montages
@@ -96,6 +99,13 @@ void UCPL_SDAttackUpper::BeginPlay()
 {
 	Super::BeginPlay();
 
+	#pragma region Super
+
+	//@Auto AttackDecision System
+	AttackDecision->OnAble(Player, AttackRange);
+
+	#pragma endregion
+
 	PlayerController = Cast<APlayerController>(Player->GetController());
 	check(PlayerController);
 
@@ -106,8 +116,8 @@ void UCPL_SDAttackUpper::BeginPlay()
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
 	});
 
-	CutOutBlendCameraFunc	= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::BlendCameraFunc);
-	LastOutBlendCameraFunc	= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::EndAttackBlendCameraFunc);
+	//CutOutBlendCameraFunc	= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::BlendCameraFunc);
+	//LastOutBlendCameraFunc	= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::EndAttackBlendCameraFunc);
 }
 
 // - IBaseAttack 참고.
@@ -125,8 +135,7 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 
 	// Super
 	{
-		bAttackCall = true;
-		IfFalseRet(bAttackPossible); // @Super::Tick 에서 처리 중.
+		IfFalseRet(GetAttackPossible()); // @Super::Tick 에서 처리 중.
 	}
 
 	// @IF TRUE RETURN
@@ -199,6 +208,12 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 		// @거리 벌리고, 높이 맞추기 - Combo 시 Target 위치 앞에서 공격하기
 		ActorLocateFrontTarget(Target);
 
+		// @중력 끄기
+		Charactor->OffGravity();
+
+		// @속력 줄이기 - 중력끄고 바로 해줘야함
+		Player->GetCharacterMovement()->Velocity = FVector(0.0f);
+
 		//@카메라 전환
 		AActor* BlendCameraActor = Player->GetBlendCameraComp()->GetBlendCamera(EBlendCameraPositionType::BottomFace);
 		if (BlendCameraActor != nullptr)
@@ -220,6 +235,7 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 		AActor* BlendCameraActor = Player->GetBlendCameraComp()->GetBlendCamera(EBlendCameraPositionType::ForwardFace);
 		if (BlendCameraActor != nullptr)
 		{
+			Player->OnBlockKeyInput(); //@OnBlockInput
 			PlayerController->SetViewTargetWithBlend(BlendCameraActor, 2.0f);
 		}
 		else
@@ -234,7 +250,8 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 		//@Delegate 추가
 		if (LastOutBlendCameraFunc.IsValid() == false)
 		{
-			LastOutBlendCameraFunc = EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::EndAttackBlendCameraFunc);
+			LastOutBlendCameraFunc 
+				= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::EndAttackBlendCameraFunc);
 		}
 	}
 
@@ -243,9 +260,6 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 
 	// @타겟 바라보게 하기
 	LookAtTarget(Target);
-
-	// @중력 끄기
-	Charactor->OffGravity();
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -392,7 +406,6 @@ void UCPL_SDAttackUpper::BlendCameraFunc()
 /* COMBO 맨 마지막 공격의 CameraBlend 처리 */
 void UCPL_SDAttackUpper::EndAttackBlendCameraFunc()
 {
-	Player->OnBlockKeyInput();
 	GetWorld()->GetTimerManager().SetTimer(EndBlendTimerHandle, this, &UCPL_SDAttackUpper::TimerFunc, 2.0f);
 }
 

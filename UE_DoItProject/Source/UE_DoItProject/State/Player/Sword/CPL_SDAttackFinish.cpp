@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "System/CS_AttackDecision.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
 #include "Interface/IC_HitComp.h"
@@ -71,28 +72,39 @@ void UCPL_SDAttackFinish::BeginPlay()
 {
 	Super::BeginPlay();
 
+	#pragma region Super
+
+	//@Auto AttackDecision System
+	AttackDecision->OnAble(Player, AttackRange);
+
+	#pragma endregion
+
 	PlayerController = Cast<APlayerController>(Player->GetController());
 	check(PlayerController);
 
-	//@BeginAttack Delegate
-	BeginAttackDeleFunc.AddLambda([&]()
-	{
-		//@ON BlockInput
-		Player->OnBlockKeyInput();
-	});
+	////@BeginAttack Delegate
+	//BeginAttackDeleFunc.AddLambda([&]()
+	//{
+	//	//@ON BlockInput
+	//	Player->OnBlockKeyInput();
+	//});
 
-	//@EndAttak Delegate
-	EndAttackDeleFunc.AddLambda([&]() 
-	{
-		//@세계 원상복구.
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+	BeginAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::DelegateBeginAttack);
 
-		//@OFF BlockInput
-		Player->OffBlockKeyInput();
+	EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::DelegateEndAttack);
 
-		//@Camera 원상복귀
-		PlayerController->SetViewTargetWithBlend(Player);
-	});
+	////@EndAttak Delegate
+	//EndAttackDeleFunc.AddLambda([&]() 
+	//{
+	//	//@세계 원상복구.
+	//	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+
+	//	//@OFF BlockInput
+	//	Player->OffBlockKeyInput();
+
+	//	//@Camera 원상복귀
+	//	PlayerController->SetViewTargetWithBlend(Player);
+	//});
 }
 
 // - IBaseAttack 참고.
@@ -108,8 +120,7 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 
 	// Super
 	{
-		bAttackCall = true;
-		IfFalseRet(bAttackPossible); // @Super::Tick 에서 처리 중.
+		IfFalseRet(GetAttackPossible()); // @Super::Tick 에서 처리 중.
 	}
 
 	//@IF TRUE RETURN
@@ -128,16 +139,18 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 		if (TargetCharactor->GetCharacterMovement()->IsFalling()
 			&& TargetCharactor->GetCharacterMovement()->GravityScale <= 0.0f)
 		{
-			bAttackCall = false;
+			//bAttackCall = false;
+			AttackDecision->StopAttackTrace();
 			return;
 		}
 
 		if (TargetCharactor->GetCharacterMovement()->IsFalling())
 		{
-			bAttackCall = false;
+			//bAttackCall = false;
+			//StopAutoAttack();
+			AttackDecision->StopAttackTrace();
 			return;
 		}
-
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,4 +391,22 @@ void UCPL_SDAttackFinish::ActorLocateFrontTarget(AActor * Target)
 
 	// @Setting Location
 	Player->SetActorLocation(SettingLocation);
+}
+
+void UCPL_SDAttackFinish::DelegateBeginAttack()
+{
+	//@ON BlockInput
+	Player->OnBlockKeyInput();
+}
+
+void UCPL_SDAttackFinish::DelegateEndAttack()
+{
+	//@세계 원상복구.
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+
+	//@OFF BlockInput
+	Player->OffBlockKeyInput();
+
+	//@Camera 원상복귀
+	PlayerController->SetViewTargetWithBlend(Player);
 }

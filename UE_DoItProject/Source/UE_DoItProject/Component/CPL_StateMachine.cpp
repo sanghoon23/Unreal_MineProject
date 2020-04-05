@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Charactor/Player/CPlayer.h"
 
+#include "Interface/IC_BaseAttack.h"
 #include "Component/Player/CPL_MageAttackComp.h"
 #include "Component/Player/CPL_SwordAttackComp.h"
 #include "Component/Player/CPL_MageActionComp.h"
@@ -182,6 +183,7 @@ void UCPL_StateMachine::OnSwapState()
 	IfTrueRet(Player->IsJumping()); //@Jump Check
 	IfTrueRet(Player->GetCharacterMovement()->IsFalling()); //@IsFalling - JUMP
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
+	IfTrueRet(Player->GetIAttackComp()->GetCurrentIBaseAttack()->GetAttacking()); //@Attacking
 
 	// @Reset
 	Player->OnActionResetState.Broadcast(Player);
@@ -223,6 +225,7 @@ void UCPL_StateMachine::OnDash()
 	IfTrueRet(Player->IsJumping()); //@Jump Check
 	IfTrueRet(Player->GetCharacterMovement()->IsFalling()); // @Falling Check
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
+	IfTrueRet(Player->GetIAttackComp()->GetCurrentIBaseAttack()->GetAttacking()); //@Attacking
 
 	// @IF FALSE RETURN
 	IfFalseRet(Player->GetCanMove());
@@ -276,7 +279,7 @@ void UCPL_StateMachine::OnDash()
 	Player->SetEvade(true);
 	Player->SetEvadeSpeed(5.0f);
 
-	//@ÀÜ»ó È¿°ú - NiaComp(WeakPtr)
+	//@ÀÜ»ó È¿°ú
 	//@Case1
 	UNiagaraFunctionLibrary::SpawnSystemAttached
 	(
