@@ -3,17 +3,25 @@
 
 #include "State/Player/Base/CPL_MageBaseAttack.h"
 #include "State/Player/Mage/CPL_MGAttackBasic.h"
+#include "State/Player/Mage/CPL_MGAttackMagicBall.h"
 
 UCPL_MageAttackComp::UCPL_MageAttackComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	#pragma region Create State
-	// Create State
+	// @BasicAttack
 	{
 		UCPL_MageBaseAttack* MG_BasicAttack = CreateDefaultSubobject<UCPL_MGAttackBasic>("Mage_AttackFrist");
 		MG_BasicAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_BasicAttack);
+	}
+
+	// @MagicBall
+	{
+		UCPL_MageBaseAttack* MG_MagicBallAttack = CreateDefaultSubobject<UCPL_MGAttackMagicBall>("Mage_AttackSecond");
+		MG_MagicBallAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
+		MageAttackStateArray.Emplace(MG_MagicBallAttack);
 	}
 	#pragma endregion
 }

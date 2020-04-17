@@ -45,6 +45,8 @@ protected:
 	/* Pure Virtual Function */
 public:
 	void BeginAttack(AActor * DoingActor) override;
+	void EndAttack() override;
+
 	void OnComboSet(AActor * DoingActor) override;
 	bool IsLastCombo() const override;
 
@@ -54,14 +56,6 @@ public:
 	void ImpulseAttack(float intensity) override {}
 	void CheckProcedural() override {}
 	
-	/* Function */
-private:
-	void LookAtTarget(AActor* Target);
-	void ActorLocateFrontTarget(AActor* Target);
-
-	void DelegateBeginAttack();
-	void DelegateEndAttack();
-
 	#pragma region Member
 private:
 	float AttackRadius = 100.0f;

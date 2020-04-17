@@ -35,15 +35,13 @@ public:
 	/* Function */
 public:
 	void BeginAttack(AActor * DoingActor) override;
+	void EndAttack() override;
 	//void OnComboSet(AActor * DoingActor) override;
 	//bool IsLastCombo() const override;
 
 	void AttackOtherPawn() override;
 	void ImpulseAttack(float intensity) override;
 	void CheckProcedural() override;
-
-private:
-	void LookAtTarget(AActor* Target);
 
 	#pragma region Member
 private:

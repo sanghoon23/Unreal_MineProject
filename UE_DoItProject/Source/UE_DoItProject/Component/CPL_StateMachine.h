@@ -70,9 +70,6 @@ public:
 	void OnDash();
 	void OnPullActorWithCable();
 
-private:
-	void SetAngleWithControlRot(float Angle);
-
 	#pragma	region Member
 public:
 	EPlayerStateType GetCurrentStateType() { return CurrentStateType; }

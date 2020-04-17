@@ -5,7 +5,8 @@
 #include "CPlayerController.generated.h"
 
 UCLASS()
-class UE_DOITPROJECT_API ACPlayerController : public APlayerController
+class UE_DOITPROJECT_API ACPlayerController 
+	: public APlayerController
 {
 	GENERATED_BODY()
 	

@@ -62,9 +62,6 @@ public:
 
 	/* Function */
 private:
-	// AttackFunc
-	void LookAtTarget(AActor* Target);
-	void ActorLocateFrontTarget(AActor* Target);
 
 	// BlendCameraActorFunc
 	void BlendCameraFunc();

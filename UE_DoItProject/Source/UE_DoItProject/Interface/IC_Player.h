@@ -21,8 +21,10 @@ class UE_DOITPROJECT_API IIC_Player
 public:
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 	/* Member */
-		/* 현재 상호작용 하고 있는 Actor 'Get' */
+	/* 현재 상호작용 하고 있는 Actor 'Get' */
 	IIC_InteractActor* GetCurrentInteractActor() { return CurrentInteractActor; }
 	/* 현재 상호작용 하고 있는 Actor 'Set' */
 	void SetCurrentInteractActor(IIC_InteractActor* IC_Interact) { CurrentInteractActor = IC_Interact; }

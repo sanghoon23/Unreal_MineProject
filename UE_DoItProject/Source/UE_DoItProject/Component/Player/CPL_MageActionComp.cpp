@@ -1,7 +1,7 @@
 #include "CPL_MageActionComp.h"
 #include "Global.h"
 
-#include "State/Player/Mage/CPL_MGActionRoll.h"
+#include "State/Player/Mage/CPL_MGActionTeleprot.h"
 #include "State/Player/Mage/CPL_MGActionJump.h"
 
 UCPL_MageActionComp::UCPL_MageActionComp()
@@ -10,7 +10,7 @@ UCPL_MageActionComp::UCPL_MageActionComp()
 
 	// Create Roll Action
 	{
-		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionRoll>("MG_RollAction");
+		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionTeleprot>("MG_Teleprot");
 		RollAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MG_ActionArray.Emplace(RollAction);
 	}

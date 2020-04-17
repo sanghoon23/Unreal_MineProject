@@ -137,7 +137,7 @@ void UCInverseKinematics::LeftHandTrace()
 	float CharactorHeight = Character->GetActorLocation().Z + Character->GetDefaultHalfHeight() + HeightOffset;
 
 	FVector Start	= FVector(SocketLocation.X, SocketLocation.Y, CharactorHeight);
-	FVector End = Start + (ForwardVec * LineTraceDistance);
+	FVector End		= Start + (ForwardVec * LineTraceDistance);
 
 	TArray<AActor *> Ignore;
 	Ignore.Add(GetOwner());

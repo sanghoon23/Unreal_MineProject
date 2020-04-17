@@ -28,7 +28,7 @@ class UE_DOITPROJECT_API UCPL_MGAttackBasic
 private:
 	// @DamageType
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*		DT_Noraml;
+		UCDamageType_Normal*		DT_Normal;
 
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_StrongAttack*	DT_StrongAttack;
@@ -51,9 +51,6 @@ public:
 	/* Virtual */
 public:
 	void AttackOtherPawn() override;
-
-private:
-	void LookAtTarget(AActor* Target);
 
 	#pragma region Member
 private:

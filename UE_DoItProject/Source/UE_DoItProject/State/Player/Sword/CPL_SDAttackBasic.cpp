@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "System/CS_AttackDecision.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
@@ -102,7 +103,7 @@ void UCPL_SDAttackBasic::BeginAttack(AActor * DoingActor)
 	check(Target);
 
 	// @타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -140,7 +141,7 @@ void UCPL_SDAttackBasic::OnComboSet(AActor * DoingActor)
 	++CurrentComboNum;
 
 	//@ 타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -236,13 +237,4 @@ void UCPL_SDAttackBasic::ImpulseAttack(float intensity)
 void UCPL_SDAttackBasic::CheckProcedural()
 {
 	Super::CheckProcedural();
-}
-
-/* TargetSystem Target 을 바라보도록 함 */
-void UCPL_SDAttackBasic::LookAtTarget(AActor* Target)
-{
-	check(Target);
-	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
-	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
-	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
 }

@@ -39,7 +39,6 @@ public:
 
 	/* Function */
 private:
-	void LookAtTarget(AActor* Target);
 	void PullingTargetLocation(AActor* Target);
 
 	/* Member */

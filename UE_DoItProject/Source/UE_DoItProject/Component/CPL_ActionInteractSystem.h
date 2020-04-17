@@ -38,7 +38,6 @@ private:
 	void JumpOverInterFunc(FHitResult& HitResult);
 	void ClimbInterFunc(FHitResult& HitResult);
 
-	void PlayerLookAtTarget(AActor* Target);
 	void PlayerHorizontalAtTarget(AActor* Target);
 
 	#pragma	region Member

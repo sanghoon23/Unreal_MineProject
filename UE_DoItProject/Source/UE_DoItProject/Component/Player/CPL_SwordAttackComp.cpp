@@ -7,13 +7,15 @@
 #include "State/Player/Sword/CPL_SDAttackBasic.h"
 #include "State/Player/Sword/CPL_SDAttackUpper.h"
 #include "State/Player/Sword/CPL_SDAttackFinish.h"
+#include "State/Player/Sword/CPL_SDAttackWindmilSlash.h"
+#include "State/Player/Sword/CPL_SDAttackBackRange.h"
 
 UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	#pragma region Create State
-	// Create First Attack (Basic Attack)
+	// Create First Attack ( Basic Attack )
 	{
 		UCPL_SwordBaseAttack* SD_BasicAttack = nullptr;
 
@@ -23,7 +25,7 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		SwordAttackStateArray.Emplace(SD_BasicAttack);
 	}
 
-	// Create Second Attack (Upper Attack)
+	// Create Second Attack ( Upper Attack )
 	{
 		UCPL_SwordBaseAttack* SD_UpperAttack = nullptr;
 
@@ -33,7 +35,7 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		SwordAttackStateArray.Emplace(SD_UpperAttack);
 	}
 
-	// Create Thrid Attack (Finish Attack)
+	// Create Thrid Attack ( Finish Attack )
 	{
 		UCPL_SwordBaseAttack* SD_FinishAttack = nullptr;
 
@@ -41,6 +43,26 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		SD_FinishAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
 
 		SwordAttackStateArray.Emplace(SD_FinishAttack);
+	}
+
+	// Create Four Attack ( WindmilSlash )
+	{
+		UCPL_SwordBaseAttack* SD_WindmilSlash = nullptr;
+
+		SD_WindmilSlash = CreateDefaultSubobject<UCPL_SDAttackWindmilSlash>("Sword_AttackFour");
+		SD_WindmilSlash->SetOwnerPawn(Cast<APawn>(GetOwner()));
+
+		SwordAttackStateArray.Emplace(SD_WindmilSlash);
+	}
+
+	// Create Five Attack ( BackRange )
+	{
+		UCPL_SwordBaseAttack* SD_BackRange = nullptr;
+
+		SD_BackRange = CreateDefaultSubobject<UCPL_SDAttackBackRange>("Sword_AttackFive");
+		SD_BackRange->SetOwnerPawn(Cast<APawn>(GetOwner()));
+
+		SwordAttackStateArray.Emplace(SD_BackRange);
 	}
 
 	#pragma endregion

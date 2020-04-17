@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 
 #include "System/CS_AttackDecision.h"
 #include "Interface/IC_Charactor.h"
@@ -115,9 +116,6 @@ void UCPL_SDAttackUpper::BeginPlay()
 		//@세계 시간 원상복구.
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
 	});
-
-	//CutOutBlendCameraFunc	= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::BlendCameraFunc);
-	//LastOutBlendCameraFunc	= EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackUpper::EndAttackBlendCameraFunc);
 }
 
 // - IBaseAttack 참고.
@@ -149,7 +147,7 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 	check(Target);
 
 	//@ 타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -157,12 +155,29 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 
 	if (bAttacking == false)
 	{
-		Player->ActorAnimMonPlay
-		(
-			SwordAttackMontages[0], /* @FirstMontage == Combo1 */
-			1.3f, true				// @AnimPlay 무조건 실행.
-		);
-	}
+		bool bInAir = false;
+		ACharacter* CharactorTarget = Cast<ACharacter>(Target);
+		if (CharactorTarget != nullptr)
+		{
+			if (UCFL_ActorAgainst::IsTargetInAir(CharactorTarget) == true)
+			{
+				//@공중에 있다면, 2번째 공격부터 - (공중 연속기)
+				BeginAttackDeleFunc.Broadcast();
+				OnComboSet(Player);
+				bInAir = true;
+			}
+		}
+
+		if (bInAir == false)
+		{
+			//@기본 동작
+			Player->ActorAnimMonPlay
+			(
+				SwordAttackMontages[0], /* @FirstMontage == Combo1 */
+				1.3f, true				// @AnimPlay 무조건 실행.
+			);
+		}//(bInAir==false)
+	}//(bAttacking==false)
 	else if (bAttacking == true)
 	{
 		bComboCheck = true;
@@ -206,7 +221,7 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 	if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_TWO))
 	{
 		// @거리 벌리고, 높이 맞추기 - Combo 시 Target 위치 앞에서 공격하기
-		ActorLocateFrontTarget(Target);
+		UCFL_ActorAgainst::ActorLocateFrontTarget(Target, Player, AttackRange, true);
 
 		// @중력 끄기
 		Charactor->OffGravity();
@@ -259,7 +274,7 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 	Player->CanNotMove();
 
 	// @타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -361,40 +376,6 @@ void UCPL_SDAttackUpper::AttackOtherPawn()
 		else
 			UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
 	}//(bHit == true)
-}
-
-/* TargetSystem Target 을 바라보도록 함 */
-void UCPL_SDAttackUpper::LookAtTarget(AActor* Target)
-{
-	check(Target);
-	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
-	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
-	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
-}
-
-// #Edit *0220 / 02:31
-/* 거리까지 맞춰줌. */
-/* TargetSystem Target 의 높이 와 Player 의 높이를 동일하게 맞춤. */
-void UCPL_SDAttackUpper::ActorLocateFrontTarget(AActor * Target)
-{
-	check(Target);
-	FVector TargetLocation = Target->GetActorLocation();
-	FVector PlayerLocation = Player->GetActorLocation();
-	FVector LookDir = TargetLocation - PlayerLocation;
-	LookDir.Normalize();
-	LookDir.Z = 0.0f;
-
-	// @Target 에서 AttackRange 만큼 떨어진 곳으로 위치시키기 위해
-	FVector SettingLocation = TargetLocation;
-
-	// @LookDir 을 이용해 , 거리 맞추고
-	SettingLocation += (-1) * LookDir * (AttackRange + 0.0f);
-
-	// @Target 의 높이에 맞추고,
-	SettingLocation.Z = TargetLocation.Z;
-
-	// @Setting Location
-	Player->SetActorLocation(SettingLocation);
 }
 
 /* COMBO 마지막을 제외한 공격 CameraBlend 처리 */

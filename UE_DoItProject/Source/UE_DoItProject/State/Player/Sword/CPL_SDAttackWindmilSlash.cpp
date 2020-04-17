@@ -1,6 +1,7 @@
 #include "CPL_SDAttackWindmilSlash.h"
 #include "Global.h"
 
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "System/CS_AttackDecision.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
@@ -9,7 +10,7 @@
 
 UCPL_SDAttackWindmilSlash::UCPL_SDAttackWindmilSlash()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	#pragma region Super
 	// Super Setting
@@ -54,6 +55,9 @@ void UCPL_SDAttackWindmilSlash::BeginPlay()
 
 	#pragma endregion
 
+	//Set Delegate
+	EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackWindmilSlash::EndAttack);
+
 }
 
 void UCPL_SDAttackWindmilSlash::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -82,11 +86,10 @@ void UCPL_SDAttackWindmilSlash::BeginAttack(AActor * DoingActor)
 	check(Target);
 
 	// @타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
-	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
-	AttackMoveDir = Player->GetActorForwardVector();
-	AttackMoveSpeed = 2.0f;
+	// @ON Block Key
+	Player->OnBlockKeyInput();
 
 	if (bAttacking == false)
 	{
@@ -98,9 +101,72 @@ void UCPL_SDAttackWindmilSlash::BeginAttack(AActor * DoingActor)
 	}
 }
 
+void UCPL_SDAttackWindmilSlash::EndAttack()
+{
+	Super::EndAttack();
+
+	// @OFF Block Key
+	Player->OffBlockKeyInput();
+}
+
 void UCPL_SDAttackWindmilSlash::AttackOtherPawn()
 {
 	Super::AttackOtherPawn();
+
+	FVector ActorForward = Player->GetActorForwardVector();
+	FVector Position = Player->GetActorLocation();
+
+	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
+	FCollisionQueryParams CollisionQueryParm(NAME_None, false, Player);
+
+	float DebugLifeTime = 1.0f;
+	TArray<FOverlapResult> OverlapResults;
+	bool bOverlap = GetWorld()->OverlapMultiByChannel //@Single - 단일.
+	(
+		OverlapResults
+		, Position
+		, FQuat::Identity
+		, ECC_GameTraceChannel2 // @PlayerAttack
+		, sphere
+		, CollisionQueryParm
+	);
+
+#if  ENABLE_DRAW_DEBUG
+
+	DrawDebugSphere(GetWorld(), Position, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
+
+#endif // ENABLE_DRAW_DEBUG
+
+	if (bOverlap == true)
+	{
+		for (FOverlapResult& OverlapResult : OverlapResults)
+		{
+			IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
+			if (Charactor != nullptr)
+			{
+				// 1. Get Interface HitComp
+				IIC_HitComp* HitComp = Charactor->GetIHitComp();
+				if (HitComp != nullptr)
+				{
+					// 1.1 Set Hit Attribute
+					FVector PlayerLocation = Player->GetActorLocation();
+					FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - PlayerLocation;
+					HitDirection.Normalize();
+					HitDirection.Z = 0.0f;
+					HitComp->SetHitDirection(HitDirection);
+					HitComp->SetHitMoveSpeed(0.3f);
+
+					// 1.2 Hit Delegate - Air(DamageType)
+					HitComp->OnHit(Player, DT_Air, 50.0f);
+				}
+				else
+					UE_LOG(LogTemp, Warning, L"SDAttackWindmilSlash CallAttack - HitComp Null!!");
+			}
+			else
+				UE_LOG(LogTemp, Warning, L"SDAttackWindmilSlash CallAttack - Charactor Null!!");
+		}
+	}
+
 }
 
 void UCPL_SDAttackWindmilSlash::ImpulseAttack(float intensity)
@@ -111,13 +177,5 @@ void UCPL_SDAttackWindmilSlash::ImpulseAttack(float intensity)
 void UCPL_SDAttackWindmilSlash::CheckProcedural()
 {
 	Super::CheckProcedural();
-}
-
-void UCPL_SDAttackWindmilSlash::LookAtTarget(AActor * Target)
-{
-	check(Target);
-	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
-	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
-	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
 }
 

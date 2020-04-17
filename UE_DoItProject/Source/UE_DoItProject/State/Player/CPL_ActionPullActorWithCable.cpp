@@ -1,9 +1,9 @@
 #include "CPL_ActionPullActorWithCable.h"
 #include "Global.h"
-
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_BaseAttack.h"
 #include "Charactor/Player/CPlayer.h"
@@ -108,7 +108,7 @@ void UCPL_ActionPullActorWithCable::BeginActionState()
 	Player->OnBlockAction();
 
 	//@대상 바라보기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	//@초기 LerpValue 설정 - PullRange 의 비율
 	float InitDistance = Player->GetDistanceTo(Target);
@@ -179,14 +179,6 @@ void UCPL_ActionPullActorWithCable::EndActionState()
 
 	//@Release - 'Action' Block
 	Player->OffBlockAction();
-}
-
-void UCPL_ActionPullActorWithCable::LookAtTarget(AActor * Target)
-{
-	check(Target);
-	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
-	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
-	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
 }
 
 /* Target 을 끌어오는 동안 위치 조정 */

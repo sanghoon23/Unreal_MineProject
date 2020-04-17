@@ -6,6 +6,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
+#include "WidgetComponent.h"
+
+#include "_GameMode/CBaseGameMode.h"
+#include "System/CS_MouseController.h"
 #include "_GameController/CPL_TargetingSystem.h"
 #include "Component/CPL_StateMachine.h"
 #include "Component/Player/CPL_EquipComp.h"
@@ -101,6 +105,7 @@ ACPlayer::ACPlayer()
 		TargetingSystem			= CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
 		IneverseKinematics		= CreateDefaultSubobject<UCInverseKinematics>("IKComp");
 		InteractSystem			= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
+		MouseController			= CreateDefaultSubobject<UCS_MouseController>("MouseController");
 	}
 	#pragma endregion
 
@@ -109,6 +114,17 @@ ACPlayer::ACPlayer()
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Test Code
+	//AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
+	//if (GameModeBase != nullptr)
+	//{
+	//	ACBaseGameMode* MyGameMode = Cast<ACBaseGameMode>(GameModeBase);
+	//	if (MyGameMode != nullptr)
+	//	{
+	//		CLog::Print(L"Call GameMode Succeed!!");
+	//	}
+	//}
 
 	#pragma region Player Setting
 	//Player Setting
@@ -225,6 +241,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("BasicAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnBasicAttack);
 	PlayerInputComponent->BindAction("SecondAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnSecondAttack);
 	PlayerInputComponent->BindAction("ThirdAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnThirdAttack);
+	PlayerInputComponent->BindAction("FourAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnFourAttack);
+	PlayerInputComponent->BindAction("FiveAttack", EInputEvent::IE_Pressed, this, &ACPlayer::OnFiveAttack);
 
 	PlayerInputComponent->BindAction("PullActorWithCableAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnPullActorWithCableAction);
 }
@@ -243,6 +261,7 @@ void ACPlayer::OnBlockKeyInput()
 	if (PlayerController != nullptr)
 	{
 		DisableInput(PlayerController);
+		//PlayerController->SetInputMode(FInputModeDataBase)
 	}
 }
 
@@ -276,6 +295,28 @@ void ACPlayer::OffHandIK(uint8 HandNumber)
 		IneverseKinematics->OffLeftHandIK();
 	else if (HandNumber == 1)
 		IneverseKinematics->OffRightHandIK();
+}
+
+void ACPlayer::OnMouseController()
+{
+	MouseController->OnMouseControl();
+}
+
+void ACPlayer::OffMouseController()
+{
+	MouseController->OffMouseControl();
+}
+
+void ACPlayer::OnParticleInPlayer()
+{
+	LeftParticle->SetVisibility(true);
+	RightParticle->SetVisibility(true);
+}
+
+void ACPlayer::OffParticleInPlayer()
+{
+	LeftParticle->SetVisibility(false);
+	RightParticle->SetVisibility(false);
 }
 
 void ACPlayer::OnMoveForward(float Value)
@@ -408,6 +449,9 @@ void ACPlayer::OnBasicAttack()
 		// BeginAttack
 		SwitchBaseAttack->BeginAttack(this);
 	}
+
+	//Test Code
+	//OnMouseController();
 }
 
 /* Attack 동일 */
@@ -432,6 +476,34 @@ void ACPlayer::OnThirdAttack()
 
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_BaseAttack* SwitchBaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(2);
+	// check(SwitchBaseAttack);
+	IfNullRet(SwitchBaseAttack);
+	{
+		// BeginAttack
+		SwitchBaseAttack->BeginAttack(this);
+	}
+}
+
+void ACPlayer::OnFourAttack()
+{
+	IfTrueRet(bBlockAction);
+
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	IIC_BaseAttack* SwitchBaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(3);
+	// check(SwitchBaseAttack);
+	IfNullRet(SwitchBaseAttack);
+	{
+		// BeginAttack
+		SwitchBaseAttack->BeginAttack(this);
+	}
+}
+
+void ACPlayer::OnFiveAttack()
+{
+	IfTrueRet(bBlockAction);
+
+	// @해당 함수에 IFRet 조건 들어가 있음.
+	IIC_BaseAttack* SwitchBaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(4);
 	// check(SwitchBaseAttack);
 	IfNullRet(SwitchBaseAttack);
 	{

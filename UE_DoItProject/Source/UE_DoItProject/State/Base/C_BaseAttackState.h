@@ -55,11 +55,6 @@ protected:
 	//* 공격 가능한지 파생 클래스에서 알기 위해 사용 */
 	virtual bool GetAttackPossible() const { return bAttackPossible; }
 
-//private:
-//	void Del_ResetState(AActor* Acto);
-//	void Del_BeginAttack();
-//	void Del_EndAttack();
-
 	#pragma	region Member
 protected:
 	UINT					CurrentComboNum = 0;

@@ -3,12 +3,12 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "System/CS_AttackDecision.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
-#include "Component/Player/CPL_SwordAttackComp.h"
 #include "Component/Player/CPL_BlendCameraComp.h"
 
 UCPL_SDAttackFinish::UCPL_SDAttackFinish()
@@ -20,7 +20,7 @@ UCPL_SDAttackFinish::UCPL_SDAttackFinish()
 		CurrentComboNum = static_cast<UINT>(USD_FinalAttack::COMBO_ONE);
 		MaxComboNum = static_cast<UINT>(USD_FinalAttack::END);
 
-		AttackRange = 400.0f;
+		AttackRange = 230.0f;
 	}
 
 	FString Path = L"";
@@ -82,29 +82,8 @@ void UCPL_SDAttackFinish::BeginPlay()
 	PlayerController = Cast<APlayerController>(Player->GetController());
 	check(PlayerController);
 
-	////@BeginAttack Delegate
-	//BeginAttackDeleFunc.AddLambda([&]()
-	//{
-	//	//@ON BlockInput
-	//	Player->OnBlockKeyInput();
-	//});
-
-	BeginAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::DelegateBeginAttack);
-
-	EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::DelegateEndAttack);
-
-	////@EndAttak Delegate
-	//EndAttackDeleFunc.AddLambda([&]() 
-	//{
-	//	//@세계 원상복구.
-	//	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
-
-	//	//@OFF BlockInput
-	//	Player->OffBlockKeyInput();
-
-	//	//@Camera 원상복귀
-	//	PlayerController->SetViewTargetWithBlend(Player);
-	//});
+	//BeginAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::DelegateBeginAttack);
+	EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::EndAttack);
 }
 
 // - IBaseAttack 참고.
@@ -117,6 +96,8 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
 	check(DoingActor);
+
+	CLog::Print(L"Finish Attack!!");
 
 	// Super
 	{
@@ -136,24 +117,17 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 	ACharacter* TargetCharactor = Cast<ACharacter>(Target);
 	if (TargetCharactor != nullptr)
 	{
-		if (TargetCharactor->GetCharacterMovement()->IsFalling()
-			&& TargetCharactor->GetCharacterMovement()->GravityScale <= 0.0f)
+		if (UCFL_ActorAgainst::IsTargetInAir(TargetCharactor) == true)
 		{
-			//bAttackCall = false;
-			AttackDecision->StopAttackTrace();
-			return;
-		}
-
-		if (TargetCharactor->GetCharacterMovement()->IsFalling())
-		{
-			//bAttackCall = false;
-			//StopAutoAttack();
 			AttackDecision->StopAttackTrace();
 			return;
 		}
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//@ON BlockInput
+	Player->OnBlockKeyInput();
 
 	//@카메라 전환
 	{
@@ -177,10 +151,10 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 	}
 
 	//@타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	//@거리 벌리고, 높이 맞추기
-	ActorLocateFrontTarget(Target);
+	UCFL_ActorAgainst::ActorLocateFrontTarget(Target, Player, AttackRange, true);
 
 	//@공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -197,6 +171,20 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 
 	// @ComboCheck == true 로 함
 	bComboCheck = true;
+}
+
+void UCPL_SDAttackFinish::EndAttack()
+{
+	Super::EndAttack();
+
+	//@세계 원상복구.
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+
+	//@OFF BlockInput
+	Player->OffBlockKeyInput();
+
+	//@Camera 원상복귀
+	PlayerController->SetViewTargetWithBlend(Player);
 }
 
 // - IBaseAttack 참고.
@@ -260,7 +248,7 @@ void UCPL_SDAttackFinish::OnComboSet(AActor * DoingActor)
 	Player->CanNotMove();
 
 	// @타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -357,56 +345,4 @@ void UCPL_SDAttackFinish::AttackOtherPawn()
 		else
 			UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
 	}//(bHit == true)
-}
-
-/* TargetSystem Target 을 바라보도록 함 */
-void UCPL_SDAttackFinish::LookAtTarget(AActor* Target)
-{
-	check(Target);
-	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
-	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
-	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
-}
-
-/* TargetSystem Target 의 높이 와 Player 의 높이를 동일하게 맞춤. */
-// @Warning - StartAttackActionDistance(Attack 이 시작되는 위치)
-// AttackRange 랑 다른 Value 임.
-void UCPL_SDAttackFinish::ActorLocateFrontTarget(AActor * Target)
-{
-	check(Target);
-	FVector TargetLocation = Target->GetActorLocation();
-	FVector PlayerLocation = Player->GetActorLocation();
-	FVector LookDir = TargetLocation - PlayerLocation;
-	LookDir.Normalize();
-	LookDir.Z = 0.0f;
-
-	// @Target 에서 AttackRange 만큼 떨어진 곳으로 위치시키기 위해
-	FVector SettingLocation = TargetLocation;
-
-	// *StartAttackActionDistance*
-	SettingLocation += (-1) * LookDir * (StartAttackActionDistance + 0.0f);
-
-	// @Target 의 높이에 맞추고,
-	SettingLocation.Z = TargetLocation.Z;
-
-	// @Setting Location
-	Player->SetActorLocation(SettingLocation);
-}
-
-void UCPL_SDAttackFinish::DelegateBeginAttack()
-{
-	//@ON BlockInput
-	Player->OnBlockKeyInput();
-}
-
-void UCPL_SDAttackFinish::DelegateEndAttack()
-{
-	//@세계 원상복구.
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
-
-	//@OFF BlockInput
-	Player->OffBlockKeyInput();
-
-	//@Camera 원상복귀
-	PlayerController->SetViewTargetWithBlend(Player);
 }

@@ -28,11 +28,6 @@ protected:
 public:
 	void OnAction() override;
 
-	/* Function */
-private:
-	void SetAngleWithControlRot(float Angle);
-	void LookAtTarget(AActor* Target);
-
 	/* Member */
 private:
 	class ACPlayer* Player;

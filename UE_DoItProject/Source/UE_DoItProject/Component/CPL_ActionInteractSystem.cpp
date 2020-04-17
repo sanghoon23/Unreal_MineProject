@@ -67,8 +67,6 @@ void UCPL_ActionInteractSystem::InteractInput()
 
 	if (bResult == true)
 	{
-		// CLog::Print(HitResult.GetActor()->GetName());
-
 		// @Reset
 		Player->OnActionResetState.Broadcast(Player);
 
@@ -132,15 +130,6 @@ void UCPL_ActionInteractSystem::ClimbInterFunc(FHitResult& HitResult)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* Player 가 Target 을 바라보도록 하는 함수 */
-void UCPL_ActionInteractSystem::PlayerLookAtTarget(AActor * Target)
-{
-	check(Target);
-	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
-	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
-	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
-}
 
 /* 대상으로부터 수평하게 회전 (4면) */
 // Ex) 만약 Cube 라면 Player 의 회전이 어떻든 

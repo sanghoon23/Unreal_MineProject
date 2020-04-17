@@ -3,6 +3,10 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
+#include "System/CS_AttackDecision.h"
+#include "Interface/IC_Charactor.h"
+#include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
 
 UCPL_MGAttackBasic::UCPL_MGAttackBasic()
@@ -45,7 +49,8 @@ UCPL_MGAttackBasic::UCPL_MGAttackBasic()
 	#pragma endregion
 
 	#pragma region Create DamageType
-	DT_Noraml = NewObject<UCDamageType_Normal>();
+
+	DT_Normal = NewObject<UCDamageType_Normal>();
 	DT_StrongAttack = NewObject<UCDamageType_StrongAttack>();
 
 	#pragma endregion
@@ -54,6 +59,13 @@ UCPL_MGAttackBasic::UCPL_MGAttackBasic()
 void UCPL_MGAttackBasic::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	#pragma region Super
+
+	//@Auto AttackDecision System
+	AttackDecision->OnAble(Player, AttackRange);
+
+	#pragma endregion
 }
 
 void UCPL_MGAttackBasic::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -73,8 +85,7 @@ void UCPL_MGAttackBasic::BeginAttack(AActor * DoingActor)
 
 	// Super
 	{
-		bAttackCall = true;
-		IfFalseRet(bAttackPossible); // @Super::Tick 에서 처리 중.
+		IfFalseRet(GetAttackPossible()); // @Super::Tick 에서 처리 중.
 	}
 
 	// @IF TRUE RETURN
@@ -88,7 +99,7 @@ void UCPL_MGAttackBasic::BeginAttack(AActor * DoingActor)
 	check(Target);
 
 	//@ 타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -125,7 +136,7 @@ void UCPL_MGAttackBasic::OnComboSet(AActor * DoingActor)
 	++CurrentComboNum;
 
 	// @타겟 바라보게 하기
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -204,7 +215,7 @@ void UCPL_MGAttackBasic::AttackOtherPawn()
 				// 1.2 Hit Delegate - Normal(DamageType)
 				if (CurrentComboNum < static_cast<uint8>(UMG_BasicAttack::COMBO_THREE))
 				{
-					HitComp->OnHit(Player, DT_Noraml, 50.0f);
+					HitComp->OnHit(Player, DT_Normal, 50.0f);
 				}
 				else if (CurrentComboNum == static_cast<uint8>(UMG_BasicAttack::COMBO_THREE))
 				{
@@ -218,12 +229,4 @@ void UCPL_MGAttackBasic::AttackOtherPawn()
 		else
 			UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - Charactor Null!!");
 	}//(bHit == true)
-}
-
-void UCPL_MGAttackBasic::LookAtTarget(AActor * Target)
-{
-	check(Target);
-	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
-	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
-	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
 }

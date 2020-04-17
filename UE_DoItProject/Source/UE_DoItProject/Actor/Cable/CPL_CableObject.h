@@ -16,7 +16,7 @@ private:
 		class UMaterialInterface* OnMaterial;
 
 	UPROPERTY(VisibleAnywhere, Category = "Cable")
-	class UCableComponent* CableComp;
+		class UCableComponent* CableComp;
 
 	UPROPERTY(EditAnyWhere, Category = "Cable")
 		FString AttachName = L"hand_l";

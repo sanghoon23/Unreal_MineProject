@@ -20,6 +20,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_StrongAttack*	DT_Strong;
 
+	UFUNCTION()
+		void GoBackToTarget(AActor* Target);
+
 	#pragma endregion
 
 public:
@@ -34,17 +37,18 @@ public:
 	/* Function */
 public:
 	void BeginAttack(AActor * DoingActor) override;
+	void EndAttack() override;
 
 	void AttackOtherPawn() override;
 	void ImpulseAttack(float intensity) override;
 	void CheckProcedural() override;
 
-private:
-	void LookAtTarget(AActor* Target);
-
 	#pragma region Member
 private:
-	float AttackRadius = 100.0f;
+	float AttackRadius = 250.0f;
+
+	FTimerHandle EndSectionTimerHandle;
+	FTimerDelegate EndSectionDelegate;
 
 	#pragma endregion
 

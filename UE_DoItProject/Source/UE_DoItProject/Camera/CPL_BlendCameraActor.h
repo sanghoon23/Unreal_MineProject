@@ -5,7 +5,8 @@
 #include "CPL_BlendCameraActor.generated.h"
 
 UCLASS()
-class UE_DOITPROJECT_API ACPL_BlendCameraActor : public ACameraActor
+class UE_DOITPROJECT_API ACPL_BlendCameraActor 
+	: public ACameraActor
 {
 	GENERATED_BODY()
 	

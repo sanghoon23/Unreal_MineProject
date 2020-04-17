@@ -49,9 +49,6 @@ public:
 	void ImpulseAttack(float intensity) override;
 	void CheckProcedural() override;
 
-private:
-	void LookAtTarget(AActor* Target);
-
 	#pragma region Member
 private:
 	float AttackRadius = 100.0f;

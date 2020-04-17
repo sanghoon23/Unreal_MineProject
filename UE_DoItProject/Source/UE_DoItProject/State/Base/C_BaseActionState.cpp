@@ -10,8 +10,6 @@ UC_BaseActionState::UC_BaseActionState()
 void UC_BaseActionState::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
 
 void UC_BaseActionState::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

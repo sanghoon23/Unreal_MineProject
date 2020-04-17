@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "Interface/IC_Charactor.h"
 #include "Charactor/Player/CPlayer.h"
 
@@ -64,7 +65,7 @@ void UCPL_SDActionRoll::OnAction()
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//@타겟 바라보기.
-	LookAtTarget(Target);
+	UCFL_ActorAgainst::LookAtTarget(Target, Player);
 
 	// @Set Evade
 	Player->SetEvade(true);
@@ -96,21 +97,4 @@ void UCPL_SDActionRoll::OnAction()
 	//	}
 	//}
 
-}
-
-void UCPL_SDActionRoll::SetAngleWithControlRot(float Angle)
-{
-	FRotator ControlRotation = Player->GetControlRotation();
-	FRotator Y = FRotator(0.0f, ControlRotation.Yaw + Angle, 0.0f);
-	FVector Right = FQuat(Y).GetRightVector();
-
-	Player->SetActorRotation(Y);
-}
-
-void UCPL_SDActionRoll::LookAtTarget(AActor * Target)
-{
-	check(Target);
-	FVector DestVec = Target->GetActorLocation() - Player->GetActorLocation();
-	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
-	Player->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
 }

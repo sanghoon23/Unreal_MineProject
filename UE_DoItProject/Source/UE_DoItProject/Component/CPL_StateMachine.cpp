@@ -4,11 +4,11 @@
 #include "NiagaraActor.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
-
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Charactor/Player/CPlayer.h"
 
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "Interface/IC_BaseAttack.h"
 #include "Component/Player/CPL_MageAttackComp.h"
 #include "Component/Player/CPL_SwordAttackComp.h"
@@ -243,7 +243,7 @@ void UCPL_StateMachine::OnDash()
 		FQuat ControlQuat = FQuat(Yaw);
 		if (Controller->IsInputKeyDown(EKeys::W))
 		{
-			SetAngleWithControlRot(0.0f);
+			UCFL_ActorAgainst::SetAngleWithControlRot(Player, 0.0f);
 			Player->SetEvadeDirection(ControlQuat.GetForwardVector());
 
 			Player->OffCollision();
@@ -251,7 +251,7 @@ void UCPL_StateMachine::OnDash()
 		}
 		else if (Controller->IsInputKeyDown(EKeys::S))
 		{
-			SetAngleWithControlRot(180.0f);
+			UCFL_ActorAgainst::SetAngleWithControlRot(Player, 180.0f);
 			Player->SetEvadeDirection((-1) * ControlQuat.GetForwardVector());
 
 			Player->OffCollision();
@@ -259,7 +259,7 @@ void UCPL_StateMachine::OnDash()
 		}
 		else if (Controller->IsInputKeyDown(EKeys::A))
 		{
-			SetAngleWithControlRot(-90.0f);
+			UCFL_ActorAgainst::SetAngleWithControlRot(Player, -90.0f);
 			Player->SetEvadeDirection((-1) * ControlQuat.GetRightVector());
 
 			Player->OffCollision();
@@ -267,7 +267,7 @@ void UCPL_StateMachine::OnDash()
 		}
 		else if (Controller->IsInputKeyDown(EKeys::D))
 		{
-			SetAngleWithControlRot(90.0f);
+			UCFL_ActorAgainst::SetAngleWithControlRot(Player, 90.0f);
 			Player->SetEvadeDirection(ControlQuat.GetRightVector());
 
 			Player->OffCollision();
@@ -300,13 +300,4 @@ void UCPL_StateMachine::OnDash()
 void UCPL_StateMachine::OnPullActorWithCable()
 {
 	PullActorAction->OnAction();
-}
-
-void UCPL_StateMachine::SetAngleWithControlRot(float Angle)
-{
-	FRotator ControlRotation = Player->GetControlRotation();
-	FRotator Y = FRotator(0.0f, ControlRotation.Yaw + Angle, 0.0f);
-	FVector Right = FQuat(Y).GetRightVector();
-
-	Player->SetActorRotation(Y);
 }

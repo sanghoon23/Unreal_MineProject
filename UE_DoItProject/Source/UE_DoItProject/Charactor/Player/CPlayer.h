@@ -60,12 +60,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCPL_TargetingSystem* TargetingSystem;
 
+	UPROPERTY(VisibleAnywhere, Category = "Controller")
+		class UCS_MouseController* MouseController;
+
 	UPROPERTY(VisibleAnywhere, Category = "AttachActor")
 		class ACPL_CableObject* CableObject;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		class UAnimMontage* CurrentMontage;
-
+		
 	#pragma endregion
 
 public:
@@ -113,17 +116,24 @@ public:
 	void OnBlockKeyInput();
 	void OffBlockKeyInput();
 
-	//#Edit 0320 - 보류,
 	// Block Action
 	void OnBlockAction()	{ bBlockAction = true; }
 	void OffBlockAction()	{ bBlockAction = false; }
-	
 
 	/* LeftHand == 0, RightHand == 1, 로 설정되어있음 그 이외의 값은 return*/
 	void OnHandIK(uint8 HandNumber);
 
 	/* LeftHand == 0, RightHand == 1, 로 설정되어있음 그 이외의 값은 return*/
 	void OffHandIK(uint8 HandNumber);
+
+	void OnMouseController();
+	void OffMouseController();
+
+	/* Player 안에 있는 Paritlce 켜기 */
+	void OnParticleInPlayer();
+
+	/* Player 안에 있는 Paritlce 끄기 */
+	void OffParticleInPlayer();
 
 private:
 	// Axis Mapping
@@ -139,15 +149,17 @@ private:
 	void OffDoAxisTurn();
 	void OnEvade();
 	void OnDash();
-	void OnSwapState(); //@무기스왑 ( 검 / 마법 )
-	void OnLookAround(); //@공격대상 찾기
+	void OnSwapState();			//@무기스왑 ( 검 / 마법 )
+	void OnLookAround();		//@공격대상 찾기
 
-	void OnInteractAction();	//  @E - 상호작용
-	void OnBasicAttack();		// @1번 공격 - 기본공격
-	void OnSecondAttack();		// @2번 공격
-	void OnThirdAttack();		// @3번 공격
+	void OnInteractAction();	//@E Key		- 상호작용
+	void OnBasicAttack();		//@1 Key 공격	- 기본공격
+	void OnSecondAttack();		//@2 Key 공격
+	void OnThirdAttack();		//@3 Key 공격
+	void OnFourAttack();		//@4 Key 공격
+	void OnFiveAttack();		//@5 Key 공격
 
-	void OnPullActorWithCableAction();
+	void OnPullActorWithCableAction(); //@F Key
 
 	#pragma	region Member
 public:
@@ -157,11 +169,15 @@ public:
 	// @TargetSystem
 	APawn* GetFindAttackTarget();
 
+	// @CS MouseController
+	class UCS_MouseController* GetPlayerCSMouseController() { return MouseController; }
+
 	// @Blend Camera
 	class UCPL_BlendCameraComp* GetBlendCameraComp() { return BlendCameraComp; }
 
-	// @Cable Object;
+	// @Cable Object
 	class ACPL_CableObject* GetCableObject() { return CableObject; }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Move

@@ -16,6 +16,8 @@ public class UE_DoItProject : ModuleRules
             "InputCore",
             "RHI",
             "GameplayTasks",
+            "HeadMountedDisplay",
+            "UMG",
             "Slate",
             "SlateCore",
             "RenderCore",

@@ -6,8 +6,6 @@
 UC_BaseAttackState::UC_BaseAttackState()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 void UC_BaseAttackState::BeginPlay()
@@ -19,7 +17,6 @@ void UC_BaseAttackState::BeginPlay()
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
 	check(IC_Charactor);
 
-	CLog::Print(GetOwner()->GetName());
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
 		bAttackMode = false;
@@ -30,9 +27,6 @@ void UC_BaseAttackState::BeginPlay()
 		bAttackPossible = false; //@AttackPossible
 	});
 
-	//IC_Charactor->OnActionResetState.AddUObject(this, &UC_BaseAttackState::Del_ResetState);
-	//BeginAttackDeleFunc.AddUObject(this, &UC_BaseAttackState::Del_BeginAttack);
-
 	// Set Delegate "Begin Attack" - IIC_BaseAttack
 	BeginAttackDeleFunc.AddLambda([&]()
 	{
@@ -41,7 +35,7 @@ void UC_BaseAttackState::BeginPlay()
 	});
 
 	// Set Delegate "End Attack" - IIC_BaseAttack
-	//EndAttackDeleFunc.AddUObject(this, &UC_BaseAttackState::Del_EndAttack);
+	EndAttackDeleFunc.AddUObject(this, &UC_BaseAttackState::EndAttack);
 
 	#pragma endregion
 
@@ -61,31 +55,4 @@ void UC_BaseAttackState::EndAttack()
 
 	bAttackPossible = false;
 }
-
-//void UC_BaseAttackState::Del_ResetState(AActor* Acto)
-//{
-//	bAttackMode = false;
-//	bAttacking = false;
-//	bComboCheck = false;
-//	CurrentComboNum = 0;
-//
-//	bAttackPossible = false; //@AttackPossible
-//}
-//
-//void UC_BaseAttackState::Del_BeginAttack()
-//{
-//	bAttacking = true;
-//	bAttackMode = true;
-//}
-//
-//void UC_BaseAttackState::Del_EndAttack()
-//{
-//	bAttackMode = false;
-//	bAttacking = false;
-//	bComboCheck = false;
-//	CurrentComboNum = 0;
-//
-//	bAttackPossible = false;
-//}
-
 
