@@ -23,6 +23,10 @@ class UE_DOITPROJECT_API UCDamageType_Base
 	GENERATED_BODY()
 	
 	#pragma region Reflection
+public:
+	//UFUNCTION(BlueprintCallable, Category = "Texture")
+	//	virtual class UTexture2D* GetDamageTypeTexture() {}
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "DamageType")
 		int TypeNumber = 0;
@@ -42,6 +46,12 @@ public:
 	virtual void OnDamageDelegate(AActor* DamagedActor);
 
 	#pragma region Member
+	/* Virutla Member */
+public:
+	virtual void SetDamageImpulse(float DamageAmount);
+	virtual void SetDestructibleImpulse(float DestructibleDamageAmount);
+	virtual void SetDestructibleDamageSpreadScale(float SpreadScale);
+
 public:
 	FDamageFunc& GetDamageDelegate() { return DamageFunc; }
 

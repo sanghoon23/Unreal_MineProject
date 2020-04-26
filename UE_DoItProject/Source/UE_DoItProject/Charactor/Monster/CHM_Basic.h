@@ -40,7 +40,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//@IC_Charactor
 	/* Pure Virtual Function In Interface */
 public:
 	virtual bool IsDeath() override { return bDeath; }
@@ -55,6 +56,7 @@ public:
 
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
 	virtual void ActorStopCurrentAnimMon() override;
+	virtual void ActorStopAnimMon(class UAnimMontage* Montage) override;
 
 	/* Virtual In Interface */
 public:
@@ -71,11 +73,18 @@ public:
 	//	class AController * EventInstigator,
 	//	AActor * DamageCauser) override;
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//@IC_Monster
+public:
+	virtual FMonsterInfo GetMonsterInfo() const override { return Info; };
+
 private:
 	void OnDestroy();
 
 	#pragma region Member
 private:
+	/* IC_Monster Member */
+	FMonsterInfo Info;
 
 	#pragma endregion
 };

@@ -68,9 +68,17 @@ void UCPL_SDAttackFinish::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+void UCPL_SDAttackFinish::IsRunTick(bool bRunning)
+{
+	SetComponentTickEnabled(bRunning);
+}
+
 void UCPL_SDAttackFinish::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//@Running Tick
+	IsRunTick(false);
 
 	#pragma region Super
 
@@ -110,7 +118,12 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 	IfTrueRet(Player->GetCharacterMovement()->IsFalling() && Player->GetCharacterMovement()->GravityScale > 0.0f); //@InAir
 	IfTrueRet(IsLastCombo()); //@IsLastCombo
 
-	APawn* Target = Player->GetFindAttackTarget();
+	Target = Player->GetFindAttackTarget();
+	if (Target == nullptr)
+	{
+		EndAttackDeleFunc.Broadcast();
+		return;
+	}
 	check(Target);
 
 	// @Target 이 공중 있다면 공격 명령 중단.
@@ -151,7 +164,7 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 	}
 
 	//@타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	//@거리 벌리고, 높이 맞추기
 	UCFL_ActorAgainst::ActorLocateFrontTarget(Target, Player, AttackRange, true);
@@ -177,6 +190,9 @@ void UCPL_SDAttackFinish::EndAttack()
 {
 	Super::EndAttack();
 
+	//@Target NULL
+	//Target = nullptr;
+
 	//@세계 원상복구.
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
 
@@ -189,6 +205,8 @@ void UCPL_SDAttackFinish::EndAttack()
 
 // - IBaseAttack 참고.
 // @Warning - bComboCheck = false 하지 않음.
+// @Warning - Target 을 변수로 저장하고 있음.
+// 이 동작은 도중에 Target을 ESC 해서 nullptr 이 되버려도 실행되게끔 함.
 void UCPL_SDAttackFinish::OnComboSet(AActor * DoingActor)
 {
 	Super::OnComboSet(DoingActor);
@@ -197,8 +215,8 @@ void UCPL_SDAttackFinish::OnComboSet(AActor * DoingActor)
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(DoingActor);
 	check(Charactor);
 
-	APawn* Target = Player->GetFindAttackTarget();
-	check(Target);
+	//Target = Player->GetFindAttackTarget();
+	//check(Target);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -248,7 +266,7 @@ void UCPL_SDAttackFinish::OnComboSet(AActor * DoingActor)
 	Player->CanNotMove();
 
 	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();

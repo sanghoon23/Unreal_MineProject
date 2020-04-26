@@ -4,8 +4,11 @@
 #include "GameFramework/Character.h"
 #include "CHumanoidMonster.generated.h"
 
+
+
 UCLASS()
-class UE_DOITPROJECT_API ACHumanoidMonster : public ACharacter
+class UE_DOITPROJECT_API ACHumanoidMonster 
+	: public ACharacter
 {
 	GENERATED_BODY()
 

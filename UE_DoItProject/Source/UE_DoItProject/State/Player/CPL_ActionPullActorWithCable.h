@@ -39,12 +39,13 @@ public:
 
 	/* Function */
 private:
-	void PullingTargetLocation(AActor* Target);
+	void PullingTargetLocation(AActor* PulledTarget);
 
 	/* Member */
 private:
 	class ACPlayer* Player;
 	class ACPL_CableObject* CableObject;
+	APawn* Target = nullptr;
 
 	// Value
 	float UsingActionRange = 1700.0f;

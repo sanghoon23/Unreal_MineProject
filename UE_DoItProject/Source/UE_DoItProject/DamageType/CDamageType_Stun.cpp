@@ -1,4 +1,5 @@
 #include "CDamageType_Stun.h"
+#include "Global.h"
 
 UCDamageType_Stun::UCDamageType_Stun()
 {
@@ -17,6 +18,15 @@ UCDamageType_Stun::UCDamageType_Stun()
 		DamageImpulse = 100.0f;
 		DestructibleImpulse = 100.0f;
 		DestructibleDamageSpreadScale = 100.0f;
+	}
+
+	FString strPath = L"";
+
+	strPath = L"Texture2D'/Engine/EngineResources/Bad.Bad'";
+	ConstructorHelpers::FObjectFinder<UTexture2D> StunTexture(*strPath);
+	if (StunTexture.Succeeded())
+	{
+		StunConditionUITexture = StunTexture.Object;
 	}
 }
 

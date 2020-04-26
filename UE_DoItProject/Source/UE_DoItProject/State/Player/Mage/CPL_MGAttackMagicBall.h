@@ -2,13 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_MageBaseAttack.h"
-#include "Interface/IC_BaseAttack.h"
+#include "Interface/IC_Component.h"
 
 #include "CPL_MGAttackMagicBall.generated.h"
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_MGAttackMagicBall 
-	: public UCPL_MageBaseAttack
+	: public UCPL_MageBaseAttack, public IIC_Component
 {
 	GENERATED_BODY()
 
@@ -26,7 +26,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
-	/* Function */
+	/* Pure Virtual Function - IC_Component */
+	virtual void IsRunTick(bool bRunning) override;
+
+	/* Pure Virtual Function - IC_BaseAttack */
 public:
 	void BeginAttack(AActor * DoingActor) override;
 	//void EndAttack() override;
@@ -35,17 +38,17 @@ public:
 	void ImpulseAttack(float intensity) override;
 	void CheckProcedural() override;
 
-private:
-	class ACProjectile_MagicBall* SpawnMagicBall();
-
 	#pragma region Member
 private:
 	float AttackRadius = 250.0f;
 
 	class UWG_SkillCastingBar* SkillCastWidget;
 	bool bFillingGauge = false;
+	float FillingSpeed = 1.0f;
 
 	FTimerHandle MontagePauseTimer;
+	float MontagePauseOffset = 2.0f;
+
 	FTimerDelegate MontagePauseDel;
 
 	#pragma endregion

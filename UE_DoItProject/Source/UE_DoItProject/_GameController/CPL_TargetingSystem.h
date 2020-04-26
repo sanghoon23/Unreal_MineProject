@@ -34,6 +34,10 @@ public:
 	APawn* GetCurrentFindAttackTarget() { return FindAttackTarget; }
 
 private:
+	class ACPlayer* Player;
+
+	class UWG_TargetInfo* TargetInfoWidget;
+
 	float FindDistance = 1500.0f; // 찾을 반경
 	APawn* FindAttackTarget;
 

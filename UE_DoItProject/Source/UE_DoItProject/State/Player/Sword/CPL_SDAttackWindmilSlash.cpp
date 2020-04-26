@@ -83,10 +83,15 @@ void UCPL_SDAttackWindmilSlash::BeginAttack(AActor * DoingActor)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	APawn* Target = Player->GetFindAttackTarget();
+	if (Target == nullptr)
+	{
+		EndAttackDeleFunc.Broadcast();
+		return;
+	}
 	check(Target);
 
 	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @ON Block Key
 	Player->OnBlockKeyInput();

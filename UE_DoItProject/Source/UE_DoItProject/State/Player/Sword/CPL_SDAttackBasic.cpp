@@ -60,14 +60,12 @@ UCPL_SDAttackBasic::UCPL_SDAttackBasic()
 	#pragma endregion
 }
 
-void UCPL_SDAttackBasic::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
 void UCPL_SDAttackBasic::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//@Running Tick
+	IsRunTick(false);
 
 	#pragma region Super
 
@@ -75,6 +73,17 @@ void UCPL_SDAttackBasic::BeginPlay()
 	AttackDecision->OnAble(Player, AttackRange);
 
 	#pragma endregion
+}
+
+void UCPL_SDAttackBasic::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+
+void UCPL_SDAttackBasic::IsRunTick(bool bRunning)
+{
+	SetComponentTickEnabled(bRunning);
 }
 
 // - IBaseAttack 참고.
@@ -100,10 +109,15 @@ void UCPL_SDAttackBasic::BeginAttack(AActor * DoingActor)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	APawn* Target = Player->GetFindAttackTarget();
+	if (Target == nullptr)
+	{
+		EndAttackDeleFunc.Broadcast();
+		return;
+	}
 	check(Target);
 
 	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -133,6 +147,12 @@ void UCPL_SDAttackBasic::OnComboSet(AActor * DoingActor)
 	check(Charactor);
 
 	APawn* Target = Player->GetFindAttackTarget();
+	if (Target == nullptr)
+	{
+		EndAttackDeleFunc.Broadcast();
+		Player->ActorStopAnimMon(SwordAttackMontages[CurrentComboNum]);
+		return;
+	}
 	check(Target);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,7 +161,7 @@ void UCPL_SDAttackBasic::OnComboSet(AActor * DoingActor)
 	++CurrentComboNum;
 
 	//@ 타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();

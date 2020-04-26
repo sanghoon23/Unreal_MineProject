@@ -6,12 +6,21 @@ UCFL_ActorAgainst::UCFL_ActorAgainst()
 {
 }
 
-void UCFL_ActorAgainst::LookAtTarget(AActor * Target, AActor* Subject)
+void UCFL_ActorAgainst::LookAtTarget(AActor * Subject, AActor* Target)
 {
 	check(Target);
 	check(Subject);
 
 	FVector DestVec = Target->GetActorLocation() - Subject->GetActorLocation();
+	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
+	Subject->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
+}
+
+void UCFL_ActorAgainst::LookAtPoint(AActor * Subject, FVector& Point)
+{
+	check(Subject);
+
+	FVector DestVec = Point - Subject->GetActorLocation();
 	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
 	Subject->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
 }

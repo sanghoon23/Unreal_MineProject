@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
-#include "Interface/IC_BaseAttack.h"
 
 #include "DamageType/CDamageType_Air.h"
 
@@ -32,7 +31,7 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	/* Function */
+	/* Pure Virtual Function - IC_BaseAttack */
 public:
 	void BeginAttack(AActor * DoingActor) override;
 	void EndAttack() override;

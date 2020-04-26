@@ -15,9 +15,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Value")
 		float FillSpeed = 1.0f;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Value")
-	//	float MaxRange = 100.0f;
-
 	UFUNCTION(BlueprintCallable, Category = "Value")
 		bool GetFinishFilledProgressBar() const { return bFinishFilledProgress; }
 
@@ -25,13 +22,15 @@ public:
 		float GetSkillCastingPersentage() const { return Persentage; }
 
 	UFUNCTION(BlueprintCallable, Category = "Value")
-		void StartProgress();
+		/* 
+		@param - FillingSpeed ( 채워지는 속도 )
+		@param - StartPercentage ( 시작될 Percentage ) Default = 0.0f;
+		@parma - Reverse ( false - LeftToRight, true - RightToLeft ) Default = false;
+		*/
+		void StartProgress(float FillingSpeed, float StartPercentage = 0.0f, bool Reverse = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Value")
 		void EndProgress();
-
-	//UFUNCTION(BlueprintCallable, Category = "Value")
-	//	void ProgressAction();
 
 	#pragma endregion
 
@@ -52,6 +51,7 @@ private:
 	bool bPlaying = false;
 
 	float Persentage	= 0.0f;
+	bool bReverse = false;
 
 	bool bFinishFilledProgress = false;
 };

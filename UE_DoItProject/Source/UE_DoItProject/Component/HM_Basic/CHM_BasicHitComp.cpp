@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Charactor/Monster/CHM_Basic.h"
@@ -19,7 +20,7 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_NormalHit1.HM_Basic_NormalHit1'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit(*Path);
 		if (normalHit.Succeeded())
-			NormalHit = normalHit.Object;
+			NormalHitMontage = normalHit.Object;
 	}
 
 	// 'Air' Hit Montage
@@ -27,7 +28,7 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_AirHitFirst.HM_Basic_AirHitFirst'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> airHit(*Path);
 		if (airHit.Succeeded())
-			AirHit = airHit.Object;
+			AirHitMontage = airHit.Object;
 	}
 
 	// 'AirAttack' Hit Montage
@@ -35,7 +36,7 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_AirAttackHit.HM_Basic_AirAttackHit'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> airAttackHit(*Path);
 		if (airAttackHit.Succeeded())
-			AirAttackHit = airAttackHit.Object;
+			AirAttackHitMontage = airAttackHit.Object;
 	}
 
 	// 'StrongAttack' Hit Montage
@@ -43,7 +44,7 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_StrongAttack.HM_Basic_StrongAttack'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> strongAttackHit(*Path);
 		if (strongAttackHit.Succeeded())
-			StrongAttackHit = strongAttackHit.Object;
+			StrongAttackHitMontage = strongAttackHit.Object;
 	}
 
 	// 'Stun' Hit Montage
@@ -51,11 +52,14 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_Stun_.HM_Basic_Stun_'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> stunHit(*Path);
 		if (stunHit.Succeeded())
-			StunHit = stunHit.Object;
+			StunHitMontage = stunHit.Object;
 	}
 
 
 	#pragma endregion
+
+	//// @Creat Condition Data
+	//StunNonActionData = NewObject<UHitNonActionConditionData>();
 }
 
 void UCHM_BasicHitComp::BeginPlay()
@@ -100,13 +104,13 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 		// DamageType->OnDamageDelegate(Owner);
 
 		// @때린 대상 바라보기
-		LookAtActor(AttackingActor);
+		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
 
 		//1.3 TakeDamage
 
 
 		//1.4 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(NormalHit, 0.6f, true);
+		HM_Basic->ActorAnimMonPlay(NormalHitMontage, 0.6f, true);
 
 		//CLog::Print(L"TYPE - NORMAL");
 	}
@@ -115,7 +119,7 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 	else if (DamageType->GetConditionType() == FConditionType::AIR)
 	{
 		// @때린 대상 바라보기
-		LookAtActor(AttackingActor);
+		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
 
 		//1.3 TakeDamage
 
@@ -133,7 +137,7 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 		HM_Basic->OffGravity();
 
 		//1.6 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(AirHit, 0.6f, true);
+		HM_Basic->ActorAnimMonPlay(AirHitMontage, 0.6f, true);
 
 		//CLog::Print(L"TYPE - AIR");
 	}
@@ -142,7 +146,7 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 	else if (DamageType->GetConditionType() == FConditionType::AIRATTACK)
 	{
 		// @때린 대상 바라보기
-		LookAtActor(AttackingActor);
+		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
 
 		//1.3 TakeDamage
 
@@ -153,7 +157,7 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 		HM_Basic->OffGravity();
 
 		//1.5 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(AirAttackHit, 0.6f, true);
+		HM_Basic->ActorAnimMonPlay(AirAttackHitMontage, 0.6f, true);
 
 		//CLog::Print(L"TYPE - AIRATTACK");
 	}
@@ -162,38 +166,33 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Damag
 	else if (DamageType->GetConditionType() == FConditionType::STRONGATTACK)
 	{
 		// @때린 대상 바라보기
-		LookAtActor(AttackingActor);
+		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
 
 		//@애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(StrongAttackHit, 0.6f, true);
+		HM_Basic->ActorAnimMonPlay(StrongAttackHitMontage, 0.6f, true);
 	}
 
 	// @STUN ATTACK
 	else if (DamageType->GetConditionType() == FConditionType::STUN)
 	{
 		//@때린 대상 바라보기
-		LookAtActor(AttackingActor);
+		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
 
 		//@StunType 캐스팅
 		UCDamageType_Stun* StunType = Cast<UCDamageType_Stun>(DamageType);
 		check(StunType);
 
 		//@상태이상 추가 - BaseHitComp
-		FHitNonActionConditionData ConditionData;
-		ConditionData.ApplyTime = StunType->GetStunTime();
-		ConditionData.NonActionMon = StunHit;
-		AddNonActionCondition(ConditionData);
+		StunNonActionData = NewObject<UHitNonActionConditionData>();
+		StunNonActionData->ApplyTime = StunType->GetStunTime();
+		StunNonActionData->NonActionMon = StunHitMontage;
+		if (StunType->StunConditionUITexture != nullptr)
+		{
+			StunNonActionData->TextureUI = StunType->StunConditionUITexture;
+		}
+		AddConditionData(StunNonActionData);
 
 		//@애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(StunHit, 0.6f, true);
+		HM_Basic->ActorAnimMonPlay(StunHitMontage, 0.6f, true);
 	}
-}
-
-// @param Target - 바라볼 대상
-void UCHM_BasicHitComp::LookAtActor(AActor * Target)
-{
-	FVector LookVec = Target->GetActorLocation() - HM_Basic->GetActorLocation();
-	LookVec.Z = 0.0f;
-	FRotator LookRot = FRotationMatrix::MakeFromX(LookVec).Rotator();
-	HM_Basic->SetActorRotation(FRotator(0.0f, LookRot.Yaw, 0.0f)); // OK 
 }

@@ -35,6 +35,12 @@ void ACDecalActor_WithMouse::SetDecalCompRotation(FRotator Rotate)
 	DecalComp->SetRelativeRotation(Rotate);
 }
 
+void ACDecalActor_WithMouse::SetDecalSize(float fSize)
+{
+	FVector SizeVec = FVector(fSize);
+	DecalComp->DecalSize = SizeVec;
+}
+
 void ACDecalActor_WithMouse::SetDecalSize(FVector Size)
 {
 	DecalComp->DecalSize = Size;

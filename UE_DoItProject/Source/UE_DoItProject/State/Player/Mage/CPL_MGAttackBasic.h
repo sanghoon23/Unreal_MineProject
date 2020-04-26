@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_MageBaseAttack.h"
-#include "Interface/IC_BaseAttack.h"
+#include "Interface/IC_Component.h"
 
 #include "DamageType/CDamageType_Normal.h"
 #include "DamageType/CDamageType_StrongAttack.h"
@@ -20,7 +20,7 @@ enum class UMG_BasicAttack : uint8
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_MGAttackBasic
-	: public UCPL_MageBaseAttack
+	: public UCPL_MageBaseAttack, public IIC_Component
 {
 	GENERATED_BODY()
 	
@@ -42,7 +42,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/* Pure Virtual Function */
+	/* Pure Virtual Function - IC_Component */
+	virtual void IsRunTick(bool bRunning) override;
+
+	/* Pure Virtual Function - IC_BaseAttack */
 public:
 	void BeginAttack(AActor * DoingActor) override;
 	void OnComboSet(AActor * DoingActor) override;

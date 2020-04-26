@@ -2,6 +2,11 @@
 #include "Global.h"
 
 #include "Charactor/Monster/Base/CHumanoidMonster.h"
+#include "Charactor/Player/CPlayer.h"
+
+//UI
+#include "UI/HUD_Main.h"
+#include "UI/Widget/WG_TargetInfo.h"
 
 UCPL_TargetingSystem::UCPL_TargetingSystem()
 {
@@ -15,13 +20,36 @@ void UCPL_TargetingSystem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	//@Set Player
+	Player = Cast<ACPlayer>(GetOwner());
+
+	//@UI
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC != nullptr)
+	{
+		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+		check(MainHUD);
+		TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+	}
 }
 
 
 void UCPL_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
+	if (PlayerController != nullptr)
+	{
+		if(PlayerController->IsInputKeyDown(EKeys::Escape))
+		{
+			//@Target NULL 시키기.
+			FindAttackTarget = nullptr;
+
+			//@Widget UnVisible
+			TargetInfoWidget->WigetUnVisible();
+		}
+	}
 }
 
 /* TargetingSystem TarceChannel 을 이용해 Target 선별하기. */
@@ -59,7 +87,11 @@ void UCPL_TargetingSystem::OnFindTargets()
 				// UE_LOG(LogTemp, Warning, (*result.GetActor()->GetName()));
 				// CLog::Print((*result.GetActor()->GetName()));
 
+				//@Target
 				FindAttackTarget = Cast<APawn>(result.GetActor());
+
+				//@Widget Visible
+				TargetInfoWidget->WigetVisible();
 				return; 
 			}
 		}

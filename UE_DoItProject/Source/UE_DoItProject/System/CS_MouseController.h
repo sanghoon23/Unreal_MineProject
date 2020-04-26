@@ -42,7 +42,12 @@ public:
 
 	/* Function */
 public:
-	void OnMouseControl();
+	/*
+	@param - DecalCircleRange MouseController 안에 있는 Decal Size 지정
+	@param - StandardTarget Unproject 의 기준점이 되는 Target 설정 Default = nullptr
+	@param - StandardRange 기준점의 반경 Default = 0.0f
+	*/
+	void OnMouseControl(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
 	void OffMouseControl();
 
 	//Temp(임시)
@@ -64,4 +69,11 @@ private:
 	bool bDebug = false;
 	EMouseState MouseState = EMouseState::NONE;
 	FVector ClickPoint = FVector(0.0f);
+
+	/* DecalActor 의 원 반경 */
+	FVector DecalActorCircleSize = FVector(300.0f);
+
+	/* Mouse Deprojection 반경 */
+	AActor* TargetMouseStandard = nullptr;
+	float MouseRangeWithTarget = 0.0f;
 };

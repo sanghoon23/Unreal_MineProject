@@ -8,9 +8,14 @@ UCLASS()
 class UE_DOITPROJECT_API UCDamageType_Stun : public UCDamageType_Base
 {
 	GENERATED_BODY()
-	
+
 	#pragma region Reflection
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Texture")
+		class UTexture2D* StunConditionUITexture = nullptr;
+
 private:
+
 
 	#pragma endregion
 

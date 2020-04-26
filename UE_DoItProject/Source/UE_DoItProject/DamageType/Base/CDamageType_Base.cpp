@@ -21,3 +21,18 @@ void UCDamageType_Base::OnDamageDelegate(AActor * DamagedActor)
 	// @Delegate ½ÇÇà
 	DamageFunc.Broadcast(DamagedActor);
 }
+
+void UCDamageType_Base::SetDamageImpulse(float DamageAmount)
+{
+	DamageImpulse = DamageAmount;
+}
+
+void UCDamageType_Base::SetDestructibleImpulse(float DestructibleDamageAmount)
+{
+	DestructibleImpulse = DestructibleDamageAmount;
+}
+
+void UCDamageType_Base::SetDestructibleDamageSpreadScale(float SpreadScale)
+{
+	DestructibleDamageSpreadScale = SpreadScale;
+}

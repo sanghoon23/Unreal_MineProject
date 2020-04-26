@@ -49,6 +49,9 @@ void UCPL_SDAttackBackRange::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//@Running Tick
+	IsRunTick(false);
+
 	#pragma region Super
 
 	//@Auto AttackDecision System
@@ -76,6 +79,11 @@ void UCPL_SDAttackBackRange::TickComponent(float DeltaTime, ELevelTick TickType,
 	//FString::Printf(TEXT("EndTime : %f"), EndTime);
 }
 
+void UCPL_SDAttackBackRange::IsRunTick(bool bRunning)
+{
+	SetComponentTickEnabled(bRunning);
+}
+
 void UCPL_SDAttackBackRange::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
@@ -94,10 +102,15 @@ void UCPL_SDAttackBackRange::BeginAttack(AActor * DoingActor)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	APawn* Target = Player->GetFindAttackTarget();
+	if (Target == nullptr)
+	{
+		EndAttackDeleFunc.Broadcast();
+		return;
+	}
 	check(Target);
 
 	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @ON BLOCK KEY INPUT
 	Player->OnBlockKeyInput();
@@ -212,5 +225,5 @@ void UCPL_SDAttackBackRange::GoBackToTarget(AActor * Target)
 	Player->SetActorLocation(TargetLoaction + (Direction * 200.0f));
 
 	//@타겟 바라보기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 }

@@ -6,6 +6,13 @@
 
 #include "CFL_ActorAgainst.generated.h"
 
+/*
+#Edit - 0410
+@ActorAgainst Obejct
+* Target 과의 상호작용을 위해 전역적으로 만든 클래스
+
+*/
+
 UCLASS()
 class UE_DOITPROJECT_API UCFL_ActorAgainst 
 	: public UObject
@@ -17,7 +24,10 @@ public:
 
 public:
 	UFUNCTION(Category = "ActorAgainst")
-	static void LookAtTarget(AActor* Target, AActor* Subject);
+	static void LookAtTarget(AActor* Subject, AActor* Target);
+
+	UFUNCTION(Category = "ActorAgainst")
+	static void LookAtPoint(AActor* Subject, FVector& Point);
 
 	UFUNCTION(Category = "ActorAgainst")
 	/* Subject 를 Target 앞에 Distance 만큼 으로 맞춤 - 높이도 포함 */

@@ -30,6 +30,8 @@ UCPL_ActionPullActorWithCable::UCPL_ActionPullActorWithCable()
 	#pragma region DamageType
 
 	DT_Stun = NewObject<UCDamageType_Stun>();
+
+	//@Stun 시간 지정
 	DT_Stun->SetStunTime(10.0f);
 
 	#pragma endregion
@@ -58,7 +60,7 @@ void UCPL_ActionPullActorWithCable::OnAction()
 	}
 
 	// @IF NULL RETURN
-	APawn* Target = Player->GetFindAttackTarget();
+	Target = Player->GetFindAttackTarget();
 	IfNullRet(Target); //@Target 이 설정되지 않았으면, return;
 
 	// @대상과의 거리가 너무 멀 시,
@@ -90,6 +92,8 @@ void UCPL_ActionPullActorWithCable::OnAction()
 	);
 }
 
+// @Warning - Target 을 변수로 저장하고 있음. - Finish Attack 과 동일
+// 이 동작은 도중에 Target을 ESC 해서 nullptr 이 되버려도 실행되게끔 함.
 void UCPL_ActionPullActorWithCable::BeginActionState()
 {
 	Super::BeginActionState();
@@ -98,9 +102,9 @@ void UCPL_ActionPullActorWithCable::BeginActionState()
 	CableObject = Player->GetCableObject();
 	check(CableObject);
 
-	//@Get Taget
-	AActor* Target = Player->GetFindAttackTarget();
-	check(Target);
+	////@Get Taget
+	//AActor* Target = Player->GetFindAttackTarget();
+	//check(Target);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -108,7 +112,7 @@ void UCPL_ActionPullActorWithCable::BeginActionState()
 	Player->OnBlockAction();
 
 	//@대상 바라보기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	//@초기 LerpValue 설정 - PullRange 의 비율
 	float InitDistance = Player->GetDistanceTo(Target);
@@ -126,9 +130,9 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 	CableObject = Player->GetCableObject();
 	check(CableObject);
 
-	//@Get Taget
-	AActor* Target = Player->GetFindAttackTarget();
-	check(Target);
+	////@Get Taget
+	//AActor* Target = Player->GetFindAttackTarget();
+	//check(Target);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//@끌어 당겨질 때,
@@ -169,7 +173,10 @@ void UCPL_ActionPullActorWithCable::EndActionState()
 {
 	Super::EndActionState();
 
-	//@This Value
+	//@ Target Init
+	Target = nullptr;
+
+	//@Montage
 	bNextMontage = false;
 
 	//@CableObject Reset
@@ -183,22 +190,24 @@ void UCPL_ActionPullActorWithCable::EndActionState()
 
 /* Target 을 끌어오는 동안 위치 조정 */
 // @Warning - BeginAction 구한 값인 LerpValue 사용.
-void UCPL_ActionPullActorWithCable::PullingTargetLocation(AActor * Target)
+void UCPL_ActionPullActorWithCable::PullingTargetLocation(AActor * PulledTarget)
 {
+	check(PulledTarget);
+
 	//@Target Location
-	FVector TargetLocation = Target->GetActorLocation();
+	FVector TargetLocation = PulledTarget->GetActorLocation();
 
 	//@Player Location + PullRange
 	FVector PlayerLocation = Player->GetActorLocation();
 	PulledDirection = PlayerLocation - TargetLocation;
 	PulledDirection.Normalize();
-	float Distance = Player->GetDistanceTo(Target);
+	float Distance = Player->GetDistanceTo(PulledTarget);
 	if (Distance > PullRange)
 	{
 		//@Calc
 		TargetLocation += PulledDirection * PulledSpeed * LerpValue;
 
 		//@Set Location
-		Target->SetActorLocation(TargetLocation);
+		PulledTarget->SetActorLocation(TargetLocation);
 	}
 }

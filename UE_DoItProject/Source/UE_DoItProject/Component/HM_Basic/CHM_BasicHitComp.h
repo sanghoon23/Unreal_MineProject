@@ -15,19 +15,23 @@ class UE_DOITPROJECT_API UCHM_BasicHitComp
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* NormalHit;
+		class UAnimMontage* NormalHitMontage;
 
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* AirHit;
+		class UAnimMontage* AirHitMontage;
 
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* AirAttackHit;
+		class UAnimMontage* AirAttackHitMontage;
 
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* StrongAttackHit;
+		class UAnimMontage* StrongAttackHitMontage;
 
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* StunHit;
+		class UAnimMontage* StunHitMontage;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "ConditionData")
+	class UHitNonActionConditionData* StunNonActionData;
 
 	#pragma endregion
 
@@ -47,7 +51,6 @@ public:
 	//
 	/* Function */
 private:
-	void LookAtActor(AActor* Target);
 
 	#pragma region Member
 private:

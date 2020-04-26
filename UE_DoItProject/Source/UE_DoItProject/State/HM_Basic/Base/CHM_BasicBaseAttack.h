@@ -31,6 +31,8 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
+	/* Virtual Function Override */
 public:
 	virtual void BeginAttack(AActor * DoingActor) override;
 	virtual void EndAttack() override;
@@ -40,7 +42,7 @@ public:
 	virtual void ImpulseAttack(float intensity) override;
 	virtual void CheckProcedural() override;
 
-#pragma	region Member
+	#pragma	region Member
 public:
 	virtual bool GetAttacking() const override { return bAttacking; }
 	virtual void SetAttacking(bool bValue) override { bAttacking = bValue; };

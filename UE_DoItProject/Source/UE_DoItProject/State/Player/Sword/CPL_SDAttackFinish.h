@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
+#include "Interface/IC_Component.h"
 
 #include "DamageType/CDamageType_Normal.h"
 #include "DamageType/CDamageType_StrongAttack.h"
@@ -19,7 +20,7 @@ enum class USD_FinalAttack : uint8
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_SDAttackFinish 
-	: public UCPL_SwordBaseAttack
+	: public UCPL_SwordBaseAttack, public IIC_Component
 {
 	GENERATED_BODY()
 
@@ -42,6 +43,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	/* Pure Virtual Function - IC_Component */
+	virtual void IsRunTick(bool bRunning) override;
+
 	/* Pure Virtual Function */
 public:
 	void BeginAttack(AActor * DoingActor) override;
@@ -62,5 +66,7 @@ private:
 	float StartAttackActionDistance = 200.0f;
 
 	APlayerController* PlayerController;
+
+	APawn* Target;
 	#pragma endregion
 };

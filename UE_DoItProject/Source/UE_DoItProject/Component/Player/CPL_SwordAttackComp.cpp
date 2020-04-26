@@ -1,5 +1,6 @@
 #include "CPL_SwordAttackComp.h"
 #include "Global.h"
+#include "Interface/IC_Component.h"
 
 #include "Charactor/Player/CPlayer.h"
 
@@ -99,16 +100,39 @@ IIC_BaseAttack*  UCPL_SwordAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	ESwordAttackType SetType = static_cast<ESwordAttackType>(Type);
 	if (AttackType == SetType)
 	{
-		return Cast<IIC_BaseAttack>(SwordAttackStateArray[Type]);
+		// @Tick true
+		IIC_Component* IC_Comp = Cast<IIC_Component>(SwordAttackStateArray[Type]);
+		if (IC_Comp != nullptr)
+		{
+			IC_Comp->IsRunTick(true);
+		}
+
+		return Cast<IIC_BaseAttack>(SwordAttackStateArray[Type]); //@return
 	}
-	else if (AttackType != SetType) // ¹Ù²î¾ú´Ù¸é
+	else if (AttackType != SetType)
 	{
+		// @Tick false
+		IIC_Component* IC_Comp = Cast<IIC_Component>(SwordAttackStateArray[BeforeTypeNum]);
+		if (IC_Comp != nullptr)
+		{
+			IC_Comp->IsRunTick(false);
+		}
+
 		// @EndAttack Call
 		SwordAttackStateArray[BeforeTypeNum]->EndAttackDeleFunc.Broadcast();
+
 		AttackType = SetType;
 	}
 
 	uint8 AfterTypeNum = static_cast<uint8>(AttackType);
+
+	// @Tick true
+	IIC_Component* IC_Comp = Cast<IIC_Component>(SwordAttackStateArray[AfterTypeNum]);
+	if (IC_Comp != nullptr)
+	{
+		IC_Comp->IsRunTick(true);
+	}
+
 	return Cast<IIC_BaseAttack>(SwordAttackStateArray[AfterTypeNum]);
 }
 

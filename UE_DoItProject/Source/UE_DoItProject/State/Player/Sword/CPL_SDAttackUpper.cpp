@@ -100,6 +100,9 @@ void UCPL_SDAttackUpper::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//@Running Tick
+	IsRunTick(false);
+
 	#pragma region Super
 
 	//@Auto AttackDecision System
@@ -113,9 +116,17 @@ void UCPL_SDAttackUpper::BeginPlay()
 	// @EndAttack Delegate - BlendCamera
 	EndAttackDeleFunc.AddLambda([&]()
 	{
+		//@Target NULL
+		//Target = nullptr;
+
 		//@세계 시간 원상복구.
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
 	});
+}
+
+void UCPL_SDAttackUpper::IsRunTick(bool bRunning)
+{
+	SetComponentTickEnabled(bRunning);
 }
 
 // - IBaseAttack 참고.
@@ -139,15 +150,21 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 	// @IF TRUE RETURN
 	IfTrueRet(Player->IsJumping()); //@Jump Check
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
+	IfTrueRet(Player->GetCharacterMovement()->IsFalling() && Player->GetCharacterMovement()->GravityScale > 0.0f); //@InAir
 	IfTrueRet(IsLastCombo()); //@IsLastCombo
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	APawn* Target = Player->GetFindAttackTarget();
+	if (Target == nullptr)
+	{
+		EndAttackDeleFunc.Broadcast();
+		return;
+	}
 	check(Target);
 
 	//@ 타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -159,12 +176,21 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 		ACharacter* CharactorTarget = Cast<ACharacter>(Target);
 		if (CharactorTarget != nullptr)
 		{
+			//@공중에 있으면 리턴하지만, 
+			// 일정높이 이상( AirComboCanHeight )  이면 두번째 공격(연속기) 부터 시행함.
 			if (UCFL_ActorAgainst::IsTargetInAir(CharactorTarget) == true)
 			{
-				//@공중에 있다면, 2번째 공격부터 - (공중 연속기)
-				BeginAttackDeleFunc.Broadcast();
-				OnComboSet(Player);
 				bInAir = true;
+				if (Target->GetActorLocation().Z > AirComboCanHeight)
+				{
+					BeginAttackDeleFunc.Broadcast();
+					OnComboSet(Player);
+
+					return;
+				}
+
+				AttackDecision->StopAttackTrace();
+				Player->ActorStopAnimMon(SwordAttackMontages[0]);
 			}
 		}
 
@@ -201,6 +227,8 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
  #Edit *0312, CameraActor Blend 하기 위해서 
 마지막 공격 COMBO_SIX 부분에 Delegate - CutOutBlendCameraFunc(삭제), LastOutBlendCameraFunc(추가)
 */
+// @Warning - Target 을 변수로 저장하고 있음. - Finish Attack 과 동일
+// 이 동작은 도중에 Target을 ESC 해서 nullptr 이 되버려도 실행되게끔 함.
 void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 {
 	Super::OnComboSet(DoingActor);
@@ -209,8 +237,28 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(DoingActor);
 	check(Charactor);
 
+	//APawn* Target = Player->GetFindAttackTarget();
+	//check(Target);
+
 	APawn* Target = Player->GetFindAttackTarget();
+	//Target = Player->GetFindAttackTarget();
+	if (Target == nullptr)
+	{
+		EndAttackDeleFunc.Broadcast();
+		return;
+	}
 	check(Target);
+
+	//@공중에 있음을 확인,
+	ACharacter* CharactorTarget = Cast<ACharacter>(Target);
+	if (CharactorTarget != nullptr)
+	{
+		if (UCFL_ActorAgainst::IsTargetInAir(CharactorTarget) == false)
+		{
+			EndAttackDeleFunc.Broadcast();
+			return;
+		}
+	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -274,7 +322,7 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 	Player->CanNotMove();
 
 	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();

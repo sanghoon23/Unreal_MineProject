@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
-#include "Interface/IC_BaseAttack.h"
+#include "Interface/IC_Component.h"
 
 #include "DamageType/CDamageType_Normal.h"
 
@@ -19,7 +19,7 @@ enum class USD_BasicAttack : uint8
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_SDAttackBasic
-	: public UCPL_SwordBaseAttack
+	: public UCPL_SwordBaseAttack, public IIC_Component
 {
 	GENERATED_BODY()
 	
@@ -38,7 +38,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/* Function */
+	/* Pure Virtual Function - IC_Component */
+	virtual void IsRunTick(bool bRunning) override;
+
+	/* Function - IC_BaseAttack */
 public:
 	void BeginAttack(AActor * DoingActor) override;
 	void OnComboSet(AActor * DoingActor) override;

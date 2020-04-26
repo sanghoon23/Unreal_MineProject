@@ -18,13 +18,13 @@ AHUD_Main::AHUD_Main()
 	#pragma endregion
 
 	#pragma region Target Info
-	////Target Info
-	//strPath = L"";
-	//ConstructorHelpers::FClassFinder<UUserWidget> TargetInfoClass(*strPath);
-	//if (TargetInfoClass.Succeeded())
-	//{
-	//	TargetInfoWidgetClass = TargetInfoClass.Class;
-	//}
+	//Target Info
+	strPath = L"WidgetBlueprint'/Game/_Mine/_MyBlueprint/Widget/BpCWG_TargetInfo.BpCWG_TargetInfo_C'";
+	ConstructorHelpers::FClassFinder<UUserWidget> TargetInfoClass(*strPath);
+	if (TargetInfoClass.Succeeded())
+	{
+		TargetInfoWidgetClass = TargetInfoClass.Class;
+	}
 
 	#pragma endregion
 }
@@ -55,6 +55,7 @@ void AHUD_Main::BeginPlay()
 		TargetInfoWidget = CreateWidget<UWG_TargetInfo>(GetWorld(), TargetInfoWidgetClass);
 		if (TargetInfoWidget)
 		{
+			TargetInfoWidget->SetVisibility(ESlateVisibility::Hidden);
 			TargetInfoWidget->AddToViewport();
 		}
 	}

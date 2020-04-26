@@ -64,11 +64,16 @@ ACProjectile_MagicBall::ACProjectile_MagicBall()
 
 	#pragma endregion
 
-	#pragma region Create DamageType
+	//@Explosion Particle
+	strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Object/P_MagicBallHit.P_MagicBallHit'";
+	ConstructorHelpers::FObjectFinder<UParticleSystem> PT_Explo(*strPath);
+	if (PT_Explo.Succeeded())
+	{
+		P_ExplosionMagicBall = PT_Explo.Object;
+	}
 
+	//@Create DamageType
 	DT_Normal = NewObject<UCDamageType_Normal>();
-
-	#pragma endregion
 }
 
 void ACProjectile_MagicBall::BeginPlay()
@@ -159,7 +164,10 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 
 
 	//@터지는 파티클 실행
-
+	FTransform P_Transform;
+	P_Transform.SetLocation(Position);
+	P_Transform.SetScale3D(FVector(2.0f));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionMagicBall, P_Transform, true);
 
 	//@Projectile 파괴.
 	Death();

@@ -1,9 +1,11 @@
 #include "CPL_MageAttackComp.h"
 #include "Global.h"
+#include "Interface/IC_Component.h"
 
 #include "State/Player/Base/CPL_MageBaseAttack.h"
 #include "State/Player/Mage/CPL_MGAttackBasic.h"
 #include "State/Player/Mage/CPL_MGAttackMagicBall.h"
+#include "State/Player/Mage/CPL_MGAttackFireRange.h"
 
 UCPL_MageAttackComp::UCPL_MageAttackComp()
 {
@@ -23,6 +25,14 @@ UCPL_MageAttackComp::UCPL_MageAttackComp()
 		MG_MagicBallAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_MagicBallAttack);
 	}
+
+	// @FireRange
+	{
+		UCPL_MageBaseAttack* MG_FireRange = CreateDefaultSubobject<UCPL_MGAttackFireRange>("Mage_AttackThrid");
+		MG_FireRange->SetOwnerPawn(Cast<APawn>(GetOwner()));
+		MageAttackStateArray.Emplace(MG_FireRange);
+	}
+
 	#pragma endregion
 }
 
@@ -58,16 +68,38 @@ IIC_BaseAttack * UCPL_MageAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	EMageAttackType SetType = static_cast<EMageAttackType>(Type);
 	if (AttackType == SetType)
 	{
+		// @Tick true
+		IIC_Component* IC_Comp = Cast<IIC_Component>(MageAttackStateArray[Type]);
+		if (IC_Comp != nullptr)
+		{
+			IC_Comp->IsRunTick(true);
+		}
+
 		return Cast<IIC_BaseAttack>(MageAttackStateArray[Type]);
 	}
-	else if (AttackType != SetType) // ¹Ù²î¾ú´Ù¸é
+	else if (AttackType != SetType)
 	{
+		// @Tick false
+		IIC_Component* IC_Comp = Cast<IIC_Component>(MageAttackStateArray[BeforeTypeNum]);
+		if (IC_Comp != nullptr)
+		{
+			IC_Comp->IsRunTick(false);
+		}
+
 		// @EndAttack Call
 		MageAttackStateArray[BeforeTypeNum]->EndAttackDeleFunc.Broadcast();
 		AttackType = SetType;
 	}
 
 	uint8 AfterTypeNum = static_cast<uint8>(AttackType);
+
+	// @Tick true
+	IIC_Component* IC_Comp = Cast<IIC_Component>(MageAttackStateArray[AfterTypeNum]);
+	if (IC_Comp != nullptr)
+	{
+		IC_Comp->IsRunTick(true);
+	}
+
 	return Cast<IIC_BaseAttack>(MageAttackStateArray[Type]);
 }
 

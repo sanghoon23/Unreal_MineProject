@@ -65,7 +65,7 @@ void UCPL_SDActionRoll::OnAction()
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//@타겟 바라보기.
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @Set Evade
 	Player->SetEvade(true);

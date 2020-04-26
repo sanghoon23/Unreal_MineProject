@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
+#include "Interface/IC_Component.h"
 
 #include "DamageType/CDamageType_Air.h"
 #include "DamageType/CDamageType_AirAttack.h"
@@ -23,7 +24,7 @@ enum class USD_UpperAttack : uint8
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_SDAttackUpper 
-	: public UCPL_SwordBaseAttack
+	: public UCPL_SwordBaseAttack, public IIC_Component
 {
 	GENERATED_BODY()
 	
@@ -48,7 +49,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/* Pure Virtual Function */
+	/* Pure Virtual Function - IC_Component */
+	virtual void IsRunTick(bool bRunning) override;
+
+	/* Pure Virtual Function - IC_BaseAttack */
 public:
 	void BeginAttack(AActor * DoingActor) override;
 	void OnComboSet(AActor * DoingActor) override;
@@ -74,10 +78,15 @@ private:
 
 	APlayerController* PlayerController;
 
+	//APawn* Target;
+
 	FTimerHandle EndBlendTimerHandle;
 
 	FDelegateHandle	CutOutBlendCameraFunc;
 	FDelegateHandle	LastOutBlendCameraFunc;
+
+	/* 일정 높이 이상일때, 두번째 콤보부터 나가기 위한 높이 값 */
+	float AirComboCanHeight = 220.0f;
 
 	#pragma endregion
 };

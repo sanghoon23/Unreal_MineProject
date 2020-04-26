@@ -26,6 +26,15 @@ ACHM_Basic::ACHM_Basic()
 		HitComp = CreateDefaultSubobject<UCHM_BasicHitComp>("HitComp");
 		EquipComp = CreateDefaultSubobject<UCHM_BasicEquipComp>("EquipComponent");
 	}
+
+	#pragma region Monster Info Setting
+
+	//# 현재 체력 상태로 갱신해주어야 함.
+	Info.HP = 50.0f;
+	Info.Name = FName(L"HM_Basic");
+	Info.InfoConditionDataArray.Init(nullptr, 5);
+
+	#pragma endregion
 }
 
 void ACHM_Basic::BeginPlay()
@@ -48,6 +57,17 @@ void ACHM_Basic::BeginPlay()
 void ACHM_Basic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//#WG_TargetInfo 에서 수행.
+	#pragma region Monster Info Update
+
+	//for (int i = 0; i < Info.InfoConditionDataArray.Num(); ++i)
+	//{
+	//	//@Update
+	//	HitComp->GetConditionDatas(&(Info.InfoConditionDataArray));
+	//}
+
+	#pragma endregion
 }
 
 void ACHM_Basic::OnGravity()
@@ -86,6 +106,12 @@ void ACHM_Basic::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlw
 void ACHM_Basic::ActorStopCurrentAnimMon()
 {
 	StopAnimMontage(CurrentMontage);
+}
+
+void ACHM_Basic::ActorStopAnimMon(class UAnimMontage* Montage)
+{
+	check(Montage);
+	StopAnimMontage(Montage);
 }
 
 IIC_AttackComp * ACHM_Basic::GetIAttackComp()

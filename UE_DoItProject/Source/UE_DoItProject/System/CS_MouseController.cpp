@@ -41,7 +41,7 @@ void UCS_MouseController::BeginPlay()
 	DecalActor = GetWorld()->SpawnActor<ACDecalActor_WithMouse>(ACDecalActor_WithMouse::StaticClass(), Transform);
 	DecalActor->SetDecalCompRotation(FRotator(-90.0f, 0.0f, 0.0f));
 	DecalActor->SetDecalCompMat(DecalMatCanUsingRange);
-	DecalActor->SetDecalSize(FVector(300.0f));
+	DecalActor->SetDecalSize(DecalActorCircleSize);
 	DecalActor->GetRootComponent()->SetVisibility(false);
 }
 
@@ -89,22 +89,43 @@ void UCS_MouseController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	}
 }
 
-void UCS_MouseController::OnMouseControl()
+void UCS_MouseController::OnMouseControl(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange)
 {
 	MouseState = EMouseState::WAIT;
 	bUsingControl = true;
+
+	//@Set Decal Size
+	DecalActorCircleSize = DecalCircleSize;
+	DecalActor->SetDecalSize(DecalActorCircleSize);
+
+	//@Set Standard
+	if (StandardTarget != nullptr)
+	{
+		TargetMouseStandard = StandardTarget;
+		MouseRangeWithTarget = StandardRange;
+	}
+	else
+	{
+		TargetMouseStandard = nullptr;
+		MouseRangeWithTarget = 0.0f;
+	}
 }
 
 void UCS_MouseController::OffMouseControl()
 {
 	bUsingControl = false;
+
+	DecalActorCircleSize = FVector(0.0f);
+
+	TargetMouseStandard = nullptr;
+	MouseRangeWithTarget = 0.0f;
 }
 
 bool UCS_MouseController::MouseRayAndHit(APlayerController* PC, FVector& HitedLocation)
 {
 	check(PC);
 
-	//@DeProjection
+	//@UnProjection
 	FVector WorldLocation;
 	FVector WorldDirection;
 	PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
@@ -140,6 +161,22 @@ bool UCS_MouseController::MouseRayAndHit(APlayerController* PC, FVector& HitedLo
 		{
 			RetLocation = HitResult.Location;
 			RetLocation.Z += 0.1;
+
+			//@Mouse 거리가 있을 때,
+			if (TargetMouseStandard != nullptr)
+			{
+				FVector CheckRangeVec = TargetMouseStandard->GetActorLocation() - RetLocation;
+				if (CheckRangeVec.Size() > MouseRangeWithTarget)
+				{
+					float temp = CheckRangeVec.Size() - MouseRangeWithTarget;
+					CheckRangeVec.Normalize();
+					CheckRangeVec *= (-1);
+					RetLocation =
+						TargetMouseStandard->GetActorLocation() + (CheckRangeVec * MouseRangeWithTarget);
+				}
+			}
+
+			//@Set DecalActor
 			DecalActor->SetActorLocation(RetLocation);
 
 			//@HitedLocation

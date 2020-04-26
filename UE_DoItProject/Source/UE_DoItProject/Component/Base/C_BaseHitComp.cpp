@@ -9,7 +9,6 @@ UC_BaseHitComp::UC_BaseHitComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
 
@@ -22,24 +21,68 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//@ '상태이상' 정보 업데이트 - ( UpsetConditionDatas )
-	// ...
-
-	//@ '행동불가' 정보 업데이트 - ( NonActionConditionData )
-	if (bNonAction == true)
+	for (int i = 0; i < ConditionDatas.Num(); ++i)
 	{
-		float Time = NonActionConditionData.ApplyTime;
+		float Time = ConditionDatas[i]->ApplyTime;
 		Time -= DeltaTime;
-		NonActionConditionData.ApplyTime = Time;
+		ConditionDatas[i]->ApplyTime = Time;
 
-		//CLog::Print(Time);
+		//@UpsetCondition Update
+		UHitUpsetConditionData* UpsetConditionData
+			= Cast<UHitUpsetConditionData>(ConditionDatas[i]);
+		if (UpsetConditionData != nullptr)
+		{
+			if (UpdateUpsetCondition(UpsetConditionData) == true)
+			{
+				ConditionDatas.RemoveAt(i);
+			}
+		}
 
-		UAnimMontage* NonActionMontage = NonActionConditionData.NonActionMon;
+		//@NonAction Update
+		UHitNonActionConditionData* NonActionData 
+			= Cast<UHitNonActionConditionData>(ConditionDatas[i]);
+		if (NonActionData != nullptr)
+		{
+			if (UpdateNonActionCondition(NonActionData) == true)
+			{
+				ConditionDatas.RemoveAt(i);
+			}
+		}
+	}
+}
+
+void UC_BaseHitComp::AddConditionData(UConditionData* ConditionData)
+{
+	ConditionDatas.Add(ConditionData);
+}
+
+bool UC_BaseHitComp::UpdateUpsetCondition(UHitUpsetConditionData * ConditionData)
+{
+	// TODO :
+	return false;
+}
+
+bool UC_BaseHitComp::UpdateNonActionCondition(UHitNonActionConditionData * ConditionData)
+{
+	check(ConditionData);
+
+	//@ '행동불가'
+	UHitNonActionConditionData* const NonActionData = ConditionData;
+	if (NonActionData != nullptr)
+	{
+		UAnimMontage* NonActionMontage = NonActionData->NonActionMon;
+		check(NonActionMontage);
 		ACharacter* Charactor = Cast<ACharacter>(GetOwner());
 		if (Charactor != nullptr)
 		{
 			UAnimInstance* AnimInst = Charactor->GetMesh()->GetAnimInstance();
 			check(AnimInst);
+
+			//@일정 시간 후의 ColorAndOpacity Update - (OpacityLinearTimer)
+			if (NonActionData->ApplyTime < OpacityLinearTimer)
+			{
+				UpdateColorAndOpacity(NonActionData);
+			}
 
 			//@다른 몽타주가 실행되고 있는지
 			bool IsOtherMonPlaying = AnimInst->IsAnyMontagePlaying();
@@ -49,47 +92,82 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 			//@JumpSection - 아직 ApplyTime 이 남아있다면,
 			IIC_Monster* I_Monster = Cast<IIC_Monster>(Charactor);
-			if (Time > 0.0f && IsOtherMonPlaying == false)
+			if (NonActionData->ApplyTime > 0.0f && IsOtherMonPlaying == false)
 			{
 				//@AI OFF
 				I_Monster->SetAIRunningPossible(false);
 
 				//@RUN Montage
 				IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Charactor);
-				I_Charactor->ActorAnimMonPlay(NonActionMontage, 0.6f, true);
-				AnimInst->Montage_JumpToSection
-				(
-					FName("Looping"), NonActionMontage //@Looping
-				);
+				if (I_Charactor != nullptr)
+				{
+					I_Charactor->ActorAnimMonPlay(NonActionMontage, 0.6f, true);
+					AnimInst->Montage_JumpToSection
+					(
+						FName("Looping"), NonActionMontage //@Looping
+					);
+				}
 			}
 			//@ApplyTime 이 지났다면,
-			else if (Time <= 0.0f)
+			else if (NonActionData->ApplyTime <= 0.0f)
 			{
 				if (IsPlayingNonAction == true)
 				{
-					AnimInst->Montage_Stop(0.2f, NonActionMontage);
+					AnimInst->Montage_Stop(0.5f, NonActionMontage);
 				}
-				// @bool - NON ACTION
-				bNonAction = false;
 
 				//@AI ON
 				I_Monster->SetAIRunningPossible(true);
+
+				//@Return - (ApplyTime < 0.0f)
+				return true;
 			}
 		}//(Charactor != nullptr)
-	}//(bNonAction == true)
+	}//(NonActionData != nullptr)
+
+	return false;
 }
 
-void UC_BaseHitComp::AddUpsetCondition(const FHitUpsetConditionData & ConditionData)
+void UC_BaseHitComp::UpdateColorAndOpacity(UConditionData* ConditionData)
 {
-	//@ADD
-	UpsetConditionDatas.Add(ConditionData);
+	float Opacity = ConditionData->ColorAndOpacity.A;
+
+	(ConditionData->bLinerColorDir == true)
+		? Opacity += OpacityLinearSpeed
+		: Opacity -= OpacityLinearSpeed;
+
+	if (Opacity > 1.0f || Opacity < 0.1f)
+	{
+		ConditionData->bLinerColorDir = !(ConditionData->bLinerColorDir);
+	}
+
+	ConditionData->ColorAndOpacity.A = Opacity;
 }
 
-void UC_BaseHitComp::AddNonActionCondition(const FHitNonActionConditionData& ConditionData)
+UConditionData * UC_BaseHitComp::GetConditionData(int Index)
 {
-	//@bool - NON ACTION
-	bNonAction = true;
+	if (Index >= ConditionDatas.Num() || Index < 0)
+		return nullptr;
 
-	//@Set
-	NonActionConditionData = ConditionData;
+	return ConditionDatas[Index];
+}
+
+void UC_BaseHitComp::GetConditionDatasAfterEmpty(TArray<UConditionData*>* OutDataArray)
+{
+	//@Empty - OutTArray
+	OutDataArray->Empty();
+
+	if (ConditionDatas.Num() <= 0) return;
+	for (UConditionData* Data : ConditionDatas)
+	{
+		OutDataArray->Push(Data);
+	}
+}
+
+void UC_BaseHitComp::GetConditionDatasWithIndex(TArray<UConditionData*>* OutDataArray, int Index)
+{
+	if (ConditionDatas.Num() <= 0) return;
+	if (Index >= ConditionDatas.Num() || Index < 0) return;
+
+	(*OutDataArray)[Index] = ConditionDatas[Index];
 }

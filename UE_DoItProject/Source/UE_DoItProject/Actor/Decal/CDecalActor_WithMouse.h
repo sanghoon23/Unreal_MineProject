@@ -34,5 +34,7 @@ public:
 public:
 	void SetDecalCompMat(class UMaterialInterface* Material);
 	void SetDecalCompRotation(FRotator Rotate);
+
+	void SetDecalSize(float fSize);
 	void SetDecalSize(FVector Size);
 };

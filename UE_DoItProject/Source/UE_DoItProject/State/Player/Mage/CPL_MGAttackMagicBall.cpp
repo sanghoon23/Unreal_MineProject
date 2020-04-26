@@ -30,17 +30,17 @@ UCPL_MGAttackMagicBall::UCPL_MGAttackMagicBall()
 
 	FString Path = L"";
 
-	#pragma region SwordAttackMontage
-	// SwordAttackMontage
+	#pragma region MageAttackMontage
+	// MageAttackMontage
 	{
-		UAnimMontage* Sword_BackRangeAttack_1 = nullptr;
+		UAnimMontage* Mage_MagicBall = nullptr;
 
 		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Mage/MAttack/Mage_MagicBallAttack.Mage_MagicBallAttack'";
-		ConstructorHelpers::FObjectFinder<UAnimMontage> MBallMagicAttack(*Path);
-		if (MBallMagicAttack.Succeeded())
-			Sword_BackRangeAttack_1 = MBallMagicAttack.Object;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> MMagicBallAttack(*Path);
+		if (MMagicBallAttack.Succeeded())
+			Mage_MagicBall = MMagicBallAttack.Object;
 
-		MageAttackMontages.Emplace(Sword_BackRangeAttack_1);
+		MageAttackMontages.Emplace(Mage_MagicBall);
 	}
 	#pragma endregion
 
@@ -56,20 +56,15 @@ void UCPL_MGAttackMagicBall::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//@Running Tick
+	IsRunTick(false);
+
 	#pragma region Super
 
 	//@Auto AttackDecision System
 	AttackDecision->OnAble(Player, AttackRange);
 
 	#pragma endregion
-
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC != nullptr)
-	{
-		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
-		check(MainHUD);
-		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
-	}
 
 	#pragma region Set Delegate
 	// Set Delegate "OnActionReset" - IIC_Charactor
@@ -83,6 +78,16 @@ void UCPL_MGAttackMagicBall::BeginPlay()
 	});
 
 	#pragma endregion
+
+	//@UI
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC != nullptr)
+	{
+		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+		check(MainHUD);
+		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	}
+
 }
 
 void UCPL_MGAttackMagicBall::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -107,6 +112,11 @@ void UCPL_MGAttackMagicBall::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
+void UCPL_MGAttackMagicBall::IsRunTick(bool bRunning)
+{
+	SetComponentTickEnabled(bRunning);
+}
+
 void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
@@ -120,15 +130,21 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 	// @IF TRUE RETURN
 	IfTrueRet(Player->IsJumping()); //@Jump Check
 	IfTrueRet(Player->GetIEquipComp()->GetEquiping()); //@Equping Check
+	IfTrueRet(Player->GetCharacterMovement()->IsFalling() && Player->GetCharacterMovement()->GravityScale > 0.0f); //@InAir
 	IfTrueRet(IsLastCombo()); //@IsLastCombo
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	APawn* Target = Player->GetFindAttackTarget();
+	if (Target == nullptr)
+	{
+		EndAttackDeleFunc.Broadcast();
+		return;
+	}
 	check(Target);
 
 	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Target, Player);
+	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @Projectile 설정.
 	FVector Dir = Target->GetActorLocation() - Player->GetActorLocation();
@@ -149,7 +165,7 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 		//@Progress Bar
 		if (bFillingGauge == false)
 		{
-			SkillCastWidget->StartProgress();
+			SkillCastWidget->StartProgress(FillingSpeed);
 			bFillingGauge = true;
 		}
 
@@ -157,7 +173,7 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 		float StartTime = 0.0f;
 		float EndTime = 0.0f;
 		MageAttackMontages[0]->GetSectionStartAndEndTime(0, StartTime, EndTime);
-		EndTime *= 2.0f;
+		EndTime *= MontagePauseOffset;
 
 		MontagePauseDel.BindUFunction(this, FName("TimerMontagePause"));
 		GetWorld()->GetTimerManager().SetTimer
@@ -165,67 +181,11 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 			MontagePauseTimer, MontagePauseDel, 1.0f, false, EndTime
 		);
 	}
-	CLog::Print(L"MagicBall Attack Call!!");
 }
 
 void UCPL_MGAttackMagicBall::AttackOtherPawn()
 {
 	Super::AttackOtherPawn();
-
-//	FVector ActorForward = Player->GetActorForwardVector();
-//	FVector Position = Player->GetActorLocation();
-//
-//	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
-//	FCollisionQueryParams CollisionQueryParm(NAME_None, false, Player);
-//
-//	float DebugLifeTime = 1.0f;
-//	TArray<FOverlapResult> OverlapResults;
-//	bool bOverlap = GetWorld()->OverlapMultiByChannel //@Single - 단일.
-//	(
-//		OverlapResults
-//		, Position
-//		, FQuat::Identity
-//		, ECC_GameTraceChannel2 // @PlayerAttack
-//		, sphere
-//		, CollisionQueryParm
-//	);
-//
-//#if  ENABLE_DRAW_DEBUG
-//
-//	DrawDebugSphere(GetWorld(), Position, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
-//
-//#endif // ENABLE_DRAW_DEBUG
-//
-//	if (bOverlap == true)
-//	{
-//		for (FOverlapResult& OverlapResult : OverlapResults)
-//		{
-//			IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
-//			if (Charactor != nullptr)
-//			{
-//				// 1. Get Interface HitComp
-//				IIC_HitComp* HitComp = Charactor->GetIHitComp();
-//				if (HitComp != nullptr)
-//				{
-//					// 1.1 Set Hit Attribute
-//					FVector PlayerLocation = Player->GetActorLocation();
-//					FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - PlayerLocation;
-//					HitDirection.Normalize();
-//					HitDirection.Z = 0.0f;
-//					HitComp->SetHitDirection(HitDirection);
-//					HitComp->SetHitMoveSpeed(0.3f);
-//
-//					// 1.2 Hit Delegate - Air(DamageType)
-//					HitComp->OnHit(Player, DT_Normal, 50.0f);
-//				}
-//				else
-//					UE_LOG(LogTemp, Warning, L"MGAttackMagicBall CallAttack - HitComp Null!!");
-//			}
-//			else
-//				UE_LOG(LogTemp, Warning, L"MGAttackMagicBall CallAttack - Charactor Null!!");
-//		}
-//	}
-//
 }
 
 void UCPL_MGAttackMagicBall::ImpulseAttack(float intensity)
@@ -236,35 +196,6 @@ void UCPL_MGAttackMagicBall::ImpulseAttack(float intensity)
 void UCPL_MGAttackMagicBall::CheckProcedural()
 {
 	Super::CheckProcedural();
-}
-
-ACProjectile_MagicBall* UCPL_MGAttackMagicBall::SpawnMagicBall()
-{
-	//Player->GetMesh()->GetAnimInstance()->Montage_GetPlayRate();
-
-	FVector PlayerLocation = Player->GetActorLocation();
-	PlayerLocation.Z += 15.0f;
-	FVector PlayerForwardVec = Player->GetActorForwardVector();
-	PlayerLocation += Player->GetActorForwardVector() * 50.0f;
-
-	FTransform MagicBallTransform = FTransform::Identity;
-	MagicBallTransform.SetLocation(PlayerLocation);
-	FActorSpawnParameters Params;
-	Params.Owner = Player;
-
-	//@Spawn
-	//UClass* test = ACProjectile_MagicBall::StaticClass();
-	ACProjectile_MagicBall* MagicBall 
-		= GetWorld()->SpawnActor<ACProjectile_MagicBall>(ACProjectile_MagicBall::StaticClass(), MagicBallTransform, Params);
-	if (MagicBall != nullptr)
-	{
-		return MagicBall;
-	}
-
-	//@Setting
-	//MagicBall->SettingProjectile(PlayerForwardVec);
-
-	return nullptr;
 }
 
 /* 

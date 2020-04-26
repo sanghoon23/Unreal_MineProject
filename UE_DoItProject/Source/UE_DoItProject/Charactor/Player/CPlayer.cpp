@@ -297,9 +297,9 @@ void ACPlayer::OffHandIK(uint8 HandNumber)
 		IneverseKinematics->OffRightHandIK();
 }
 
-void ACPlayer::OnMouseController()
+void ACPlayer::OnMouseController(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange)
 {
-	MouseController->OnMouseControl();
+	MouseController->OnMouseControl(DecalCircleSize, StandardTarget, StandardRange);
 }
 
 void ACPlayer::OffMouseController()
@@ -552,6 +552,12 @@ void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlway
 void ACPlayer::ActorStopCurrentAnimMon()
 {
 	StopAnimMontage(CurrentMontage);
+}
+
+void ACPlayer::ActorStopAnimMon(class UAnimMontage* Montage)
+{
+	check(Montage);
+	StopAnimMontage(Montage);
 }
 
 void ACPlayer::OnCollision()

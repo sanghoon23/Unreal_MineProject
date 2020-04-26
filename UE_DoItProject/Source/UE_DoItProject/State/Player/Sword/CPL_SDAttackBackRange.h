@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
-#include "Interface/IC_BaseAttack.h"
+#include "Interface/IC_Component.h"
 
 #include "DamageType/CDamageType_StrongAttack.h"
 
@@ -10,7 +10,7 @@
 
 UCLASS()
 class UE_DOITPROJECT_API UCPL_SDAttackBackRange 
-	: public UCPL_SwordBaseAttack
+	: public UCPL_SwordBaseAttack, public IIC_Component
 {
 	GENERATED_BODY()
 	
@@ -34,7 +34,10 @@ protected:
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	/* Function */
+	/* Pure Virtual Function - IC_Component */
+	virtual void IsRunTick(bool bRunning) override;
+
+	/* Function - IC_BaseAttack */
 public:
 	void BeginAttack(AActor * DoingActor) override;
 	void EndAttack() override;

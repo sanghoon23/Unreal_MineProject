@@ -94,6 +94,7 @@ public:
 
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
 	virtual void ActorStopCurrentAnimMon() override;
+	virtual void ActorStopAnimMon(class UAnimMontage* Montage) override;
 
 	/* Virtual */
 public:
@@ -126,7 +127,13 @@ public:
 	/* LeftHand == 0, RightHand == 1, 로 설정되어있음 그 이외의 값은 return*/
 	void OffHandIK(uint8 HandNumber);
 
-	void OnMouseController();
+	/*
+	(CS_MouseController Class) Mapping
+	@param - DecalCircleRange MouseController 안에 있는 Decal Size 지정
+	@param - StandardTarget Unproject 의 기준점이 되는 Target 설정 Default = nullptr
+	@param - StandardRange 기준점의 반경 Default = 0.0f
+	*/
+	void OnMouseController(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
 	void OffMouseController();
 
 	/* Player 안에 있는 Paritlce 켜기 */

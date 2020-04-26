@@ -60,6 +60,9 @@ public:
 	// @현재 실행중인 Montage Stop ( CurrentApplyedMontage )
 	virtual void ActorStopCurrentAnimMon() = 0;
 
+	// @해당 몽타주 실행중 이면 Montage Stop ( Input Montage )
+	virtual void ActorStopAnimMon(class UAnimMontage* Montage) = 0;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Virtual Function */
 public:
