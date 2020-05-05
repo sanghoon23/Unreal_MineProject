@@ -40,8 +40,6 @@ public:
 
 	#pragma region Member
 private:
-	float AttackRadius = 250.0f;
-
 	class UWG_SkillCastingBar* SkillCastWidget;
 	bool bFillingGauge = false;
 	float FillingSpeed = 1.0f;

@@ -2,7 +2,6 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "_GameMode/CBaseGameMode.h"
 
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "System/CS_MouseController.h"
@@ -11,6 +10,7 @@
 #include "Interface/IC_Monster.h"
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
+#include "Actor/Particle/CParticle_FireRain.h"
 
 //Widget
 #include "UI/HUD_Main.h"
@@ -35,7 +35,7 @@ UCPL_MGAttackFireRange::UCPL_MGAttackFireRange()
 	{
 		UAnimMontage* Mage_FireRange= nullptr;
 
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Mage/MAttack/Mage_Skilling.Mage_Skilling'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Mage/MAttack/Mage_Skilling_FireRange.Mage_Skilling_FireRange'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> MFireRange(*Path);
 		if (MFireRange.Succeeded())
 			Mage_FireRange = MFireRange.Object;
@@ -44,12 +44,6 @@ UCPL_MGAttackFireRange::UCPL_MGAttackFireRange()
 	}
 		
 	#pragma endregion
-
-	//#pragma region Create DamageType
-
-	//DT_Normal = NewObject<UCDamageType_Normal>();
-
-	//#pragma endregion
 }
 
 void UCPL_MGAttackFireRange::BeginPlay()
@@ -63,6 +57,16 @@ void UCPL_MGAttackFireRange::BeginPlay()
 
 	//@UNABLE - Auto AttackDecision System 
 	AttackDecision->UnAble();
+
+	#pragma endregion
+
+	#pragma region Spawn Particle Object
+
+	FTransform Transform = FTransform::Identity;
+	FActorSpawnParameters Params;
+	Params.Owner = GetOwner();
+	FireRainActor = GetWorld()->SpawnActor<ACParticle_FireRain>(ACParticle_FireRain::StaticClass(), Transform, Params);
+	FireRainActor->OffEndActor();
 
 	#pragma endregion
 
@@ -83,7 +87,7 @@ void UCPL_MGAttackFireRange::BeginPlay()
 		Player->OffBlockAction();
 	});
 
-	// @EndAttack Delegate - BlendCamera
+	// @EndAttack Delegate
 	EndAttackDeleFunc.AddLambda([&]()
 	{
 		SkillCastWidget->EndProgress();
@@ -93,6 +97,9 @@ void UCPL_MGAttackFireRange::BeginPlay()
 
 		//@StopMontage
 		Player->ActorStopAnimMon(MageAttackMontages[0]);
+
+		//@Off Particle Object
+		FireRainActor->OffEndActor();
 
 		Player->OffBlockAction();
 	});
@@ -123,7 +130,7 @@ void UCPL_MGAttackFireRange::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//@ 마우스 대기상태
+	// @마우스 대기상태
 	if (bMouseWaiting == true)
 	{
 		if (MouseController != nullptr)
@@ -160,6 +167,9 @@ void UCPL_MGAttackFireRange::TickComponent(float DeltaTime, ELevelTick TickType,
 			//@Jump Section
 			Player->GetMesh()->GetAnimInstance()->Montage_JumpToSection("Looping", MageAttackMontages[0]);
 
+			//@ON Particle Object
+			FireRainActor->OnStartActor(AttackPosition);
+
 			//@다시 줄어드는 Filling
 			bFillOutGauge = true;
 			SkillCastWidget->StartProgress(FillOutSpeed, 1.0f, true);
@@ -178,6 +188,7 @@ void UCPL_MGAttackFireRange::TickComponent(float DeltaTime, ELevelTick TickType,
 			//@StopMontage
 			Player->ActorStopAnimMon(MageAttackMontages[0]);
 
+			//@EndAttack
 			EndAttackDeleFunc.Broadcast();
 			return;
 		}
@@ -200,7 +211,6 @@ void UCPL_MGAttackFireRange::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UCPL_MGAttackFireRange::IsRunTick(bool bRunning)
 {
-	CLog::Print(bRunning);
 	SetComponentTickEnabled(bRunning);
 }
 
@@ -235,6 +245,9 @@ void UCPL_MGAttackFireRange::EndAttack()
 
 	//@StopMontage
 	Player->ActorStopAnimMon(MageAttackMontages[0]);
+
+	//@Off Particle Object
+	FireRainActor->OffEndActor();
 
 	Player->OffBlockAction();
 }

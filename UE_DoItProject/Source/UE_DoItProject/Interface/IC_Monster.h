@@ -4,6 +4,7 @@
 #include "UObject/Interface.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface//IC_HitComp.h"
+#include "DamagedConditionType/Base/CBaseConditionType.h"
 
 #include "IC_Monster.generated.h"
 
@@ -14,7 +15,7 @@ struct FMonsterInfo
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Asset")
-	TArray<UConditionData*> InfoConditionDataArray;
+	TArray<UCBaseConditionType*> InfoConditionDataArray;
 
 public:
 	float HP = 0.0f;
@@ -41,9 +42,10 @@ public:
 
 	/* Member */
 public:
-	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }
-	bool GetAIRunningPossible() const { return bAIRunningPossible; }
+	virtual void SetAIRunningPossible(bool bValue) = 0;
+	virtual bool GetAIRunningPossible() const = 0;
 
-private:
-	bool bAIRunningPossible = true;
+	/* CHumaniodMonster ¸â¹ö·Î »­. */
+//private:
+//	bool bAIRunningPossible = true;
 };

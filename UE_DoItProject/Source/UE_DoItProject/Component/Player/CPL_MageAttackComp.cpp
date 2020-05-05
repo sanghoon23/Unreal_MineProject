@@ -6,6 +6,7 @@
 #include "State/Player/Mage/CPL_MGAttackBasic.h"
 #include "State/Player/Mage/CPL_MGAttackMagicBall.h"
 #include "State/Player/Mage/CPL_MGAttackFireRange.h"
+#include "State/Player/Mage/CPL_MGAttackPoisioning.h"
 
 UCPL_MageAttackComp::UCPL_MageAttackComp()
 {
@@ -31,6 +32,13 @@ UCPL_MageAttackComp::UCPL_MageAttackComp()
 		UCPL_MageBaseAttack* MG_FireRange = CreateDefaultSubobject<UCPL_MGAttackFireRange>("Mage_AttackThrid");
 		MG_FireRange->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_FireRange);
+	}
+
+	// @Poisioning
+	{
+		UCPL_MageBaseAttack* MG_Poisioning = CreateDefaultSubobject<UCPL_MGAttackPoisioning>("Mage_AttackFour");
+		MG_Poisioning->SetOwnerPawn(Cast<APawn>(GetOwner()));
+		MageAttackStateArray.Emplace(MG_Poisioning);
 	}
 
 	#pragma endregion

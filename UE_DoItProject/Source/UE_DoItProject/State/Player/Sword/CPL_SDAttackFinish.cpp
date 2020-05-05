@@ -105,8 +105,6 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 	Super::BeginAttack(DoingActor);
 	check(DoingActor);
 
-	CLog::Print(L"Finish Attack!!");
-
 	// Super
 	{
 		IfFalseRet(GetAttackPossible()); // @Super::Tick 에서 처리 중.

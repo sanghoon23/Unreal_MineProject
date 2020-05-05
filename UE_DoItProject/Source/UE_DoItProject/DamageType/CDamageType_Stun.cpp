@@ -6,7 +6,7 @@ UCDamageType_Stun::UCDamageType_Stun()
 	// Super
 	{
 		TypeNumber = 0;
-		ConditionType = FConditionType::STUN;
+		DamageType = FDamageType::STUN;
 	}
 
 	// Attribute
@@ -22,7 +22,7 @@ UCDamageType_Stun::UCDamageType_Stun()
 
 	FString strPath = L"";
 
-	strPath = L"Texture2D'/Engine/EngineResources/Bad.Bad'";
+	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/Test_UI_StunWithTargetInfo.Test_UI_StunWithTargetInfo'";
 	ConstructorHelpers::FObjectFinder<UTexture2D> StunTexture(*strPath);
 	if (StunTexture.Succeeded())
 	{

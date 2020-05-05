@@ -11,12 +11,11 @@ class UE_DOITPROJECT_API UWG_TargetInfo
 	: public UUserWidget
 {
 	GENERATED_BODY()
+		
+private:
+	const uint8 ConditionUITextureNumber = 5;
 	
 	#pragma region Reflection
-public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ConditionValue")
-		float test;
-
 public:
 	UFUNCTION(BlueprintCallable, Category = "DataValue")
 		FText GetInfoMonsterName() const { return FText::FromName(TargetInfo.Name); }
@@ -28,13 +27,16 @@ public:
 		float GetInfoMonsterDistance() const { return TargetInfo.Distance; }
 
 	UFUNCTION(BlueprintCallable, Category = "ConditionData")
+		class UTexture2D* GetInfoConditionTextureUI(int ArrayNumber);
+
+	UFUNCTION(BlueprintCallable, Category = "ConditionData")
 		FLinearColor GetInfoConditionDataLinearColor(int ArrayNumber);
 
 	UFUNCTION(BlueprintCallable, Category = "ConditionData")
-		class UConditionData* GetInfoMonsterConditionData(int ArrayNumber);
+		class UCBaseConditionType* GetInfoMonsterConditionData(int ArrayNumber);
 
 	UFUNCTION(BlueprintCallable, Category = "ConditionData")
-		TArray<class UConditionData*> GetInfoMonsterConditionDataArray();
+		TArray<class UCBaseConditionType*> GetInfoMonsterConditionDataArray();
 
 	UFUNCTION(BlueprintCallable, Category = "Function")
 		void WigetVisible();

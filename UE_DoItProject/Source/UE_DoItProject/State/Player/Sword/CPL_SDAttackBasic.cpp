@@ -223,7 +223,7 @@ void UCPL_SDAttackBasic::AttackOtherPawn()
 
 #endif //  ENABLE_DRAW_DEBUG
 
-	if (bHit)
+	if (bHit == true)
 	{
 		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
 		if (Charactor != nullptr)
@@ -235,6 +235,7 @@ void UCPL_SDAttackBasic::AttackOtherPawn()
 				// 1.1 Set Hit Attribute
 				FVector HitDirection = Player->GetActorForwardVector();
 				HitDirection.Z = 0.0f;
+				HitDirection.Normalize();
 				HitComp->SetHitDirection(HitDirection);
 				HitComp->SetHitMoveSpeed(0.3f);
 

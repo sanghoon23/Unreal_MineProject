@@ -35,6 +35,8 @@ ACHM_Basic::ACHM_Basic()
 	Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
+
+	
 }
 
 void ACHM_Basic::BeginPlay()
@@ -52,6 +54,9 @@ void ACHM_Basic::BeginPlay()
 
 		OnCharactorDestroy.AddUObject(this, &ACHM_Basic::OnDestroy);
 	}
+	
+	//GetMesh()->SetMaterial();
+
 }
 
 void ACHM_Basic::Tick(float DeltaTime)

@@ -19,6 +19,9 @@ class UE_DOITPROJECT_API ACHM_Basic
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(EditAnywhere, Category = "AI")
+		bool bAIRunningPossible = true;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_BasicAttackComp* AttackComp;
 
@@ -77,6 +80,9 @@ public:
 	//@IC_Monster
 public:
 	virtual FMonsterInfo GetMonsterInfo() const override { return Info; };
+
+	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }
+	bool GetAIRunningPossible() const { return bAIRunningPossible; }
 
 private:
 	void OnDestroy();

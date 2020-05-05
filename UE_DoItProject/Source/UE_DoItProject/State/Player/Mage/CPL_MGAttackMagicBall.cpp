@@ -44,12 +44,6 @@ UCPL_MGAttackMagicBall::UCPL_MGAttackMagicBall()
 	}
 	#pragma endregion
 
-	//#pragma region Create DamageType
-
-	//DT_Normal = NewObject<UCDamageType_Normal>();
-
-	//#pragma endregion
-
 }
 
 void UCPL_MGAttackMagicBall::BeginPlay()
@@ -73,8 +67,25 @@ void UCPL_MGAttackMagicBall::BeginPlay()
 
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
-		SkillCastWidget->EndProgress();
 		bFillingGauge = false;
+
+		//@Timer 무효화
+		MontagePauseTimer.Invalidate();
+
+		//@EndProgress
+		SkillCastWidget->EndProgress();
+	});
+
+	// @EndAttack Delegate
+	EndAttackDeleFunc.AddLambda([&]()
+	{
+		bFillingGauge = false;
+
+		//@Timer 무효화
+		MontagePauseTimer.Invalidate();
+
+		//@EndProgress
+		SkillCastWidget->EndProgress();
 	});
 
 	#pragma endregion
@@ -87,7 +98,6 @@ void UCPL_MGAttackMagicBall::BeginPlay()
 		check(MainHUD);
 		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
 	}
-
 }
 
 void UCPL_MGAttackMagicBall::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -109,7 +119,24 @@ void UCPL_MGAttackMagicBall::TickComponent(float DeltaTime, ELevelTick TickType,
 			//@Jump Section
 			Player->GetMesh()->GetAnimInstance()->Montage_JumpToSection("NextAction", MageAttackMontages[0]);
 		}
-	}
+
+		// @이동 방향키 누르면, 공격 취소 - bPlayerInput
+		APlayerController* controller = Cast<APlayerController>(Player->GetController());
+		if (controller != nullptr /* && bAttacking == false */)
+		{
+			if (controller->IsInputKeyDown(EKeys::W)
+				|| controller->IsInputKeyDown(EKeys::S)
+				|| controller->IsInputKeyDown(EKeys::A)
+				|| controller->IsInputKeyDown(EKeys::D))
+			{
+				//@StopMontage
+				Player->ActorStopAnimMon(MageAttackMontages[0]);
+
+				EndAttackDeleFunc.Broadcast();
+				return;
+			}
+		}
+	}//(bFillingGauge == true)
 }
 
 void UCPL_MGAttackMagicBall::IsRunTick(bool bRunning)
@@ -146,11 +173,16 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 	// @타겟 바라보게 하기
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
-	// @Projectile 설정.
+	// @Projectile 설정. -> Montage 에서 Spawn
 	FVector Dir = Target->GetActorLocation() - Player->GetActorLocation();
 	Dir.Normalize();
 	float Speed = 2000.0f;
-	ACProjectile_MagicBall::SettingProjectile(Dir, Speed);
+	FProjectileData ProjectileData;
+	ProjectileData.Direction = Dir;
+	ProjectileData.MoveSpeed = Speed;
+	ProjectileData.FollowingTarget = Target;
+
+	ACProjectile_MagicBall::SettingProjectile(ProjectileData);
 
 	// @공격 실행
 	if (bAttacking == false)

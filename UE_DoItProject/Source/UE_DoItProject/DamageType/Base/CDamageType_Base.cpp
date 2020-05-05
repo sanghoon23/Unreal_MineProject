@@ -3,7 +3,7 @@
 UCDamageType_Base::UCDamageType_Base()
 {
 	TypeNumber = 0;
-	ConditionType = FConditionType::NORMAL;
+	DamageType = FDamageType::NORMAL;
 
 	bCausedByWorld = false;
 	bScaleMomentumByMass = true;

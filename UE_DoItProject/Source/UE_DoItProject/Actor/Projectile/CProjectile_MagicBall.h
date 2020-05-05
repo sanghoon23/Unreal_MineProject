@@ -15,13 +15,16 @@ class UE_DOITPROJECT_API ACProjectile_MagicBall
 	GENERATED_BODY()
 	
 	#pragma	region Reflection
-public:
+private:
 	// @DamageType
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_Normal*	DT_Normal;
 
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UParticleSystemComponent* ParticleComp;
+
 	UPROPERTY(VisibleAnywhere, Category = "System")
-		UParticleSystem* P_ExplosionMagicBall;
+		class UParticleSystem* P_ExplosionMagicBall;
 
 	#pragma endregion
 
@@ -32,12 +35,6 @@ protected:
 	/* Virtual Overlap */
 		virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
-private:
-	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UParticleSystemComponent* ParticleComp;
-
-	#pragma endregion
-
 	
 public:	
 	ACProjectile_MagicBall();
@@ -47,9 +44,6 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
-
-	/* Function */
-public:
 
 
 	/* Member */

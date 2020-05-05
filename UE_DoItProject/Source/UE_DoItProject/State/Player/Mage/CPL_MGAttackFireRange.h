@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_MageBaseAttack.h"
 #include "Interface/IC_Component.h"
+#include "DamageType/CDamageType_Burn.h"
 
 #include "CPL_MGAttackFireRange.generated.h"
 
@@ -16,6 +17,10 @@ class UE_DOITPROJECT_API UCPL_MGAttackFireRange
 private:
 	UFUNCTION(Category = "Timer")
 		void TimerMontagePause();
+
+	UPROPERTY(VisibleAnywhere, Category = "Actor")
+		/* FireRainActor 에서 BeginOverlap 으로 Monster Attacking */
+		class ACParticle_FireRain* FireRainActor;
 
 	#pragma endregion
 

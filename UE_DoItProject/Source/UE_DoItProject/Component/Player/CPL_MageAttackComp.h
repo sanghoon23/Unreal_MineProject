@@ -14,7 +14,8 @@ enum class EMageAttackType : uint8// @MageType - Mage 상태일 때의 공격 Type
 	BASIC				= 0,
 	MAGICBALLATTACK		= 1,
 	FIRERANGE			= 2,
-	END					= 3,
+	POISIONING			= 3,
+	END					= 4,
 };
 
 UCLASS()

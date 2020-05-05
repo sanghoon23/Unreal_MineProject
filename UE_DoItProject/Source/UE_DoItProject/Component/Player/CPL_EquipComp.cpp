@@ -113,7 +113,7 @@ void UCPL_EquipComp::WeaponNextSwap(bool AscendingOrder)
 		CurrentWeaponNum = HandWeaponArray->Num() - 1;
 	}
 
-	CLog::Print(L"EquipComp Swap In!!");
+	//CLog::Print(L"EquipComp Swap In!!");
 	// Setting
 	{
 		// 이전 socket 으로 무기 MeshDetach - GetItemAttachName.

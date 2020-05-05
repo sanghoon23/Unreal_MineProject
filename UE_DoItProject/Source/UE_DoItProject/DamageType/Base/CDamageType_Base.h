@@ -5,13 +5,16 @@
 #include "CDamageType_Base.generated.h"
 
 UENUM()
-enum class FConditionType
+enum class FDamageType
 {
 	NORMAL = 0,
 	AIR = 1,
 	AIRATTACK = 2,
 	STRONGATTACK = 3,
 	STUN = 4,
+	BURN = 5,
+	POISION = 6,
+	FREEZE = 7,
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDamageFunc, AActor*)
@@ -32,7 +35,7 @@ protected:
 		int TypeNumber = 0;
 
 	UPROPERTY(EditAnywhere, Category = "DamageType")
-		FConditionType ConditionType;
+		FDamageType DamageType;
 
 	#pragma endregion
 
@@ -56,7 +59,7 @@ public:
 	FDamageFunc& GetDamageDelegate() { return DamageFunc; }
 
 	int GetTypeNumber() const { return TypeNumber; }
-	FConditionType GetConditionType() const { return ConditionType; }
+	FDamageType GetConditionType() const { return DamageType; }
 
 protected:
 	/* @HitComp 에 들어갔을 때, 수행할 Delegate */

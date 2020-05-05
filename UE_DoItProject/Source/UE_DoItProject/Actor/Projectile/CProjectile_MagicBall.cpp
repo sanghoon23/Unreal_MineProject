@@ -79,10 +79,6 @@ ACProjectile_MagicBall::ACProjectile_MagicBall()
 void ACProjectile_MagicBall::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//@Overlap
-	//SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ACProjectile_MagicBall::OnBeginOverlap);
-	//SphereComp->OnComponentEndOverlap.AddDynamic(this, &ACProjectile_MagicBall::OnEndOverlap);
 }
 
 void ACProjectile_MagicBall::Tick(float DeltaTime)
@@ -97,13 +93,27 @@ void ACProjectile_MagicBall::Tick(float DeltaTime)
 		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_MagicBall::Death, DeathTime);
 	}
 
-	//@Moving
-	FVector Location = GetActorLocation();
-	Direction.Normalize();
-	Location += Direction * MoveSpeed * DeltaTime;
+	if (FollowingTarget != nullptr)
+	{
+		FVector TargetLocation = FollowingTarget->GetActorLocation();
+		FVector Location = GetActorLocation();
+		FVector Dir = TargetLocation - Location;
+		Dir.Normalize();
 
-	//@Set Location
-	SetActorLocation(Location);
+		//@Set Location
+		Location += Dir * MoveSpeed * DeltaTime;
+		SetActorLocation(Location);
+	}
+	else
+	{
+		//@Moving
+		FVector Location = GetActorLocation();
+		Direction.Normalize();
+		Location += Direction * MoveSpeed * DeltaTime;
+
+		//@Set Location
+		SetActorLocation(Location);
+	}
 
 }
 
@@ -117,11 +127,17 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 
 	IfTrueRet(OtherActor == this);
 
-	CLog::Print(L"MagicBall BeginOverlap");
+	//@Following Target Check
+	if (FollowingTarget != nullptr)
+	{
+		IfFalseRet(OtherActor == FollowingTarget);
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	TArray<FOverlapResult> OverlapResults;
-	FVector Position = GetActorLocation();
-	FCollisionQueryParams param(NAME_None, false, this);
+	const FVector Position = GetActorLocation();
+	FCollisionQueryParams Param(NAME_None, false, this);
 
 	//@충돌 시행
 	bool bOverlapValue = GetWorld()->OverlapMultiByChannel
@@ -129,48 +145,50 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 		OverlapResults, Position, FQuat::Identity,
 		ECollisionChannel::ECC_GameTraceChannel2, //@Player Attack
 		FCollisionShape::MakeSphere(CollisionSphereRadius),
-		param
+		Param
 	);
 
 	if (bOverlapValue == true)
 	{
 		for (FOverlapResult& OverlapResult : OverlapResults)
 		{
-			//CLog::Print(Result.GetActor()->GetName());
-
-			IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
-			if (Charactor != nullptr)
+			IIC_Monster* Monster = Cast<IIC_Monster>(OverlapResult.GetActor());
+			if (Monster != nullptr)
 			{
-				// 1. Get Interface HitComp
-				IIC_HitComp* HitComp = Charactor->GetIHitComp();
-				if (HitComp != nullptr)
+				IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
+				if (Charactor != nullptr)
 				{
-					// 1.1 Set Hit Attribute
-					FVector ActorLocation = this->GetActorLocation();
-					FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - ActorLocation;
-					HitDirection.Normalize();
-					HitDirection.Z = 0.0f;
-					HitComp->SetHitDirection(HitDirection);
-					HitComp->SetHitMoveSpeed(0.3f);
+					// 1. Get Interface HitComp
+					IIC_HitComp* HitComp = Charactor->GetIHitComp();
+					if (HitComp != nullptr)
+					{
+						// 1.1 Set Hit Attribute
+						FVector ActorLocation = GetActorLocation();
+						FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - ActorLocation;
+						HitDirection.Normalize();
+						HitDirection.Z = 0.0f;
+						HitComp->SetHitDirection(HitDirection);
+						HitComp->SetHitMoveSpeed(0.3f);
 
-					// 1.2 Hit Delegate - Air(DamageType)
-					HitComp->OnHit(this, DT_Normal, 50.0f);
+						// 1.2 Hit Delegate - Air(DamageType)
+						HitComp->OnHit(this, DT_Normal, 50.0f);
+					}
+					else
+						UE_LOG(LogTemp, Warning, L"ACProjectile MagicBall CallAttack - HitComp Null!!");
 				}
-				else
-					UE_LOG(LogTemp, Warning, L"ACProjectile MagicBall CallAttack - HitComp Null!!");
 			}
 		}//for(OverlapResult)
+
+		//@터지는 파티클 실행
+		FTransform P_Transform;
+		P_Transform.SetLocation(Position);
+		P_Transform.SetScale3D(FVector(2.0f));
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionMagicBall, P_Transform, true);
+
+		//@Projectile 파괴.
+		Death();
+
 	}//(bOverlapValue == true)
-
-
-	//@터지는 파티클 실행
-	FTransform P_Transform;
-	P_Transform.SetLocation(Position);
-	P_Transform.SetScale3D(FVector(2.0f));
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionMagicBall, P_Transform, true);
-
-	//@Projectile 파괴.
-	Death();
 }
 
 void ACProjectile_MagicBall::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)

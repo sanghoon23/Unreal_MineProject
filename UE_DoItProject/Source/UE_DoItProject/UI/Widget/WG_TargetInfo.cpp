@@ -6,6 +6,7 @@
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
+#include "DamagedConditionType/Base/CBaseConditionType.h"
 
 UWG_TargetInfo::UWG_TargetInfo(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -39,7 +40,6 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 
 		//## 자기 자신에서 Visible 이 되지 않음. ##
 		//## TargetSystem 에서 하고 있음
-
 		InitTargetInfo();
 
 		return;
@@ -71,7 +71,8 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 			//@자체적으로 GetConditionDatas 함수에서 Empty 로 갱신.
 			InterfaceHitComp->GetConditionDatasAfterEmpty
 			(
-				&(TargetInfo.InfoConditionDataArray)
+				&(TargetInfo.InfoConditionDataArray),
+				ConditionUITextureNumber
 			);
 		}
 	}
@@ -87,6 +88,15 @@ void UWG_TargetInfo::InitTargetInfo()
 	TargetInfo.InfoConditionDataArray.Empty();
 }
 
+UTexture2D * UWG_TargetInfo::GetInfoConditionTextureUI(int ArrayNumber)
+{
+	int ArraySize = TargetInfo.InfoConditionDataArray.Num();
+	if (ArrayNumber >= ArraySize || ArraySize < 0)
+		return nullptr;
+
+	return TargetInfo.InfoConditionDataArray[ArrayNumber]->TextureUI;
+}
+
 FLinearColor UWG_TargetInfo::GetInfoConditionDataLinearColor(int ArrayNumber)
 {
 	int ArraySize = TargetInfo.InfoConditionDataArray.Num();
@@ -99,7 +109,7 @@ FLinearColor UWG_TargetInfo::GetInfoConditionDataLinearColor(int ArrayNumber)
 	return TargetInfo.InfoConditionDataArray[ArrayNumber]->ColorAndOpacity;
 }
 
-UConditionData * UWG_TargetInfo::GetInfoMonsterConditionData(int ArrayNumber)
+UCBaseConditionType * UWG_TargetInfo::GetInfoMonsterConditionData(int ArrayNumber)
 {
 	int ArraySize = TargetInfo.InfoConditionDataArray.Num();
 	if (ArrayNumber >= ArraySize || ArraySize < 0)
@@ -108,7 +118,7 @@ UConditionData * UWG_TargetInfo::GetInfoMonsterConditionData(int ArrayNumber)
 	return TargetInfo.InfoConditionDataArray[ArrayNumber];
 }
 
-TArray<class UConditionData*> UWG_TargetInfo::GetInfoMonsterConditionDataArray()
+TArray<class UCBaseConditionType*> UWG_TargetInfo::GetInfoMonsterConditionDataArray()
 {
 	return TargetInfo.InfoConditionDataArray;
 }

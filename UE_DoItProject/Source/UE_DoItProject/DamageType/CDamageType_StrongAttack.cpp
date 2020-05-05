@@ -5,7 +5,7 @@ UCDamageType_StrongAttack::UCDamageType_StrongAttack()
 	// Super
 	{
 		TypeNumber = 0;
-		ConditionType = FConditionType::STRONGATTACK;
+		DamageType = FDamageType::STRONGATTACK;
 	}
 
 	// Attribute

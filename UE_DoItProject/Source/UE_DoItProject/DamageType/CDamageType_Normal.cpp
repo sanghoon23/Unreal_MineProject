@@ -5,7 +5,7 @@ UCDamageType_Normal::UCDamageType_Normal()
 	// Super
 	{
 		TypeNumber = 0;
-		ConditionType = FConditionType::NORMAL;
+		DamageType = FDamageType::NORMAL;
 	}
 
 	// Attribute

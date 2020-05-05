@@ -5,7 +5,7 @@ UCDamageType_AirAttack::UCDamageType_AirAttack()
 	// Super
 	{
 		TypeNumber = 0;
-		ConditionType = FConditionType::AIRATTACK;
+		DamageType = FDamageType::AIRATTACK;
 	}
 
 	// Attribute

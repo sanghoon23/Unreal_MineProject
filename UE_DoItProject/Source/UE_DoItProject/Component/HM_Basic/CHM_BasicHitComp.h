@@ -14,6 +14,14 @@ class UE_DOITPROJECT_API UCHM_BasicHitComp
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "ConditionData")
+		class UMaterialInterface* PoisionMaterial = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* BurnParticleComp;
+
+
+private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* NormalHitMontage;
 
@@ -28,10 +36,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* StunHitMontage;
-
-private:
-	UPROPERTY(VisibleAnywhere, Category = "ConditionData")
-	class UHitNonActionConditionData* StunNonActionData;
 
 	#pragma endregion
 
@@ -55,6 +59,8 @@ private:
 	#pragma region Member
 private:
 	class ACHM_Basic* HM_Basic;
+
+	UAnimInstance* AnimInst_HM_Basic;
 
 	#pragma endregion
 };

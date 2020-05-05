@@ -5,7 +5,7 @@ UCDamageType_Air::UCDamageType_Air()
 	// Super
 	{
 		TypeNumber = 0;
-		ConditionType = FConditionType::AIR;
+		DamageType = FDamageType::AIR;
 	}
 
 	// Attribute
