@@ -1,4 +1,7 @@
 #include "CDamageType_Base.h"
+#include "Global.h"
+
+#include "Component/Base/C_BaseHitComp.h"
 
 UCDamageType_Base::UCDamageType_Base()
 {
@@ -12,6 +15,13 @@ UCDamageType_Base::UCDamageType_Base()
 	DamageImpulse = 100.0f;
 	DestructibleImpulse = 100.0f;
 	DestructibleDamageSpreadScale = 100.0f;
+}
+
+void UCDamageType_Base::OnHittingProcess(AActor* Subject, AActor* DamagedActor, UC_BaseHitComp* DamagedActorHitComp, float InitialDamageAmount)
+{
+	check(Subject);
+	check(DamagedActor);
+	check(DamagedActorHitComp);
 }
 
 void UCDamageType_Base::OnDamageDelegate(AActor * DamagedActor)

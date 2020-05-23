@@ -203,7 +203,6 @@ bool UCPL_PakrouBaseAction::CheckClimbingPossible(FVector CheckLocation)
 	{
 		if (DegAngle >= 45.f && DegAngle < 135.f)
 		{
-			CLog::Print(CollisionRadius);
 			float MaxPosX = ClimbObjectLocation.X + (MeshScaleVec.X * Max.X);
 			float MinPosX = ClimbObjectLocation.X + (MeshScaleVec.X * Min.X);
 			if (MovedLocation.X + (CollisionRadius) >= MaxPosX

@@ -4,6 +4,11 @@
 #include "DamagedConditionType/Base/CBaseConditionType.h"
 #include "CUpset_Freeze.generated.h"
 
+/*
+@Warning -
+이 상태는 무조건 FreezeParticleComp 가 존재한다는 가정에서 실행
+*/
+
 UCLASS()
 class UE_DOITPROJECT_API UCUpset_Freeze 
 	: public UCBaseConditionType
@@ -15,6 +20,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystemComponent* FreezeParticleComp;
 
+	UPROPERTY(VisibleAnywhere, Category = "DestructibleActor")
+		class ACDM_FreezingBroken* DM_FreezenBroken;
+
 	#pragma endregion
 
 public:
@@ -24,20 +32,20 @@ public:
 public:
 	/* 해당 Owner 의 HitComp AddCondition 될 때 실행 함수*/
 	//@BaseConditionType.h
-	virtual void StartConditionOnActor(AActor* Owner) override;
+	virtual void StartCondition(APawn* Owner) override;
 
 	/* 해당 Owner 의 HitComp Tick 에서 Update */
-	virtual void UpdateConditionOnActor(AActor* Owner, float DeltaTime) override;
-
-	/* 해당 상태가 중첩되었을 때, */
-	virtual void ConditionOverlap(UCBaseConditionType* OverlappedCondition) override;
+	virtual void UpdateCondition(APawn* Owner, float DeltaTime) override;
 
 	/* 해당 Onwer 의 HitComp 에서 ApplyTime 이 끝난 후, 실행될 함수 */
 	//@BaseConditionType.h
-	virtual void EndConditionOnActor(AActor * Owner) override;
+	virtual void EndCondition(APawn * Owner) override;
+
+	/* 해당 상태가 중첩되었을 때, */
+	virtual void ConditionOverlap(UCBaseConditionType* OverlappedCondition) override;
 	
 	/* Function */
 public:
-	void SetFreezeParticleComp(class UParticleSystemComponent* PTComp) { FreezeParticleComp = PTComp; }
+	void SetFreezeParticleComp(class UParticleSystemComponent* PTComp);
 
 };

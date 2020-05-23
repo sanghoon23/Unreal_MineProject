@@ -13,6 +13,9 @@ ACPL_Sword::ACPL_Sword()
 
 	// @Create Component
 	{
+		Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule");
+		RootComponent = Capsule;
+
 		StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
 		StaticMesh->SetupAttachment(Capsule);
 	}

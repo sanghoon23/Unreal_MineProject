@@ -43,7 +43,6 @@ void ACBaseInteractActor::OnBegin(UPrimitiveComponent* OverlappedComponent, AAct
 	if (OtherActor == this) return;
 	if (GetOwner() == OtherActor) return;
 
-	// CLog::Print(L"Begin Overlap");
 	bCollisioning = true;
 }
 
@@ -54,7 +53,6 @@ void ACBaseInteractActor::OnEnd(UPrimitiveComponent * OverlappedComponent, AActo
 	if (OtherActor == this) return;
 	if (GetOwner() == OtherActor) return;
 
-	// CLog::Print(L"End Overlap");
 	bCollisioning = false;
 }
 

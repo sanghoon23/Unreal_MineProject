@@ -2,9 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "UI/Widget/WG_SkillCastingBar.h"
-#include "UI/Widget/WG_TargetInfo.h"
 #include "UI/Widget/WG_PlayerInfo.h"
+#include "UI/Widget/WG_TargetInfo.h"
+#include "UI/Widget/WG_SkillCastingBar.h"
 
 #include "HUD_Main.generated.h"
 
@@ -21,10 +21,13 @@ public:
 		void SetInputWidget(TSubclassOf<UUserWidget> InputWidget);
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Health")
+	UPROPERTY(EditAnywhere, Category = "Visible")
+		TSubclassOf<class UUserWidget> PlayerInfoWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Visible")
 		TSubclassOf<class UUserWidget> TargetInfoWidgetClass;
 
-	UPROPERTY(EditAnywhere, Category = "Casting")
+	UPROPERTY(EditAnywhere, Category = "Visible")
 		TSubclassOf<class UUserWidget> CastingWidgetClass;
 
 	//UPROPERTY(EditAnywhere, Category = "Health")
@@ -47,10 +50,12 @@ public:
 	UWG_TargetInfo* GetWidgetTargetInfo() { return TargetInfoWidget; }
 
 private:
-	UWG_SkillCastingBar* CastingWidget;
+	UWG_PlayerInfo*			PlayerInfoWidget;
 
-	UWG_TargetInfo*		TargetInfoWidget;
+	UWG_TargetInfo*			TargetInfoWidget;
 	
+	UWG_SkillCastingBar*	CastingWidget;
+
 	//Test Code
 	UUserWidget* InputWidget;
 };

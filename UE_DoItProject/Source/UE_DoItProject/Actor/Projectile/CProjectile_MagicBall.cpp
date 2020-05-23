@@ -90,18 +90,18 @@ void ACProjectile_MagicBall::Tick(float DeltaTime)
 	{
 		bSpawned = true;
 		FTimerHandle DeathTimerHandle;
-		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_MagicBall::Death, DeathTime);
+		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_MagicBall::Explosion, DeathTime);
 	}
 
 	if (FollowingTarget != nullptr)
 	{
 		FVector TargetLocation = FollowingTarget->GetActorLocation();
 		FVector Location = GetActorLocation();
-		FVector Dir = TargetLocation - Location;
-		Dir.Normalize();
+		Direction = TargetLocation - Location;
+		Direction.Normalize();
 
 		//@Set Location
-		Location += Dir * MoveSpeed * DeltaTime;
+		Location += Direction * MoveSpeed * DeltaTime;
 		SetActorLocation(Location);
 	}
 	else
@@ -171,7 +171,7 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 						HitComp->SetHitMoveSpeed(0.3f);
 
 						// 1.2 Hit Delegate - Air(DamageType)
-						HitComp->OnHit(this, DT_Normal, 50.0f);
+						HitComp->OnHit(this, DT_Normal, 10.0f);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"ACProjectile MagicBall CallAttack - HitComp Null!!");
@@ -179,14 +179,8 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 			}
 		}//for(OverlapResult)
 
-		//@터지는 파티클 실행
-		FTransform P_Transform;
-		P_Transform.SetLocation(Position);
-		P_Transform.SetScale3D(FVector(2.0f));
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionMagicBall, P_Transform, true);
-
-		//@Projectile 파괴.
-		Death();
+		//@폭발
+		Explosion();
 
 	}//(bOverlapValue == true)
 }
@@ -198,4 +192,16 @@ void ACProjectile_MagicBall::OnEndOverlap(UPrimitiveComponent * OverlappedCompon
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
+}
+
+void ACProjectile_MagicBall::Explosion()
+{
+	//@터지는 파티클 실행
+	FTransform P_Transform;
+	P_Transform.SetLocation(GetActorLocation());
+	P_Transform.SetScale3D(FVector(2.0f));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionMagicBall, P_Transform, true);
+
+	//@Projectile 파괴.
+	Death();
 }

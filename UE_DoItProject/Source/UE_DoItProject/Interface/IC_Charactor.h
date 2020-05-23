@@ -7,6 +7,7 @@
 #include "Interface/IC_BaseAction.h"
 #include "Interface/IC_HitComp.h"
 #include "Interface/IC_EquipComp.h"
+#include "Interface/IC_MeshParticle.h"
 #include "Interface/IC_InteractActor.h"
 
 #include "IC_Charactor.generated.h"
@@ -26,22 +27,23 @@ class UE_DOITPROJECT_API IIC_Charactor
 	GENERATED_BODY()
 
 public:
-	// @Action(Key Input 등) 으로 인해 행동이 시작됐을 때, 진행중인 상태값을 되돌리는
+	// @Action(Key Input 등) 으로 인해 행동이 시작됐을 때, 진행중인 상태값을 되돌리는 Delegate
 	// @param AActor - 주체 객체
 	FOnActionResetState		OnActionResetState;
 
 	// @Death - 죽음 상태 실행 시작할 때
-	FOnDeath				OnDeath;
+	FOnDeath				OnDeathDelegate;
 
-	// @CharactorDestroy - 상태가 완전히 끝나고 사라질 때
+	// @CharactorDestroy - 죽음 상태가 완전히 끝나고 사라질 때
 	FOnCharactorDestroy		OnCharactorDestroy;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Pure Virtual Function */
 public:
-	virtual bool IsDeath() = 0; // 캐릭터의 죽음 여부.
-	virtual void CanMove() = 0; // 이동 가능.
-	virtual void CanNotMove() = 0;// 이동 불가.
+	virtual bool IsDeath() = 0;
+	virtual void OnDeath() = 0;
+	virtual void CanMove() = 0;
+	virtual void CanNotMove() = 0;
 
 	virtual void OnGravity() = 0;
 	virtual void OffGravity() = 0;
@@ -49,8 +51,11 @@ public:
 	virtual bool IsJumping() = 0;
 	virtual void OffJumping() = 0;
 
-	// @Charactor 의 현재상태. (AnimInst 에서 쓰임)
+	// @Charactor 의 현재상태 - ( AnimInst 에서 쓰임 )
 	virtual int GetCurrentStateType() const = 0;
+
+	// @현재 적용된, 혹은 적용되어졌던 Montage
+	virtual const class UAnimMontage* GetCurrentApplyedMontage() const = 0;
 
 	// @Montage - 실행할 Montage
 	// @Speed - Montage 속도
@@ -63,6 +68,12 @@ public:
 	// @해당 몽타주 실행중 이면 Montage Stop ( Input Montage )
 	virtual void ActorStopAnimMon(class UAnimMontage* Montage) = 0;
 
+	// @현재 실행중인 Montage Pause ( CurrentApplyedMontage )
+	virtual void ActorAnimMonPause() = 0;
+
+	// @Pause 된 CurrentApplyMonatge 를 다시 실행
+	virtual void ActorPausedAnimMonResume() = 0;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Virtual Function */
 public:
@@ -74,12 +85,11 @@ public:
 	virtual FVector GetEvadeDirection() { return FVector(1.f, 0.0f, 0.0f); } // 회피방향
 
 public:
-	virtual const class UAnimMontage* GetCurrentApplyedMontage() const { return nullptr; } // @현재 적용된, 혹은 적용된 후의 애니메이션
 	virtual IIC_StateManager* GetIStateManager() { return nullptr; }
 	virtual IIC_AttackComp* GetIAttackComp() { return nullptr; }
 	virtual IIC_HitComp* GetIHitComp() { return nullptr; }
 	virtual IIC_EquipComp* GetIEquipComp() { return nullptr; }
-
+	virtual IIC_MeshParticle* GetIMeshParticle() { return nullptr; }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Function */

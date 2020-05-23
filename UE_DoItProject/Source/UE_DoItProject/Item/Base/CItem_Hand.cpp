@@ -21,12 +21,21 @@ void ACItem_Hand::Tick(float DeltaTime)
 
 void ACItem_Hand::MeshAttach(FString StrAttachName)
 {
-	Super::MeshAttach(StrAttachName);
+	ACharacter* SettingCharacter = Cast<ACharacter>(GetOwner());
+	check(SettingCharacter);
+	IfNullRet(SettingCharacter);
+
+	AttachToComponent(SettingCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), *StrAttachName);
 }
 
 void ACItem_Hand::MeshDetach()
 {
-	Super::MeshDetach();
+	// Attach - ItemAttachName
+	ACharacter* SettingCharacter = Cast<ACharacter>(GetOwner());
+	check(SettingCharacter);
+	IfNullRet(SettingCharacter);
+
+	AttachToComponent(SettingCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), *ItemAttachName);
 }
 
 void ACItem_Hand::OnEquip()
@@ -44,7 +53,7 @@ void ACItem_Hand::OnEquip()
 	// 2. Montage 가 없다면, Detach
 	else if (AttachMontage == nullptr)
 	{
-		MeshAttach(Super::GetItemEquipName());
+		MeshAttach(GetItemEquipName());
 
 		OnEquipedCharacter->GetIEquipComp()->SetEquiping(false);
 	}

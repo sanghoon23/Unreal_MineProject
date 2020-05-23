@@ -157,10 +157,6 @@ void UCInverseKinematics::LeftHandTrace()
 
 		FVector RightVec = Character->GetActorRightVector();
 		HandIK.Location_Left = HitResult.Location - (RightVec * 10.0f);
-
-		// Test Code
-		//FString PrintStr = L"Left Location : " + HandIK.Location_Left.ToString();
-		//CLog::Print(PrintStr);
 	}
 }
 
@@ -194,10 +190,6 @@ void UCInverseKinematics::RightHandTrace()
 
 		FVector RightVec = Character->GetActorRightVector();
 		HandIK.Location_Right = HitResult.Location + (RightVec * 10.0f);
-
-		// Test Code
-		//FString PrintStr = L"Right Location : " + HandIK.Location_Right.ToString();
-		//CLog::Print(PrintStr);
 	}
 }
 

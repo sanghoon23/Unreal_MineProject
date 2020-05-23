@@ -13,6 +13,9 @@ ACHM_BasicSword::ACHM_BasicSword()
 
 	// @Create Component
 	{
+		Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule");
+		RootComponent = Capsule;
+
 		SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMesh");
 		SkeletalMesh->SetupAttachment(Capsule);
 	}

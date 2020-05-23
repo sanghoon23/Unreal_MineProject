@@ -92,10 +92,6 @@ void ACInteractActor_JumpOver::TickInteract(AActor * InteractedActor)
 	//// 3. Setting
 	//InteractedActor->SetActorLocation(ActorLocation);
 
-	//// Test Code
-	////CLog::Print(MeshScale);
-	////CLog::Print(L"Min : " + Min.ToString());
-	////CLog::Print(L"Max : " + Max.ToString());
 }
 
 void ACInteractActor_JumpOver::EndInteract(AActor * InteractedActor)

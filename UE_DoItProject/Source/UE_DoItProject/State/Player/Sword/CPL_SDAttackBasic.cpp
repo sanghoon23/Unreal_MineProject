@@ -2,6 +2,8 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DestructibleActor.h"
+#include "DestructibleComponent.h"
 
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "System/CS_AttackDecision.h"
@@ -69,8 +71,12 @@ void UCPL_SDAttackBasic::BeginPlay()
 
 	#pragma region Super
 
+	//Test Code
+	AttackDecision->UnAble();
+
+	//@Before
 	//@Auto AttackDecision System
-	AttackDecision->OnAble(Player, AttackRange);
+	//AttackDecision->OnAble(Player, AttackRange);
 
 	#pragma endregion
 }
@@ -109,15 +115,22 @@ void UCPL_SDAttackBasic::BeginAttack(AActor * DoingActor)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	APawn* Target = Player->GetFindAttackTarget();
-	if (Target == nullptr)
+	if (Target != nullptr)
 	{
-		EndAttackDeleFunc.Broadcast();
-		return;
+		//@ 타겟 바라보게 하기
+		UCFL_ActorAgainst::LookAtTarget(Player, Target);
 	}
-	check(Target);
 
-	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Player, Target);
+	//@Before
+	//APawn* Target = Player->GetFindAttackTarget();
+	//if (Target == nullptr)
+	//{
+	//	EndAttackDeleFunc.Broadcast();
+	//	return;
+	//}
+	//check(Target);
+	//// @타겟 바라보게 하기
+	//UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -147,21 +160,28 @@ void UCPL_SDAttackBasic::OnComboSet(AActor * DoingActor)
 	check(Charactor);
 
 	APawn* Target = Player->GetFindAttackTarget();
-	if (Target == nullptr)
+	if (Target != nullptr)
 	{
-		EndAttackDeleFunc.Broadcast();
-		Player->ActorStopAnimMon(SwordAttackMontages[CurrentComboNum]);
-		return;
+		//@ 타겟 바라보게 하기
+		UCFL_ActorAgainst::LookAtTarget(Player, Target);
 	}
-	check(Target);
+
+	//@Before
+	//if (Target == nullptr)
+	//{
+	//	EndAttackDeleFunc.Broadcast();
+	//	Player->ActorStopAnimMon(SwordAttackMontages[CurrentComboNum]);
+	//	return;
+	//}
+	//check(Target);
+
+	//	//@ 타겟 바라보게 하기
+	//UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bComboCheck = false;
 	++CurrentComboNum;
-
-	//@ 타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -253,6 +273,54 @@ void UCPL_SDAttackBasic::AttackOtherPawn()
 void UCPL_SDAttackBasic::ImpulseAttack(float intensity)
 {
 	Super::ImpulseAttack(intensity);
+
+	FVector ActorForward = Player->GetActorForwardVector();
+	FVector Start = Player->GetActorLocation();
+	FVector End = Player->GetActorLocation() + ActorForward * AttackRange;
+
+	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
+	FCollisionQueryParams CollisionQueryParm(NAME_None, false, Player);
+
+	TArray<FHitResult> HitResults;
+	float DebugLifeTime = 1.0f;
+	bool bHit = GetWorld()->SweepMultiByChannel //@충격량 주기 - Multi
+	(
+		HitResults
+		, Start
+		, End
+		, FQuat::Identity
+		, ECC_GameTraceChannel2 // @PlayerAttack
+		, sphere
+		, CollisionQueryParm
+	);
+
+	if (bHit == true)
+	{
+		for (auto& Hit : HitResults)
+		{
+			if (Hit.GetActor()->IsA<APawn>()) // Pawn 이면, Continue;
+				continue;
+
+			if (Cast<ADestructibleActor>(Hit.GetActor()))
+			{
+				UDestructibleComponent* destructible
+					= Cast<UDestructibleComponent>(Hit.GetActor()->GetComponentByClass(UDestructibleComponent::StaticClass()));
+				if (destructible != nullptr)
+				{
+					destructible->ApplyDamage(5.0f, Hit.GetActor()->GetActorLocation(), ActorForward, 1.0f);
+
+					// Test Code
+					CLog::Print(Hit.GetActor()->GetName());
+				}
+				continue;
+			}
+
+			CLog::Print(L"SDAttackBasic _ DamageEvnet In!!");
+
+			FDamageEvent DamageEvent;
+			Hit.GetActor()->TakeDamage(1.0f, DamageEvent, Player->GetController(), Hit.GetActor());
+		}
+	}//(bHit)
 }
 
 void UCPL_SDAttackBasic::CheckProcedural()

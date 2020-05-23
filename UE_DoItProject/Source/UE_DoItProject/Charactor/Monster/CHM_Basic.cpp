@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "AI/Controller/CAIC_HM_Basic.h"
+#include "DamageType/CDamageType_Normal.h"
 
 ACHM_Basic::ACHM_Basic()
 {
@@ -23,20 +24,20 @@ ACHM_Basic::ACHM_Basic()
 	// Create Component
 	{
 		AttackComp = CreateDefaultSubobject<UCHM_BasicAttackComp>("AttackComp");
-		HitComp = CreateDefaultSubobject<UCHM_BasicHitComp>("HitComp");
+		HitComponent = CreateDefaultSubobject<UCHM_BasicHitComp>("HitComp");
 		EquipComp = CreateDefaultSubobject<UCHM_BasicEquipComp>("EquipComponent");
+		MeshParticleComp = CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
 	}
 
 	#pragma region Monster Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.HP = 50.0f;
+	Info.MaxHP = 100.0f;
+	Info.CurrentHP = 100.0f;
 	Info.Name = FName(L"HM_Basic");
 	Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
-
-	
 }
 
 void ACHM_Basic::BeginPlay()
@@ -45,34 +46,37 @@ void ACHM_Basic::BeginPlay()
 
 	// Set Delegate
 	{
-		OnDeath.AddLambda([&]()
+		OnDeathDelegate.AddLambda([&]()
 		{
-			SetActorEnableCollision(false);
+			SetActorTickEnabled(false);
+
+			//@띄워졌을 때 사망할 때의 예외,
+			OnGravity();
+
+			//@Monster 라면, AI 꺼주기
+			SetAIRunningPossible(false);
+
+			//@Collision OFF
+			OffCollision();
 			//AutoPossessAI = EAutoPossessAI::Disabled;
 			//AIControllerClass = nullptr;
 		});
 
-		OnCharactorDestroy.AddUObject(this, &ACHM_Basic::OnDestroy);
+		OnCharactorDestroy.AddUObject(this, &ACHM_Basic::OnDelegateCharactorDestroy);
 	}
-	
-	//GetMesh()->SetMaterial();
-
 }
 
 void ACHM_Basic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
-	//#WG_TargetInfo 에서 수행.
-	#pragma region Monster Info Update
+void ACHM_Basic::OnDeath()
+{
+	bDeath = true;
+	OnDeathDelegate.Broadcast(); //@Delegate
 
-	//for (int i = 0; i < Info.InfoConditionDataArray.Num(); ++i)
-	//{
-	//	//@Update
-	//	HitComp->GetConditionDatas(&(Info.InfoConditionDataArray));
-	//}
-
-	#pragma endregion
+	CLog::Print(L"DeathCall");
 }
 
 void ACHM_Basic::OnGravity()
@@ -119,28 +123,85 @@ void ACHM_Basic::ActorStopAnimMon(class UAnimMontage* Montage)
 	StopAnimMontage(Montage);
 }
 
+void ACHM_Basic::ActorPausedAnimMonResume()
+{
+	GetMesh()->GetAnimInstance()->Montage_Resume(CurrentMontage);
+
+	//Test Code
+	//bool bRunningMontage = GetMesh()->GetAnimInstance()->Montage_IsPlaying(CurrentMontage);
+	//if (bRunningMontage == true)
+	//{
+	//}
+	CLog::Print(L"Montage Resume!!");
+}
+
+void ACHM_Basic::ActorAnimMonPause()
+{
+	bool bRunningMontage = GetMesh()->GetAnimInstance()->Montage_IsPlaying(CurrentMontage);
+	if (bRunningMontage == true)
+	{
+		GetMesh()->GetAnimInstance()->Montage_Pause(CurrentMontage);
+	}
+
+	CLog::Print(L"Montage Pause!!");
+}
+
+void ACHM_Basic::OnCollision()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void ACHM_Basic::OffCollision()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	Info.CurrentHP -= DamageAmount;
+
+	if (Info.CurrentHP <= 0.0f)
+	{
+		OnDeath();
+	}
+
+	return Info.CurrentHP;
+}
+
+void ACHM_Basic::OnDelegateCharactorDestroy()
+{
+	FTimerHandle DeathTimerHandle;
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACHM_Basic::CallDestory, 2.0f);
+}
+
+void ACHM_Basic::CallDestory()
+{
+	Destroy();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Get, Set
+
 IIC_AttackComp * ACHM_Basic::GetIAttackComp()
 {
 	IfTureRetResult(AttackComp == nullptr, nullptr); // @Return Null
-
 	return Cast<IIC_AttackComp>(AttackComp);
 }
 
 IIC_EquipComp * ACHM_Basic::GetIEquipComp()
 {
 	IfTureRetResult(EquipComp == nullptr, nullptr); // @Return Null
-
 	return Cast<IIC_EquipComp>(EquipComp);
 }
 
 IIC_HitComp * ACHM_Basic::GetIHitComp()
 {
-	IfTureRetResult(HitComp == nullptr, nullptr); // @Return Null
-
-	return Cast<IIC_HitComp>(HitComp);
+	IfTureRetResult(HitComponent == nullptr, nullptr); // @Return Null
+	return Cast<IIC_HitComp>(HitComponent);
 }
 
-void ACHM_Basic::OnDestroy()
+IIC_MeshParticle * ACHM_Basic::GetIMeshParticle()
 {
-	Destroy();
+	IfTureRetResult(MeshParticleComp == nullptr, nullptr); // @Return Null
+	return Cast<IIC_MeshParticle>(MeshParticleComp);
 }

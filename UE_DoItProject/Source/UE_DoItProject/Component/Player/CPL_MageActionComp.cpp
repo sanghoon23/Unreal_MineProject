@@ -38,7 +38,7 @@ IIC_BaseAction * UCPL_MageActionComp::GetIBaseAction(uint8 Type)
 {
 	if (Type > MG_ActionArray.Num() - 1)
 	{
-		CLog::Print(L"MageActionComp GetIBaseAction Array Excess!!");
+		UE_LOG(LogTemp, Warning, L"MageActionComp GetIBaseAction Array Excess!!");
 		return nullptr;
 	}
 

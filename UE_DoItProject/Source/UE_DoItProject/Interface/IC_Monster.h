@@ -18,7 +18,8 @@ public:
 	TArray<UCBaseConditionType*> InfoConditionDataArray;
 
 public:
-	float HP = 0.0f;
+	float MaxHP = 0.0f;
+	float CurrentHP = 0.0f;
 	float Distance = 0.0f;
 	FName Name = "";
 
@@ -38,7 +39,7 @@ class UE_DOITPROJECT_API IIC_Monster
 
 	/* Pure Virtual Function */
 public:
-	virtual FMonsterInfo GetMonsterInfo() const = 0;
+	virtual const FMonsterInfo GetMonsterInfo() const = 0;
 
 	/* Member */
 public:

@@ -1,7 +1,7 @@
 #include "CBaseConditionType.h"
 #include "Global.h"
 
-void UCBaseConditionType::UpdateConditionOnActor(AActor * Owner, float DeltaTime)
+void UCBaseConditionType::UpdateCondition(APawn * Owner, float DeltaTime)
 {
 	check(Owner);
 
@@ -12,6 +12,15 @@ void UCBaseConditionType::UpdateConditionOnActor(AActor * Owner, float DeltaTime
 	{
 		UpdateUIColorAndOpacity(this);
 	}
+}
+
+void UCBaseConditionType::EndCondition(APawn * Owner)
+{
+	//@Init
+	ColorAndOpacity = FLinearColor(FVector4(1.0f));
+	bLinerColorDir = true;
+	TextureUI = nullptr;
+	ApplyTime = 0.0f;
 }
 
 void UCBaseConditionType::InitUIColorAndOpacity()
@@ -36,11 +45,8 @@ void UCBaseConditionType::UpdateUIColorAndOpacity(UCBaseConditionType* Condition
 	ConditionData->ColorAndOpacity.A = Opacity;
 }
 
-void UCBaseConditionType::EndConditionOnActor(AActor * Owner)
+void UCBaseConditionType::SetDamageSubjectController(AController * InputController)
 {
-	//@Init
-	ColorAndOpacity = FLinearColor(FVector4(1.0f));
-	bLinerColorDir = true;
-	TextureUI = nullptr;
-	ApplyTime = 0.0f;
+	check(InputController);
+	DamageSubjectController = InputController;
 }

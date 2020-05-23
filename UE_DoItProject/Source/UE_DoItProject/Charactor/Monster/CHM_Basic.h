@@ -8,6 +8,8 @@
 #include "Component/HM_Basic/CHM_BasicAttackComp.h"
 #include "Component/HM_Basic/CHM_BasicHitComp.h"
 #include "Component/HM_Basic/CHM_BasicEquipComp.h"
+#include "Component/CMeshParticleComp.h"
+
 
 #include "CHM_Basic.generated.h"
 
@@ -26,10 +28,13 @@ private:
 		class UCHM_BasicAttackComp* AttackComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCHM_BasicHitComp* HitComp;
+		class UCHM_BasicHitComp* HitComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_BasicEquipComp* EquipComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCMeshParticleComp* MeshParticleComp;
 
 	#pragma endregion
 
@@ -44,10 +49,11 @@ public:
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//@IC_Charactor
-	/* Pure Virtual Function In Interface */
+
+	/* Pure Virtual Function In Interface - (IC_Charactor) */
 public:
 	virtual bool IsDeath() override { return bDeath; }
+	virtual void OnDeath() override; //죽음
 	virtual void CanMove() override { bCanMove = true; }
 	virtual void CanNotMove() override { bCanMove = false; }
 	virtual void OnGravity() override;
@@ -60,32 +66,43 @@ public:
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
 	virtual void ActorStopCurrentAnimMon() override;
 	virtual void ActorStopAnimMon(class UAnimMontage* Montage) override;
+	virtual void ActorPausedAnimMonResume() override;
+	virtual void ActorAnimMonPause() override;
 
-	/* Virtual In Interface */
+	/* Virtual In Interface - (IC_Charactor) */
 public:
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const override { return CurrentMontage; } // @현재 적용된, 혹은 적용된 후의 애니메이션
 	virtual IIC_AttackComp* GetIAttackComp() override;
 	virtual IIC_EquipComp* GetIEquipComp() override;
 	virtual IIC_HitComp* GetIHitComp() override;
-
-public:
-	//virtual void OnHit(AActor* AttackActor, UINT HitAnimNum, float AnimSpeed) override;
-	//virtual float TakeDamage
-	//(float DamageAmount,
-	//	struct FDamageEvent const & DamageEvent,
-	//	class AController * EventInstigator,
-	//	AActor * DamageCauser) override;
+	virtual IIC_MeshParticle* GetIMeshParticle() override;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//@IC_Monster
 public:
-	virtual FMonsterInfo GetMonsterInfo() const override { return Info; };
+	virtual const FMonsterInfo GetMonsterInfo() const override { return Info; };
 
 	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }
 	bool GetAIRunningPossible() const { return bAIRunningPossible; }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Class Virtual */
+public:
+	//@return float - 현재 남은 체력 - (TargetInfo.CurrentHP)
+	virtual float TakeDamage
+	(
+		float DamageAmount,
+		struct FDamageEvent const & DamageEvent,
+		class AController * EventInstigator,
+		AActor * DamageCauser
+	) override;
+	
+	virtual void OnCollision() override;
+	virtual void OffCollision() override;
+
 private:
-	void OnDestroy();
+	void OnDelegateCharactorDestroy();
+	void CallDestory();
 
 	#pragma region Member
 private:

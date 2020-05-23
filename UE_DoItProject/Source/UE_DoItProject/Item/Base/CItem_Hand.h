@@ -17,6 +17,7 @@ class UE_DOITPROJECT_API ACItem_Hand
 {
 	GENERATED_BODY()
 	
+	#pragma region Reflection
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 		UHandItemType HandItemType = UHandItemType::END;
@@ -27,6 +28,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Montage")
 		class UAnimMontage* DetachMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Attachment")
+		FString ItemAttachName = "";
+
+	UPROPERTY(EditAnywhere, Category = "Attachment")
+		FString ItemEquipName = "";
+
+	#pragma endregion
+
 public:
 	ACItem_Hand();
 	virtual void Tick(float DeltaTime) override;
@@ -35,10 +44,14 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void MeshAttach(FString StrAttachName) override; // 무기 붙이기.
-	virtual void MeshDetach() override; // 원상 복구..
+	virtual void MeshAttach(FString StrAttachName); // 무기 붙이기.
+	virtual void MeshDetach(); // 원상 복구..
 
 	virtual void OnEquip();
 	virtual void UnEquip();
 
+	/* Member */
+public:
+	FString GetItemAttachName() { return ItemAttachName; }
+	FString GetItemEquipName() { return ItemEquipName; }
 };

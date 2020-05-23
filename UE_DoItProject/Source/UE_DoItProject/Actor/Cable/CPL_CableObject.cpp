@@ -79,7 +79,6 @@ void ACPL_CableObject::Tick(float DeltaTime)
 			bStretch = false;
 			bPulling = true;
 		}
-		//CLog::Print(L"Stretch == true");
 
 	}//if(bStretch == true)
 	else if (PullTarget != nullptr && bPulling == true)

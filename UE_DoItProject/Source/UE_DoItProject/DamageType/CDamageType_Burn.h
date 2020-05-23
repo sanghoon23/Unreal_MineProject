@@ -16,6 +16,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Texture")
 		class UTexture2D* BurnConditionUITexture = nullptr;
 
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		float SecondDamageValue = 0.0f;
+
+
 	#pragma endregion
 
 public:
@@ -23,6 +27,12 @@ public:
 
 	/* Virtual */
 public:
+	//@param Subject - 주체자
+	//@param DamagedActor - 맞는 액터
+	//@param InitialDamageAmount - 초기에 들어갈 데미지 값
+	//@param Montage - 맞는 액터가 시행할 Montage (default = nullptr)
+	virtual void OnHittingProcess(AActor* Subject, AActor* DamagedActor, class UC_BaseHitComp* DamagedActorHitComp, float InitialDamageAmount);
+
 	virtual void OnDamageDelegate(AActor* DamagedActor) override;
 
 	/* Function */
@@ -33,6 +43,9 @@ public:
 public:
 	void SetBurnTime(float ApplyStunTime) { BurnTime = ApplyStunTime; }
 	float GetBurnTime() const { return BurnTime; }
+
+	void SetSecondDamageValue(float ApplyDamage) { SecondDamageValue = ApplyDamage; }
+	float GetSecondDamageValue() const { return SecondDamageValue; }
 
 private:
 	float BurnTime = 0.0f;

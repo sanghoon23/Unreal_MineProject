@@ -15,13 +15,17 @@ class UE_DOITPROJECT_API UWG_TargetInfo
 private:
 	const uint8 ConditionUITextureNumber = 5;
 	
+
 	#pragma region Reflection
 public:
 	UFUNCTION(BlueprintCallable, Category = "DataValue")
 		FText GetInfoMonsterName() const { return FText::FromName(TargetInfo.Name); }
 
 	UFUNCTION(BlueprintCallable, Category = "DataValue")
-		float GetInfoMonsterHP() const { return TargetInfo.HP; }
+		float GetInfoMonsterMaxHP() const { return TargetInfo.MaxHP; }
+
+	UFUNCTION(BlueprintCallable, Category = "DataValue")
+		float GetInfoMonsterCurrentHP() const { return TargetInfo.CurrentHP; }
 
 	UFUNCTION(BlueprintCallable, Category = "DataValue")
 		float GetInfoMonsterDistance() const { return TargetInfo.Distance; }
@@ -32,11 +36,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ConditionData")
 		FLinearColor GetInfoConditionDataLinearColor(int ArrayNumber);
 
-	UFUNCTION(BlueprintCallable, Category = "ConditionData")
-		class UCBaseConditionType* GetInfoMonsterConditionData(int ArrayNumber);
+	//UFUNCTION(BlueprintCallable, Category = "ConditionData")
+	//	class UCBaseConditionType* GetInfoMonsterConditionData(int ArrayNumber);
 
-	UFUNCTION(BlueprintCallable, Category = "ConditionData")
-		TArray<class UCBaseConditionType*> GetInfoMonsterConditionDataArray();
+	//UFUNCTION(BlueprintCallable, Category = "ConditionData")
+	//	TArray<class UCBaseConditionType*> GetInfoMonsterConditionDataArray();
 
 	UFUNCTION(BlueprintCallable, Category = "Function")
 		void WigetVisible();

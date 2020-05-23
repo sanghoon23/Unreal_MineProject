@@ -11,10 +11,10 @@ UCUpset_Stun::UCUpset_Stun()
 	State = EHitUpset::STUN;
 }
 
-void UCUpset_Stun::UpdateConditionOnActor(AActor * Owner, float DeltaTime)
+void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 {
 	//@ApplyTime -= DeltaTime
-	Super::UpdateConditionOnActor(Owner, DeltaTime);
+	Super::UpdateCondition(Owner, DeltaTime);
 
 	check(Owner);
 	//@TakeDamage

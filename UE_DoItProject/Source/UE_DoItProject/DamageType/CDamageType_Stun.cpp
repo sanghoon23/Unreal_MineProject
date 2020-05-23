@@ -1,11 +1,17 @@
 #include "CDamageType_Stun.h"
 #include "Global.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
+
+#include "Component/Base/C_BaseHitComp.h"
+#include "DamagedConditionType/UpsetCondition/CUpset_Stun.h"
 
 UCDamageType_Stun::UCDamageType_Stun()
 {
 	// Super
 	{
-		TypeNumber = 0;
+		TypeNumber = 4;
 		DamageType = FDamageType::STUN;
 	}
 
@@ -28,6 +34,44 @@ UCDamageType_Stun::UCDamageType_Stun()
 	{
 		StunConditionUITexture = StunTexture.Object;
 	}
+}
+
+void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor, UC_BaseHitComp * DamagedActorHitComp, float InitialDamageAmount)
+{
+	Super::OnHittingProcess(Subject, DamagedActor, DamagedActorHitComp, InitialDamageAmount);
+
+	//@때린 대상 바라보기
+	UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
+
+	APawn* const DamagedPawn = Cast<APawn>(DamagedActor);
+	check(DamagedPawn);
+
+	AController* const PawnController = DamagedPawn->GetController();
+	check(PawnController);
+
+	UCUpset_Stun* UpsetStun = NewObject<UCUpset_Stun>();
+	UpsetStun->ApplyTime = GetStunTime();
+	UpsetStun->SetDamageSubjectController(PawnController);
+	const uint8 StunMontageNum = static_cast<uint8>(FDamageType::STUN);
+	UpsetStun->SetMontage(DamagedActorHitComp->GetDamagedMontageOrNull(StunMontageNum));
+
+	//@Damage Class
+	FDamageEvent DamageEvent;
+	DamageEvent.DamageTypeClass = GetClass();
+	UpsetStun->SetDamageEvent(DamageEvent);
+
+	UTexture2D* Texture = GetUITexture();
+	if (Texture != nullptr)
+	{
+		UpsetStun->TextureUI = Texture;
+	}
+
+	bool bAddResult = DamagedActorHitComp->AddConditionData(UpsetStun);
+	if (bAddResult == false)
+	{
+		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp STUN AddConditionData Derived NULL!!");
+	}
+
 }
 
 void UCDamageType_Stun::OnDamageDelegate(AActor* DamagedActor)

@@ -35,7 +35,7 @@ UCPL_MGAttackFreezing::UCPL_MGAttackFreezing()
 	{
 		UAnimMontage* Mage_Freezing = nullptr;
 
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Mage/MAttack/Mage_MagicBallAttack.Mage_MagicBallAttack'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Mage/MAttack/Mage_Skilling_FreezeBall.Mage_Skilling_FreezeBall'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> MFreezingAttack(*Path);
 		if (MFreezingAttack.Succeeded())
 			Mage_Freezing = MFreezingAttack.Object;
@@ -181,7 +181,7 @@ void UCPL_MGAttackFreezing::BeginAttack(AActor * DoingActor)
 	ProjectileData.MoveSpeed = Speed;
 	ProjectileData.FollowingTarget = Target;
 
-	ACProjectile_MagicBall::SettingProjectile(ProjectileData);
+	ACProjectile_FreezeBall::SettingProjectile(ProjectileData);
 
 	// @공격 실행
 	if (bAttacking == false)
@@ -204,7 +204,7 @@ void UCPL_MGAttackFreezing::BeginAttack(AActor * DoingActor)
 		float StartTime = 0.0f;
 		float EndTime = 0.0f;
 		MageAttackMontages[0]->GetSectionStartAndEndTime(0, StartTime, EndTime);
-		EndTime *= MontagePauseOffset;
+		//EndTime *= MontagePauseOffset;
 
 		MontagePauseDel.BindUFunction(this, FName("TimerMontagePause"));
 		GetWorld()->GetTimerManager().SetTimer

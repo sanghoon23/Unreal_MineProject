@@ -23,7 +23,7 @@ void UCPlayerAnimInst::NativeBeginPlay()
 		FootIK = Cast<UCInverseKinematics>(ActorComp);
 	}
 
-	// OnMontageBlendingOut.AddDynamic(this, &UCPlayerAnimInst::Test);
+	//OnMontageBlendingOut.AddDynamic(this, &UCPlayerAnimInst::Test);
 }
 
 void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
@@ -111,8 +111,6 @@ float UCPlayerAnimInst::FootTraceDistance()
 
 	return 0.0f;
 }
-
-
 
 //void UCPlayerAnimInst::Test(UAnimMontage * Montage, bool bInterrupted)
 //{

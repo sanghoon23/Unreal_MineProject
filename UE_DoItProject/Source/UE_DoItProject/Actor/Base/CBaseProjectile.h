@@ -66,6 +66,10 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	/* Vritual */
+public:
+	virtual void Explosion() {}
+
 	/* Function */
 public:
 	/* Montage 에서 Projectile 을 Spawn 하기 위해서 static 설정 */
@@ -78,7 +82,6 @@ public:
 	static void SettingProjectile(const FProjectileData& Data);
 
 	#pragma region Member 
-
 	/* Member */
 public:
 

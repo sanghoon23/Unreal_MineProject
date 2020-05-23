@@ -22,7 +22,7 @@ public:
 
 	/* Virtual Function */
 public:
-	virtual void UpdateConditionOnActor(AActor* Owner, float DeltaTime) override;
+	virtual void UpdateCondition(APawn* Owner, float DeltaTime) override;
 
 	/* 해당 상태가 중첩되었을 때, */
 	virtual void ConditionOverlap(UCBaseConditionType* OverlappedCondition) override;

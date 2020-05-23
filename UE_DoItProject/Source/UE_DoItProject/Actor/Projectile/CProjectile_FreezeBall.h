@@ -16,7 +16,7 @@ class UE_DOITPROJECT_API ACProjectile_FreezeBall
 private:
 	// @DamageType
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Freeze*	DT_Freeze;
+		UCDamageType_Freeze*	DT_Freezing;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* ParticleComp;
@@ -43,8 +43,17 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	/* Vritual */
+public:
+	virtual void Explosion() override;
 
 	/* Member */
 private:
 	float CollisionSphereRadius = 100.0f;
+
+	/* 생성 여부 */
+	bool bSpawned = false;
+
+	/* Destory 될 시간 */
+	float DeathTime = 5.0f;
 };

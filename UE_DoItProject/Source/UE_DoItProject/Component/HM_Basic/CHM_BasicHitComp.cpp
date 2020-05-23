@@ -7,6 +7,9 @@
 #include "Interface/IC_Charactor.h"
 #include "Charactor/Monster/CHM_Basic.h"
 #include "DamageType/Base/CDamageType_Base.h"
+#include "DamageType/CDamageType_Normal.h"
+#include "DamageType/CDamageType_Air.h"
+#include "DamageType/CDamageType_AirAttack.h"
 #include "DamageType/CDamageType_Stun.h"
 #include "DamageType/CDamageType_Burn.h"
 #include "DamageType/CDamageType_Poision.h"
@@ -23,6 +26,15 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	FString Path = L"";
+
+	//Create Common Death Montage
+	Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_BasicMon_Die01.HM_BasicMon_Die01'";
+	ConstructorHelpers::FObjectFinder<UAnimMontage> DeathMon(*Path);
+	if (DeathMon.Succeeded())
+	{
+		CommonDeathMontage = DeathMon.Object;
+	}
+
 	#pragma region Hit Montages
 	// 'Normal' Hit Montage
 	{
@@ -66,6 +78,30 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 
 	#pragma endregion
 
+	#pragma region Set MontagesArray - (BaseHitComp)
+	//@Set Montage
+	//...
+
+	uint8 NormalNum = static_cast<uint8>(FDamageType::NORMAL);
+	DamagedMontages[NormalNum] = NormalHitMontage;
+
+	uint8 AirNum = static_cast<uint8>(FDamageType::AIR);
+	DamagedMontages[AirNum] = AirHitMontage;
+
+	uint8 AirAttackNum = static_cast<uint8>(FDamageType::AIRATTACK);
+	DamagedMontages[AirAttackNum] = AirAttackHitMontage;
+
+	uint8 StrongAttackNum = static_cast<uint8>(FDamageType::STRONGATTACK);
+	DamagedMontages[StrongAttackNum] = StrongAttackHitMontage;
+
+	uint8 StunNum = static_cast<uint8>(FDamageType::STUN);
+	DamagedMontages[StunNum] = StunHitMontage;
+
+	//uint8 FreezeNum = static_cast<uint8>(FDamageType::FREEZE);
+	//DamagedMontages[FreezeNum] = NormalHitMontage;
+
+	#pragma endregion
+
 	//@Load Poision Material
 	{
 		Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
@@ -80,12 +116,25 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 	{
 		BurnParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("BurnParticleComp");
 
-		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/P_MG_BurnParticle.P_MG_BurnParticle'";
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_BurningActor.PS_BurningActor'";
 		ConstructorHelpers::FObjectFinder<UParticleSystem> BurnPT(*Path);
 		if (BurnPT.Succeeded())
 		{
 			BurnParticleComp->bAutoActivate = false;
 			BurnParticleComp->SetTemplate(BurnPT.Object);
+		}
+	}
+
+	//@Load Freeze Particle - ParticleComp
+	{
+		FreezeParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("FreezeParticleComp");
+
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_FreezingActor.PS_FreezingActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> FreezePT(*Path);
+		if (FreezePT.Succeeded())
+		{
+			FreezeParticleComp->bAutoActivate = false;
+			FreezeParticleComp->SetTemplate(FreezePT.Object);
 		}
 	}
 }
@@ -118,204 +167,29 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type,
 	check(AttackingActor);
 	check(Type);
 
-	// @Interface
-	IIC_Charactor* ICharactor = Cast<IIC_Charactor>(HM_Basic);
-	check(ICharactor);
+	if (Type->GetConditionType() == FDamageType::END)
+	{
+		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp OnHit - ConditionTtpe END!!");
+		verify(Type->GetConditionType() == FDamageType::END);
+	}
 
-	//1. Delegate 실행.
-	// @ResetState
+	//@Delegate 실행.
 	HM_Basic->OnActionResetState.Broadcast(HM_Basic);
 
-	// @NORMAL - 일반 공격
-	if (Type->GetConditionType() == FDamageType::NORMAL)
+	///DamageType Process
+	Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
+
+	//#Edit 0510 - 
+	//@Death Animation 은 AnimInstance 의 LocoMotion 을 이용
+
+	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
+	IfTrueRet(bBlockDamagedMontage);
+
+	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
+	if (MontageNum >= DamagedMontages.Num()) return;
+	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
+	if (RunMontage != nullptr)
 	{
-		// @OnDamageDelegate
-		// Type->OnDamageDelegate(Owner);
-
-		// @때린 대상 바라보기
-		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
-
-		//1.3 TakeDamage
-
-
-		//@Test Code
-		//@다른 몽타주가 실행되고 있는지
-		//bool IsOtherMonPlaying = AnimInst_HM_Basic->IsAnyMontagePlaying();
-		//if (IsOtherMonPlaying == false)
-		//{
-		//}
-
-		//1.4 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(NormalHitMontage, 0.6f, true);
-
-		//CLog::Print(L"TYPE - NORMAL");
+		HM_Basic->ActorAnimMonPlay(RunMontage, 0.6f, true);
 	}
-	
-	// @AIR - 띄우기
-	else if (Type->GetConditionType() == FDamageType::AIR)
-	{
-		// @때린 대상 바라보기
-		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
-
-		//1.3 TakeDamage
-
-		//1.4 Jump
-		ACharacter* Charactor = Cast<ACharacter>(HM_Basic);
-		check(Charactor);
-		FVector Location = Charactor->GetActorLocation();
-		Location.Z += 200.0f;
-		Charactor->SetActorLocation(Location);
-
-		// @속력 줄이기 - 중력끄고 바로 해줘야함
-		HM_Basic->GetCharacterMovement()->Velocity = FVector(0.0f);
-
-		// @중력 끄기.
-		HM_Basic->OffGravity();
-
-		//1.6 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(AirHitMontage, 0.6f, true);
-
-		//CLog::Print(L"TYPE - AIR");
-	}
-
-	// @AIR ATTACK
-	else if (Type->GetConditionType() == FDamageType::AIRATTACK)
-	{
-		// @때린 대상 바라보기
-		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
-
-		//1.3 TakeDamage
-
-		// @속력 줄이기 - 중력끄고 바로 해줘야함
-		HM_Basic->GetCharacterMovement()->Velocity = FVector(0.0f);
-
-		// @중력 끄기.
-		HM_Basic->OffGravity();
-
-		//1.5 애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(AirAttackHitMontage, 0.6f, true);
-
-		//CLog::Print(L"TYPE - AIRATTACK");
-	}
-
-	// @STRONG ATTACK
-	else if (Type->GetConditionType() == FDamageType::STRONGATTACK)
-	{
-		// @때린 대상 바라보기
-		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
-
-		//@애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(StrongAttackHitMontage, 0.6f, true);
-	}
-
-	// @STUN ATTACK
-	else if (Type->GetConditionType() == FDamageType::STUN)
-	{
-		//@때린 대상 바라보기
-		UCFL_ActorAgainst::LookAtTarget(HM_Basic, AttackingActor);
-
-		//@StunType 캐스팅
-		UCDamageType_Stun* StunType = Cast<UCDamageType_Stun>(Type);
-		check(StunType);
-
-		//@상태이상 추가 - BaseHitComp
-		UCUpset_Stun* UpsetStun = NewObject<UCUpset_Stun>();
-		UpsetStun->ApplyTime = StunType->GetStunTime();
-		UpsetStun->SetMontage(StunHitMontage);
-
-		UTexture2D* Texture = StunType->GetUITexture();
-		if (Texture != nullptr)
-		{
-			UpsetStun->TextureUI = Texture;
-		}
-
-		//@애니메이션 실행 - (무조건 실행)
-		HM_Basic->ActorAnimMonPlay(StunHitMontage, 0.6f, true);
-
-		bool bAddResult = AddConditionData(UpsetStun);
-		if (bAddResult == false)
-		{
-			UE_LOG(LogTemp, Warning, L"HM_BasicHitComp STUN AddConditionData Derived NULL!!");
-		}
-	}
-
-	// @BURN ATTACK
-	else if (Type->GetConditionType() == FDamageType::BURN)
-	{
-		//@BurnType 캐스팅
-		UCDamageType_Burn* BurnType = Cast<UCDamageType_Burn>(Type);
-		check(BurnType);
-
-		UCUpset_Burn* BurnConditionData = NewObject<UCUpset_Burn>();
-		check(BurnConditionData);
-		BurnConditionData->ApplyTime = BurnType->GetBurnTime();
-		BurnConditionData->SetBurnParticleComp(BurnParticleComp);
-
-		UTexture2D* Texture = BurnType->GetUITexture();
-		if (Texture != nullptr)
-		{
-			BurnConditionData->TextureUI = Texture;
-		}
-
-		bool bAddResult = AddConditionData(BurnConditionData);
-		if (bAddResult == false)
-		{
-			UE_LOG(LogTemp, Warning, L"HM_BasicHitComp BURN AddConditionData Derived NULL!!");
-		}
-	}
-
-	// @POISION ATTACK
-	else if (Type->GetConditionType() == FDamageType::POISION)
-	{
-		//@PoisionType 캐스팅
-		UCDamageType_Poision* PoisionType = Cast<UCDamageType_Poision>(Type);
-		check(PoisionType);
-
-		//UCUpset_Poision* PoisionConditionData = NewObject<UCUpset_Poision>();
-		UCUpset_Poision* PoisionConditionData = NewObject<UCUpset_Poision>();
-		check(PoisionConditionData);
-		PoisionConditionData->ApplyTime = PoisionType->GetPoisioningTime();
-		PoisionConditionData->SetOriginMaterial(HM_Basic->GetMesh()->GetMaterial(0));
-
-		UTexture2D* Texture = PoisionType->GetUITexture();
-		if (Texture != nullptr)
-		{
-			PoisionConditionData->TextureUI = Texture;
-		}
-
-		//@Poision Material 변경
-		HM_Basic->GetMesh()->SetMaterial(0, PoisionMaterial);
-
-		bool bAddResult = AddConditionData(PoisionConditionData);
-		if (bAddResult == false)
-		{
-			UE_LOG(LogTemp, Warning, L"HM_BasicHitComp POISION AddConditionData Derived NULL!!");
-		}
-	}
-
-	// @FREEZE ATTACK
-	else if (Type->GetConditionType() == FDamageType::FREEZE)
-	{
-		//@PoisionType 캐스팅
-		UCDamageType_Freeze* FreezeType = Cast<UCDamageType_Freeze>(Type);
-		check(FreezeType);
-
-		//UCUpset_Poision* PoisionConditionData = NewObject<UCUpset_Poision>();
-		UCUpset_Freeze* FreezeConditionData = NewObject<UCUpset_Freeze>();
-		check(FreezeConditionData);
-		FreezeConditionData->ApplyTime = FreezeType->GetFreezingTime();
-
-		UTexture2D* Texture = FreezeType->GetUITexture();
-		if (Texture != nullptr)
-		{
-			FreezeConditionData->TextureUI = Texture;
-		}
-
-		bool bAddResult = AddConditionData(FreezeConditionData);
-		if (bAddResult == false)
-		{
-			UE_LOG(LogTemp, Warning, L"HM_BasicHitComp FREEZE AddConditionData Derived NULL!!");
-		}
-	}
-
 }

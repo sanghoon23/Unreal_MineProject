@@ -11,8 +11,14 @@ class UE_DOITPROJECT_API UCPL_TargetingSystem
 {
 	GENERATED_BODY()
 
+private:
+	const float FindDistance = 3000.0f; // 찾을 반경
+
+
 	#pragma	region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Array")
+		TArray<APawn*> SelectedMonsters;
 
 	#pragma endregion
 
@@ -25,21 +31,27 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	/* Function */
 public:
 	void OnFindTargets();
 		
+private:
+	bool CheckSelectedMonsters(APawn* InputPawn);
+	void AddSelectedMonstersArray(APawn* InputPawn);
+	void DelSelectedMonstersArray(APawn* InputPawn);
+	APawn* GetSelectedMonsterArray(uint8 Index);
 
 	#pragma	region Member
 public:
-	APawn* GetCurrentFindAttackTarget() { return FindAttackTarget; }
+	APawn* GetCurrentFindAttackTarget();
 
 private:
 	class ACPlayer* Player;
 
 	class UWG_TargetInfo* TargetInfoWidget;
 
-	float FindDistance = 1500.0f; // 찾을 반경
-	APawn* FindAttackTarget;
+	uint8 CurrentIndexFindAttackTarget = 0;
+	APawn* CurrentFindAttackTarget;
 
 	#pragma endregion
 };

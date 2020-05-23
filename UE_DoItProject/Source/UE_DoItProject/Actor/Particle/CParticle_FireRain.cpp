@@ -48,6 +48,7 @@ ACParticle_FireRain::ACParticle_FireRain()
 	DT_Normal = NewObject<UCDamageType_Normal>();
 
 	DT_Burn = NewObject<UCDamageType_Burn>();
+	DT_Burn->SetSecondDamageValue(3.0f);
 	DT_Burn->SetBurnTime(5.0f);
 
 	#pragma endregion
@@ -121,7 +122,6 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 	IfTrueRet(OtherActor == this);
 	IfTrueRet(OtherActor == GetOwner());
 
-	CLog::Print(L"Begin Overlap");
 	bCollisioning = true;
 
 	TArray<FOverlapResult> OverlapResults;
@@ -141,8 +141,6 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 	{
 		for (FOverlapResult& OverlapResult : OverlapResults)
 		{
-			//CLog::Print(OverlapResult.GetActor()->GetName());
-
 			IIC_Monster* Monster = Cast<IIC_Monster>(OverlapResult.GetActor());
 			if (Monster != nullptr)
 			{
@@ -154,11 +152,14 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 					if (HitComp != nullptr)
 					{
 						//// 1.1 Set Hit Attribute
-						HitComp->SetHitDirection(FVector(0.0f));
+						FVector HitDir = OverlapResult.GetActor()->GetActorLocation() - GetActorLocation();
+						HitDir.Z = 0.0f;
+						HitDir.Normalize();
+						HitComp->SetHitDirection(HitDir);
 
 						// 1.2 Hit Delegate - Air(DamageType)
 						HitComp->SetHitMoveSpeed(0.0f);
-						HitComp->OnHit(this, DT_Burn, 50.0f);
+						HitComp->OnHit(this, DT_Burn, 5.0f);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"Particle_FireRain BeginOverlap - HitComp Null!!");
@@ -214,10 +215,10 @@ void ACParticle_FireRain::OnAttackingOverlap()
 						HitDirection.Z = 0.0f;
 						HitDirection.Normalize();
 						HitComp->SetHitDirection(HitDirection);
-						HitComp->SetHitMoveSpeed(0.1f);
+						HitComp->SetHitMoveSpeed(2.0f);
 
 						// 1.2 Hit Delegate - Air(DamageType)
-						HitComp->OnHit(this, DT_Normal, 50.0f);
+						HitComp->OnHit(this, DT_Normal, 10.0f);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"Particle_FireRain OnUpdateOverlap - HitComp Null!!");

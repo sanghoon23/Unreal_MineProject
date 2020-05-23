@@ -54,14 +54,10 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 	{
 		for (auto OverlapResult : OverlapResults)
 		{
-			// Test Code
-			// CLog::Print(OverlapResult.GetActor()->GetName());
-
 			// @Blackboard - Target ¼³Á¤
 			APawn* Charactor = Cast<APawn>(OverlapResult.GetActor());
 			if (Charactor != nullptr && Charactor->GetController()->IsPlayerController())
 			{
-				// CLog::Print(L"Good!!");
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", Charactor);
 				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 				DrawDebugLine(World, ControlPawn->GetActorLocation(), Charactor->GetActorLocation(), FColor::Blue, false, 1.0f);
@@ -69,14 +65,12 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 			}
 			else
 			{
-				// CLog::Print(L"Bad!!");
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
 			}
 		}
 	}
 	else
 	{
-		// CLog::Print(L"Bad!!");
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
 	}
 }

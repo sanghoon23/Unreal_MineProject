@@ -7,6 +7,7 @@
 #include "State/Player/Mage/CPL_MGAttackMagicBall.h"
 #include "State/Player/Mage/CPL_MGAttackFireRange.h"
 #include "State/Player/Mage/CPL_MGAttackPoisioning.h"
+#include "State/Player/Mage/CPL_MGAttackFreezing.h"
 
 UCPL_MageAttackComp::UCPL_MageAttackComp()
 {
@@ -39,6 +40,13 @@ UCPL_MageAttackComp::UCPL_MageAttackComp()
 		UCPL_MageBaseAttack* MG_Poisioning = CreateDefaultSubobject<UCPL_MGAttackPoisioning>("Mage_AttackFour");
 		MG_Poisioning->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_Poisioning);
+	}
+
+	// @Poisioning
+	{
+		UCPL_MageBaseAttack* MG_Freezing = CreateDefaultSubobject<UCPL_MGAttackFreezing>("Mage_AttackFive");
+		MG_Freezing->SetOwnerPawn(Cast<APawn>(GetOwner()));
+		MageAttackStateArray.Emplace(MG_Freezing);
 	}
 
 	#pragma endregion
@@ -119,7 +127,7 @@ IIC_BaseAttack * UCPL_MageAttackComp::GetCurrentIBaseAttack()
 	int CurrentType = static_cast<int>(AttackType);
 	if (CurrentType > MageAttackStateArray.Num() - 1)
 	{
-		CLog::Print(L"MGAttackComp IBaseAttack Array Excess!!");
+		UE_LOG(LogTemp, Warning, L"MGAttackComp IBaseAttack Array Excess!!");
 		return nullptr; /*@Return*/
 	}
 

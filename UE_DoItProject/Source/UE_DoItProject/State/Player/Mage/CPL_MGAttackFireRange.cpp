@@ -231,7 +231,6 @@ void UCPL_MGAttackFireRange::BeginAttack(AActor * DoingActor)
 
 	//@Mouse Controller ON
 	MouseStartWaiting();
-	//CLog::Print(L"FirRange Attack Call!!");
 }
 
 void UCPL_MGAttackFireRange::EndAttack()

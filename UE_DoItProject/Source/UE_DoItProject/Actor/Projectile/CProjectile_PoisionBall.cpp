@@ -71,10 +71,10 @@ ACProjectile_PoisionBall::ACProjectile_PoisionBall()
 	}
 
 	#pragma region Create DamageType
-	//@Create DamageType
 	DamageType_Normal = NewObject<UCDamageType_Normal>();
 
 	DamageType_Poision = NewObject<UCDamageType_Poision>();
+	DamageType_Poision->SetSecondDamageValue(3.0f);
 	DamageType_Poision->SetPoisioningTime(5.0f);
 
 	#pragma endregion
@@ -89,16 +89,24 @@ void ACProjectile_PoisionBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// After delay seconds, call Function
+	if (bSpawned == false)
+	{
+		bSpawned = true;
+		FTimerHandle DeathTimerHandle;
+		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_PoisionBall::Explosion, DeathTime);
+	}
+
 	if (FollowingTarget != nullptr)
 	{
 		//@Target 이 움직일 수도 있어서 계산해주어야 함
 		FVector TargetLocation = FollowingTarget->GetActorLocation();
 		FVector Location = GetActorLocation();
-		FVector Dir = TargetLocation - Location;
-		Dir.Normalize();
+		Direction = TargetLocation - Location;
+		Direction.Normalize();
 
 		//@Set Location
-		Location += Dir * MoveSpeed * DeltaTime;
+		Location += Direction * MoveSpeed * DeltaTime;
 		SetActorLocation(Location);
 	}
 	else
@@ -173,9 +181,7 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 					HitComp->SetHitMoveSpeed(0.0f);
 
 					// 1.2 Hit Delegate - Normal(DamageType)
-					HitComp->OnHit(this, DamageType_Poision, 50.0f);
-
-					CLog::Print(L"PoisionBall ON Hit CALL!!");
+					HitComp->OnHit(this, DamageType_Poision, 10.0f);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"Projectile Poisionball OnBeginOverlap - HitComp Null!!");
@@ -185,14 +191,8 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 	}//(bHit)
 
 
-	//@터지는 파티클 실행
-	FTransform P_Transform;
-	P_Transform.SetLocation(GetActorLocation());
-	P_Transform.SetScale3D(FVector(2.0f));
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionPoisionBall, P_Transform, true);
-
-	//@Projectile 파괴.
-	Death();
+	//@폭발
+	Explosion();
 }
 
 void ACProjectile_PoisionBall::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
@@ -202,4 +202,16 @@ void ACProjectile_PoisionBall::OnEndOverlap(UPrimitiveComponent * OverlappedComp
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
+}
+
+void ACProjectile_PoisionBall::Explosion()
+{
+	//@터지는 파티클 실행
+	FTransform P_Transform;
+	P_Transform.SetLocation(GetActorLocation());
+	P_Transform.SetScale3D(FVector(2.0f));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionPoisionBall, P_Transform, true);
+
+	//@Projectile 파괴.
+	Death();
 }

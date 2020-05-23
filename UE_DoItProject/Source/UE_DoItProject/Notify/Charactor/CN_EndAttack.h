@@ -5,7 +5,8 @@
 #include "CN_EndAttack.generated.h"
 
 UCLASS()
-class UE_DOITPROJECT_API UCN_EndAttack : public UAnimNotify
+class UE_DOITPROJECT_API UCN_EndAttack 
+	: public UAnimNotify
 {
 	GENERATED_BODY()
 	

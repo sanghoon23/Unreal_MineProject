@@ -89,7 +89,7 @@ void UCPL_EquipComp::WeaponRelease()
 //		false - 내림차순
 void UCPL_EquipComp::WeaponNextSwap(bool AscendingOrder)
 {
-	TArray<ACDisplayItem*>* HandWeaponArray = DisplayMap.Find(UItemType::HAND);
+	TArray<ACItem_Hand*>* HandWeaponArray = DisplayMap.Find(UItemType::HAND);
 	IfNullRetResult(HandWeaponArray, CLog::Print(L"WeaponSwap_HandWeaponArray NULL!!"));
 	check(HandWeaponArray);
 
@@ -138,7 +138,7 @@ void UCPL_EquipComp::WeaponNextSwap(bool AscendingOrder)
 
 
 /* DisplayList Size 체크해주어야함. */
-ACDisplayItem * UCPL_EquipComp::GetDisplayItem(int WeaponArrayNum)
+ACItem_Hand * UCPL_EquipComp::GetDisplayItem(int WeaponArrayNum)
 {
 	if (WeaponArrayNum < 0
 		&& WeaponArrayNum > DisplayList.Num() - 1)
@@ -150,14 +150,14 @@ ACDisplayItem * UCPL_EquipComp::GetDisplayItem(int WeaponArrayNum)
 // DisplayMap - TMap<UItemType, TArray<class ACDisplayItem*>>
 // @Type - ItemHand 에 정의 되어있는 Type 으로 Map Insert
 // @CItem - Map 에 삽입할 아이템(ACDisplayItem)
-void UCPL_EquipComp::ItemMapAdd(UItemType Type, ACDisplayItem * CItem)
+void UCPL_EquipComp::ItemMapAdd(UItemType Type, ACItem_Hand * CItem)
 {
 	IfNullRet(CItem);
 
-	TArray<ACDisplayItem*>* ArrayValue = DisplayMap.Find(Type);
+	TArray<ACItem_Hand*>* ArrayValue = DisplayMap.Find(Type);
 	if (ArrayValue == nullptr) // TArray 생성.
 	{
-		TArray<ACDisplayItem*> insertArrayValue;
+		TArray<ACItem_Hand*> insertArrayValue;
 		insertArrayValue.Add(CItem);
 		DisplayMap.Add(Type, insertArrayValue);
 	}
@@ -167,13 +167,13 @@ void UCPL_EquipComp::ItemMapAdd(UItemType Type, ACDisplayItem * CItem)
 	}
 }
 
-// DisplayMap - TMap<UItemType, TArray<class ACDisplayItem*>>
+// DisplayMap - TMap<UItemType, TArray<class ACItem_Hand*>>
 // @Type - ItemHand 에 정의 되어있는 Type , Ex)Hand, Static...등
-// @FindItemNum - TMap Type 에 해당하는 Array ACDisplayItem 의 Number
+// @FindItemNum - TMap Type 에 해당하는 Array ACItem_Hand 의 Number
 // @Return - 최상위 부모를 반환함, Ex) ACDisplay -> ItemHand -> Sword..
-ACDisplayItem * UCPL_EquipComp::ItemMapFind(UItemType Type, int FindItemNum)
+ACItem_Hand * UCPL_EquipComp::ItemMapFind(UItemType Type, int FindItemNum)
 {
-	TArray<ACDisplayItem*>* Item = DisplayMap.Find(Type);
+	TArray<ACItem_Hand*>* Item = DisplayMap.Find(Type);
 	IfNullRetResult(Item, nullptr);
 
 	return (*Item)[FindItemNum];

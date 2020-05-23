@@ -37,8 +37,6 @@ EBTNodeResult::Type UBTTask_FindPatrol::ExecuteTask(UBehaviorTreeComponent & Own
 	// Random 위치 구하기 후, Succeeded
 	if (Nav->GetRandomPointInNavigableRadius(Origin, PatrolRadius, NextLocation))
 	{
-		// Test Code
-		// CLog::Print(L"AI Patrol Find Destination!!");
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector("Destination", NextLocation);
 		return EBTNodeResult::Succeeded;
 	}

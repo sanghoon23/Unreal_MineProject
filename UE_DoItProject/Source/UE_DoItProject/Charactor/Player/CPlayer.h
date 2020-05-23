@@ -63,6 +63,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCS_MouseController* MouseController;
 
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCMeshParticleComp* MeshParticleComp;
+
 	UPROPERTY(VisibleAnywhere, Category = "AttachActor")
 		class ACPL_CableObject* CableObject;
 
@@ -80,9 +83,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/* Pure Virtual Function */
+	/* Pure Virtual Function - (IIC_Charactor) */
 public:
 	virtual bool IsDeath() override { return bDeath; }
+	virtual void OnDeath() override; //죽음
 	virtual void CanMove() override { bCanMove = true; } // 이동 가능.
 	virtual void CanNotMove() override { bCanMove = false; } // 이동 불가.
 	virtual void OnGravity() override;
@@ -95,6 +99,21 @@ public:
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
 	virtual void ActorStopCurrentAnimMon() override;
 	virtual void ActorStopAnimMon(class UAnimMontage* Montage) override;
+	virtual void ActorPausedAnimMonResume() override;
+	virtual void ActorAnimMonPause() override;
+
+	/* Pure Virtual Function - (IIC_Player) */
+public:
+	virtual const FPlayerInfo GetPlayerInfo() const override { return Info; };
+
+	/* HP 를 올려주는 함수 */
+	virtual void HealthUp(float fValue) override { Info.CurrentHP += fValue; }
+
+	/* Max HP 를 올려주는 함수 */
+	virtual void MaxHealthUp(float fValue) override { Info.MaxHP += fValue; }
+
+	/* Speed 를 올려주는 함수 */
+	virtual void SpeedUp(float fValue) override { Info.Speed += fValue; }
 
 	/* Virtual */
 public:
@@ -109,7 +128,9 @@ public:
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const override { return CurrentMontage; }
 	virtual IIC_StateManager* GetIStateManager() override;
 	virtual IIC_AttackComp* GetIAttackComp() override;
+	// TODO : virtual IIC_HitComp* GetIHitComp() override;
 	virtual IIC_EquipComp* GetIEquipComp() override;
+	virtual IIC_MeshParticle* GetIMeshParticle() override;
 
 	/* Function */
 public:
@@ -200,6 +221,9 @@ public:
 	void SetEvadeSpeed(float Speed) { EvadeSpeed = Speed; }
 
 private:
+	// Info
+	FPlayerInfo Info;
+
 	bool bDeath				= false;
 
 	// Block
@@ -223,9 +247,6 @@ private:
 
 	// Attack
 	IIC_BaseAttack* CurrentBaseAttack = nullptr;
-
-	// Ability
-	float Health		= 30.0f;
 
 	#pragma endregion
 

@@ -88,8 +88,6 @@ void UCPL_MGActionTeleprot::OnAction()
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 	StartWaiting();
-
-	//CLog::Print(L"On Action!!");
 }
 
 /* OnAction 후, MouseController 에서 Player 가 클릭을 누른 후의 실행 */
@@ -166,18 +164,6 @@ void UCPL_MGActionTeleprot::PlayAfterMouseControl()
 	//@Visibility - 원상 복귀
 	FTimerHandle T_Handle;
 	GetWorld()->GetTimerManager().SetTimer(T_Handle, this, &UCPL_MGActionTeleprot::PlayerVisibleAfterParticle, 0.3f);
-
-	////Test Code
-	//TArray<UMaterialInterface*> MatArray = Player->GetMesh()->GetMaterials();
-	//for (UMaterialInterface* Mat : MatArray)
-	//{
-	//	//Mat->t
-	//	//Mat->tran
-	//	Mat->SetDiffuseBoost(1.0f);
-	//	//Mat->GetMaterial()
-	//	//CLog::Print(Mat->GetDiffuseBoost());
-	//}
-	//Player->GetMesh()->SetScalarParameterValueOnMaterials(FName("Opacity"), 1.0f);
 }
 
 void UCPL_MGActionTeleprot::PlayerVisibleAfterParticle()

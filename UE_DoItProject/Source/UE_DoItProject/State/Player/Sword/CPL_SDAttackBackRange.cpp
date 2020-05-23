@@ -67,16 +67,6 @@ void UCPL_SDAttackBackRange::BeginPlay()
 void UCPL_SDAttackBackRange::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// Test Code
-	//SwordAttackMontages[0]->GetSectionLength();
-	//SwordAttackMontages[0]->GetTimeAtFrame
-	//float StartTime = 0.0f;
-	//float EndTime = 0.0f;
-	//SwordAttackMontages[0]->GetSectionStartAndEndTime(0, StartTime, EndTime);
-	//CLog::Print(EndTime);
-	//FString::Printf(TEXT("StartTime : %f"), StartTime);
-	//FString::Printf(TEXT("EndTime : %f"), EndTime);
 }
 
 void UCPL_SDAttackBackRange::IsRunTick(bool bRunning)

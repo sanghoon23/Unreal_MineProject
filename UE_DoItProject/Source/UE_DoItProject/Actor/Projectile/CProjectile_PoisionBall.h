@@ -47,7 +47,17 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	/* Vritual */
+public:
+	virtual void Explosion() override;
+
 	/* Member */
 private:
 	float CollisionSphereRadius = 100.0f;
+
+	/* 생성 여부 */
+	bool bSpawned = false;
+
+	/* Destory 될 시간 */
+	float DeathTime = 5.0f;
 };

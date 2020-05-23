@@ -38,7 +38,7 @@ IIC_BaseAction * UCPL_SwordActionComp::GetIBaseAction(uint8 Type)
 {
 	if (Type > SD_ActionArray.Num() - 1)
 	{
-		CLog::Print(L"SwordActionComp GetIBaseAction Array Excess!!");
+		UE_LOG(LogTemp, Warning, L"SwordActionComp GetIBaseAction Array Excess!!");
 		return nullptr;
 	}
 

@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "Interface/IC_EquipComp.h"
 #include "Item/Base/CDisplayItem.h"
+#include "Item/Base/CItem_Hand.h"
 
 #include "CHM_BasicEquipComp.generated.h"
 
@@ -17,11 +18,14 @@ class UE_DOITPROJECT_API UCHM_BasicEquipComp
 	#pragma	region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Display")
-		TArray<ACDisplayItem*> DisplayList;
+		TArray<ACItem_Hand*> DisplayList;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+		class ACHM_BasicSword* Sword;
 
 	#pragma endregion
 
-public:	
+public:
 	UCHM_BasicEquipComp();
 
 protected:
@@ -37,8 +41,8 @@ public:
 	bool GetArmed() const override { return bArmed; }
 	int GetCurrentWeaponNum() const override { return CurrentWeaponNum; }
 
-	class ACDisplayItem* GetCurrentWeaponDisplay() override { return CurrentWeapon; }
-	class ACDisplayItem* GetDisplayItem(int WeaponArrayNum) override;
+	class ACItem_Hand* GetCurrentWeaponDisplay() override { return CurrentWeapon; }
+	class ACItem_Hand* GetDisplayItem(int WeaponArrayNum) override;
 
 	#pragma	region Member
 private:
@@ -46,9 +50,9 @@ private:
 	bool					bArmed = false;
 
 	int						CurrentWeaponNum = -1;
-	class ACDisplayItem*	CurrentWeapon;
+	class ACItem_Hand*	CurrentWeapon;
 
-	TMap<UItemType, TArray<class ACDisplayItem*> > DisplayMap;
+	TMap<UItemType, TArray<class ACItem_Hand*> > DisplayMap;
 
 	class ACPlayer* Player;
 	FVector AttachTransform;

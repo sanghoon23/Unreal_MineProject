@@ -114,7 +114,6 @@ void UCPL_ActionInteractSystem::ClimbInterFunc(FHitResult& HitResult)
 
 	if (DegAngle > 90.0f)
 	{
-		// CLog::Print(L"Upper");
 		Player->StopJumping();
 		PlayerHorizontalAtTarget(HitResult.GetActor());
 
@@ -122,7 +121,6 @@ void UCPL_ActionInteractSystem::ClimbInterFunc(FHitResult& HitResult)
 	}
 	else
 	{
-		// CLog::Print(L"Downer");
 		PlayerHorizontalAtTarget(HitResult.GetActor());
 
 		PakrouActionComp->StartAction(PakrouStartActionType::WALLCLIMBRUN, HitResult.GetActor());

@@ -37,8 +37,6 @@ void UCN_SpawnProjectile::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 	FRotator	SpawnRotation	= SpawnTransform.GetRotation().Rotator();
 	FVector		SpawnScale		= SpawnTransform.GetScale3D();
 
-	//CLog::Print(SpawnRotation.ToString());
-
 	//@Calc
 	SpawnLocation	+= LocationOffset;
 	SpawnRotation	+= RotationOffset;

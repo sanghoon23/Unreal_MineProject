@@ -16,6 +16,7 @@
 #include "Component/CPL_ActionInteractSystem.h"
 #include "Component/CInverseKinematics.h"
 #include "Component/Player/CPL_BlendCameraComp.h"
+#include "Component/CMeshParticleComp.h"
 
 #include "Actor/Cable/CPL_CableObject.h"
 
@@ -69,12 +70,18 @@ ACPlayer::ACPlayer()
 
 	// Setting CharacterMovement
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCapsuleComponent()->SetGenerateOverlapEvents(true);
 	}
+
+	//// Setting Charactor Mesh
+	//{
+	//	//@Mesh Overlap 켜줘야 죽었을 때도 땅에 닿음
+	//	GetMesh()->SetGenerateOverlapEvents(true);
+	//}
 
 	// Setting Camera
 	{
@@ -106,9 +113,19 @@ ACPlayer::ACPlayer()
 		IneverseKinematics		= CreateDefaultSubobject<UCInverseKinematics>("IKComp");
 		InteractSystem			= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
 		MouseController			= CreateDefaultSubobject<UCS_MouseController>("MouseController");
+		MeshParticleComp		= CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
 	}
 	#pragma endregion
 
+	#pragma region Player Info Setting
+
+	//# 현재 체력 상태로 갱신해주어야 함.
+	Info.MaxHP = 100.0f;
+	Info.CurrentHP = 50.0f;
+	Info.Name = FName(L"MyPlayer");
+	Info.InfoConditionDataArray.Init(nullptr, 5);
+
+	#pragma endregion
 }
 
 void ACPlayer::BeginPlay()
@@ -203,15 +220,14 @@ void ACPlayer::Tick(float DeltaTime)
 	//	if (TestController->IsInputKeyDown(EKeys::W))
 	//	{
 	//		EnableInput(TestController);
-	//		CLog::Print(L"KeyDown!!");
 	//	}
 	//}
 
 	// Test Code
 	//FRotator ControllerRot = GetControlRotation();
 	//CLog::Print(ControllerRot.ToString());
-	// FRotator TestRot = GetSpringArmRotation();
-	// CLog::Print(TestRot.ToString());
+	//FRotator TestRot = GetSpringArmRotation();
+	//CLog::Print(TestRot.ToString());
 	//FVector Right = GetActorRightVector();
 	//CLog::Print(Right.ToString());
 }
@@ -521,6 +537,11 @@ void ACPlayer::OnPullActorWithCableAction()
 	StateManager->OnPullActorWithCable();
 }
 
+void ACPlayer::OnDeath()
+{
+	//TODO : 죽음 구현 - 현재 체력이 0 이하 일때,
+}
+
 void ACPlayer::OnGravity()
 {
 	GetCharacterMovement()->GravityScale = 1.0f;
@@ -558,6 +579,16 @@ void ACPlayer::ActorStopAnimMon(class UAnimMontage* Montage)
 {
 	check(Montage);
 	StopAnimMontage(Montage);
+}
+
+void ACPlayer::ActorPausedAnimMonResume()
+{
+	GetMesh()->GetAnimInstance()->Montage_Resume(CurrentMontage);
+}
+
+void ACPlayer::ActorAnimMonPause()
+{
+	GetMesh()->GetAnimInstance()->Montage_Pause(CurrentMontage);
 }
 
 void ACPlayer::OnCollision()
@@ -602,3 +633,7 @@ IIC_EquipComp * ACPlayer::GetIEquipComp()
 	return Cast<IIC_EquipComp>(EquipComp);
 }
 
+IIC_MeshParticle * ACPlayer::GetIMeshParticle()
+{
+	return Cast<IIC_MeshParticle>(MeshParticleComp);
+}

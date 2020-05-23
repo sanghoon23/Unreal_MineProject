@@ -16,6 +16,5 @@ void UCN_BeginAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 	IIC_BaseAttack* BaseAttackState = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
 	IfNullRet(BaseAttackState);
 
-	//CLog::Print(L"Begine Notify Call");
 	BaseAttackState->BeginAttackDeleFunc.Broadcast();
 }

@@ -29,6 +29,25 @@ private:
 	const float OpacityLinearSpeed = 0.01f;
 
 	#pragma	region Reflection
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		bool bBlockDamagedMontage = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		TArray<class UAnimMontage*> DamagedMontages;
+
+	UPROPERTY(VisibleAnywhere, Category = "ConditionData")
+		/* Poision ConditionData 에서 사용할 Material */
+		class UMaterialInterface* PoisionMaterial = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		/* Burn ConditionData 에서 사용할 Paritcel */
+		class UParticleSystemComponent* BurnParticleComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		/* Freeze ConditionData 에서 사용할 Paritcel */
+		class UParticleSystemComponent* FreezeParticleComp;
+
 private:
 	/*
 	@상태이상, 행동불가 를 다음 ConditionData TArray 
@@ -69,6 +88,15 @@ public:
 	bool AddConditionData(UCBaseConditionType* ConditionData);
 
 	#pragma	region Member
+public:
+	class UMaterialInterface* GetPoisionMaterialOrNull() const;
+	class UParticleSystemComponent* GetBurnParticleCompOrNull() const;
+	class UParticleSystemComponent* GetFreezeParticleCompOrNull() const;
+
+	class UAnimMontage* GetDamagedMontageOrNull(const uint8 ArrayNum);
+
+	virtual void SetBlockDamagedMontage(bool bValue) override { bBlockDamagedMontage = bValue; }
+
 private:
 
 	#pragma endregion

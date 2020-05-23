@@ -9,11 +9,13 @@ enum class UItemType : uint8
 {
 	NONE = 0,
 	HAND = 1,
-	END = 2,
+	EVENT = 2,
+	END = 3,
 };
 
 UCLASS()
-class UE_DOITPROJECT_API ACDisplayItem : public AActor
+class UE_DOITPROJECT_API ACDisplayItem 
+	: public AActor
 {
 	GENERATED_BODY()
 
@@ -28,12 +30,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Attribute")
 		class USkeletalMeshComponent* SkeletalMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Attachment")
-		FString ItemAttachName = "";
-
-	UPROPERTY(EditAnywhere, Category = "Attachment")
-		FString ItemEquipName = "";
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attachment")
 		UItemType ItemType = UItemType::NONE;
 
@@ -46,21 +42,16 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:
-	FString GetItemAttachName() { return ItemAttachName; }
-	FString GetItemEquipName() { return ItemEquipName; }
+protected:
+	virtual void Death();
 
+	#pragma	region Member
+public:
 	UItemType GetItemType() { return ItemType; }
 
 	UCapsuleComponent* GetCapsuleComp() { return Capsule; }
 	UStaticMeshComponent* GetStaticMeshComp() { return StaticMesh; }
 
-	// Function
-public:
-	virtual void MeshAttach(FString StrAttachName);// 무기 붙이기.
-	virtual void MeshDetach();// 원상 복구..
-
-	#pragma	region Member
 private:
 
 	#pragma endregion

@@ -35,7 +35,7 @@ public:
 	// FOnHitResetState		OnHitResetState;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/* Virtual Function */
+	/* Pure Virtual Function */
 public:
 	// @AttackingActor - 때리는 주체 Actor
 	// @DamageType - 데미지 유형 (Ex. Normal, Air...) 등
@@ -61,6 +61,9 @@ public:
 
 
 	#pragma region Member
+public:
+	virtual void SetBlockDamagedMontage(bool bValue) = 0;
+
 public:
 	/* Hit 당했을 때, 움직일 '방향' */
 	FVector GetHitDirection() { return HitDirection; }

@@ -12,7 +12,6 @@ UCHM_BasicEquipComp::UCHM_BasicEquipComp()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-
 void UCHM_BasicEquipComp::BeginPlay()
 {
 	Super::BeginPlay();
@@ -23,11 +22,11 @@ void UCHM_BasicEquipComp::BeginPlay()
 	FActorSpawnParameters params;
 	params.Owner = GetOwner();
 
+	Sword = GetWorld()->SpawnActor<ACHM_BasicSword>(ACHM_BasicSword::StaticClass(), params);
+	check(Sword);
+
 	// Spawn Sword
 	{
-		ACHM_BasicSword* Sword = GetWorld()->SpawnActor<ACHM_BasicSword>(ACHM_BasicSword::StaticClass(), params);
-		check(Sword);
-
 		Sword->AttachToComponent
 		(
 			Cast<ACharacter>(GetOwner())->GetMesh() //@Charactor Mesh
@@ -41,6 +40,19 @@ void UCHM_BasicEquipComp::BeginPlay()
 	}
 
 	#pragma endregion
+
+	#pragma region Set Delegate - Charactor	
+	//@OnDeath 호출 시, Sword 제거 
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(GetOwner());
+	if (I_Charactor != nullptr)
+	{
+		I_Charactor->OnDeathDelegate.AddLambda([&]()
+		{
+			Sword->Destroy();
+		});
+	}
+
+	#pragma endregion
 }
 
 
@@ -49,11 +61,10 @@ void UCHM_BasicEquipComp::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-ACDisplayItem * UCHM_BasicEquipComp::GetDisplayItem(int WeaponArrayNum)
+ACItem_Hand * UCHM_BasicEquipComp::GetDisplayItem(int WeaponArrayNum)
 {
 	if (WeaponArrayNum > DisplayList.Num() - 1)
 		return nullptr;
 
 	return DisplayList[WeaponArrayNum];
 }
-

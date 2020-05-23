@@ -14,14 +14,9 @@ class UE_DOITPROJECT_API UCHM_BasicHitComp
 	
 	#pragma region Reflection
 private:
-	UPROPERTY(VisibleAnywhere, Category = "ConditionData")
-		class UMaterialInterface* PoisionMaterial = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = "Montage")
+		class UAnimMontage* CommonDeathMontage;
 
-	UPROPERTY(VisibleAnywhere, Category = "Particle")
-		class UParticleSystemComponent* BurnParticleComp;
-
-
-private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* NormalHitMontage;
 
@@ -52,7 +47,6 @@ public:
 public:
 	void OnHit(AActor* AttackingActor, UCDamageType_Base * DamageType, float DamageAmount) override;
 
-	//
 	/* Function */
 private:
 

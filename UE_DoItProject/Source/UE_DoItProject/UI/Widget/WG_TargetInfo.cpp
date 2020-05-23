@@ -50,26 +50,26 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 	FVector TargetLocation = Target->GetActorLocation();
 
 	//@IC_Monster
-	IIC_Monster* InterfaceMonster = Cast<IIC_Monster>(Target);
-	if (InterfaceMonster != nullptr)
+	IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
+	if (I_Monster != nullptr)
 	{
 		//## 자기 자신에서 Visible 이 되지 않음. ##
 		//## TargetSystem 에서 하고 있음
 
 		//@Get MonsterInfo
-		TargetInfo = InterfaceMonster->GetMonsterInfo();
+		TargetInfo = I_Monster->GetMonsterInfo();
 		TargetInfo.Distance = Player->GetDistanceTo(Target);
 	}
 
 	//@IC_HitComp - 상태이상, ConditionData 를 가져오기 위해,
-	IIC_Charactor* InterfaceCharactor = Cast<IIC_Charactor>(Target);
-	if (InterfaceCharactor != nullptr)
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Target);
+	if (I_Charactor != nullptr)
 	{
-		IIC_HitComp* InterfaceHitComp = InterfaceCharactor->GetIHitComp();
-		if (InterfaceHitComp != nullptr)
+		IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
+		if (I_HitComp != nullptr)
 		{
 			//@자체적으로 GetConditionDatas 함수에서 Empty 로 갱신.
-			InterfaceHitComp->GetConditionDatasAfterEmpty
+			I_HitComp->GetConditionDatasAfterEmpty
 			(
 				&(TargetInfo.InfoConditionDataArray),
 				ConditionUITextureNumber
@@ -83,7 +83,7 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 void UWG_TargetInfo::InitTargetInfo()
 {
 	TargetInfo.Name = "";
-	TargetInfo.HP = 0.0f;
+	TargetInfo.CurrentHP = 0.0f;
 	TargetInfo.Distance = 0.0f;
 	TargetInfo.InfoConditionDataArray.Empty();
 }
@@ -94,7 +94,11 @@ UTexture2D * UWG_TargetInfo::GetInfoConditionTextureUI(int ArrayNumber)
 	if (ArrayNumber >= ArraySize || ArraySize < 0)
 		return nullptr;
 
-	return TargetInfo.InfoConditionDataArray[ArrayNumber]->TextureUI;
+	class UTexture2D* RetTexture = TargetInfo.InfoConditionDataArray[ArrayNumber]->TextureUI;
+	if (RetTexture == nullptr)
+		return nullptr;
+
+	return RetTexture;
 }
 
 FLinearColor UWG_TargetInfo::GetInfoConditionDataLinearColor(int ArrayNumber)
@@ -109,19 +113,19 @@ FLinearColor UWG_TargetInfo::GetInfoConditionDataLinearColor(int ArrayNumber)
 	return TargetInfo.InfoConditionDataArray[ArrayNumber]->ColorAndOpacity;
 }
 
-UCBaseConditionType * UWG_TargetInfo::GetInfoMonsterConditionData(int ArrayNumber)
-{
-	int ArraySize = TargetInfo.InfoConditionDataArray.Num();
-	if (ArrayNumber >= ArraySize || ArraySize < 0)
-		return nullptr;
-
-	return TargetInfo.InfoConditionDataArray[ArrayNumber];
-}
-
-TArray<class UCBaseConditionType*> UWG_TargetInfo::GetInfoMonsterConditionDataArray()
-{
-	return TargetInfo.InfoConditionDataArray;
-}
+//UCBaseConditionType * UWG_TargetInfo::GetInfoMonsterConditionData(int ArrayNumber)
+//{
+//	int ArraySize = TargetInfo.InfoConditionDataArray.Num();
+//	if (ArrayNumber >= ArraySize || ArraySize < 0)
+//		return nullptr;
+//
+//	return TargetInfo.InfoConditionDataArray[ArrayNumber];
+//}
+//
+//TArray<class UCBaseConditionType*> UWG_TargetInfo::GetInfoMonsterConditionDataArray()
+//{
+//	return TargetInfo.InfoConditionDataArray;
+//}
 
 void UWG_TargetInfo::WigetVisible()
 {

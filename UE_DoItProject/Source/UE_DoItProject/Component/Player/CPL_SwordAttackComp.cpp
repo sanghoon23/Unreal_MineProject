@@ -143,7 +143,7 @@ IIC_BaseAttack * UCPL_SwordAttackComp::GetCurrentIBaseAttack()
 	int CurrentType = static_cast<int>(AttackType);
 	if (CurrentType > SwordAttackStateArray.Num() - 1)
 	{
-		CLog::Print(L"SDAttackComp IBaseAttack Array Excess!!");
+		UE_LOG(LogTemp, Warning, L"SDAttackComp IBaseAttack Array Excess!!");
 		return nullptr;
 	}
 

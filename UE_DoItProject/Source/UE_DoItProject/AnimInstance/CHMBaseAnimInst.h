@@ -25,6 +25,12 @@ public:
 		float Direction;
 
 	UPROPERTY(BlueprintReadOnly)
+		bool bIsRunningMontage;
+
+	UPROPERTY(BlueprintReadOnly)
+		uint8 DeathType;
+
+	UPROPERTY(BlueprintReadOnly)
 		bool bDeath;
 
 	#pragma endregion
@@ -39,5 +45,5 @@ protected:
 	// Member
 private:
 	ACHM_Basic* Monster;
-	IIC_Charactor* Charactor;
+	IIC_Charactor* I_Charactor;
 };

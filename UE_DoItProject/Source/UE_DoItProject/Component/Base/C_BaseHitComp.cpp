@@ -1,13 +1,19 @@
 #include "C_BaseHitComp.h"
 #include "Global.h"
-
 #include "GameFramework/Character.h"
+
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
+#include "DamageType/Base/CDamageType_Base.h"
 
 UC_BaseHitComp::UC_BaseHitComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	//@Set MontageArrayNum
+	uint8 DamageTypeNum = static_cast<int>(FDamageType::END);
+	DamagedMontages.Init(nullptr, DamageTypeNum);
+	//DamagedMontages.SetNum(DamageTypeNum);
 }
 
 
@@ -20,13 +26,23 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	check(OwnerPawn);
+
+	////@죽었다면 Return
+	//IIC_Charactor* OwnerCharactor = Cast<IIC_Charactor>(OwnerPawn);
+	//if (OwnerCharactor != nullptr)
+	//{
+	//	IfTrueRet(OwnerCharactor->IsDeath() == true);
+	//}
+
 	//@Apply 시간 다 되면 제거
 	for (int i = 0; i < ConditionDatas.Num(); ++i)
 	{
-		ConditionDatas[i]->UpdateConditionOnActor(GetOwner(), DeltaTime);
+		ConditionDatas[i]->UpdateCondition(OwnerPawn, DeltaTime);
 		if (ConditionDatas[i]->ApplyTime < 0.0f)
 		{
-			ConditionDatas[i]->EndConditionOnActor(GetOwner());
+			ConditionDatas[i]->EndCondition(OwnerPawn);
 			ConditionDatas.RemoveAt(i);
 		}
 	}
@@ -52,15 +68,61 @@ bool UC_BaseHitComp::AddConditionData(UCBaseConditionType* ConditionData)
 	}
 
 	//@다 돌았는데도 없다면,
-	UpsetData->StartConditionOnActor(GetOwner());
+	UpsetData->StartCondition(Cast<APawn>(GetOwner()));
 	ConditionDatas.Add(UpsetData);
 	return true; //@Ret
+}
+
+UMaterialInterface * UC_BaseHitComp::GetPoisionMaterialOrNull() const
+{
+	if (PoisionMaterial == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, L"BaseHitComp PoisionMaterial NOT SETTING!!");
+		return nullptr;
+	}
+	return PoisionMaterial;
+}
+
+UParticleSystemComponent * UC_BaseHitComp::GetBurnParticleCompOrNull() const
+{
+	if (BurnParticleComp == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, L"BaseHitComp BurnParticleComp NOT SETTING!!");
+		return nullptr;
+	}
+
+	return BurnParticleComp;
+}
+
+UParticleSystemComponent * UC_BaseHitComp::GetFreezeParticleCompOrNull() const
+{
+	if (FreezeParticleComp == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, L"BaseHitComp FreezeParticleComp NOT SETTING!!");
+		return nullptr;
+	}
+
+	return FreezeParticleComp;
+}
+
+UAnimMontage * UC_BaseHitComp::GetDamagedMontageOrNull(const uint8 ArrayNum)
+{
+	if (ArrayNum >= DamagedMontages.Num())
+	{
+		UE_LOG(LogTemp, Warning, L"BaseHitComp GetDamagedMontage ArrayNumber Overflow");
+		return nullptr;
+	}
+
+	return DamagedMontages[ArrayNum];
 }
 
 UCBaseConditionType * UC_BaseHitComp::GetConditionData(int Index)
 {
 	if (Index >= ConditionDatas.Num() || Index < 0)
+	{
+		UE_LOG(LogTemp, Warning, L"BaseHitComp GetConditionData ArrayNumber Overflow");
 		return nullptr;
+	}
 
 	return ConditionDatas[Index];
 }
