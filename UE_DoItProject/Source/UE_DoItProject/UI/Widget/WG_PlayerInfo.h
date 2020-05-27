@@ -26,6 +26,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "DataValue")
 		float GetInfoPlayerCurrentHP() const { return PlayerInfo.CurrentHP; }
 
+	UFUNCTION(BlueprintCallable, Category = "DataValue")
+		float GetInfoPlayerMaxMP() const { return PlayerInfo.MaxMP; }
+
+	UFUNCTION(BlueprintCallable, Category = "DataValue")
+		float GetInfoPlayerCurrentMP() const { return PlayerInfo.CurrentMP; }
+
+	UFUNCTION(BlueprintCallable, Category = "DataValue")
+		float GetInfoPlayerBarrierAmount() const { return PlayerInfo.BarrierAmount; }
+
+public:
 	UFUNCTION(BlueprintCallable, Category = "Function")
 		void WigetVisible();
 
@@ -43,6 +53,7 @@ public:
 	/* Member */
 private:
 	void InitPlayerInfo();
+	void InsertPlayerInfo(const FPlayerInfo& Insert);
 
 private:
 	class ACPlayer* Player;

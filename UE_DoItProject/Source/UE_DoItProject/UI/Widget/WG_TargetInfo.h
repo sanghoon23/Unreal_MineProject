@@ -59,6 +59,7 @@ public:
 	/* Member */
 private:
 	void InitTargetInfo();
+	void InsertTargetInfo(const FMonsterInfo& Insert);
 
 private:
 	class ACPlayer* Player;

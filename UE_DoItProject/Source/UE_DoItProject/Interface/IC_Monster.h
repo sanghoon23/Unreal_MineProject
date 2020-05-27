@@ -39,7 +39,7 @@ class UE_DOITPROJECT_API IIC_Monster
 
 	/* Pure Virtual Function */
 public:
-	virtual const FMonsterInfo GetMonsterInfo() const = 0;
+	virtual const FMonsterInfo& GetMonsterInfo() const = 0;
 
 	/* Member */
 public:

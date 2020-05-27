@@ -3,7 +3,10 @@
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Player.h"
+#include "Interface/IC_AbilityComp.h"
 #include "Interface/IC_MeshParticle.h"
+
+#include "Ability/Player/CPLAbility_Speed.h"
 
 ACItem_Faster::ACItem_Faster()
 {
@@ -33,6 +36,7 @@ ACItem_Faster::ACItem_Faster()
 		BoxComp->SetCollisionProfileName("OverlapOnlyPawn");
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		//BoxComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+		BoxComp->SetBoxExtent(FVector(50.0f, 50.0f, 32.0f));
 
 		StaticMesh->SetSimulatePhysics(false);
 		StaticMesh->SetGenerateOverlapEvents(false);
@@ -135,7 +139,22 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 		//@UnVisible
 		SetActorHiddenInGame(true);
 
-		I_Player->SpeedUp(AddSpeedValue);
+		//@Ability 추가
+		IIC_AbilityComp* I_AbilityComp = I_Player->GetIAbilityComp();
+		if (I_AbilityComp != nullptr)
+		{
+			//@Create Ability
+			UCPLAbility_Speed* AbilitySpeed = NewObject<UCPLAbility_Speed>();
+			FAbilityValue InputValue;
+			InputValue.bTimer = true;
+			InputValue.Timer = 5.0f;
+			InputValue.Value = AddSpeedValue;
+			AbilitySpeed->SetAbilityValue(InputValue);
+
+			AbilitySpeed->SetAppliedActor(EventedActor);
+
+			I_AbilityComp->AddAbility(AbilitySpeed);
+		}
 
 		//@Healing 파티클 실행
 		IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(EventedActor);
@@ -148,8 +167,8 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 		I_MeshParticle->SpawnParticleAtMesh
 		(
 			FasterParticle,
-			AttachPointType::BODY,
-			EAttachLocation::SnapToTargetIncludingScale
+			AttachPointType::ROOT,
+			EAttachLocation::SnapToTarget
 		);
 
 		//@파괴

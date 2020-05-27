@@ -26,6 +26,7 @@ class UE_DOITPROJECT_API IIC_MeshParticle
 	
 	/* Pure Virtual Function */
 public:
-	virtual void SpawnParticleAtMesh(class UParticleSystem* const PT, const AttachPointType Point, const EAttachLocation::Type AttachLocation) = 0;
+	virtual class UParticleSystemComponent* SpawnParticleAtMesh(class UParticleSystem* const PT, const AttachPointType Point, const EAttachLocation::Type AttachLocation) = 0;
 	virtual bool SetLocationParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const AttachPointType Point) = 0;
+	virtual void AttachParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const AttachPointType Point) = 0;
 };

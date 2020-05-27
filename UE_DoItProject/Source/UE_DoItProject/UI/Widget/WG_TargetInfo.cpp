@@ -57,7 +57,7 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 		//## TargetSystem 에서 하고 있음
 
 		//@Get MonsterInfo
-		TargetInfo = I_Monster->GetMonsterInfo();
+		InsertTargetInfo(I_Monster->GetMonsterInfo());
 		TargetInfo.Distance = Player->GetDistanceTo(Target);
 	}
 
@@ -76,6 +76,8 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 			);
 		}
 	}
+
+	//CLog::Print(TargetInfo.CurrentHP);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,9 +85,18 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 void UWG_TargetInfo::InitTargetInfo()
 {
 	TargetInfo.Name = "";
+	TargetInfo.MaxHP = 0.0f;
 	TargetInfo.CurrentHP = 0.0f;
 	TargetInfo.Distance = 0.0f;
 	TargetInfo.InfoConditionDataArray.Empty();
+}
+
+void UWG_TargetInfo::InsertTargetInfo(const FMonsterInfo & Insert)
+{
+	TargetInfo.Name = Insert.Name;
+	TargetInfo.MaxHP = Insert.MaxHP;
+	TargetInfo.CurrentHP = Insert.CurrentHP;
+	//TargetInfo.Distance = 0.0f;
 }
 
 UTexture2D * UWG_TargetInfo::GetInfoConditionTextureUI(int ArrayNumber)

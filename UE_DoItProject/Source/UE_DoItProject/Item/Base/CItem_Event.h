@@ -11,9 +11,8 @@ enum class EItemEventType : uint8
 	RECOVERY_HP		= 1,
 	RECOVERY_MP		= 2,
 	FASTER			= 3,
-	END				= 4,
-
-	//TODO : Ãß°¡
+	BARRIER			= 4,
+	END				= 5,
 };
 
 UCLASS()

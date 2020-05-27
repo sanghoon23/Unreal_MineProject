@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_AbilityComp.h"
 #include "DamagedConditionType/Base/CBaseConditionType.h"
 
 #include "IC_Player.generated.h"
@@ -17,10 +18,19 @@ public:
 		TArray<UCBaseConditionType*> InfoConditionDataArray;
 
 public:
-	float MaxHP = 0.0f;
-	float CurrentHP = 0.0f;
-	float Speed = 0.0f;
-	FName Name = "";
+	float MaxHP			= 0.0f;
+	float CurrentHP		= 0.0f;
+
+	float MaxMP			= 0.0f;
+	float CurrentMP		= 0.0f;
+
+	float BarrierAmount	= 0.0f;
+
+	float AddSpeed		= 0.0f;
+	float ATK			= 0.0f;
+	float DEF			= 0.0f;
+
+	FName Name			= "";
 
 	//# 상태 추가..
 	//class 
@@ -39,16 +49,16 @@ class UE_DOITPROJECT_API IIC_Player
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Pure Virtual Function */
 public:
-	virtual const FPlayerInfo GetPlayerInfo() const = 0;
+	virtual void OnParticleInPlayer() = 0;
+	virtual void OffParticleInPlayer() = 0;
 
-	/* HP 를 올려주는 함수 */
-	virtual void HealthUp(float fValue) = 0;
+	virtual const FPlayerInfo& GetPlayerInfo() const = 0;
 
-	/* Max HP 를 올려주는 함수 */
-	virtual void MaxHealthUp(float fValue) = 0;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Virtual Function */
+public:
+	virtual IIC_AbilityComp* GetIAbilityComp() { return nullptr; }
 
-	/* Speed 를 올려주는 함수 */
-	virtual void SpeedUp(float fValue) = 0;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

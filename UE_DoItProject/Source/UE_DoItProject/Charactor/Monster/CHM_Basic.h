@@ -80,7 +80,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//@IC_Monster
 public:
-	virtual const FMonsterInfo GetMonsterInfo() const override { return Info; };
+	virtual const FMonsterInfo& GetMonsterInfo() const override { return Info; };
 
 	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }
 	bool GetAIRunningPossible() const { return bAIRunningPossible; }

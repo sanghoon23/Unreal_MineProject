@@ -57,5 +57,5 @@ public:
 	void SetHPValue(float fValue) { RecoveryHPValue = fValue; }
 
 private:
-	float RecoveryHPValue = 40.0f;
+	float RecoveryHPValue = 10.0f;
 };

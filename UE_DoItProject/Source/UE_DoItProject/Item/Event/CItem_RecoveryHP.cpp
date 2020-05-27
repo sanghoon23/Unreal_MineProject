@@ -4,6 +4,9 @@
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Player.h"
 #include "Interface/IC_MeshParticle.h"
+#include "Interface/IC_AbilityComp.h"
+
+#include "Ability/Player/CPLAbility_HP.h"
 
 ACItem_RecoveryHP::ACItem_RecoveryHP()
 {
@@ -129,18 +132,25 @@ void ACItem_RecoveryHP::ApplyEvent(AActor * EventedActor)
 	IIC_Player* I_Player = Cast<IIC_Player>(EventedActor);
 	if (I_Player != nullptr)
 	{
-		//@Collision OFF
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-		//@UnVisible
 		SetActorHiddenInGame(true);
 
-		I_Player->HealthUp(RecoveryHPValue);
+		IIC_AbilityComp* I_AbilityComp = I_Player->GetIAbilityComp();
+		if (I_AbilityComp != nullptr)
+		{
+			//@ADD Ability
+			UCPLAbility_HP* Ability_HP = NewObject<UCPLAbility_HP>();
+			FAbilityValue Input;
+			Input.Value = RecoveryHPValue;
+			Ability_HP->SetAbilityValue(Input);
+			Ability_HP->SetAppliedActor(EventedActor);
+
+			I_AbilityComp->AddAbility(Ability_HP);
+		}
 
 		//@Healing 파티클 실행
 		IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(EventedActor);
 		check(I_Charactor);
-
 		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
 		check(I_MeshParticle);
 
@@ -148,7 +158,7 @@ void ACItem_RecoveryHP::ApplyEvent(AActor * EventedActor)
 		I_MeshParticle->SpawnParticleAtMesh
 		(
 			HealingParticle,
-			AttachPointType::BODY,
+			AttachPointType::ROOT,
 			EAttachLocation::SnapToTargetIncludingScale
 		);
 

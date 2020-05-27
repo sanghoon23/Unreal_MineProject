@@ -17,6 +17,7 @@
 #include "Component/CInverseKinematics.h"
 #include "Component/Player/CPL_BlendCameraComp.h"
 #include "Component/CMeshParticleComp.h"
+#include "Component/CPL_AbilityComp.h"
 
 #include "Actor/Cable/CPL_CableObject.h"
 
@@ -70,7 +71,7 @@ ACPlayer::ACPlayer()
 
 	// Setting CharacterMovement
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+		GetCharacterMovement()->MaxWalkSpeed = OriginMaxSpeed;
 
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -114,6 +115,7 @@ ACPlayer::ACPlayer()
 		InteractSystem			= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
 		MouseController			= CreateDefaultSubobject<UCS_MouseController>("MouseController");
 		MeshParticleComp		= CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
+		AbilityComp				= CreateDefaultSubobject<UCPL_AbilityComp>("AbilityComp");
 	}
 	#pragma endregion
 
@@ -122,7 +124,11 @@ ACPlayer::ACPlayer()
 	//# 현재 체력 상태로 갱신해주어야 함.
 	Info.MaxHP = 100.0f;
 	Info.CurrentHP = 50.0f;
-	Info.Name = FName(L"MyPlayer");
+
+	Info.MaxMP = 100.0f;
+	Info.CurrentMP = 50.0f;
+
+	Info.Name = FName(L"PlayerName");
 	Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
@@ -343,7 +349,8 @@ void ACPlayer::OnMoveForward(float Value)
 	FRotator temp = FRotator(0, rotation.Yaw, 0);
 	FVector forward = FQuat(temp).GetForwardVector();
 
-	AddMovementInput(forward, Value);
+	/* Value * MultipleInputSpeed */
+	AddMovementInput(forward, Value * MultipleInputSpeed);
 }
 
 void ACPlayer::OnMoveRight(float Value)
@@ -354,8 +361,8 @@ void ACPlayer::OnMoveRight(float Value)
 	FRotator temp = FRotator(0, rotation.Yaw, 0);
 	FVector right = FQuat(temp).GetRightVector();
 
-	// 캐릭터 회전
-	AddMovementInput(right, Value);
+	/* Value * MultipleInputSpeed */
+	AddMovementInput(right, Value * MultipleInputSpeed);
 }
 
 void ACPlayer::OnTurn(float Value)
@@ -617,6 +624,41 @@ APawn * ACPlayer::GetFindAttackTarget()
 	return TargetingSystem->GetCurrentFindAttackTarget();
 }
 
+void ACPlayer::AddCurrentHP(float fValue)
+{
+	Info.CurrentHP += fValue;
+}
+
+void ACPlayer::AddCurrentMP(float fValue)
+{
+	Info.CurrentMP += fValue;
+}
+
+void ACPlayer::AddBarrierAmount(float fValue)
+{
+	float InputBarrierAmount = Info.BarrierAmount + fValue;
+	Info.BarrierAmount += fValue;
+	//if (InputBarrierAmount >= Info.MaxHP)
+	//{
+	//	/* Barrier 는 MaxHP 를 넘지 않음 */
+	//	InputBarrierAmount = FMath::Clamp(InputBarrierAmount, 0.0f, Info.MaxHP);
+	//}
+}
+
+void ACPlayer::AddSpeedToOrigin(float fValue)
+{
+	Info.AddSpeed += fValue;
+	GetCharacterMovement()->MaxWalkSpeed = OriginMaxSpeed + Info.AddSpeed;
+}
+
+void ACPlayer::AddATK(float fValue)
+{
+}
+
+void ACPlayer::AddDEF(float fValue)
+{
+}
+
 IIC_StateManager * ACPlayer::GetIStateManager()
 {
 	return Cast<IIC_StateManager>(StateManager);
@@ -636,4 +678,9 @@ IIC_EquipComp * ACPlayer::GetIEquipComp()
 IIC_MeshParticle * ACPlayer::GetIMeshParticle()
 {
 	return Cast<IIC_MeshParticle>(MeshParticleComp);
+}
+
+IIC_AbilityComp * ACPlayer::GetIAbilityComp()
+{
+	return Cast<IIC_AbilityComp>(AbilityComp);
 }

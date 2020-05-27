@@ -35,7 +35,8 @@ void UWG_PlayerInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 	check(I_Player);
 	if (I_Player != nullptr)
 	{
-		PlayerInfo = I_Player->GetPlayerInfo();
+		//Get PlayerInfo
+		InsertPlayerInfo(I_Player->GetPlayerInfo());
 	}
 
 	//@IC_HitComp - 상태이상, ConditionData 를 가져오기 위해,
@@ -58,8 +59,26 @@ void UWG_PlayerInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 void UWG_PlayerInfo::InitPlayerInfo()
 {
 	PlayerInfo.Name = "";
+	PlayerInfo.MaxHP = 0.0f;
 	PlayerInfo.CurrentHP = 0.0f;
+	PlayerInfo.MaxMP = 0.0f;
+	PlayerInfo.CurrentMP = 0.0f;
+	PlayerInfo.BarrierAmount = 0.0f;
+
 	PlayerInfo.InfoConditionDataArray.Empty();
+}
+
+void UWG_PlayerInfo::InsertPlayerInfo(const FPlayerInfo & Insert)
+{
+	PlayerInfo.Name = Insert.Name;
+	PlayerInfo.MaxHP = Insert.MaxHP;
+	PlayerInfo.CurrentHP = Insert.CurrentHP;
+	PlayerInfo.MaxMP = Insert.MaxMP;
+	PlayerInfo.CurrentMP = Insert.CurrentMP;
+
+	//@BarrierAmount Clamp
+	PlayerInfo.BarrierAmount = Insert.BarrierAmount;
+	FMath::Clamp(PlayerInfo.BarrierAmount, 0.0f, PlayerInfo.MaxMP);
 }
 
 void UWG_PlayerInfo::WigetVisible()

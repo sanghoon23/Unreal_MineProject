@@ -57,5 +57,7 @@ public:
 	void SetSpeedValue(float fValue) { AddSpeedValue = fValue; }
 
 private:
-	float AddSpeedValue = 100.0f;
+	float AddSpeedValue = 300.0f;
+
+	//class UCPLAbility_Speed* AbilitySpeed;
 };

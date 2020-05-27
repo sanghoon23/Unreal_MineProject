@@ -22,10 +22,10 @@ class UE_DOITPROJECT_API ACPlayer
 	#pragma	region Reflection
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movements")
-		float WalkSpeed = 400.0f;
+		float OriginMaxSpeed = 600.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Movements")
-		float RunSpeed = 600.0f;
+	UPROPERTY(VisibleAnywhere, Category = "Movements")
+		float MultipleInputSpeed = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 		float ZoomSpeed = 20.0f;
@@ -36,6 +36,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 		class UCameraComponent* CameraComp;
 
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* LeftParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* RightParticle;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCPL_BlendCameraComp* BlendCameraComp;
 
@@ -45,17 +51,17 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCPL_EquipComp* EquipComp;
 
-	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UParticleSystemComponent* LeftParticle;
-
-	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UParticleSystemComponent* RightParticle;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Component")
 		class UCPL_ActionInteractSystem* InteractSystem;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Component")
 		class UCInverseKinematics* IneverseKinematics;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCMeshParticleComp* MeshParticleComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCPL_AbilityComp* AbilityComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCPL_TargetingSystem* TargetingSystem;
@@ -63,15 +69,18 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCS_MouseController* MouseController;
 
-	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCMeshParticleComp* MeshParticleComp;
-
 	UPROPERTY(VisibleAnywhere, Category = "AttachActor")
 		class ACPL_CableObject* CableObject;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		class UAnimMontage* CurrentMontage;
-		
+
+	// Test Code
+	//UPROPERTY(Category = MapsAndSets, EditAnywhere)
+	//	TMap<int32, FString> FruitMap;
+	//UPROPERTY(Category = "Asset")
+	//	TMultiMap<int32, FString> AttributeMultiMap;
+
 	#pragma endregion
 
 public:
@@ -102,20 +111,21 @@ public:
 	virtual void ActorPausedAnimMonResume() override;
 	virtual void ActorAnimMonPause() override;
 
-	/* Pure Virtual Function - (IIC_Player) */
+/* Pure Virtual Function - (IIC_Player) */
 public:
-	virtual const FPlayerInfo GetPlayerInfo() const override { return Info; };
+	/* Player 안에 기본적 내장되어있는 Paritlce 켜기 */
+	virtual void OnParticleInPlayer() override;
 
-	/* HP 를 올려주는 함수 */
-	virtual void HealthUp(float fValue) override { Info.CurrentHP += fValue; }
+	/* Player 안에 기본적 내장되어있는 Paritlce 끄기 */
+	virtual void OffParticleInPlayer() override;
 
-	/* Max HP 를 올려주는 함수 */
-	virtual void MaxHealthUp(float fValue) override { Info.MaxHP += fValue; }
+	/* */
+	virtual const FPlayerInfo& GetPlayerInfo() const override { return Info; };
 
-	/* Speed 를 올려주는 함수 */
-	virtual void SpeedUp(float fValue) override { Info.Speed += fValue; }
+	/* 능력치 상승 */
+	//virtual void AddAbility(EAddAttribute KeyType, const FPlayerAddAbility& Ability) override;
 
-	/* Virtual */
+/* Virtual - (IC_Charactor) */
 public:
 	virtual void OnCollision() override;
 	virtual void OffCollision() override;
@@ -131,6 +141,10 @@ public:
 	// TODO : virtual IIC_HitComp* GetIHitComp() override;
 	virtual IIC_EquipComp* GetIEquipComp() override;
 	virtual IIC_MeshParticle* GetIMeshParticle() override;
+
+/* Virtual - (IC_Player) */
+public:
+	virtual IIC_AbilityComp* GetIAbilityComp();
 
 	/* Function */
 public:
@@ -156,12 +170,6 @@ public:
 	*/
 	void OnMouseController(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
 	void OffMouseController();
-
-	/* Player 안에 있는 Paritlce 켜기 */
-	void OnParticleInPlayer();
-
-	/* Player 안에 있는 Paritlce 끄기 */
-	void OffParticleInPlayer();
 
 private:
 	// Axis Mapping
@@ -208,6 +216,14 @@ public:
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Info
+	void AddCurrentHP(float fValue);
+	void AddCurrentMP(float fValue);
+	void AddBarrierAmount(float fValue);
+	void AddSpeedToOrigin(float fValue);
+	void AddATK(float fValue);
+	void AddDEF(float fValue);
+
 	// Move
 	bool GetCanMove() const { return bCanMove; }
 

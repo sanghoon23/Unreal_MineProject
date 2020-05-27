@@ -37,7 +37,7 @@ void UCMeshParticleComp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 //	ApplyParticles.Add(Insert);
 //}
 
-void UCMeshParticleComp::SpawnParticleAtMesh(UParticleSystem * const PT, const AttachPointType Point, const EAttachLocation::Type AttachLocation)
+UParticleSystemComponent* UCMeshParticleComp::SpawnParticleAtMesh(UParticleSystem * const PT, const AttachPointType Point, const EAttachLocation::Type AttachLocation)
 {
 	check(PT);
 
@@ -47,13 +47,14 @@ void UCMeshParticleComp::SpawnParticleAtMesh(UParticleSystem * const PT, const A
 	UWorld* const World = CharactorOwner->GetWorld();
 
 	//@Spawn
-	UGameplayStatics::SpawnEmitterAttached
+	UParticleSystemComponent* Ret = UGameplayStatics::SpawnEmitterAttached
 	(
 		PT, CharactorOwner->GetMesh(), AttachName,
 		FVector(0.0f), FRotator(0.0f), FVector(1.0f),
 		AttachLocation
 	);
 
+	return Ret;
 }
 
 bool UCMeshParticleComp::SetLocationParticleCompAtMesh(UParticleSystemComponent * const PTComp, const AttachPointType Point)
@@ -67,6 +68,25 @@ bool UCMeshParticleComp::SetLocationParticleCompAtMesh(UParticleSystemComponent 
 	PTComp->SetWorldLocation(Location);
 
 	return bResult;
+}
+
+void UCMeshParticleComp::AttachParticleCompAtMesh(UParticleSystemComponent * const PTComp, const AttachPointType Point)
+{
+	check(PTComp);
+
+	FName AttachName = "";
+	const bool bResult = CheckAttackName(AttachName, Point);
+
+	bool bAttach = PTComp->AttachTo
+	(
+		CharactorOwner->GetMesh(),
+		AttachName,
+		EAttachLocation::SnapToTarget
+	);
+
+	PTComp->SetupAttachment(CharactorOwner->GetMesh(), AttachName);
+
+	CLog::Print(bAttach ? 1 : 0);
 }
 
 bool UCMeshParticleComp::CheckAttackName(FName & OutName, const AttachPointType Point)

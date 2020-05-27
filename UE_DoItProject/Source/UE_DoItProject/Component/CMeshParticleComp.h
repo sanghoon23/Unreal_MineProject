@@ -61,8 +61,9 @@ public:
 public:
 	//void AddParticleCompAtContainer(class UParticleSystemComponent* const PTComp, const AttachPointType Point) override;
 
-	void SpawnParticleAtMesh(class UParticleSystem* const PT, const AttachPointType Point, const EAttachLocation::Type AttachLocation) override;
+	class UParticleSystemComponent* SpawnParticleAtMesh(class UParticleSystem* const PT, const AttachPointType Point, const EAttachLocation::Type AttachLocation) override;
 	bool SetLocationParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const AttachPointType Point) override;
+	void AttachParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const AttachPointType Point) override;
 
 private:
 	bool CheckAttackName(FName& OutName, const AttachPointType Point);

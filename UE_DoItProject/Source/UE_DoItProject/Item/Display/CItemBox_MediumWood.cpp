@@ -101,7 +101,6 @@ void ACItemBox_MediumWood::OnBegin(UPrimitiveComponent* OverlappedComponent, AAc
 	IIC_Player* I_Player = Cast<IIC_Player>(OtherActor);
 	if (I_Player != nullptr)
 	{
-		//@ TODO : 실행.. 상자 열리고, 아이템 생성.
 		CLog::Print(L"OnBegin ItemBox_MediumWood!!");
 	}
 }
