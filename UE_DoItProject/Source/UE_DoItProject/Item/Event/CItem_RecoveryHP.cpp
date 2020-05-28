@@ -158,7 +158,8 @@ void ACItem_RecoveryHP::ApplyEvent(AActor * EventedActor)
 		I_MeshParticle->SpawnParticleAtMesh
 		(
 			HealingParticle,
-			AttachPointType::ROOT,
+			EAttachPointType::ROOT,
+			EAttachPointRelative::NONE,
 			EAttachLocation::SnapToTargetIncludingScale
 		);
 

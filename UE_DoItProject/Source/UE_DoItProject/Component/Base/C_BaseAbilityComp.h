@@ -4,10 +4,11 @@
 #include "Components/ActorComponent.h"
 #include "Interface/IC_AbilityComp.h"
 
-#include "CPL_AbilityComp.generated.h"
+#include "C_BaseAbilityComp.generated.h"
+
 
 UCLASS()
-class UE_DOITPROJECT_API UCPL_AbilityComp
+class UE_DOITPROJECT_API UC_BaseAbilityComp 
 	: public UActorComponent, public IIC_AbilityComp
 {
 	GENERATED_BODY()
@@ -16,14 +17,12 @@ class UE_DOITPROJECT_API UCPL_AbilityComp
 private:
 	TMap<EAbilityType, UCBaseAbility*> AddAbilityMap;
 
-	// Test Code
-	//TMultiMap<EAddAttribute, FAddAbilityValue> AddAbilityMultiMap;
-	//TArray<UCBaseAbility*> AddedAbilityArray;
-
 	#pragma endregion
 
+
+
 public:	
-	UCPL_AbilityComp();
+	UC_BaseAbilityComp();
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,7 +30,7 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	/* Pure Virtual Function */
+	/* Pure Virtual Function - IIC_AbilityComp */
 public:
 	/* 능력치 적용 */
 	//@두가지 상황을 적용
@@ -43,5 +42,5 @@ public:
 
 	/* Memeber */
 private:
-
+		
 };

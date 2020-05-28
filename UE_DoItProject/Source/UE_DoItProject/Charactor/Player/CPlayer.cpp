@@ -17,7 +17,7 @@
 #include "Component/CInverseKinematics.h"
 #include "Component/Player/CPL_BlendCameraComp.h"
 #include "Component/CMeshParticleComp.h"
-#include "Component/CPL_AbilityComp.h"
+#include "Component/Base/C_BaseAbilityComp.h"
 
 #include "Actor/Cable/CPL_CableObject.h"
 
@@ -115,7 +115,7 @@ ACPlayer::ACPlayer()
 		InteractSystem			= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
 		MouseController			= CreateDefaultSubobject<UCS_MouseController>("MouseController");
 		MeshParticleComp		= CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
-		AbilityComp				= CreateDefaultSubobject<UCPL_AbilityComp>("AbilityComp");
+		AbilityComponent		= CreateDefaultSubobject<UC_BaseAbilityComp>("AbilityComp");
 	}
 	#pragma endregion
 
@@ -565,6 +565,9 @@ void ACPlayer::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlway
 {
 	check(Montage);
 
+	//@Montage 를 받지 않음
+	IfTrueRet(bDontMontagePlay);
+
 	if (bAlways == false)
 	{
 		// 만약 캐릭터가 몽타주 실행 중이라면,
@@ -682,5 +685,5 @@ IIC_MeshParticle * ACPlayer::GetIMeshParticle()
 
 IIC_AbilityComp * ACPlayer::GetIAbilityComp()
 {
-	return Cast<IIC_AbilityComp>(AbilityComp);
+	return Cast<IIC_AbilityComp>(AbilityComponent);
 }

@@ -4,11 +4,39 @@
 #include "GameFramework/Character.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
+#include "Interface//IC_MeshParticle.h"
 
 UCUpset_Stun::UCUpset_Stun()
 {
 	//Super
 	State = EHitUpset::STUN;
+}
+
+void UCUpset_Stun::StartCondition(APawn * Owner)
+{
+	Super::StartCondition(Owner);
+	check(Owner);
+
+	//@Stun Head Particle 머리에 붙이기
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
+	if (I_Charactor != nullptr)
+	{
+		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
+		if (I_MeshParticle != nullptr)
+		{
+			StunHeadParticleComp = I_MeshParticle->SpawnParticleAtMesh
+			(
+				StunHeadParticle, 
+				EAttachPointType::HEAD,
+				EAttachPointRelative::NONE,
+				EAttachLocation::SnapToTargetIncludingScale
+			);
+
+			if (StunHeadParticleComp == nullptr)
+				UE_LOG(LogTemp, Warning, L"CUpset_Stun StunHeadParticleComp NULL!!");
+		}
+	}
+
 }
 
 void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
@@ -64,6 +92,21 @@ void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 	}
 }
 
+void UCUpset_Stun::EndCondition(APawn * Owner)
+{
+	Super::EndCondition(Owner);
+	check(Owner);
+
+	//@Particle OFF
+	if (StunHeadParticleComp != nullptr)
+	{
+		StunHeadParticleComp->SetActive(false);
+		StunHeadParticleComp = nullptr;
+	}
+	else
+		UE_LOG(LogTemp, Warning, L"CUpset_Stun EndCondition StunHeadParticleComp NULL!!");
+}
+
 void UCUpset_Stun::ConditionOverlap(UCBaseConditionType * OverlappedCondition)
 {
 	Super::ConditionOverlap(OverlappedCondition);
@@ -72,6 +115,12 @@ void UCUpset_Stun::ConditionOverlap(UCBaseConditionType * OverlappedCondition)
 	//@초기화
 	ApplyTime = OverlappedCondition->ApplyTime;
 	InitUIColorAndOpacity();
+}
+
+void UCUpset_Stun::SetStunHeadPrticle(UParticleSystem * PT)
+{
+	check(PT);
+	StunHeadParticle = PT;
 }
 
 void UCUpset_Stun::SetMontage(UAnimMontage * Montage)

@@ -35,6 +35,27 @@ UCDamageType_Freeze::UCDamageType_Freeze()
 	{
 		FreezeConditionUITexture = FreezeTexture.Object;
 	}
+
+
+	//@LOAD Freeze Particle - ParticleComp
+	{
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_FreezingActor.PS_FreezingActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> FreezePT(*strPath);
+		if (FreezePT.Succeeded())
+		{
+			FreezeParticle = FreezePT.Object;
+		}
+	}
+
+	//@LOAD 'Under' Freeze Particle - ParticleComp
+	{
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_UnderFreezingActor.PS_UnderFreezingActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> FreezeUnderPT(*strPath);
+		if (FreezeUnderPT.Succeeded())
+		{
+			FreezeUnderParticle = FreezeUnderPT.Object;
+		}
+	}
 }
 
 void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedActor, UC_BaseHitComp * DamagedActorHitComp, float InitialDamageAmount)
@@ -52,11 +73,11 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	check(FreezeConditionData);
 	FreezeConditionData->ApplyTime = GetFreezingTime();
 	FreezeConditionData->SetDamageSubjectController(PawnController);
-	UParticleSystemComponent* FreezeParticleComp = DamagedActorHitComp->GetFreezeParticleCompOrNull();
-	if (FreezeParticleComp != nullptr)
-	{
-		FreezeConditionData->SetFreezeParticleComp(FreezeParticleComp);
-	}
+
+	/* Freeze Particle 은 UnderParticle 도 존재 */
+	//@Warning - HitComp 에 Under까지 넣기 애매함 - (우선 Default 를 쓰자)
+	FreezeConditionData->SetFreezeParticle(FreezeParticle);
+	FreezeConditionData->SetFreezeUnderParticle(FreezeUnderParticle);
 
 	//@Damage Class
 	FDamageEvent DamageEvent;
@@ -70,7 +91,11 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
 	if (I_Charactor != nullptr)
 	{
-		IfTrueRet(I_Charactor->IsDeath() == true);
+		if (I_Charactor->IsDeath() == true)
+		{
+			CLog::Print(L"deathCheak!!");
+			return;
+		}
 	}
 
 	UTexture2D* Texture = GetUITexture();

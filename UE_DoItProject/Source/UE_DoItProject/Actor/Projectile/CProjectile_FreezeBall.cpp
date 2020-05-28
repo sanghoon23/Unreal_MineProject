@@ -42,7 +42,7 @@ ACProjectile_FreezeBall::ACProjectile_FreezeBall()
 		StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		StaticMesh->SetVisibility(false);
 
-		StaticMesh->SetRelativeScale3D(FVector(0.4f));
+		StaticMesh->SetRelativeScale3D(FVector(0.6f));
 	}
 
 	// @Paritcle Component
@@ -58,7 +58,7 @@ ACProjectile_FreezeBall::ACProjectile_FreezeBall()
 		}
 
 		ParticleComp->SetRelativeLocation(FVector(10.0f, 0.0f, 0.0f));
-		ParticleComp->SetRelativeScale3D(FVector(1.0f));
+		ParticleComp->SetRelativeScale3D(FVector(0.3f));
 	}
 	#pragma endregion
 

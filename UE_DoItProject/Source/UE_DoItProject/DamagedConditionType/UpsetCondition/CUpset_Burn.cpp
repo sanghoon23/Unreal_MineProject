@@ -3,7 +3,6 @@
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
-#include "Interface/IC_Monster.h"
 #include "Interface/IC_MeshParticle.h"
 
 UCUpset_Burn::UCUpset_Burn()
@@ -17,26 +16,25 @@ void UCUpset_Burn::StartCondition(APawn * Owner)
 	Super::StartCondition(Owner);
 	check(Owner);
 	
-	bool bSet = false;
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
 	if (I_Charactor != nullptr)
 	{
-		//@Montage Pause
-		I_Charactor->ActorAnimMonPause();
-
 		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
 		if (I_MeshParticle != nullptr)
 		{
-			bSet = I_MeshParticle->SetLocationParticleCompAtMesh(BurnParticleComp, AttachPointType::BODY);
+			check(BurnParticle);
+			BurnParticleComp = I_MeshParticle->SpawnParticleAtMesh
+			(
+				BurnParticle,
+				EAttachPointType::BODY,
+				EAttachPointRelative::RELATIVE,
+				EAttachLocation::SnapToTarget
+			);
+
+			if (BurnParticleComp == nullptr)
+				UE_LOG(LogTemp, Warning, L"CUpset_Burn BurnParticleComp NULL!!");
 		}
 	}//(I_Charactor != nullptr)
-
-	if (bSet == true)
-	{
-		BurnParticleComp->SetActive(true);
-	}
-	else
-		UE_LOG(LogTemp, Warning, L"UCUpsetBurn StartCondition NOT SET ParticleLocation");
 }
 
 void UCUpset_Burn::UpdateCondition(APawn * Owner, float DeltaTime)
@@ -62,12 +60,6 @@ void UCUpset_Burn::UpdateCondition(APawn * Owner, float DeltaTime)
 		{
 			ApplyTime = -0.001f;
 		}
-
-		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
-		if (I_MeshParticle != nullptr)
-		{
-			I_MeshParticle->SetLocationParticleCompAtMesh(BurnParticleComp, AttachPointType::BODY);
-		}
 	}
 }
 
@@ -79,8 +71,13 @@ void UCUpset_Burn::EndCondition(APawn * Owner)
 	IfTrueRet(BurnParticleComp == nullptr);
 
 	//@Particle OFF
-	BurnParticleComp->SetActive(false);
-	BurnParticleComp = nullptr;
+	if (BurnParticleComp != nullptr)
+	{
+		BurnParticleComp->SetActive(false);
+		BurnParticleComp = nullptr;
+	}
+	else
+		UE_LOG(LogTemp, Warning, L"CUpset_Burn EndCondition BurnParticleComp NULL!!");
 }
 
 void UCUpset_Burn::ConditionOverlap(UCBaseConditionType* OverlappedCondition)
@@ -103,18 +100,15 @@ void UCUpset_Burn::ConditionOverlap(UCBaseConditionType* OverlappedCondition)
 	//@Damage 중첩
 	const float InputConditionDamage = OverlapCondition->GetSecondDamage();
 	SecondDamage += InputConditionDamage;
-
-	//CLog::Print(L"Burn Overlap!!");
-	//CLog::Print(SecondDamage);
 }
 
-void UCUpset_Burn::SetBurnParticleComp(UParticleSystemComponent * PTComp)
+void UCUpset_Burn::SetBurnParticle(UParticleSystem * PT)
 {
 	//#Edit 0509 - 
 	//@우선은 check 로써, BurnParticleComp 는 무조건 유효한 값으로 정의함
-	check(PTComp);
-	if (PTComp != nullptr)
+	check(PT);
+	if (PT != nullptr)
 	{
-		BurnParticleComp = PTComp;
+		BurnParticle = PT;
 	}
 }

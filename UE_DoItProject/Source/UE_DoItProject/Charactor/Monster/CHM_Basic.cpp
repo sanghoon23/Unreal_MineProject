@@ -26,7 +26,7 @@ ACHM_Basic::ACHM_Basic()
 		AttackComp = CreateDefaultSubobject<UCHM_BasicAttackComp>("AttackComp");
 		HitComponent = CreateDefaultSubobject<UCHM_BasicHitComp>("HitComp");
 		EquipComp = CreateDefaultSubobject<UCHM_BasicEquipComp>("EquipComponent");
-		MeshParticleComp = CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
+		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
 	}
 
 	#pragma region Monster Info Setting
@@ -44,26 +44,18 @@ void ACHM_Basic::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Set Delegate
-	{
-		OnDeathDelegate.AddLambda([&]()
-		{
-			SetActorTickEnabled(false);
+	//#Edit 0528 - 순서가 맞지 않아, OnDeath 함수에서 호출
+	//// Set Delegate
+	//{
+	//	OnDeathDelegate.AddLambda([&]()
+	//	{
+	//		//OffCollision();
+	//		//AutoPossessAI = EAutoPossessAI::Disabled;
+	//		//AIControllerClass = nullptr;
+	//	});
 
-			//@띄워졌을 때 사망할 때의 예외,
-			OnGravity();
-
-			//@Monster 라면, AI 꺼주기
-			SetAIRunningPossible(false);
-
-			//@Collision OFF
-			OffCollision();
-			//AutoPossessAI = EAutoPossessAI::Disabled;
-			//AIControllerClass = nullptr;
-		});
-
-		OnCharactorDestroy.AddUObject(this, &ACHM_Basic::OnDelegateCharactorDestroy);
-	}
+	//	OnCharactorDestroy.AddUObject(this, &ACHM_Basic::OnDelegateCharactorDestroy);
+	//}
 }
 
 void ACHM_Basic::Tick(float DeltaTime)
@@ -74,7 +66,26 @@ void ACHM_Basic::Tick(float DeltaTime)
 void ACHM_Basic::OnDeath()
 {
 	bDeath = true;
+
+	//@1. 먼저 바인딩된 Delegate 브로드 캐스트 후,
 	OnDeathDelegate.Broadcast(); //@Delegate
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//@2. 현 Charactor 에 관해 최종적으로 호출함.
+	//그렇지 않으면 Delegate 는 순서를 따지지 않아서 죽었는데도, AI 가 돌고 있음
+
+	SetActorTickEnabled(false);
+
+	//@띄워졌을 때 사망할 때의 예외,
+	OnGravity();
+
+	//@Monster 라면, AI 꺼주기
+	SetAIRunningPossible(false);
+
+	//@Collision OFF 가 아니라 "Spectator" 로 설정한다.
+	GetCapsuleComponent()->SetCollisionProfileName("Spectator");
+
+	OnDelegateCharactorDestroy();
 
 	CLog::Print(L"DeathCall");
 }
@@ -99,6 +110,9 @@ bool ACHM_Basic::IsJumping()
 void ACHM_Basic::ActorAnimMonPlay(UAnimMontage * Montage, float Speed, bool bAlways)
 {
 	check(Montage);
+
+	//@Montage 를 받지 않음
+	IfTrueRet(bDontMontagePlay);
 
 	if (bAlways == false)
 	{
@@ -202,6 +216,6 @@ IIC_HitComp * ACHM_Basic::GetIHitComp()
 
 IIC_MeshParticle * ACHM_Basic::GetIMeshParticle()
 {
-	IfTureRetResult(MeshParticleComp == nullptr, nullptr); // @Return Null
-	return Cast<IIC_MeshParticle>(MeshParticleComp);
+	IfTureRetResult(MeshParticleComponent == nullptr, nullptr); // @Return Null
+	return Cast<IIC_MeshParticle>(MeshParticleComponent);
 }

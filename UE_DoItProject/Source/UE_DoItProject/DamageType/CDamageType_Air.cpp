@@ -39,15 +39,19 @@ void UCDamageType_Air::OnHittingProcess(AActor * Subject, AActor * DamagedActor,
 		IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
 		check(I_Charactor);
 
-		FVector Location = DamagedActor->GetActorLocation();
-		Location.Z += 200.0f;
-		DamagedActor->SetActorLocation(Location);
+		//@Montage 를 실행할 수 있는 상황이 아닐 때에는 Ex) - 결빙 상황이 아닐 때,
+		if (I_Charactor->IsDontMontagePlay() == false)
+		{
+			FVector Location = DamagedActor->GetActorLocation();
+			Location.Z += 200.0f;
+			DamagedActor->SetActorLocation(Location);
 
-		// @속력 줄이기 - 중력끄고 바로 해줘야함
-		Charactor->GetCharacterMovement()->Velocity = FVector(0.0f);
+			// @속력 줄이기 - 중력끄고 바로 해줘야함
+			Charactor->GetCharacterMovement()->Velocity = FVector(0.0f);
 
-		// @중력 끄기.
-		I_Charactor->OffGravity();
+			// @중력 끄기.
+			I_Charactor->OffGravity();
+		}
 	}
 
 	//@Take Damage

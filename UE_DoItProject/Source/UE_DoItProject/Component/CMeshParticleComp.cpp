@@ -23,26 +23,12 @@ void UCMeshParticleComp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-//void UCMeshParticleComp::AddParticleCompAtContainer(UParticleSystemComponent * const PTComp, const AttachPointType Point)
-//{
-//	check(PTComp);
-//
-//	FName AttachName;
-//	const bool bResult = CheckAttackName(AttachName, Point);
-//
-//	FMeshParticle Insert;
-//	Insert.TypeName = AttachName;
-//	Insert.ParticleComp = PTComp;
-//
-//	ApplyParticles.Add(Insert);
-//}
-
-UParticleSystemComponent* UCMeshParticleComp::SpawnParticleAtMesh(UParticleSystem * const PT, const AttachPointType Point, const EAttachLocation::Type AttachLocation)
+UParticleSystemComponent* UCMeshParticleComp::SpawnParticleAtMesh(UParticleSystem * const PT, const EAttachPointType Point, const EAttachPointRelative Rel, const EAttachLocation::Type AttachLocation)
 {
 	check(PT);
 
 	FName AttachName;
-	const bool bResult = CheckAttackName(AttachName, Point);
+	const bool bResult = CheckAttackName(AttachName, Point, Rel);
 
 	UWorld* const World = CharactorOwner->GetWorld();
 
@@ -57,12 +43,12 @@ UParticleSystemComponent* UCMeshParticleComp::SpawnParticleAtMesh(UParticleSyste
 	return Ret;
 }
 
-bool UCMeshParticleComp::SetLocationParticleCompAtMesh(UParticleSystemComponent * const PTComp, const AttachPointType Point)
+bool UCMeshParticleComp::SetLocationParticleCompAtMesh(UParticleSystemComponent * const PTComp, const EAttachPointType Point, const EAttachPointRelative Rel)
 {
 	check(PTComp);
 
 	FName AttachName = "";
-	const bool bResult = CheckAttackName(AttachName, Point);
+	const bool bResult = CheckAttackName(AttachName, Point, Rel);
 
 	FVector Location = CharactorOwner->GetMesh()->GetSocketLocation(AttachName);
 	PTComp->SetWorldLocation(Location);
@@ -70,12 +56,12 @@ bool UCMeshParticleComp::SetLocationParticleCompAtMesh(UParticleSystemComponent 
 	return bResult;
 }
 
-void UCMeshParticleComp::AttachParticleCompAtMesh(UParticleSystemComponent * const PTComp, const AttachPointType Point)
+void UCMeshParticleComp::AttachParticleCompAtMesh(UParticleSystemComponent * const PTComp, const EAttachPointType Point, const EAttachPointRelative Rel)
 {
 	check(PTComp);
 
 	FName AttachName = "";
-	const bool bResult = CheckAttackName(AttachName, Point);
+	const bool bResult = CheckAttackName(AttachName, Point, Rel);
 
 	bool bAttach = PTComp->AttachTo
 	(
@@ -89,39 +75,45 @@ void UCMeshParticleComp::AttachParticleCompAtMesh(UParticleSystemComponent * con
 	CLog::Print(bAttach ? 1 : 0);
 }
 
-bool UCMeshParticleComp::CheckAttackName(FName & OutName, const AttachPointType Point)
+bool UCMeshParticleComp::CheckAttackName(FName & OutName, const EAttachPointType Point, const EAttachPointRelative Rel)
 {
+	FString Temp = "";
+	if (Rel == EAttachPointRelative::RELATIVE)
+	{
+		Temp.Append(RelativeTypeName.ToString());
+	}
+
 	switch (Point)
 	{
-		case AttachPointType::ROOT:
-			OutName = AttachRootName;
-			return true;
+		case EAttachPointType::ROOT:
+			Temp.Empty();
+			Temp.Append(AttachRootName.ToString());
 			break;
 
-		case AttachPointType::HEAD:
-			OutName = AttachHeadName;
-			return true;
+		case EAttachPointType::HEAD:
+			Temp.Append(AttachHeadName.ToString());
 			break;
 
-		case AttachPointType::BODY:
-			OutName = AttachBodyName;
-			return true;
+		case EAttachPointType::BODY:
+			Temp.Append(AttachBodyName.ToString());
 			break;
 
-		case AttachPointType::LHAND:
-			OutName = AttachLeftHandName;
-			return true;
+		case EAttachPointType::LHAND:
+			Temp.Append(AttachLeftHandName.ToString());
 			break;
 
-		case AttachPointType::RHAND:
-			OutName = AttachRightHandName;
-			return true;
+		case EAttachPointType::RHAND:
+			Temp.Append(AttachRightHandName.ToString());
 			break;
 
 		default:
-			OutName = AttachRootName;
+			Temp.Append(AttachRootName.ToString());
 			return false;
 			break;
 	}
+
+	//@Result
+	OutName = FName(*Temp);
+	return true;
 }
 

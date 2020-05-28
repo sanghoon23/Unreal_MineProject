@@ -404,17 +404,17 @@ void UCPL_SDAttackUpper::AttackOtherPawn()
 				if (CurrentComboNum == 0)
 				{
 					HitComp->SetHitMoveSpeed(0.3f);
-					HitComp->OnHit(Player, DT_Air, 50.0f);
+					HitComp->OnHit(Player, DT_Air, 5.0f);
 				}
 				else if (CurrentComboNum > 0 && CurrentComboNum < static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
 				{
 					HitComp->SetHitMoveSpeed(0.3f);
-					HitComp->OnHit(Player, DT_AirAttack, 50.0f);
+					HitComp->OnHit(Player, DT_AirAttack, 5.0f);
 				}
 				else if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
 				{
 					HitComp->SetHitMoveSpeed(500.0f);
-					HitComp->OnHit(Player, DT_StrongAttack, 50.0f);
+					HitComp->OnHit(Player, DT_StrongAttack, 5.0f);
 				}
 
 			}//(HitComp != nullptr)

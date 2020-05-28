@@ -2,6 +2,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Interface/IC_Charactor.h"
+
 UCFL_ActorAgainst::UCFL_ActorAgainst()
 {
 }
@@ -10,6 +12,23 @@ void UCFL_ActorAgainst::LookAtTarget(AActor * Subject, AActor* Target)
 {
 	check(Target);
 	check(Subject);
+
+	/* 
+	Montage 가 실행될 때, 타겟을 바라본다는 것을 가정한 상태에서
+	주체는 Charactor->DontMontagePlay 가 되었다면 바라보지 않음
+	Ex) - 공격 상황,
+	*/
+
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
+	if (I_Charactor != nullptr)
+	{
+		bool bDontMontagePlay = I_Charactor->IsDontMontagePlay();
+		if (bDontMontagePlay == true)
+		{
+			return; //@return
+		}
+	}
+
 
 	FVector DestVec = Target->GetActorLocation() - Subject->GetActorLocation();
 	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();

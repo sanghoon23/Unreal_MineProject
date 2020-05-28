@@ -15,6 +15,14 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Texture")
 		class UTexture2D* FreezeConditionUITexture = nullptr;
 
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		/* Freeze ConditionData 에서 사용할 Particle */
+		class UParticleSystem* FreezeParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		/* Freeze ConditionData 에서 사용할 Freeze Under Particle */
+		class UParticleSystem* FreezeUnderParticle;
+
 	#pragma endregion
 
 public:

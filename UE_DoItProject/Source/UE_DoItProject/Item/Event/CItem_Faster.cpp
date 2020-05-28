@@ -167,7 +167,8 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 		I_MeshParticle->SpawnParticleAtMesh
 		(
 			FasterParticle,
-			AttachPointType::ROOT,
+			EAttachPointType::ROOT,
+			EAttachPointRelative::NONE,
 			EAttachLocation::SnapToTarget
 		);
 

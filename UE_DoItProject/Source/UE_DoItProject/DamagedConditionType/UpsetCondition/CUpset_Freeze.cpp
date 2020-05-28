@@ -20,21 +20,46 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 	Super::StartCondition(Owner);
 	check(Owner);
 
-	IfTrueRet(FreezeParticleComp == nullptr);
-
-	CLog::Print(L"Freeze StartCondition!!");
-
-	bool bSet = false;
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
 	if (I_Charactor != nullptr)
 	{
+		//@Montage DontPlay
+		I_Charactor->SetDontMontagePlay(true);
+
 		//@Montage Pause
 		I_Charactor->ActorAnimMonPause();
 
 		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
 		if (I_MeshParticle != nullptr)
 		{
-			bSet = I_MeshParticle->SetLocationParticleCompAtMesh(FreezeParticleComp, AttachPointType::BODY);
+			/////////////////////////////////////////////////////////////////////////////////////////////////////
+			//@Upper Particle
+			check(FreezeParticle);
+			FreezeParticleComp = I_MeshParticle->SpawnParticleAtMesh
+			(
+				FreezeParticle, 
+				EAttachPointType::BODY,
+				EAttachPointRelative::NONE,
+				EAttachLocation::SnapToTargetIncludingScale
+			);
+
+			if (FreezeParticleComp == nullptr)
+				UE_LOG(LogTemp, Warning, L"CUpset_Freeze FreezeParticleComp NULL!!");
+
+			/////////////////////////////////////////////////////////////////////////////////////////////////////
+			//@Under Particle
+			check(FreezeUnderParticle);
+			FreezeUnderParticleComp = I_MeshParticle->SpawnParticleAtMesh
+			(
+				FreezeUnderParticle,
+				EAttachPointType::ROOT,
+				EAttachPointRelative::NONE,
+				EAttachLocation::SnapToTargetIncludingScale
+			);
+
+			if (FreezeUnderParticleComp == nullptr)
+				UE_LOG(LogTemp, Warning, L"CUpset_Freeze FreezeUnderParticleComp NULL!!");
+
 		}
 
 		//@빙결 상황일 땐 다른 Montage 가 들어오지 못하도록 함.
@@ -45,13 +70,6 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 		}
 
 	}//(I_Charactor != nullptr)
-
-	if (bSet == true)
-	{
-		FreezeParticleComp->SetActive(true);
-	}
-	else
-		UE_LOG(LogTemp, Warning, L"UCUpset_Freeze StartCondition NOT SET ParticleLocation");
 
 	///
 	IIC_Monster* I_Monster = Cast<IIC_Monster>(Owner);
@@ -66,8 +84,6 @@ void UCUpset_Freeze::UpdateCondition(APawn * Owner, float DeltaTime)
 {
 	Super::UpdateCondition(Owner, DeltaTime);
 
-	IfTrueRet(FreezeParticleComp == nullptr);
-
 	//@Particle Freeze Update
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
 	if (I_Charactor != nullptr)
@@ -78,13 +94,6 @@ void UCUpset_Freeze::UpdateCondition(APawn * Owner, float DeltaTime)
 		{
 			ApplyTime = -0.001f;
 		}
-
-		//@Freeze Particle
-		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
-		if (I_MeshParticle != nullptr)
-		{
-			I_MeshParticle->SetLocationParticleCompAtMesh(FreezeParticleComp, AttachPointType::BODY);
-		}
 	}
 }
 
@@ -93,11 +102,24 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 	Super::EndCondition(Owner);
 	check(Owner);
 
-	IfTrueRet(FreezeParticleComp == nullptr);
-
 	//@Particle OFF
-	FreezeParticleComp->SetActive(false);
-	FreezeParticleComp = nullptr;
+	{
+		if (FreezeParticleComp != nullptr)
+		{
+			FreezeParticleComp->SetActive(false);
+			FreezeParticleComp = nullptr;
+		}
+		else
+			UE_LOG(LogTemp, Warning, L"CUPset_Freeze EndCondition FreezeParticleComp NULL!!");
+
+		if (FreezeUnderParticleComp != nullptr)
+		{
+			FreezeUnderParticleComp->SetActive(false);
+			FreezeUnderParticleComp = nullptr;
+		}
+		else
+			UE_LOG(LogTemp, Warning, L"CUPset_Freeze EndCondition FreezeUnderParticleComp NULL!!");
+	}
 
 	IIC_Monster* I_Monster = Cast<IIC_Monster>(Owner);
 	if (I_Monster != nullptr)
@@ -109,6 +131,9 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
 	if (I_Charactor != nullptr)
 	{
+		//@Montage DontPlay
+		I_Charactor->SetDontMontagePlay(false);
+
 		//@Montage Resume
 		I_Charactor->ActorPausedAnimMonResume();
 
@@ -161,11 +186,20 @@ void UCUpset_Freeze::ConditionOverlap(UCBaseConditionType* OverlappedCondition)
 	CLog::Print(L"Freeze Overlap!!");
 }
 
-void UCUpset_Freeze::SetFreezeParticleComp(UParticleSystemComponent * PTComp)
+void UCUpset_Freeze::SetFreezeParticle(UParticleSystem* PT)
 {
-	check(PTComp);
-	if (PTComp != nullptr)
+	check(PT);
+	if (PT != nullptr)
 	{
-		FreezeParticleComp = PTComp;
+		FreezeParticle = PT;
+	}
+}
+
+void UCUpset_Freeze::SetFreezeUnderParticle(UParticleSystem * PT)
+{
+	check(PT);
+	if (PT != nullptr)
+	{
+		FreezeUnderParticle = PT;
 	}
 }

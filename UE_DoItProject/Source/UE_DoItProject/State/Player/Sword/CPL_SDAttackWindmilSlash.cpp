@@ -162,7 +162,7 @@ void UCPL_SDAttackWindmilSlash::AttackOtherPawn()
 					HitComp->SetHitMoveSpeed(0.3f);
 
 					// 1.2 Hit Delegate - Air(DamageType)
-					HitComp->OnHit(Player, DT_Air, 50.0f);
+					HitComp->OnHit(Player, DT_Air, 5.0f);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"SDAttackWindmilSlash CallAttack - HitComp Null!!");

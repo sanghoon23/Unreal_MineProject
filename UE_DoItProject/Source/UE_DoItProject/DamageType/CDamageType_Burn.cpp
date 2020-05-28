@@ -35,6 +35,16 @@ UCDamageType_Burn::UCDamageType_Burn()
 	{
 		BurnConditionUITexture = BurnTexture.Object;
 	}
+
+	//@LOAD Burn Particle - ParticleComp
+	{
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_BurningActor.PS_BurningActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> BurnPT(*strPath);
+		if (BurnPT.Succeeded())
+		{
+			BurnParticle = BurnPT.Object;
+		}
+	}
 }
 
 void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor, UC_BaseHitComp * DamagedActorHitComp, float InitialDamageAmount)
@@ -52,11 +62,16 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	check(BurnConditionData);
 	BurnConditionData->ApplyTime = GetBurnTime();
 	BurnConditionData->SetDamageSubjectController(PawnController);
-	UParticleSystemComponent* BurnParticleComp = DamagedActorHitComp->GetBurnParticleCompOrNull();
-	if (BurnParticleComp != nullptr)
+	UParticleSystem* HitCompBurnParticle = DamagedActorHitComp->GetBurnParticleOrNull();
+	if (HitCompBurnParticle != nullptr)
 	{
-		BurnConditionData->SetBurnParticleComp(BurnParticleComp);
+		BurnConditionData->SetBurnParticle(HitCompBurnParticle);
 	}
+	else //@Default
+	{
+		BurnConditionData->SetBurnParticle(BurnParticle);
+	}
+
 	BurnConditionData->SetSecondDamage(GetSecondDamageValue());
 
 	//@Damage Class

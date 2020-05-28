@@ -20,6 +20,21 @@ UC_BaseHitComp::UC_BaseHitComp()
 void UC_BaseHitComp::BeginPlay()
 {
 	Super::BeginPlay();
+
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(GetOwner());
+	check(I_Charactor);
+	I_Charactor->OnDeathDelegate.AddLambda([&]()
+	{
+		APawn* OwnerPawn = Cast<APawn>(GetOwner());
+		check(OwnerPawn);
+
+		//@Á×¾úÀ» ¶© ConditionData ¸¦ ºñ¿î´Ù.
+		for (int i = 0; i < ConditionDatas.Num(); ++i)
+		{
+			ConditionDatas[i]->EndCondition(OwnerPawn);
+		}
+		ConditionDatas.Empty();
+	});
 }
 
 void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -73,6 +88,9 @@ bool UC_BaseHitComp::AddConditionData(UCBaseConditionType* ConditionData)
 	return true; //@Ret
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//@Get, Set
+
 UMaterialInterface * UC_BaseHitComp::GetPoisionMaterialOrNull() const
 {
 	if (PoisionMaterial == nullptr)
@@ -83,26 +101,37 @@ UMaterialInterface * UC_BaseHitComp::GetPoisionMaterialOrNull() const
 	return PoisionMaterial;
 }
 
-UParticleSystemComponent * UC_BaseHitComp::GetBurnParticleCompOrNull() const
+UParticleSystem * UC_BaseHitComp::GetBurnParticleOrNull() const
 {
-	if (BurnParticleComp == nullptr)
+	if (BurnParticle == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, L"BaseHitComp BurnParticleComp NOT SETTING!!");
 		return nullptr;
 	}
 
-	return BurnParticleComp;
+	return BurnParticle;
 }
 
-UParticleSystemComponent * UC_BaseHitComp::GetFreezeParticleCompOrNull() const
+UParticleSystem * UC_BaseHitComp::GetFreezeParticleOrNull() const
 {
-	if (FreezeParticleComp == nullptr)
+	if (FreezeParticle == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, L"BaseHitComp FreezeParticleComp NOT SETTING!!");
 		return nullptr;
 	}
 
-	return FreezeParticleComp;
+	return FreezeParticle;
+}
+
+UParticleSystem * UC_BaseHitComp::GetStunHeadParticleOrNull() const
+{
+	if (StunHeadParticle == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, L"BaseHitComp StunHeadParticle NOT SETTING!!");
+		return nullptr;
+	}
+
+	return StunHeadParticle;
 }
 
 UAnimMontage * UC_BaseHitComp::GetDamagedMontageOrNull(const uint8 ArrayNum)

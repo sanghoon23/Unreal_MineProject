@@ -16,7 +16,10 @@ private:
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
-	class UParticleSystemComponent* BurnParticleComp;
+		class UParticleSystem* BurnParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* BurnParticleComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	/* 시간 마다 들어갈 데미지, */
@@ -45,7 +48,7 @@ public:
 
 	/* Function */
 public:
-	void SetBurnParticleComp(class UParticleSystemComponent* PTComp);
+	void SetBurnParticle(class UParticleSystem* PT);
 
 	float GetSecondDamage() const { return SecondDamage; }
 	void SetSecondDamage(float fValue) { SecondDamage = fValue; }

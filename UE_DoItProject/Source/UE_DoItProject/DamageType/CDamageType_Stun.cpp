@@ -34,6 +34,13 @@ UCDamageType_Stun::UCDamageType_Stun()
 	{
 		StunConditionUITexture = StunTexture.Object;
 	}
+
+	strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_StunActor.PS_StunActor'";
+	ConstructorHelpers::FObjectFinder<UParticleSystem> P_StunHead(*strPath);
+	if (P_StunHead.Succeeded())
+	{
+		StunHeadParticle = P_StunHead.Object;
+	}
 }
 
 void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor, UC_BaseHitComp * DamagedActorHitComp, float InitialDamageAmount)
@@ -49,11 +56,21 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	AController* const PawnController = DamagedPawn->GetController();
 	check(PawnController);
 
+	//@Set Montage && StunParticle
 	UCUpset_Stun* UpsetStun = NewObject<UCUpset_Stun>();
 	UpsetStun->ApplyTime = GetStunTime();
 	UpsetStun->SetDamageSubjectController(PawnController);
 	const uint8 StunMontageNum = static_cast<uint8>(FDamageType::STUN);
 	UpsetStun->SetMontage(DamagedActorHitComp->GetDamagedMontageOrNull(StunMontageNum));
+	UParticleSystem* HitCompStunHeadParticle = DamagedActorHitComp->GetStunHeadParticleOrNull();
+	if (HitCompStunHeadParticle != nullptr)
+	{
+		UpsetStun->SetStunHeadPrticle(HitCompStunHeadParticle);
+	}
+	else //@Default
+	{
+		UpsetStun->SetStunHeadPrticle(StunHeadParticle);
+	}
 
 	//@Damage Class
 	FDamageEvent DamageEvent;

@@ -41,12 +41,16 @@ protected:
 		class UMaterialInterface* PoisionMaterial = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
-		/* Burn ConditionData 에서 사용할 Paritcel */
-		class UParticleSystemComponent* BurnParticleComp;
+		/* Stun ConditionData 에서 사용할 머리 위 표시할 Particle */
+		class UParticleSystem* StunHeadParticle;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
-		/* Freeze ConditionData 에서 사용할 Paritcel */
-		class UParticleSystemComponent* FreezeParticleComp;
+		/* Burn ConditionData 에서 사용할 Particle */
+		class UParticleSystem* BurnParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		/* Freeze ConditionData 에서 사용할 Particle */
+		class UParticleSystem* FreezeParticle;
 
 private:
 	/*
@@ -90,8 +94,9 @@ public:
 	#pragma	region Member
 public:
 	class UMaterialInterface* GetPoisionMaterialOrNull() const;
-	class UParticleSystemComponent* GetBurnParticleCompOrNull() const;
-	class UParticleSystemComponent* GetFreezeParticleCompOrNull() const;
+	class UParticleSystem* GetBurnParticleOrNull() const;
+	class UParticleSystem* GetFreezeParticleOrNull() const;
+	class UParticleSystem* GetStunHeadParticleOrNull() const;
 
 	class UAnimMontage* GetDamagedMontageOrNull(const uint8 ArrayNum);
 

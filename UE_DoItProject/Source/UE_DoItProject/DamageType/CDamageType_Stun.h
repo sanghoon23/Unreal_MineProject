@@ -14,6 +14,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Texture")
 		class UTexture2D* StunConditionUITexture = nullptr;
 
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		/* Stun ConditionData 에서 사용할 머리 위 표시할 Particle */
+		class UParticleSystem* StunHeadParticle; //@Default
+
 	#pragma endregion
 
 public:

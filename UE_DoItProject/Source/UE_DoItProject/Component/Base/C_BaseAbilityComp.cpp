@@ -1,26 +1,21 @@
-#include "CPL_AbilityComp.h"
+#include "C_BaseAbilityComp.h"
 #include "Global.h"
 
-#include "Interface/IC_Charactor.h"
-#include "Interface/IC_Player.h"
 #include "Ability/Base/CBaseAbility.h"
 
-UCPL_AbilityComp::UCPL_AbilityComp()
+UC_BaseAbilityComp::UC_BaseAbilityComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
 }
 
-void UCPL_AbilityComp::BeginPlay()
+void UC_BaseAbilityComp::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-//TODO : 기존의 속성이 들어온다면?
-//TArray 말고 TMap 을 쓰자.
-
-void UCPL_AbilityComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UC_BaseAbilityComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -50,7 +45,7 @@ void UCPL_AbilityComp::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	}
 }
 
-void UCPL_AbilityComp::AddAbility(UCBaseAbility* Ability)
+void UC_BaseAbilityComp::AddAbility(UCBaseAbility* Ability)
 {
 	check(Ability);
 
@@ -77,4 +72,3 @@ void UCPL_AbilityComp::AddAbility(UCBaseAbility* Ability)
 		Ability->ApplyAbility();
 	}
 }
-

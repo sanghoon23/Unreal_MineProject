@@ -180,7 +180,7 @@ void UCPL_SDAttackBackRange::AttackOtherPawn()
 					HitComp->SetHitMoveSpeed(0.3f);
 
 					// 1.2 Hit Delegate - Air(DamageType)
-					HitComp->OnHit(Player, DT_Strong, 50.0f);
+					HitComp->OnHit(Player, DT_Strong, 5.0f);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"SDAttackBackRange CallAttack - HitComp Null!!");

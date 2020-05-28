@@ -59,10 +59,22 @@ void UCPLAbility_Speed::StartUseTimerAbility()
 		if (I_MeshParticle != nullptr)
 		{
 			//@LHand ParticleComp
-			ParticleComp_LHand = I_MeshParticle->SpawnParticleAtMesh(SpeedUp_LHand, AttachPointType::LHAND, EAttachLocation::SnapToTarget);
+			ParticleComp_LHand = I_MeshParticle->SpawnParticleAtMesh
+			(
+				SpeedUp_LHand,
+				EAttachPointType::LHAND,
+				EAttachPointRelative::RELATIVE,
+				EAttachLocation::SnapToTarget
+			);
 
 			//@RHand ParticleComp
-			ParticleComp_RHand = I_MeshParticle->SpawnParticleAtMesh(SpeedUp_RHand, AttachPointType::RHAND, EAttachLocation::SnapToTarget);
+			ParticleComp_RHand = I_MeshParticle->SpawnParticleAtMesh
+			(
+				SpeedUp_RHand,
+				EAttachPointType::RHAND,
+				EAttachPointRelative::RELATIVE,
+				EAttachLocation::SnapToTarget
+			);
 		}
 	}
 	

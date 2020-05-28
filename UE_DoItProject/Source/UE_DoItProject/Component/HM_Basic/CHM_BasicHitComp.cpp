@@ -102,7 +102,17 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 
 	#pragma endregion
 
-	//@Load Poision Material
+	//@LOAD Stun HEad Particle
+	{
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_StunActor.PS_StunActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_StunHead(*Path);
+		if (P_StunHead.Succeeded())
+		{
+			StunHeadParticle = P_StunHead.Object;
+		}
+	}
+
+	//@LOAD Poision Material
 	{
 		Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
 		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
@@ -112,29 +122,23 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 		}
 	}
 
-	//@Load Burn Particle - ParticleComp
+	//@LOAD Burn Particle - ParticleComp
 	{
-		BurnParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("BurnParticleComp");
-
 		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_BurningActor.PS_BurningActor'";
 		ConstructorHelpers::FObjectFinder<UParticleSystem> BurnPT(*Path);
 		if (BurnPT.Succeeded())
 		{
-			BurnParticleComp->bAutoActivate = false;
-			BurnParticleComp->SetTemplate(BurnPT.Object);
+			BurnParticle = BurnPT.Object;
 		}
 	}
 
-	//@Load Freeze Particle - ParticleComp
+	//@LOAD Freeze Particle - ParticleComp
 	{
-		FreezeParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("FreezeParticleComp");
-
 		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_FreezingActor.PS_FreezingActor'";
 		ConstructorHelpers::FObjectFinder<UParticleSystem> FreezePT(*Path);
 		if (FreezePT.Succeeded())
 		{
-			FreezeParticleComp->bAutoActivate = false;
-			FreezeParticleComp->SetTemplate(FreezePT.Object);
+			FreezeParticle = FreezePT.Object;
 		}
 	}
 }

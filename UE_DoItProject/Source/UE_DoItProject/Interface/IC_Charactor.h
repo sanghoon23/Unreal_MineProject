@@ -94,11 +94,21 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Function */
 public :
+	const bool IsDontMontagePlay() const { return bDontMontagePlay; }
+
+	// @몽타주를 받지 않음 
+	//- Ex) 빙결 상황일 땐 다른 공격이 들어와도 실행되지 않아야 함
+	void SetDontMontagePlay(bool bValue) { bDontMontagePlay = bValue; }
+
 	/* 현재 동작할 BaseAction */
 	IIC_BaseAction* GetCurrentIBaseAction() { return CurrentIBaseAction; }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Member */
 protected:
+	//@Montage 실행시킴 여부
+	bool bDontMontagePlay = false;
+
+	//@현재 실행되는 액션 - 'E'
 	IIC_BaseAction* CurrentIBaseAction;
 };

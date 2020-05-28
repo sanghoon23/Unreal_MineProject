@@ -5,7 +5,14 @@
 #include "IC_MeshParticle.generated.h"
 
 UENUM()
-enum class AttachPointType
+enum class EAttachPointRelative
+{
+	NONE = 0,
+	RELATIVE = 1,
+};
+
+UENUM()
+enum class EAttachPointType
 {
 	ROOT = 0,
 	HEAD = 1,
@@ -26,7 +33,7 @@ class UE_DOITPROJECT_API IIC_MeshParticle
 	
 	/* Pure Virtual Function */
 public:
-	virtual class UParticleSystemComponent* SpawnParticleAtMesh(class UParticleSystem* const PT, const AttachPointType Point, const EAttachLocation::Type AttachLocation) = 0;
-	virtual bool SetLocationParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const AttachPointType Point) = 0;
-	virtual void AttachParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const AttachPointType Point) = 0;
+	virtual class UParticleSystemComponent* SpawnParticleAtMesh(class UParticleSystem* const PT, const EAttachPointType Point, const EAttachPointRelative Rel, const EAttachLocation::Type AttachLocation) = 0;
+	virtual bool SetLocationParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const EAttachPointType Point, const EAttachPointRelative Rel) = 0;
+	virtual void AttachParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const EAttachPointType Point, const EAttachPointRelative Rel) = 0;
 };

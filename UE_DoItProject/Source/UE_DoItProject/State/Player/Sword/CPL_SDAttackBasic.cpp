@@ -260,7 +260,7 @@ void UCPL_SDAttackBasic::AttackOtherPawn()
 				HitComp->SetHitMoveSpeed(0.3f);
 
 				// 1.2 Hit Delegate - Normal(DamageType)
-				HitComp->OnHit(Player, DT_Noraml, 50.0f);
+				HitComp->OnHit(Player, DT_Noraml, 5.0f);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");

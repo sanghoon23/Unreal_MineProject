@@ -18,7 +18,16 @@ class UE_DOITPROJECT_API UCUpset_Freeze
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* FreezeParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystemComponent* FreezeParticleComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* FreezeUnderParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* FreezeUnderParticleComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "DestructibleActor")
 		class ACDM_FreezingBroken* DM_FreezenBroken;
@@ -46,6 +55,7 @@ public:
 	
 	/* Function */
 public:
-	void SetFreezeParticleComp(class UParticleSystemComponent* PTComp);
+	void SetFreezeParticle(class UParticleSystem* PT);
+	void SetFreezeUnderParticle(class UParticleSystem* PT);
 
 };

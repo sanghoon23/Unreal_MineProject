@@ -16,6 +16,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Texture")
 		class UTexture2D* BurnConditionUITexture = nullptr;
 
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		/* Burn ConditionData 에서 사용할 Particle */
+		class UParticleSystem* BurnParticle;
+
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		float SecondDamageValue = 0.0f;
 

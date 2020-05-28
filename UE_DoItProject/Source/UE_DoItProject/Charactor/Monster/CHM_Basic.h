@@ -34,7 +34,7 @@ private:
 		class UCHM_BasicEquipComp* EquipComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCMeshParticleComp* MeshParticleComp;
+		class UCMeshParticleComp* MeshParticleComponent;
 
 	#pragma endregion
 

@@ -61,7 +61,7 @@ private:
 		class UCMeshParticleComp* MeshParticleComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCPL_AbilityComp* AbilityComp;
+		class UC_BaseAbilityComp* AbilityComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCPL_TargetingSystem* TargetingSystem;

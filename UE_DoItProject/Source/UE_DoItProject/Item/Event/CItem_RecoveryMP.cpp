@@ -14,7 +14,7 @@ ACItem_RecoveryMP::ACItem_RecoveryMP()
 
 	//Super
 	{
-		ItemEventType = EItemEventType::RECOVERY_HP;
+		ItemEventType = EItemEventType::RECOVERY_MP;
 	}
 
 	//@Create Component
@@ -145,6 +145,8 @@ void ACItem_RecoveryMP::ApplyEvent(AActor * EventedActor)
 			Ability_MP->SetAppliedActor(EventedActor);
 
 			I_AbilityComp->AddAbility(Ability_MP);
+
+			CLog::Print(L"Ability_Mp In!!");
 		}
 
 		//@Healing 파티클 실행
@@ -157,7 +159,8 @@ void ACItem_RecoveryMP::ApplyEvent(AActor * EventedActor)
 		I_MeshParticle->SpawnParticleAtMesh
 		(
 			HealingParticle,
-			AttachPointType::ROOT,
+			EAttachPointType::ROOT,
+			EAttachPointRelative::NONE,
 			EAttachLocation::SnapToTargetIncludingScale
 		);
 
