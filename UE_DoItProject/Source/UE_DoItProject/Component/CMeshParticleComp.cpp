@@ -63,16 +63,14 @@ void UCMeshParticleComp::AttachParticleCompAtMesh(UParticleSystemComponent * con
 	FName AttachName = "";
 	const bool bResult = CheckAttackName(AttachName, Point, Rel);
 
-	bool bAttach = PTComp->AttachTo
+	bool bAttach = PTComp->AttachToComponent
 	(
 		CharactorOwner->GetMesh(),
-		AttachName,
-		EAttachLocation::SnapToTarget
+		FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
+		AttachName
 	);
 
 	PTComp->SetupAttachment(CharactorOwner->GetMesh(), AttachName);
-
-	CLog::Print(bAttach ? 1 : 0);
 }
 
 bool UCMeshParticleComp::CheckAttackName(FName & OutName, const EAttachPointType Point, const EAttachPointRelative Rel)

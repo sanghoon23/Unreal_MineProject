@@ -50,7 +50,13 @@ void UCPLAbility_Barrier::StartUseTimerAbility()
 		if (I_MeshParticle != nullptr)
 		{
 			//@Barrier ParticleComp
-			ParticleComp_Barrier = I_MeshParticle->SpawnParticleAtMesh(ParticleBarrier, EAttachPointType::BODY, EAttachPointRelative::NONE, EAttachLocation::SnapToTarget);
+			ParticleComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
+			(
+				ParticleBarrier, 
+				EAttachPointType::BODY,
+				EAttachPointRelative::RELATIVE,
+				EAttachLocation::SnapToTarget
+			);
 		}
 	}
 }

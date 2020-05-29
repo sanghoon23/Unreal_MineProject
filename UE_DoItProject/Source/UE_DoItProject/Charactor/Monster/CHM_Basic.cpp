@@ -86,8 +86,6 @@ void ACHM_Basic::OnDeath()
 	GetCapsuleComponent()->SetCollisionProfileName("Spectator");
 
 	OnDelegateCharactorDestroy();
-
-	CLog::Print(L"DeathCall");
 }
 
 void ACHM_Basic::OnGravity()
@@ -146,7 +144,6 @@ void ACHM_Basic::ActorPausedAnimMonResume()
 	//if (bRunningMontage == true)
 	//{
 	//}
-	CLog::Print(L"Montage Resume!!");
 }
 
 void ACHM_Basic::ActorAnimMonPause()
@@ -156,8 +153,6 @@ void ACHM_Basic::ActorAnimMonPause()
 	{
 		GetMesh()->GetAnimInstance()->Montage_Pause(CurrentMontage);
 	}
-
-	CLog::Print(L"Montage Pause!!");
 }
 
 void ACHM_Basic::OnCollision()

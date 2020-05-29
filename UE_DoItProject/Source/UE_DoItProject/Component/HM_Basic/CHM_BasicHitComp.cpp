@@ -148,7 +148,7 @@ void UCHM_BasicHitComp::BeginPlay()
 	Super::BeginPlay();
 
 	HM_Basic = Cast<ACHM_Basic>(GetOwner());
-	AnimInst_HM_Basic = HM_Basic->GetMesh()->GetAnimInstance();
+	check(HM_Basic);
 
 	// Set Delegate "OnActionReset" - IIC_Charactor
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());

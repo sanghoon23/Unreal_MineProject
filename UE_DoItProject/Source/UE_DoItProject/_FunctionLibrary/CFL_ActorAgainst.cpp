@@ -18,7 +18,6 @@ void UCFL_ActorAgainst::LookAtTarget(AActor * Subject, AActor* Target)
 	주체는 Charactor->DontMontagePlay 가 되었다면 바라보지 않음
 	Ex) - 공격 상황,
 	*/
-
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
 	if (I_Charactor != nullptr)
 	{
@@ -29,7 +28,7 @@ void UCFL_ActorAgainst::LookAtTarget(AActor * Subject, AActor* Target)
 		}
 	}
 
-
+	//@Look At Target
 	FVector DestVec = Target->GetActorLocation() - Subject->GetActorLocation();
 	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
 	Subject->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));

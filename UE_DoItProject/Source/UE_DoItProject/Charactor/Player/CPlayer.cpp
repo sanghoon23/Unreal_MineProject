@@ -630,15 +630,18 @@ APawn * ACPlayer::GetFindAttackTarget()
 void ACPlayer::AddCurrentHP(float fValue)
 {
 	Info.CurrentHP += fValue;
+	Info.CurrentHP = FMath::Clamp(Info.CurrentHP, 0.0f, Info.MaxHP);
 }
 
 void ACPlayer::AddCurrentMP(float fValue)
 {
 	Info.CurrentMP += fValue;
+	Info.CurrentMP = FMath::Clamp(Info.CurrentMP, 0.0f, Info.MaxMP);
 }
 
 void ACPlayer::AddBarrierAmount(float fValue)
 {
+	//@방어막은 제한 없음
 	float InputBarrierAmount = Info.BarrierAmount + fValue;
 	Info.BarrierAmount += fValue;
 	//if (InputBarrierAmount >= Info.MaxHP)

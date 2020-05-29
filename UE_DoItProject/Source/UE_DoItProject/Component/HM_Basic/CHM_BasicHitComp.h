@@ -54,7 +54,5 @@ private:
 private:
 	class ACHM_Basic* HM_Basic;
 
-	UAnimInstance* AnimInst_HM_Basic;
-
 	#pragma endregion
 };

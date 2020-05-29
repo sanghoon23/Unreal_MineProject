@@ -31,6 +31,7 @@ private:
 	#pragma	region Reflection
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		/* HitComp 에 해당하는 몽타주들의 실행 여부 */
 		bool bBlockDamagedMontage = false;
 
 	UPROPERTY(VisibleAnywhere, Category = "Montages")

@@ -35,6 +35,7 @@ ACItem_RecoveryMP::ACItem_RecoveryMP()
 		BoxComp->SetGenerateOverlapEvents(true);
 		BoxComp->SetCollisionProfileName("OverlapOnlyPawn");
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		BoxComp->SetBoxExtent(FVector(50.0f, 50.0f, 32.0f));
 		//BoxComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 
 		StaticMesh->SetSimulatePhysics(false);
@@ -145,8 +146,6 @@ void ACItem_RecoveryMP::ApplyEvent(AActor * EventedActor)
 			Ability_MP->SetAppliedActor(EventedActor);
 
 			I_AbilityComp->AddAbility(Ability_MP);
-
-			CLog::Print(L"Ability_Mp In!!");
 		}
 
 		//@Healing 파티클 실행

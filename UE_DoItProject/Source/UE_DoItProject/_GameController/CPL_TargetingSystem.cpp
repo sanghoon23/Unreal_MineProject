@@ -5,6 +5,7 @@
 #include "Interface/IC_Monster.h"
 #include "Charactor/Monster/Base/CHumanoidMonster.h"
 #include "Charactor/Player/CPlayer.h"
+#include "Actor/Decal/CDecalActor_Targeting.h"
 
 //UI
 #include "UI/HUD_Main.h"
@@ -33,6 +34,13 @@ void UCPL_TargetingSystem::BeginPlay()
 		check(MainHUD);
 		TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
 	}
+
+	//@Spawn DecalActor
+	FTransform Transform = FTransform::Identity;
+	TargetDecal = GetWorld()->SpawnActor<ACDecalActor_Targeting>(ACDecalActor_Targeting::StaticClass(), Transform);
+	TargetDecal->SetDecalCompRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	TargetDecal->SetDecalSize(DecalActorCircleSize);
+	TargetDecal->GetRootComponent()->SetVisibility(false);
 }
 
 
@@ -40,7 +48,7 @@ void UCPL_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//@몬스터가 죽었을 때,
+	//@Target 이 죽었을 때,
 	IIC_Charactor* I_TargetCharactor = Cast<IIC_Charactor>(CurrentFindAttackTarget);
 	if (I_TargetCharactor != nullptr)
 	{
@@ -55,7 +63,19 @@ void UCPL_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 			//@Widget UnVisible
 			TargetInfoWidget->WigetUnVisible();
 
+			//@Decal OFF
+			TargetDecal->GetRootComponent()->SetVisibility(false);
+
 			return;
+		}
+		else
+		{
+			//@Decal ON
+			TargetDecal->GetRootComponent()->SetVisibility(true);
+
+			//@Set Location
+			FVector TargetLocation = CurrentFindAttackTarget->GetActorLocation();
+			TargetDecal->SetActorLocation(TargetLocation);
 		}
 	}
 
@@ -66,13 +86,17 @@ void UCPL_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 		if (PlayerController->IsInputKeyDown(EKeys::Escape))
 		{
 			//@Target Selected 에서 제외
-			DelSelectedMonstersArray(CurrentFindAttackTarget);
+			//DelSelectedMonstersArray(CurrentFindAttackTarget);
+			SelectedMonsters.Empty();
 
 			//@Target NULL 시키기
 			CurrentFindAttackTarget = nullptr;
 
 			//@Widget UnVisible
 			TargetInfoWidget->WigetUnVisible();
+
+			//@Decal OFF
+			TargetDecal->GetRootComponent()->SetVisibility(false);
 		}
 	}
 }
@@ -101,6 +125,18 @@ void UCPL_TargetingSystem::OnFindTargets()
 	DrawDebugSphere(GetWorld(), Center, Sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLiftTime);
 
 #endif //  ENABLE_DRAW_DEBUG
+
+	//overlapResults.sor
+	//arrayWithStructs.Sort([](const FMyStruct& a, const FMyStruct& b) { return a.field < b.field; });
+	overlapResults.StableSort([&](const FOverlapResult& A, const FOverlapResult& B)
+	{
+		float DistanceToA = Player->GetDistanceTo(A.GetActor());
+		float DistanceToB = Player->GetDistanceTo(B.GetActor());
+
+		if (DistanceToA < DistanceToB)
+			return true;
+		else return false;
+	});
 
 	if (bHit == true)
 	{
@@ -132,7 +168,7 @@ void UCPL_TargetingSystem::OnFindTargets()
 				//@Target
 				CurrentFindAttackTarget = FindMonster;
 
-				//@Array ADD
+				//@Array ADD - Priority Queue
 				AddSelectedMonstersArray(FindMonster);
 
 				//@Widget Visible

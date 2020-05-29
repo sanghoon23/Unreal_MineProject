@@ -78,7 +78,7 @@ void UWG_PlayerInfo::InsertPlayerInfo(const FPlayerInfo & Insert)
 
 	//@BarrierAmount Clamp
 	PlayerInfo.BarrierAmount = Insert.BarrierAmount;
-	FMath::Clamp(PlayerInfo.BarrierAmount, 0.0f, PlayerInfo.MaxMP);
+	PlayerInfo.BarrierAmount = FMath::Clamp(PlayerInfo.BarrierAmount, 0.0f, PlayerInfo.MaxHP);
 }
 
 void UWG_PlayerInfo::WigetVisible()

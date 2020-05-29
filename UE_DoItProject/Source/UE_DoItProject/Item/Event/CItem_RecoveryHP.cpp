@@ -35,6 +35,7 @@ ACItem_RecoveryHP::ACItem_RecoveryHP()
 		BoxComp->SetGenerateOverlapEvents(true);
 		BoxComp->SetCollisionProfileName("OverlapOnlyPawn");
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		BoxComp->SetBoxExtent(FVector(50.0f, 50.0f, 32.0f));
 		//BoxComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 
 		StaticMesh->SetSimulatePhysics(false);

@@ -19,5 +19,14 @@ public:
 
 public:
 	UFUNCTION(Category = "Spawning")
-		static ACItem_Event* SpawnItemEventOrNull(AActor* DoingActor, EItemEventType Type, FVector Location, FRotator Rotation);
+		/*
+		적용될 ItemEvent 를 랜덤으로 스폰 (범위로 설정)
+		//@param Start	- EItemEventType 의 첫번째 범위
+		//@param End	- EItemEventType 의 마지막 범위
+		*/
+		static ACItem_Event* RandomSpawnAppliedItemEvent
+		(
+			AActor* DoingActor, EItemEventType Start, EItemEventType End,
+			FVector Location = FVector(0.0f), FRotator Rotation = FRotator(0.0f)
+		);
 };

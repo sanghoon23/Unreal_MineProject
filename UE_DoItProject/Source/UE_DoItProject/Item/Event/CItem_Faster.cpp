@@ -35,8 +35,8 @@ ACItem_Faster::ACItem_Faster()
 		BoxComp->SetGenerateOverlapEvents(true);
 		BoxComp->SetCollisionProfileName("OverlapOnlyPawn");
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		//BoxComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 		BoxComp->SetBoxExtent(FVector(50.0f, 50.0f, 32.0f));
+		//BoxComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 
 		StaticMesh->SetSimulatePhysics(false);
 		StaticMesh->SetGenerateOverlapEvents(false);

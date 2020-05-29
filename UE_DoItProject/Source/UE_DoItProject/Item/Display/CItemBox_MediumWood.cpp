@@ -5,6 +5,11 @@
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Player.h"
 
+#include "Item/Event/CItem_RecoveryHP.h"
+#include "Item/Event/CItem_RecoveryMP.h"
+#include "Item/Event/CItem_Faster.h"
+#include "Item/Event/CItem_Barrier.h"
+
 ACItemBox_MediumWood::ACItemBox_MediumWood()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -152,10 +157,12 @@ void ACItemBox_MediumWood::SpawnItem()
 	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	//@Spawn
-	UCFL_ItemSpawning::SpawnItemEventOrNull
+	UCFL_ItemSpawning::RandomSpawnAppliedItemEvent
 	(
-		this, EItemEventType::RECOVERY_HP,
-		FVector(GetActorLocation()), FRotator(0.0f)
+		this,
+		EItemEventType::RECOVERY_HP,
+		EItemEventType::BARRIER,
+		FVector(GetActorLocation())
 	);
 
 	FTimerHandle DeathTimerHandle;

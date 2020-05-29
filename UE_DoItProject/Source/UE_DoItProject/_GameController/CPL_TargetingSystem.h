@@ -17,8 +17,14 @@ private:
 
 	#pragma	region Reflection
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Array")
+	UPROPERTY(VisibleAnywhere, Category = "Container")
 		TArray<APawn*> SelectedMonsters;
+
+	UPROPERTY(VisibleAnywhere, Category = "Decal")
+		/* Ex) Target 이 설정되었을 때 표시될 Decal */
+		class ACDecalActor_Targeting* TargetDecal;
+
+
 
 	#pragma endregion
 
@@ -36,6 +42,8 @@ public:
 	void OnFindTargets();
 		
 private:
+	//void SelectedMonster
+
 	bool CheckSelectedMonsters(APawn* InputPawn);
 	void AddSelectedMonstersArray(APawn* InputPawn);
 	void DelSelectedMonstersArray(APawn* InputPawn);
@@ -52,6 +60,9 @@ private:
 
 	uint8 CurrentIndexFindAttackTarget = 0;
 	APawn* CurrentFindAttackTarget;
+
+	/* DecalActor 의 원 반경 */
+	FVector DecalActorCircleSize = FVector(300.0f);
 
 	#pragma endregion
 };

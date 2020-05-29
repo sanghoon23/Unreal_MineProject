@@ -21,6 +21,7 @@ class UE_DOITPROJECT_API UCS_MouseController
 	#pragma	region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Actor")
+		/* Ex) Player 가 스킬을 쓸 때, 범위를 나타낼 Decal */
 		class ACDecalActor_WithMouse* DecalActor;
 
 	UPROPERTY(EditAnywhere, Category = "Material")
@@ -28,6 +29,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Material")
 		class UMaterialInterface* DecalMatCanNotUsingRange;
+
+	//UPROPERTY(VisibleAnywhere, Category = "Actor")
+	//	/* Ex) Player 가 스킬을 쓸 때, 범위를 나타낼 Decal */
+	//	class ACDecalActor_WithMouse* TargetDecalActor;
 
 	#pragma endregion
 
@@ -71,7 +76,7 @@ private:
 	FVector ClickPoint = FVector(0.0f);
 
 	/* DecalActor 의 원 반경 */
-	FVector DecalActorCircleSize = FVector(300.0f);
+	FVector DecalActorCircleSize = FVector(200.0f);
 
 	/* Mouse Deprojection 반경 */
 	AActor* TargetMouseStandard = nullptr;

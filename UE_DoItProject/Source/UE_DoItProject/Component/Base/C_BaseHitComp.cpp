@@ -52,14 +52,21 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	//}
 
 	//@Apply 시간 다 되면 제거
+	TArray<int> DeleteIndex;
 	for (int i = 0; i < ConditionDatas.Num(); ++i)
 	{
 		ConditionDatas[i]->UpdateCondition(OwnerPawn, DeltaTime);
 		if (ConditionDatas[i]->ApplyTime < 0.0f)
 		{
 			ConditionDatas[i]->EndCondition(OwnerPawn);
-			ConditionDatas.RemoveAt(i);
+			DeleteIndex.Add(i);
 		}
+	}
+
+	//@제거
+	for (int Index : DeleteIndex)
+	{
+		ConditionDatas.RemoveAt(Index);
 	}
 }
 
