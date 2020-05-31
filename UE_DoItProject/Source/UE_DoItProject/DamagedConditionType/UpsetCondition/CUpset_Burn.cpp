@@ -51,24 +51,22 @@ void UCUpset_Burn::UpdateCondition(APawn * Owner, float DeltaTime)
 		Owner->TakeDamage(SecondDamage, DamageEvent, GetDamageSubjectController(), Owner);
 	}
 
-	//@Particle Burn Update
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
-	if (I_Charactor != nullptr)
-	{
-		//@만약 도중에 죽었다면,
-		if (I_Charactor->IsDeath() == true)
-		{
-			ApplyTime = -0.001f;
-		}
-	}
+	////@Particle Burn Update
+	//IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
+	//if (I_Charactor != nullptr)
+	//{
+	//	//@만약 도중에 죽었다면,
+	//	if (I_Charactor->IsDeath() == true)
+	//	{
+	//		ApplyTime = -0.001f;
+	//	}
+	//}
 }
 
 void UCUpset_Burn::EndCondition(APawn * Owner)
 {
 	Super::EndCondition(Owner);
 	check(Owner);
-
-	IfTrueRet(BurnParticleComp == nullptr);
 
 	//@Particle OFF
 	if (BurnParticleComp != nullptr)

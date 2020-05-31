@@ -20,11 +20,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Container")
 		TArray<APawn*> SelectedMonsters;
 
-	UPROPERTY(VisibleAnywhere, Category = "Decal")
-		/* Ex) Target 이 설정되었을 때 표시될 Decal */
-		class ACDecalActor_Targeting* TargetDecal;
+	UPROPERTY(VisibleAnywhere, Category = "Actor")
+		/* Ex) Target 이 설정되었을 때 표시될 Plane */
+		class ACPlaneActor* TargetMarkActor;
 
-
+	UPROPERTY(VisibleAnywhere, Category = "Material")
+		class UMaterialInterface* Mat_TargetMarkActor;
 
 	#pragma endregion
 
@@ -39,11 +40,9 @@ public:
 
 	/* Function */
 public:
-	void OnFindTargets();
+	void OnFindTargets(FVector CenterPos, float CollisionSphereRadius);
 		
 private:
-	//void SelectedMonster
-
 	bool CheckSelectedMonsters(APawn* InputPawn);
 	void AddSelectedMonstersArray(APawn* InputPawn);
 	void DelSelectedMonstersArray(APawn* InputPawn);
@@ -60,9 +59,6 @@ private:
 
 	uint8 CurrentIndexFindAttackTarget = 0;
 	APawn* CurrentFindAttackTarget;
-
-	/* DecalActor 의 원 반경 */
-	FVector DecalActorCircleSize = FVector(300.0f);
 
 	#pragma endregion
 };

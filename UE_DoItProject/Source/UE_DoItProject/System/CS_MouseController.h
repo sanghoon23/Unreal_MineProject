@@ -52,14 +52,18 @@ public:
 	@param - StandardTarget Unproject 의 기준점이 되는 Target 설정 Default = nullptr
 	@param - StandardRange 기준점의 반경 Default = 0.0f
 	*/
-	void OnMouseControl(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
-	void OffMouseControl();
+	void OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
+	void OffUsingDecalMouseControl();
 
 	//Temp(임시)
 	//void SettingDecalMaterial();
 
 private:
-	bool MouseRayAndHit(APlayerController* PC, FVector& HitedLocation);
+	/* Ex) Mouse 클릭 시 Monster 타겟 설정 */
+	bool TargetMouseRayAndHit(APlayerController* PC);
+
+	/* Ex) 스킬 사용 시 범위 설정 */
+	bool UsingDecalMouseRayAndHit(APlayerController* PC, FVector& HitedLocation);
 
 	/* Member */
 public:
@@ -68,8 +72,10 @@ public:
 
 
 private:
+	class ACPlayer* Player;
+
 	int32 ControllerIndex = 0;
-	bool bUsingControl = false;
+	bool bUsingDecalMouseControl = false;
 
 	bool bDebug = false;
 	EMouseState MouseState = EMouseState::NONE;
@@ -81,4 +87,7 @@ private:
 	/* Mouse Deprojection 반경 */
 	AActor* TargetMouseStandard = nullptr;
 	float MouseRangeWithTarget = 0.0f;
+
+	/* Target Info - (Widget) */
+	class UWG_TargetInfo* TargetInfoWidget;
 };

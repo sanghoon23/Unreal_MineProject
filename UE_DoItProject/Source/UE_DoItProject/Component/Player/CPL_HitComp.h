@@ -12,6 +12,11 @@ class UE_DOITPROJECT_API UCPL_HitComp
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		class UAnimMontage* NormalHitMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		class UAnimMontage* StrongAttackHitMontage;
 
 	#pragma endregion
 

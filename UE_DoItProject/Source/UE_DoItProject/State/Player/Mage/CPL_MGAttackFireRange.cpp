@@ -311,7 +311,7 @@ void UCPL_MGAttackFireRange::MouseStartWaiting()
 	Player->OnBlockAction();
 
 	// @Mouse Controller
-	MouseController->OnMouseControl(FVector(400.0f), Player, 2000.0f);
+	MouseController->OnUsingDecalMouseControl(FVector(400.0f), Player, 2000.0f);
 	bMouseWaiting = true;
 
 	bFillingReadyGauge = false;

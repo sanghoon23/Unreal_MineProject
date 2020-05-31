@@ -35,7 +35,7 @@
 #define IfNullRetResult(p, result){ if(p == NULL) return result; }
 
 #define IfTrueRet(p){ if(p == true) return ;}
-#define IfTureRetResult(p, result){ if(p == true) return result; }
+#define IfTrueRetResult(p, result){ if(p == true) return result; }
 
 #define IfFalseRet(p){ if(p == false) return ;}
 #define IfFalseRetResult(p, result){ if(p == false) return result; }

@@ -270,10 +270,6 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//@Implementable Event
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //@Custom
 
 /* Player 의 KeyInput 을 Block -  Move & Action 이 실행되지 않도록 */
@@ -319,14 +315,14 @@ void ACPlayer::OffHandIK(uint8 HandNumber)
 		IneverseKinematics->OffRightHandIK();
 }
 
-void ACPlayer::OnMouseController(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange)
+void ACPlayer::OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange)
 {
-	MouseController->OnMouseControl(DecalCircleSize, StandardTarget, StandardRange);
+	MouseController->OnUsingDecalMouseControl(DecalCircleSize, StandardTarget, StandardRange);
 }
 
-void ACPlayer::OffMouseController()
+void ACPlayer::OffUsingDecalMouseControl()
 {
-	MouseController->OffMouseControl();
+	MouseController->OffUsingDecalMouseControl();
 }
 
 void ACPlayer::OnParticleInPlayer()
@@ -446,7 +442,7 @@ void ACPlayer::OnSwapState()
 /* @Player 위치 반경으로 공격 대상 찾기 */
 void ACPlayer::OnLookAround()
 {
-	TargetingSystem->OnFindTargets();
+	TargetingSystem->OnFindTargets(GetActorLocation(), 3000.0f);
 }
 
 /* @Player ActionKey - E (상호작용하기) */
@@ -472,9 +468,6 @@ void ACPlayer::OnBasicAttack()
 		// BeginAttack
 		SwitchBaseAttack->BeginAttack(this);
 	}
-
-	//Test Code
-	//OnMouseController();
 }
 
 /* Attack 동일 */

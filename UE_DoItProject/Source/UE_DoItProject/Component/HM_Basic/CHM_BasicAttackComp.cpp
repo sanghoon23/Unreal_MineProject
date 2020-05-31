@@ -36,7 +36,7 @@ void UCHM_BasicAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, F
 // @Return - @Type 에 해당하는 IBaseAttack
 IIC_BaseAttack * UCHM_BasicAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 {
-	IfTureRetResult
+	IfTrueRetResult
 	(
 		Type >= static_cast<uint8>(HM_BasicAttackType::END),
 		nullptr

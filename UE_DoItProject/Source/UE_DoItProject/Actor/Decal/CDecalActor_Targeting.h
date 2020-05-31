@@ -12,6 +12,9 @@ class UE_DOITPROJECT_API ACDecalActor_Targeting
 	
 	#pragma	region Reflection
 private:
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//	class UStaticMeshComponent* StaticMesh;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UDecalComponent* DecalComp;
 

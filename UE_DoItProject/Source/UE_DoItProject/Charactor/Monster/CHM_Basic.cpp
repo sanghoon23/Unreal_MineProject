@@ -167,6 +167,10 @@ void ACHM_Basic::OffCollision()
 
 float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+
 	Info.CurrentHP -= DamageAmount;
 
 	if (Info.CurrentHP <= 0.0f)
@@ -193,24 +197,24 @@ void ACHM_Basic::CallDestory()
 
 IIC_AttackComp * ACHM_Basic::GetIAttackComp()
 {
-	IfTureRetResult(AttackComp == nullptr, nullptr); // @Return Null
+	IfTrueRetResult(AttackComp == nullptr, nullptr); // @Return Null
 	return Cast<IIC_AttackComp>(AttackComp);
 }
 
 IIC_EquipComp * ACHM_Basic::GetIEquipComp()
 {
-	IfTureRetResult(EquipComp == nullptr, nullptr); // @Return Null
+	IfTrueRetResult(EquipComp == nullptr, nullptr); // @Return Null
 	return Cast<IIC_EquipComp>(EquipComp);
 }
 
 IIC_HitComp * ACHM_Basic::GetIHitComp()
 {
-	IfTureRetResult(HitComponent == nullptr, nullptr); // @Return Null
+	IfTrueRetResult(HitComponent == nullptr, nullptr); // @Return Null
 	return Cast<IIC_HitComp>(HitComponent);
 }
 
 IIC_MeshParticle * ACHM_Basic::GetIMeshParticle()
 {
-	IfTureRetResult(MeshParticleComponent == nullptr, nullptr); // @Return Null
+	IfTrueRetResult(MeshParticleComponent == nullptr, nullptr); // @Return Null
 	return Cast<IIC_MeshParticle>(MeshParticleComponent);
 }

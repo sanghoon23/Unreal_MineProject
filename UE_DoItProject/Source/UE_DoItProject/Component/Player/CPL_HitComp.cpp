@@ -13,6 +13,28 @@ UCPL_HitComp::UCPL_HitComp()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	FString Path = L"";
+
+	#pragma region Hit Montages
+	// 'Normal' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Damaged/Player_Mon_NormalAttack.Player_Mon_NormalAttack'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit(*Path);
+		if (normalHit.Succeeded())
+			NormalHitMontage = normalHit.Object;
+	}
+
+	// 'StrongAttack' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Damaged/Player_Mon_StorngAttack.Player_Mon_StorngAttack'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> strongAttackHit(*Path);
+		if (strongAttackHit.Succeeded())
+			StrongAttackHitMontage = strongAttackHit.Object;
+	}
+
+	#pragma endregion
+
+
+
 }
 
 void UCPL_HitComp::BeginPlay()

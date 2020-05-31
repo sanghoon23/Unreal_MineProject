@@ -5,7 +5,7 @@
 #include "Interface/IC_Monster.h"
 #include "Charactor/Monster/Base/CHumanoidMonster.h"
 #include "Charactor/Player/CPlayer.h"
-#include "Actor/Decal/CDecalActor_Targeting.h"
+#include "Actor/Figure/CPlaneActor.h"
 
 //UI
 #include "UI/HUD_Main.h"
@@ -16,6 +16,14 @@ UCPL_TargetingSystem::UCPL_TargetingSystem()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	FString strPath = L"";
+
+	strPath = L"Material'/Game/_Mine/UseMaterial/Mat_TargetMark.Mat_TargetMark'";
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> Mat_TargetMark(*strPath);
+	if (Mat_TargetMark.Succeeded())
+	{
+		Mat_TargetMarkActor = Mat_TargetMark.Object;
+	}
 }
 
 
@@ -35,12 +43,12 @@ void UCPL_TargetingSystem::BeginPlay()
 		TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
 	}
 
-	//@Spawn DecalActor
+	//@Spawn PlaneActor & Set Material
 	FTransform Transform = FTransform::Identity;
-	TargetDecal = GetWorld()->SpawnActor<ACDecalActor_Targeting>(ACDecalActor_Targeting::StaticClass(), Transform);
-	TargetDecal->SetDecalCompRotation(FRotator(-90.0f, 0.0f, 0.0f));
-	TargetDecal->SetDecalSize(DecalActorCircleSize);
-	TargetDecal->GetRootComponent()->SetVisibility(false);
+	TargetMarkActor = GetWorld()->SpawnActor<ACPlaneActor>(ACPlaneActor::StaticClass(), Transform);
+	TargetMarkActor->SetActorScale3D(FVector(2.0f));
+	TargetMarkActor->SetMaterial(Mat_TargetMarkActor);
+	TargetMarkActor->GetRootComponent()->SetVisibility(false);
 }
 
 
@@ -63,19 +71,19 @@ void UCPL_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 			//@Widget UnVisible
 			TargetInfoWidget->WigetUnVisible();
 
-			//@Decal OFF
-			TargetDecal->GetRootComponent()->SetVisibility(false);
+			//@MarkActor Visible OFF
+			TargetMarkActor->SetSMVisibility(false);
 
 			return;
 		}
 		else
 		{
-			//@Decal ON
-			TargetDecal->GetRootComponent()->SetVisibility(true);
-
-			//@Set Location
+			//@MarkActor Set Location
 			FVector TargetLocation = CurrentFindAttackTarget->GetActorLocation();
-			TargetDecal->SetActorLocation(TargetLocation);
+			TargetMarkActor->SetActorLocation(TargetLocation);
+
+			//@MarkActor Visible ON
+			TargetMarkActor->SetSMVisibility(true);
 		}
 	}
 
@@ -95,18 +103,18 @@ void UCPL_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 			//@Widget UnVisible
 			TargetInfoWidget->WigetUnVisible();
 
-			//@Decal OFF
-			TargetDecal->GetRootComponent()->SetVisibility(false);
+			//@MarkActor Visible OFF
+			TargetMarkActor->SetSMVisibility(false);
 		}
 	}
 }
 
 /* TargetingSystem TarceChannel 을 이용해 Target 선별하기. */
-void UCPL_TargetingSystem::OnFindTargets()
+void UCPL_TargetingSystem::OnFindTargets(FVector CenterPos, float CollisionSphereRadius)
 {
-	FVector Center = GetOwner()->GetActorLocation();
-	FCollisionShape Sphere = FCollisionShape::MakeSphere(FindDistance);
-	FCollisionQueryParams params(NAME_None, false, GetOwner());
+	FVector Center = CenterPos;
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(CollisionSphereRadius);
+	FCollisionQueryParams Params(NAME_None, false, GetOwner());
 
 	TArray<FOverlapResult> overlapResults;
 	bool bHit = GetWorld()->OverlapMultiByChannel
@@ -116,7 +124,7 @@ void UCPL_TargetingSystem::OnFindTargets()
 		FQuat::Identity,
 		ECollisionChannel::ECC_GameTraceChannel6, //@TragetSystem TraceChannel
 		Sphere,
-		params
+		Params
 	);
 
 	float DebugLiftTime = 2.0f;
@@ -126,8 +134,6 @@ void UCPL_TargetingSystem::OnFindTargets()
 
 #endif //  ENABLE_DRAW_DEBUG
 
-	//overlapResults.sor
-	//arrayWithStructs.Sort([](const FMyStruct& a, const FMyStruct& b) { return a.field < b.field; });
 	overlapResults.StableSort([&](const FOverlapResult& A, const FOverlapResult& B)
 	{
 		float DistanceToA = Player->GetDistanceTo(A.GetActor());
@@ -168,7 +174,7 @@ void UCPL_TargetingSystem::OnFindTargets()
 				//@Target
 				CurrentFindAttackTarget = FindMonster;
 
-				//@Array ADD - Priority Queue
+				//@Array ADD - (Sort)
 				AddSelectedMonstersArray(FindMonster);
 
 				//@Widget Visible

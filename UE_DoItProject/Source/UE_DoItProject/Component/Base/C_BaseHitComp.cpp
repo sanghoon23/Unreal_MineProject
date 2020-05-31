@@ -28,12 +28,12 @@ void UC_BaseHitComp::BeginPlay()
 		APawn* OwnerPawn = Cast<APawn>(GetOwner());
 		check(OwnerPawn);
 
-		//@Á×¾úÀ» ¶© ConditionData ¸¦ ºñ¿î´Ù.
-		for (int i = 0; i < ConditionDatas.Num(); ++i)
-		{
-			ConditionDatas[i]->EndCondition(OwnerPawn);
-		}
-		ConditionDatas.Empty();
+		////@Á×¾úÀ» ¶© ConditionData ¸¦ ºñ¿î´Ù.
+		//for (int i = 0; i < ConditionDatas.Num(); ++i)
+		//{
+		//	ConditionDatas[i]->EndCondition(OwnerPawn);
+		//}
+		//ConditionDatas.Empty();
 	});
 }
 

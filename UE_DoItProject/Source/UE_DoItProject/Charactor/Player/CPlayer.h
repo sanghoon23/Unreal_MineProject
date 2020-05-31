@@ -168,8 +168,8 @@ public:
 	@param - StandardTarget Unproject 의 기준점이 되는 Target 설정 Default = nullptr
 	@param - StandardRange 기준점의 반경 Default = 0.0f
 	*/
-	void OnMouseController(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
-	void OffMouseController();
+	void OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
+	void OffUsingDecalMouseControl();
 
 private:
 	// Axis Mapping
@@ -204,6 +204,9 @@ public:
 
 	// @TargetSystem
 	APawn* GetFindAttackTarget();
+
+	// @Target System
+	class UCPL_TargetingSystem* GetTargetingSystem() { return TargetingSystem; }
 
 	// @CS MouseController
 	class UCS_MouseController* GetPlayerCSMouseController() { return MouseController; }

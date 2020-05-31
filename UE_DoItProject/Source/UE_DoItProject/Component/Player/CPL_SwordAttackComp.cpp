@@ -87,7 +87,7 @@ void UCPL_SwordAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, F
 // 기존 타입과 바뀌면, EndAttack BroadCast 후, 타입 세팅, 세팅한 Type IBaseAttack 리턴.
 IIC_BaseAttack*  UCPL_SwordAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 {
-	IfTureRetResult
+	IfTrueRetResult
 	(
 		Type >= static_cast<uint8>(ESwordAttackType::END),
 		nullptr

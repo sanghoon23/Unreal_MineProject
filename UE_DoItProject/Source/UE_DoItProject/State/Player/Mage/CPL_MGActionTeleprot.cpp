@@ -113,7 +113,7 @@ void UCPL_MGActionTeleprot::StartWaiting()
 	// @이동 키를 제외한 Action Key Block 하기.
 	Player->OnBlockAction();
 
-	MouseController->OnMouseControl(FVector(100.0f), Player, 2500.0f);
+	MouseController->OnUsingDecalMouseControl(FVector(100.0f), Player, 2500.0f);
 	bStartWaiting = true;
 }
 

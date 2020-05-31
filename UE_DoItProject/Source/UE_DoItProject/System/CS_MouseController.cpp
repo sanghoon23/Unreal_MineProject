@@ -1,7 +1,14 @@
 #include "CS_MouseController.h"
 #include "Global.h"
 
+#include "Interface/IC_Monster.h"
 #include "Actor/Decal/CDecalActor_WithMouse.h"
+#include "Charactor/Player/CPlayer.h"
+#include "_GameController/CPL_TargetingSystem.h"
+
+//UI
+#include "UI/HUD_Main.h"
+#include "UI/Widget/WG_TargetInfo.h"
 
 UCS_MouseController::UCS_MouseController()
 {
@@ -36,6 +43,10 @@ void UCS_MouseController::BeginPlay()
 
 	bDebug = true;
 
+	//@Player
+	Player = Cast<ACPlayer>(GetOwner());
+	check(Player);
+
 	//@Spawn DecalActor
 	FTransform Transform = FTransform::Identity;
 	DecalActor = GetWorld()->SpawnActor<ACDecalActor_WithMouse>(ACDecalActor_WithMouse::StaticClass(), Transform);
@@ -43,19 +54,30 @@ void UCS_MouseController::BeginPlay()
 	DecalActor->SetDecalCompMat(DecalMatCanUsingRange);
 	DecalActor->SetDecalSize(DecalActorCircleSize);
 	DecalActor->GetRootComponent()->SetVisibility(false);
+
+	//@UI
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC != nullptr)
+	{
+		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+		check(MainHUD);
+		TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+	}
 }
 
 void UCS_MouseController::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bUsingControl == true)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//@Using Decal
+	if (bUsingDecalMouseControl == true)
 	{
 		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), ControllerIndex);
 		if (PC != nullptr)
 		{
 			FVector HitLocation;
-			bool bRay = MouseRayAndHit(PC, HitLocation);
+			bool bRay = UsingDecalMouseRayAndHit(PC, HitLocation);
 			if (bRay == true)
 			{
 				//@Set Visibility
@@ -69,7 +91,7 @@ void UCS_MouseController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 					//@좌표 넘겨주기.
 					ClickPoint = HitLocation;
 					MouseState = EMouseState::CHECKINGPOINT;
-					OffMouseControl();
+					OffUsingDecalMouseControl();
 				}
 
 			}//(bRay == true)
@@ -78,21 +100,31 @@ void UCS_MouseController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 			if (PC->IsInputKeyDown(EKeys::RightMouseButton))
 			{
 				MouseState = EMouseState::NONE;
-				OffMouseControl();
+				OffUsingDecalMouseControl();
 			}
 
 		}//(PC != nullptr)
 	}
-	else if (bUsingControl == false)
+	//@몬스터 선택
+	else if (bUsingDecalMouseControl == false)
 	{
 		DecalActor->GetRootComponent()->SetVisibility(false);
+
+		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), ControllerIndex);
+		if (PC != nullptr)
+		{
+			if (PC->IsInputKeyDown(EKeys::LeftMouseButton))
+			{
+				TargetMouseRayAndHit(PC);
+			}
+		}
 	}
 }
 
-void UCS_MouseController::OnMouseControl(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange)
+void UCS_MouseController::OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange)
 {
 	MouseState = EMouseState::WAIT;
-	bUsingControl = true;
+	bUsingDecalMouseControl = true;
 
 	//@Set Decal Size
 	DecalActorCircleSize = DecalCircleSize;
@@ -111,9 +143,9 @@ void UCS_MouseController::OnMouseControl(FVector DecalCircleSize, AActor* Standa
 	}
 }
 
-void UCS_MouseController::OffMouseControl()
+void UCS_MouseController::OffUsingDecalMouseControl()
 {
-	bUsingControl = false;
+	bUsingDecalMouseControl = false;
 
 	DecalActorCircleSize = FVector(0.0f);
 
@@ -121,7 +153,43 @@ void UCS_MouseController::OffMouseControl()
 	MouseRangeWithTarget = 0.0f;
 }
 
-bool UCS_MouseController::MouseRayAndHit(APlayerController* PC, FVector& HitedLocation)
+bool UCS_MouseController::TargetMouseRayAndHit(APlayerController * PC)
+{
+	check(PC);
+
+	//@UnProjection
+	FVector WorldLocation;
+	FVector WorldDirection;
+	PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+
+	//@Calc Hit
+	FVector RayStart = WorldLocation;
+	FVector RayEnd = WorldLocation + (WorldDirection * 10000.0f);
+	TArray<AActor *> Ignore;
+	EDrawDebugTrace::Type Debug
+		= (bDebug == true) ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
+
+	FHitResult HitResult;
+	bool bHit = UKismetSystemLibrary::LineTraceSingle
+	(
+		GetWorld(), RayStart, RayEnd, 
+		UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility),
+		false, Ignore, Debug, HitResult, true
+	);
+
+	if (bHit == true)
+	{
+		UCPL_TargetingSystem* TargetSystem = Player->GetTargetingSystem();
+		check(TargetSystem);
+
+		TargetSystem->OnFindTargets(HitResult.GetActor()->GetActorLocation(), 10.0f);
+	}
+	else return false;
+
+	return true;
+}
+
+bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVector& HitedLocation)
 {
 	check(PC);
 
