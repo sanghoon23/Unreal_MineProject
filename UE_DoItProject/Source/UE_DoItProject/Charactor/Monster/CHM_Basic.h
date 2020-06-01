@@ -25,10 +25,10 @@ private:
 		bool bAIRunningPossible = true;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCHM_BasicAttackComp* AttackComp;
+		class UCHM_BasicAttackComp* AttackComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCHM_BasicHitComp* HitComponent;
+		class UCHM_BasicHitComp* HitComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_BasicEquipComp* EquipComp;

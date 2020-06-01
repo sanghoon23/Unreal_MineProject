@@ -11,14 +11,12 @@ UCPL_SwordActionComp::UCPL_SwordActionComp()
 	// Create Roll Action
 	{
 		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_SDActionRoll>("SD_RollAction");
-		RollAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		SD_ActionArray.Emplace(RollAction);
 	}
 
 	// Create Jump Action
 	{
 		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_SDActionJump>("SD_JumpAction");
-		JumpAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		SD_ActionArray.Emplace(JumpAction);
 	}
 }

@@ -21,8 +21,6 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		UCPL_SwordBaseAttack* SD_BasicAttack = nullptr;
 
 		SD_BasicAttack = CreateDefaultSubobject<UCPL_SDAttackBasic>("Sword_AttackFirst");
-		SD_BasicAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
 		SwordAttackStateArray.Emplace(SD_BasicAttack);
 	}
 
@@ -31,8 +29,6 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		UCPL_SwordBaseAttack* SD_UpperAttack = nullptr;
 
 		SD_UpperAttack = CreateDefaultSubobject<UCPL_SDAttackUpper>("Sword_AttackSecond");
-		SD_UpperAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
 		SwordAttackStateArray.Emplace(SD_UpperAttack);
 	}
 
@@ -41,8 +37,6 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		UCPL_SwordBaseAttack* SD_FinishAttack = nullptr;
 
 		SD_FinishAttack = CreateDefaultSubobject<UCPL_SDAttackFinish>("Sword_AttackThird");
-		SD_FinishAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
 		SwordAttackStateArray.Emplace(SD_FinishAttack);
 	}
 
@@ -51,8 +45,6 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		UCPL_SwordBaseAttack* SD_WindmilSlash = nullptr;
 
 		SD_WindmilSlash = CreateDefaultSubobject<UCPL_SDAttackWindmilSlash>("Sword_AttackFour");
-		SD_WindmilSlash->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
 		SwordAttackStateArray.Emplace(SD_WindmilSlash);
 	}
 
@@ -61,8 +53,6 @@ UCPL_SwordAttackComp::UCPL_SwordAttackComp()
 		UCPL_SwordBaseAttack* SD_BackRange = nullptr;
 
 		SD_BackRange = CreateDefaultSubobject<UCPL_SDAttackBackRange>("Sword_AttackFive");
-		SD_BackRange->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
 		SwordAttackStateArray.Emplace(SD_BackRange);
 	}
 

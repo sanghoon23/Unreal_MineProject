@@ -9,14 +9,10 @@ UCHM_BasicAttackComp::UCHM_BasicAttackComp()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	#pragma region Create State
-	// Create State
+	// @FirstCombo
 	{
-		UCHM_BasicBaseAttack* FirstCombo = CreateDefaultSubobject<UCHM_BasicFirstCombo>("HM_Basic_FirstCombo");
-		FirstCombo->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
-		// UGameplayStatics::getpawn
-
-		BasicAttackStateArray.Add(FirstCombo);
+		UCHM_BasicBaseAttack* FirstAttack = CreateDefaultSubobject<UCHM_BasicFirstCombo>("HMBasic_FirstCombo");
+		BasicAttackStateArray.Emplace(FirstAttack);
 	}
 	#pragma endregion
 }

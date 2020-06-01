@@ -69,11 +69,6 @@ public:
 
 	#pragma region Member
 public:
-	// @Onwer - 공격하는 Pawn (주체)
-	// Protected - OwnerPawn 에 넣어짐.
-	// 좀 더 편하게 Owner 로 접근하기 위해 만듬.
-	void SetOwnerPawn(APawn* Owner);
-
 	/* Attack 동작 실행 중 움직일 '방향' */
 	FVector GetAttackMoveDir() const { return AttackMoveDir; }
 
@@ -81,8 +76,6 @@ public:
 	float GetAttackMoveSpeed() const { return AttackMoveSpeed; }
 
 protected:
-	APawn* OwnerPawn;
-
 	// @Attack 시 Move 방향
 	FVector AttackMoveDir;
 

@@ -28,7 +28,7 @@ void UCPL_SDActionRoll::BeginPlay()
 	Super::BeginPlay();
 	
 	// @Set PlayerActor
-	Player = Cast<ACPlayer>(OwnerPawn);
+	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
 }
 

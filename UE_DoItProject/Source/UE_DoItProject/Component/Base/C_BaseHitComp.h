@@ -30,7 +30,7 @@ private:
 
 	#pragma	region Reflection
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
+	UPROPERTY(EditAnywhere, Category = "Data")
 		/* HitComp 에 해당하는 몽타주들의 실행 여부 */
 		bool bBlockDamagedMontage = false;
 
@@ -54,6 +54,10 @@ protected:
 		class UParticleSystem* FreezeParticle;
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+	/* HitComp Owner 가 맞고 있는지 - 몽타주 실행시, CN_BeginBeat */
+	bool bBeated = false;
+
 	/*
 	@상태이상, 행동불가 를 다음 ConditionData TArray 
 	* UHitUpsetConditionData(상태이상) , * UHitNonActionConditionData(행동불가)
@@ -75,6 +79,9 @@ public:
 	/* Pure Virtual Function */
 public:
 	virtual void OnHit(AActor* AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount) override {}
+
+	virtual const bool IsBeated() const override { return bBeated; }
+	virtual void SetBeated(bool bValue) override { bBeated = bValue; }
 
 	virtual UCBaseConditionType* GetConditionData(int Index) override;
 

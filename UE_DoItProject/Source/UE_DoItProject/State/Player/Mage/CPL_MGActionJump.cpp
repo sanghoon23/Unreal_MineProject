@@ -26,7 +26,7 @@ void UCPL_MGActionJump::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Player = Cast<ACPlayer>(OwnerPawn);
+	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
 }
 

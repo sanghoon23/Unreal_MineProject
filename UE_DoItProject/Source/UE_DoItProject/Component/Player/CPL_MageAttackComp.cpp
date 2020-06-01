@@ -17,35 +17,30 @@ UCPL_MageAttackComp::UCPL_MageAttackComp()
 	// @BasicAttack
 	{
 		UCPL_MageBaseAttack* MG_BasicAttack = CreateDefaultSubobject<UCPL_MGAttackBasic>("Mage_AttackFrist");
-		MG_BasicAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_BasicAttack);
 	}
 
 	// @MagicBall
 	{
 		UCPL_MageBaseAttack* MG_MagicBallAttack = CreateDefaultSubobject<UCPL_MGAttackMagicBall>("Mage_AttackSecond");
-		MG_MagicBallAttack->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_MagicBallAttack);
 	}
 
 	// @FireRange
 	{
 		UCPL_MageBaseAttack* MG_FireRange = CreateDefaultSubobject<UCPL_MGAttackFireRange>("Mage_AttackThrid");
-		MG_FireRange->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_FireRange);
 	}
 
 	// @Poisioning
 	{
 		UCPL_MageBaseAttack* MG_Poisioning = CreateDefaultSubobject<UCPL_MGAttackPoisioning>("Mage_AttackFour");
-		MG_Poisioning->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_Poisioning);
 	}
 
 	// @Poisioning
 	{
 		UCPL_MageBaseAttack* MG_Freezing = CreateDefaultSubobject<UCPL_MGAttackFreezing>("Mage_AttackFive");
-		MG_Freezing->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MageAttackStateArray.Emplace(MG_Freezing);
 	}
 

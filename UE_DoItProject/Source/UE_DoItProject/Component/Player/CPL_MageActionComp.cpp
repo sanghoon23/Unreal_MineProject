@@ -11,14 +11,12 @@ UCPL_MageActionComp::UCPL_MageActionComp()
 	// Create Roll Action
 	{
 		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionTeleprot>("MG_Teleprot");
-		RollAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MG_ActionArray.Emplace(RollAction);
 	}
 
 	// Create Jump Action
 	{
 		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_MGActionJump>("MG_JumpAction");
-		JumpAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
 		MG_ActionArray.Emplace(JumpAction);
 	}
 }

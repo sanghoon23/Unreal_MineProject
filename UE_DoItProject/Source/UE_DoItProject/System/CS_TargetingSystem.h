@@ -2,18 +2,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CPL_TargetingSystem.generated.h"
+#include "CS_TargetingSystem.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class UE_DOITPROJECT_API UCPL_TargetingSystem 
+UCLASS()
+class UE_DOITPROJECT_API UCS_TargetingSystem 
 	: public UActorComponent
 {
 	GENERATED_BODY()
 
 private:
 	const float FindDistance = 3000.0f; // 찾을 반경
-
 
 	#pragma	region Reflection
 private:
@@ -30,7 +29,7 @@ private:
 	#pragma endregion
 
 public:	
-	UCPL_TargetingSystem();
+	UCS_TargetingSystem();
 
 protected:
 	virtual void BeginPlay() override;
@@ -40,8 +39,9 @@ public:
 
 	/* Function */
 public:
+	/* TargetingSystem TarceChannel 을 이용해 Target 선별하기. */
 	void OnFindTargets(FVector CenterPos, float CollisionSphereRadius);
-		
+
 private:
 	bool CheckSelectedMonsters(APawn* InputPawn);
 	void AddSelectedMonstersArray(APawn* InputPawn);
@@ -61,4 +61,5 @@ private:
 	APawn* CurrentFindAttackTarget;
 
 	#pragma endregion
+		
 };

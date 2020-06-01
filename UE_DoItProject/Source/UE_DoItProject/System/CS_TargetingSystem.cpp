@@ -1,4 +1,4 @@
-#include "CPL_TargetingSystem.h"
+#include "CS_TargetingSystem.h"
 #include "Global.h"
 
 #include "Interface/IC_Charactor.h"
@@ -11,7 +11,7 @@
 #include "UI/HUD_Main.h"
 #include "UI/Widget/WG_TargetInfo.h"
 
-UCPL_TargetingSystem::UCPL_TargetingSystem()
+UCS_TargetingSystem::UCS_TargetingSystem()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -27,7 +27,8 @@ UCPL_TargetingSystem::UCPL_TargetingSystem()
 }
 
 
-void UCPL_TargetingSystem::BeginPlay()
+// Called when the game starts
+void UCS_TargetingSystem::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -52,7 +53,8 @@ void UCPL_TargetingSystem::BeginPlay()
 }
 
 
-void UCPL_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+// Called every frame
+void UCS_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -110,7 +112,7 @@ void UCPL_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 }
 
 /* TargetingSystem TarceChannel 을 이용해 Target 선별하기. */
-void UCPL_TargetingSystem::OnFindTargets(FVector CenterPos, float CollisionSphereRadius)
+void UCS_TargetingSystem::OnFindTargets(FVector CenterPos, float CollisionSphereRadius)
 {
 	FVector Center = CenterPos;
 	FCollisionShape Sphere = FCollisionShape::MakeSphere(CollisionSphereRadius);
@@ -179,13 +181,13 @@ void UCPL_TargetingSystem::OnFindTargets(FVector CenterPos, float CollisionSpher
 
 				//@Widget Visible
 				TargetInfoWidget->WigetVisible();
-				return; 
+				return;
 			}
 		}
 	}
 }
 
-bool UCPL_TargetingSystem::CheckSelectedMonsters(APawn * InputPawn)
+bool UCS_TargetingSystem::CheckSelectedMonsters(APawn * InputPawn)
 {
 	check(InputPawn);
 	for (APawn* Pawn : SelectedMonsters)
@@ -197,13 +199,13 @@ bool UCPL_TargetingSystem::CheckSelectedMonsters(APawn * InputPawn)
 	return false;
 }
 
-void UCPL_TargetingSystem::AddSelectedMonstersArray(APawn * InputPawn)
+void UCS_TargetingSystem::AddSelectedMonstersArray(APawn * InputPawn)
 {
 	check(InputPawn);
 	SelectedMonsters.Add(InputPawn);
 }
 
-void UCPL_TargetingSystem::DelSelectedMonstersArray(APawn * InputPawn)
+void UCS_TargetingSystem::DelSelectedMonstersArray(APawn * InputPawn)
 {
 	check(InputPawn);
 	for (int i = 0; i < SelectedMonsters.Num(); ++i)
@@ -216,7 +218,7 @@ void UCPL_TargetingSystem::DelSelectedMonstersArray(APawn * InputPawn)
 	}
 }
 
-APawn * UCPL_TargetingSystem::GetSelectedMonsterArray(uint8 Index)
+APawn * UCS_TargetingSystem::GetSelectedMonsterArray(uint8 Index)
 {
 	if (Index >= SelectedMonsters.Num() || Index < 0)
 		return nullptr;
@@ -224,7 +226,7 @@ APawn * UCPL_TargetingSystem::GetSelectedMonsterArray(uint8 Index)
 	return SelectedMonsters[Index];
 }
 
-APawn * UCPL_TargetingSystem::GetCurrentFindAttackTarget()
+APawn * UCS_TargetingSystem::GetCurrentFindAttackTarget()
 {
 	//@죽었을 때,
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(CurrentFindAttackTarget);
@@ -237,4 +239,3 @@ APawn * UCPL_TargetingSystem::GetCurrentFindAttackTarget()
 
 	return CurrentFindAttackTarget;
 }
-

@@ -4,7 +4,7 @@
 #include "Interface/IC_Monster.h"
 #include "Actor/Decal/CDecalActor_WithMouse.h"
 #include "Charactor/Player/CPlayer.h"
-#include "_GameController/CPL_TargetingSystem.h"
+#include "System/CS_TargetingSystem.h"
 
 //UI
 #include "UI/HUD_Main.h"
@@ -179,7 +179,7 @@ bool UCS_MouseController::TargetMouseRayAndHit(APlayerController * PC)
 
 	if (bHit == true)
 	{
-		UCPL_TargetingSystem* TargetSystem = Player->GetTargetingSystem();
+		UCS_TargetingSystem* TargetSystem = Player->GetTargetingSystem();
 		check(TargetSystem);
 
 		TargetSystem->OnFindTargets(HitResult.GetActor()->GetActorLocation(), 10.0f);

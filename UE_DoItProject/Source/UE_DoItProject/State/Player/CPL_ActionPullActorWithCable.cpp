@@ -42,7 +42,7 @@ void UCPL_ActionPullActorWithCable::BeginPlay()
 	Super::BeginPlay();
 	
 	//@Get Player Pointer
-	Player = Cast<ACPlayer>(OwnerPawn);
+	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
 }
 

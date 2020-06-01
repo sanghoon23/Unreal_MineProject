@@ -105,8 +105,6 @@ UCPL_StateMachine::UCPL_StateMachine()
 	// Create PullActorWithCable Action
 	{
 		PullActorAction = CreateDefaultSubobject<UCPL_ActionPullActorWithCable>("ActionPullActor");
-		//@Set OwnerPawn ÇØÁà¾ßÇÔ.
-		PullActorAction->SetOwnerPawn(Cast<APawn>(GetOwner()));
 	}
 
 	#pragma endregion

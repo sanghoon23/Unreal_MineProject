@@ -5,7 +5,6 @@
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_BaseAttack.h"
 #include "Charactor/Player/CPlayer.h"
-#include "_GameController/CPL_TargetingSystem.h"
 #include "System/CS_AttackDecision.h"
 
 UCPL_SwordBaseAttack::UCPL_SwordBaseAttack()
@@ -22,7 +21,7 @@ void UCPL_SwordBaseAttack::BeginPlay()
 	Super::BeginPlay();
 
 	// @Set Player
-	Player = Cast<ACPlayer>(OwnerPawn);
+	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
 
 	#pragma region Set Delegate

@@ -49,6 +49,9 @@ private:
 		class UCPL_StateMachine* StateManager;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCPL_HitComp* HitComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCPL_EquipComp* EquipComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Component")
@@ -64,7 +67,7 @@ private:
 		class UC_BaseAbilityComp* AbilityComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
-		class UCPL_TargetingSystem* TargetingSystem;
+		class UCS_TargetingSystem* TargetSystem;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
 		class UCS_MouseController* MouseController;
@@ -138,13 +141,23 @@ public:
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const override { return CurrentMontage; }
 	virtual IIC_StateManager* GetIStateManager() override;
 	virtual IIC_AttackComp* GetIAttackComp() override;
-	// TODO : virtual IIC_HitComp* GetIHitComp() override;
+	virtual IIC_HitComp* GetIHitComp() override;
 	virtual IIC_EquipComp* GetIEquipComp() override;
 	virtual IIC_MeshParticle* GetIMeshParticle() override;
 
 /* Virtual - (IC_Player) */
 public:
 	virtual IIC_AbilityComp* GetIAbilityComp();
+
+/* Class Virtual */
+	//@return float - 현재 남은 체력 - (PlayerInfo.CurrentHP)
+	virtual float TakeDamage
+	(
+		float DamageAmount,
+		struct FDamageEvent const & DamageEvent,
+		class AController * EventInstigator,
+		AActor * DamageCauser
+	) override;
 
 	/* Function */
 public:
@@ -206,7 +219,7 @@ public:
 	APawn* GetFindAttackTarget();
 
 	// @Target System
-	class UCPL_TargetingSystem* GetTargetingSystem() { return TargetingSystem; }
+	class UCS_TargetingSystem* GetTargetingSystem() { return TargetSystem; }
 
 	// @CS MouseController
 	class UCS_MouseController* GetPlayerCSMouseController() { return MouseController; }

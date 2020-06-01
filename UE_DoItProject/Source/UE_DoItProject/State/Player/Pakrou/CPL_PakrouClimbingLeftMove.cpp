@@ -26,7 +26,7 @@ void UCPL_PakrouClimbingLeftMove::BeginPlay()
 	Super::BeginPlay();
 
 	// @Set PlayerActor
-	Player = Cast<ACPlayer>(OwnerPawn);
+	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
 }
 

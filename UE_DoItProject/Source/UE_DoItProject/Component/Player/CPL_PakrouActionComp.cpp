@@ -20,11 +20,6 @@ UCPL_PakrouActionComp::UCPL_PakrouActionComp()
 	#pragma region Set StartBaseAction
 	// Set StartBaseAciton
 	{
-		// @SetOwner
-		JumpOver->SetOwnerPawn(Cast<APawn>(GetOwner()));
-		ClimbingIdle->SetOwnerPawn(Cast<APawn>(GetOwner()));
-		WallClimbRun->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
 		// @SetPakrouComp
 		JumpOver->SetPakrouComponent(this);
 		ClimbingIdle->SetPakrouComponent(this);
@@ -47,11 +42,6 @@ UCPL_PakrouActionComp::UCPL_PakrouActionComp()
 	#pragma region Set PakrouLinkAction
 	// Set PakrouLinkAction
 	{
-		// @SetOwner
-		ClimbingLeftMove->SetOwnerPawn(Cast<APawn>(GetOwner()));
-		ClimbingRightMove->SetOwnerPawn(Cast<APawn>(GetOwner()));
-		ClimbOver->SetOwnerPawn(Cast<APawn>(GetOwner()));
-
 		// @SetPakrouComp
 		ClimbingLeftMove->SetPakrouComponent(this);
 		ClimbingRightMove->SetPakrouComponent(this);

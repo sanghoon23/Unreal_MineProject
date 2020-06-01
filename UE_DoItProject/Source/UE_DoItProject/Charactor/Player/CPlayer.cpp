@@ -10,7 +10,7 @@
 
 #include "_GameMode/CBaseGameMode.h"
 #include "System/CS_MouseController.h"
-#include "_GameController/CPL_TargetingSystem.h"
+#include "System/CS_TargetingSystem.h"
 #include "Component/CPL_StateMachine.h"
 #include "Component/Player/CPL_EquipComp.h"
 #include "Component/CPL_ActionInteractSystem.h"
@@ -18,6 +18,7 @@
 #include "Component/Player/CPL_BlendCameraComp.h"
 #include "Component/CMeshParticleComp.h"
 #include "Component/Base/C_BaseAbilityComp.h"
+#include "Component/Player/CPL_HitComp.h"
 
 #include "Actor/Cable/CPL_CableObject.h"
 
@@ -109,8 +110,9 @@ ACPlayer::ACPlayer()
 	{
 		BlendCameraComp			= CreateDefaultSubobject<UCPL_BlendCameraComp>("BlendCameraComp");
 		StateManager			= CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
+		HitComp					= CreateDefaultSubobject<UCPL_HitComp>("HitComp");
 		EquipComp				= CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
-		TargetingSystem			= CreateDefaultSubobject<UCPL_TargetingSystem>("TargetingSystem");
+		TargetSystem			= CreateDefaultSubobject<UCS_TargetingSystem>("TargetingSystem");
 		IneverseKinematics		= CreateDefaultSubobject<UCInverseKinematics>("IKComp");
 		InteractSystem			= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
 		MouseController			= CreateDefaultSubobject<UCS_MouseController>("MouseController");
@@ -442,7 +444,7 @@ void ACPlayer::OnSwapState()
 /* @Player 위치 반경으로 공격 대상 찾기 */
 void ACPlayer::OnLookAround()
 {
-	TargetingSystem->OnFindTargets(GetActorLocation(), 3000.0f);
+	TargetSystem->OnFindTargets(GetActorLocation(), 3000.0f);
 }
 
 /* @Player ActionKey - E (상호작용하기) */
@@ -540,6 +542,9 @@ void ACPlayer::OnPullActorWithCableAction()
 void ACPlayer::OnDeath()
 {
 	//TODO : 죽음 구현 - 현재 체력이 0 이하 일때,
+	bDeath = true;
+
+	OnDeathDelegate.Broadcast();
 }
 
 void ACPlayer::OnGravity()
@@ -604,6 +609,31 @@ void ACPlayer::OffCollision()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
+	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+
+	float InputDamageAmount = DamageAmount;
+	if (Info.BarrierAmount > 0.0f) //@Barrier
+	{
+		Info.BarrierAmount -= InputDamageAmount;
+		InputDamageAmount -= Info.BarrierAmount;
+	}
+	if (InputDamageAmount > 0.0f) //@CurrentHP
+	{
+		Info.CurrentHP -= InputDamageAmount;
+	}
+
+	if (Info.CurrentHP <= 0.0f) //@죽음
+	{
+		OnDeath();
+	}
+	return Info.CurrentHP;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Get, Set
 
@@ -617,7 +647,7 @@ void ACPlayer::SetCurrentBaseAction(IIC_BaseAction * IBaseAction)
 /* TargetingSystem 에서 Player 가 Tab 을 눌렀을 때, 설정된 Pawn 을 가져옴 */
 APawn * ACPlayer::GetFindAttackTarget()
 {
-	return TargetingSystem->GetCurrentFindAttackTarget();
+	return TargetSystem->GetCurrentFindAttackTarget();
 }
 
 void ACPlayer::AddCurrentHP(float fValue)
@@ -667,6 +697,11 @@ IIC_StateManager * ACPlayer::GetIStateManager()
 IIC_AttackComp * ACPlayer::GetIAttackComp()
 {
 	return StateManager->GetIAttackComp();
+}
+
+IIC_HitComp * ACPlayer::GetIHitComp()
+{
+	return Cast<IIC_HitComp>(HitComp);
 }
 
 IIC_EquipComp * ACPlayer::GetIEquipComp()

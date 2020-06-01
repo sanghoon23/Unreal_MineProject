@@ -3,8 +3,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-#include "Charactor/Monster/CHM_Basic.h"
 #include "Interface/IC_Charactor.h"
+#include "Charactor/Monster/CHM_Basic.h"
 
 UCHM_BasicFirstCombo::UCHM_BasicFirstCombo()
 {
@@ -14,7 +14,7 @@ UCHM_BasicFirstCombo::UCHM_BasicFirstCombo()
 	CurrentComboNum = static_cast<UINT>(UHM_BasicFirstComboType::COMBO_ONE);
 	MaxComboNum = static_cast<UINT>(UHM_BasicFirstComboType::END);
 
-#pragma region BasicAttack
+	#pragma region BasicAttack
 
 	UAnimMontage* HM_FirstAttack_1 = nullptr;
 	UAnimMontage* HM_FirstAttack_2 = nullptr;
@@ -43,12 +43,22 @@ UCHM_BasicFirstCombo::UCHM_BasicFirstCombo()
 		AttackMontages.Emplace(HM_FirstAttack_3);
 	}
 
-#pragma endregion
+	#pragma endregion
+
+	#pragma region Create DamageType
+
+	DT_Normal = NewObject<UCDamageType_Normal>();
+
+	#pragma endregion
 }
 
 void UCHM_BasicFirstCombo::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// @Set HM_Basic
+	HM_Basic = Cast<ACHM_Basic>(GetOwner());
+	check(HM_Basic);
 }
 
 void UCHM_BasicFirstCombo::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -121,5 +131,62 @@ bool UCHM_BasicFirstCombo::IsLastCombo() const
 		return true;
 
 	return false;
+}
+
+void UCHM_BasicFirstCombo::AttackOtherPawn()
+{
+	Super::AttackOtherPawn();
+
+	FVector ActorForward = HM_Basic->GetActorForwardVector();
+	FVector Start = HM_Basic->GetActorLocation();
+	FVector End = HM_Basic->GetActorLocation() + ActorForward * AttackRange;
+
+	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
+	FCollisionQueryParams CollisionQueryParm(NAME_None, false, HM_Basic);
+
+	FHitResult HitResult;
+	float DebugLifeTime = 1.0f;
+	bool bHit = GetWorld()->SweepSingleByChannel //@Single - ¥‹¿œ.
+	(
+		HitResult
+		, Start
+		, End
+		, FQuat::Identity
+		, ECC_GameTraceChannel3 // @MonsterAttack
+		, sphere
+		, CollisionQueryParm
+	);
+
+#if  ENABLE_DRAW_DEBUG
+
+	DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
+
+#endif //  ENABLE_DRAW_DEBUG
+
+	if (bHit == true)
+	{
+		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
+		if (Charactor != nullptr)
+		{
+			// 1. Get Interface HitComp
+			IIC_HitComp* HitComp = Charactor->GetIHitComp();
+			if (HitComp != nullptr)
+			{
+				// 1.1 Set Hit Attribute
+				FVector HitDirection = HM_Basic->GetActorForwardVector();
+				HitDirection.Z = 0.0f;
+				HitDirection.Normalize();
+				HitComp->SetHitDirection(HitDirection);
+				HitComp->SetHitMoveSpeed(0.3f);
+
+				// 1.2 Hit Delegate - Normal(DamageType)
+				HitComp->OnHit(HM_Basic, DT_Normal, 5.0f);
+			}
+			else
+				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
+		}
+		else
+			UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
+	}
 }
 

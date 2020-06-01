@@ -7,13 +7,6 @@
 #include "Interface/IC_Charactor.h"
 #include "Charactor/Monster/CHM_Basic.h"
 #include "DamageType/Base/CDamageType_Base.h"
-#include "DamageType/CDamageType_Normal.h"
-#include "DamageType/CDamageType_Air.h"
-#include "DamageType/CDamageType_AirAttack.h"
-#include "DamageType/CDamageType_Stun.h"
-#include "DamageType/CDamageType_Burn.h"
-#include "DamageType/CDamageType_Poision.h"
-#include "DamageType/CDamageType_Freeze.h"
 
 #include "DamagedConditionType/Base/CBaseConditionType.h"
 #include "DamagedConditionType/UpsetCondition/CUpset_Stun.h"

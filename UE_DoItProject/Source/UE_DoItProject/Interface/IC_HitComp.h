@@ -42,6 +42,12 @@ public:
 	// @DamageAmount - 데미지량
 	virtual void OnHit(AActor* AttackingActor, UCDamageType_Base* const DamageType, float DamageAmount) = 0;
 
+	/* 대상이 맞고 있는지 */
+	virtual const bool IsBeated() const = 0;
+
+	/* 대상이 맞고 있는지 설정 - CN_BeginBeat */
+	virtual void SetBeated(bool bValue) = 0;
+
 	/* HitComponent 안의 상태이상, 행동불가 데이터 */
 	// @ArrayNumber - 배열 컨테이너의 Index
 	virtual UCBaseConditionType* GetConditionData(int Index) = 0;
@@ -54,11 +60,10 @@ public:
 	/* ConditionDatas 의 [Index] 값을 가져옴  */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) = 0;
 
-	/* ConditionDatas 를 Count 까지 가져옴 */
+	/* ConditionDatas 를 Count(범위) 까지 가져옴 */
 	//@param OutDataArray - OUT
 	//@param Count - 가져올 갯수
 	virtual void GetConditionDatasByCount(TArray<UCBaseConditionType*>* OutDataArray, int IndexCount) = 0;
-
 
 	#pragma region Member
 public:

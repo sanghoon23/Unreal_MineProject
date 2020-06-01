@@ -55,7 +55,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 		for (auto OverlapResult : OverlapResults)
 		{
 			// @Blackboard - Target ¼³Á¤
-			APawn* Charactor = Cast<APawn>(OverlapResult.GetActor());
+			ACharacter* Charactor = Cast<ACharacter>(OverlapResult.GetActor());
 			if (Charactor != nullptr && Charactor->GetController()->IsPlayerController())
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", Charactor);

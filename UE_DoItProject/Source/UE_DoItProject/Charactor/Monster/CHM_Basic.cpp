@@ -23,8 +23,8 @@ ACHM_Basic::ACHM_Basic()
 
 	// Create Component
 	{
-		AttackComp = CreateDefaultSubobject<UCHM_BasicAttackComp>("AttackComp");
-		HitComponent = CreateDefaultSubobject<UCHM_BasicHitComp>("HitComp");
+		AttackComponent = CreateDefaultSubobject<UCHM_BasicAttackComp>("AttackComp");
+		HitComp = CreateDefaultSubobject<UCHM_BasicHitComp>("HitComp");
 		EquipComp = CreateDefaultSubobject<UCHM_BasicEquipComp>("EquipComponent");
 		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
 	}
@@ -169,6 +169,7 @@ float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
 	IfTrueRetResult(bDeath == true, Info.CurrentHP);
 
 	Info.CurrentHP -= DamageAmount;
@@ -177,7 +178,6 @@ float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 	{
 		OnDeath();
 	}
-
 	return Info.CurrentHP;
 }
 
@@ -197,8 +197,8 @@ void ACHM_Basic::CallDestory()
 
 IIC_AttackComp * ACHM_Basic::GetIAttackComp()
 {
-	IfTrueRetResult(AttackComp == nullptr, nullptr); // @Return Null
-	return Cast<IIC_AttackComp>(AttackComp);
+	IfTrueRetResult(AttackComponent == nullptr, nullptr); // @Return Null
+	return Cast<IIC_AttackComp>(AttackComponent);
 }
 
 IIC_EquipComp * ACHM_Basic::GetIEquipComp()
@@ -209,8 +209,8 @@ IIC_EquipComp * ACHM_Basic::GetIEquipComp()
 
 IIC_HitComp * ACHM_Basic::GetIHitComp()
 {
-	IfTrueRetResult(HitComponent == nullptr, nullptr); // @Return Null
-	return Cast<IIC_HitComp>(HitComponent);
+	IfTrueRetResult(HitComp == nullptr, nullptr); // @Return Null
+	return Cast<IIC_HitComp>(HitComp);
 }
 
 IIC_MeshParticle * ACHM_Basic::GetIMeshParticle()
