@@ -29,9 +29,10 @@ bool UBTDecorator_IsBattle::CalculateRawConditionValue(UBehaviorTreeComponent & 
 			Result = true;
 		}
 	}
-	else return false;
 
 	//IfTrueRet(Player->GetIAttackComp()->GetCurrentIBaseAttack()->GetAttacking()); //@Attacking
+
+	CLog::Print(Result);
 
 	return Result;
 }

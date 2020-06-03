@@ -22,6 +22,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AIControl")
 		float PatrolRadius = 600.0f;
 
+	UPROPERTY(EditAnywhere, Category = "AIControl")
+		float DetectRadius = 700.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AIControl")
+		float HangAround = 500.0f;
+
 	//UPROPERTY(VisibleAnywhere, Category = "Behavior")
 	//	class UBehaviorTree* BT;
 

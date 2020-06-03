@@ -20,5 +20,6 @@ public:
 	static void Print(const FString& val, float time = 10.0f, FColor color = FColor::Blue, int32 key = -1);
 	static void Print(const TCHAR* val, float time = 10.0f, FColor color = FColor::Blue, int32 key = -1);
 	static void Print(const FName& val, float time = 10.0f, FColor color = FColor::Blue, int32 key = -1);
+	static void Print(const FVector& val, float time = 10.0f, FColor color = FColor::Blue, int32 key = -1);
 	static void PrintNull(UObject* object, float time = 10.0f, FColor color = FColor::Blue, int32 key = -1);
 };

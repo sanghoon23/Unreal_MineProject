@@ -26,7 +26,7 @@ class UE_DOITPROJECT_API UCHM_BasicFirstCombo
 private:
 	// @DamageType
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Normal;
+		UCDamageType_Normal*	NormalDamageType;
 
 	#pragma endregion
 

@@ -49,6 +49,8 @@ void ACAIC_HM_Basic::BeginPlay()
 	Super::BeginPlay();
 
 	//Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ACAIC_HM_Basic::OnSensingTarget);
+
+	Blackboard->SetValueAsVector("Destination", FVector(0.0f));
 }
 
 void ACAIC_HM_Basic::OnPossess(APawn * InPawn)
@@ -65,6 +67,8 @@ void ACAIC_HM_Basic::OnPossess(APawn * InPawn)
 	{
 		Blackboard->SetValueAsVector("Home", InPawn->GetActorLocation());
 		Blackboard->SetValueAsFloat("PatrolRadius", PatrolRadius);
+		Blackboard->SetValueAsFloat("DetectRadius", DetectRadius);
+		Blackboard->SetValueAsFloat("HangAround", HangAround);
 
 		RunBehaviorTree(BT);
 	}

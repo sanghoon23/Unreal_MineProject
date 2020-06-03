@@ -29,7 +29,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 	FVector Center = ControlPawn->GetActorLocation();
 	
 	// 감지 범위
-	float DetectRadius = 700.0f;
+	float DetectRadius = OwnerComp.GetBlackboardComponent()->GetValueAsFloat("DetectRadius");
 
 	// @Collision Channel 로 인해 CharactorType(Player) 가 감지
 	TArray<FOverlapResult> OverlapResults;

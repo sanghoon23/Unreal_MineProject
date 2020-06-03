@@ -32,6 +32,8 @@ EBTNodeResult::Type UBTTask_FindPatrol::ExecuteTask(UBehaviorTreeComponent & Own
 	// Blackboard - Home & PatrolRadius
 	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector("Home");
 	FNavLocation NextLocation;
+
+	// @PatrolRadius
 	float PatrolRadius = OwnerComp.GetBlackboardComponent()->GetValueAsFloat("PatrolRadius");
 
 	// Random 위치 구하기 후, Succeeded

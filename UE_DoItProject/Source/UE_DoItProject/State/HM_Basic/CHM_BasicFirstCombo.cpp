@@ -44,12 +44,6 @@ UCHM_BasicFirstCombo::UCHM_BasicFirstCombo()
 	}
 
 	#pragma endregion
-
-	#pragma region Create DamageType
-
-	DT_Normal = NewObject<UCDamageType_Normal>();
-
-	#pragma endregion
 }
 
 void UCHM_BasicFirstCombo::BeginPlay()
@@ -59,6 +53,12 @@ void UCHM_BasicFirstCombo::BeginPlay()
 	// @Set HM_Basic
 	HM_Basic = Cast<ACHM_Basic>(GetOwner());
 	check(HM_Basic);
+
+#pragma region Create DamageType
+
+	NormalDamageType = NewObject<UCDamageType_Normal>();
+
+#pragma endregion
 }
 
 void UCHM_BasicFirstCombo::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -180,7 +180,7 @@ void UCHM_BasicFirstCombo::AttackOtherPawn()
 				HitComp->SetHitMoveSpeed(0.3f);
 
 				// 1.2 Hit Delegate - Normal(DamageType)
-				HitComp->OnHit(HM_Basic, DT_Normal, 5.0f);
+				HitComp->OnHit(HM_Basic, NormalDamageType, 5.0f);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");

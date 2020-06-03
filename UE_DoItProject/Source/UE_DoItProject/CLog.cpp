@@ -64,6 +64,11 @@ void CLog::Print(const FName & val, float time, FColor color, int32 key)
 	GEngine->AddOnScreenDebugMessage(key, time, color, val.ToString());
 }
 
+void CLog::Print(const FVector & val, float time, FColor color, int32 key)
+{
+	GEngine->AddOnScreenDebugMessage(key, time, color, FString::Printf(L"x = %f, y = %f, z = %f", val.X, val.Y, val.Z));
+}
+
 void CLog::PrintNull(UObject * object, float time, FColor color, int32 key)
 {
 	GEngine->AddOnScreenDebugMessage(key, time, color, object != NULL ? "NotNull" : "Null");
