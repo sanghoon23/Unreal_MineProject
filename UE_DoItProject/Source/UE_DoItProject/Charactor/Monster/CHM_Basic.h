@@ -24,6 +24,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI")
 		bool bAIRunningPossible = true;
 
+	UPROPERTY(EditAnywhere, Category = "AI")
+		bool bAIAttackMode = false;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_BasicAttackComp* AttackComponent;
 
@@ -78,12 +81,15 @@ public:
 	virtual IIC_MeshParticle* GetIMeshParticle() override;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//@IC_Monster
+	//@Virtual Pure Function - (IC_Monster)
 public:
 	virtual const FMonsterInfo& GetMonsterInfo() const override { return Info; };
 
 	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }
 	bool GetAIRunningPossible() const { return bAIRunningPossible; }
+
+	void SetAIAttackMode(bool bValue);
+	virtual bool GetAIAttackMode() const { return bAIAttackMode; }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Class Virtual */

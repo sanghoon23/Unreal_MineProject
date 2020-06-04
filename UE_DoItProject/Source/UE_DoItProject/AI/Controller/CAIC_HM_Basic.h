@@ -5,6 +5,13 @@
 
 #include "CAIC_HM_Basic.generated.h"
 
+UENUM(BlueprintType)
+enum class AIBehaviorState : uint8
+{
+	NONE = 0,
+
+};
+
 UCLASS()
 class UE_DOITPROJECT_API ACAIC_HM_Basic 
 	: public AAIController
@@ -23,10 +30,13 @@ private:
 		float PatrolRadius = 600.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float DetectRadius = 700.0f;
+		float DetectRadius = 900.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
 		float HangAround = 500.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AIControl")
+		float AttackRange = 220.0f;
 
 	//UPROPERTY(VisibleAnywhere, Category = "Behavior")
 	//	class UBehaviorTree* BT;

@@ -15,7 +15,4 @@ public:
 
 protected:
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
-
-private:
-	float AttackRange = 220.0f;
 };

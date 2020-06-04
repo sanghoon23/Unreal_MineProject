@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_Monster.h"
 #include "Charactor/Monster/CHM_Basic.h"
 
 #include "CHMBaseAnimInst.generated.h"
@@ -28,10 +29,10 @@ public:
 		bool bIsRunningMontage;
 
 	UPROPERTY(BlueprintReadOnly)
-		uint8 DeathType;
+		bool bDeath;
 
 	UPROPERTY(BlueprintReadOnly)
-		bool bDeath;
+		bool bAttackMode;
 
 	#pragma endregion
 
@@ -46,4 +47,5 @@ protected:
 private:
 	ACHM_Basic* Monster;
 	IIC_Charactor* I_Charactor;
+	IIC_Monster* I_Monster;
 };

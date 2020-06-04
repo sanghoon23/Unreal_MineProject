@@ -1,4 +1,4 @@
-#include "BTTask_MoveAndLookAtTarget.h"
+#include "BTTask_LookAtTarget.h"
 #include "Global.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/Character.h"
@@ -8,16 +8,16 @@
 #include "AI/Controller/CAIC_HM_Basic.h"
 #include "NavigationSystem.h"
 
-UBTTask_MoveAndLookAtTarget::UBTTask_MoveAndLookAtTarget()
+UBTTask_LookAtTarget::UBTTask_LookAtTarget()
 {
 	// Name
-	NodeName = L"MoveAndLookAtTarget";
+	NodeName = L"LookAtTarget";
 
 	// @Tick
 	bNotifyTick = true;
 }
 
-EBTNodeResult::Type UBTTask_MoveAndLookAtTarget::ExecuteTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory)
+EBTNodeResult::Type UBTTask_LookAtTarget::ExecuteTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -35,20 +35,22 @@ EBTNodeResult::Type UBTTask_MoveAndLookAtTarget::ExecuteTask(UBehaviorTreeCompon
 	//@Target 바라보기
 	UCFL_ActorAgainst::LookAtTarget(Pawn, Target);
 
-	FVector Location = Pawn->GetActorLocation();
-	FVector Dest = OwnerComp.GetBlackboardComponent()->GetValueAsVector("Destination");
+	//Test Code
+	//FVector Location = Pawn->GetActorLocation();
+	//FVector Dest = OwnerComp.GetBlackboardComponent()->GetValueAsVector("Destination");
 
-	FVector Dir = Location - Dest;
-	Dir.Normalize();
+	//FVector Dir = Location - Dest;
+	//Dir.Normalize();
 
-	float DeltaTime = GetWorld()->GetDeltaSeconds();
-	Location += Dir * DeltaTime * 5.0f; /* Speed */
+	//float DeltaTime = GetWorld()->GetDeltaSeconds();
+	//Location += Dir * DeltaTime * 5.0f; /* Speed */
 
-	//@Set
-	FAIMoveRequest Request;
-	Request.SetGoalLocation(Location);
+	////@Set
+	//FAIMoveRequest Request;
+	//Request.SetGoalActor(Target);
+	//Request.SetGoalLocation(Location);
 
-	Controller->MoveTo(Request);
+	//Controller->MoveTo(Request);
 
 	return EBTNodeResult::Succeeded;
 }

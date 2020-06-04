@@ -2,6 +2,7 @@
 #include "Global.h"
 
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_Monster.h"
 
 #include "AI/Controller/CAIC_HM_Basic.h"
 #include "Charactor/Monster/CHM_Basic.h"
@@ -20,6 +21,9 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 	// 자기 자신 Pawn
 	APawn* ControlPawn = OwnerComp.GetAIOwner()->GetPawn();
 	IfNullRet(ControlPawn);
+
+	IIC_Monster* I_Monster = Cast<IIC_Monster>(ControlPawn);
+	IfNullRet(I_Monster);
 
 	// World
 	UWorld* World = ControlPawn->GetWorld();
@@ -61,16 +65,26 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", Charactor);
 				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 				DrawDebugLine(World, ControlPawn->GetActorLocation(), Charactor->GetActorLocation(), FColor::Blue, false, 1.0f);
+
+				//@Target 발견 시 AttackMODE ON
+				I_Monster->SetAIAttackMode(true);
+
 				return;
 			}
 			else
 			{
+				//@Target 발견 시 AttackMODE OFF
+				I_Monster->SetAIAttackMode(false);
+
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
 			}
 		}
 	}
 	else
 	{
+		//@Target 발견 시 AttackMODE OFF
+		I_Monster->SetAIAttackMode(false);
+
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
 	}
 }

@@ -165,6 +165,11 @@ void ACHM_Basic::OffCollision()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void ACHM_Basic::SetAIAttackMode(bool bValue)
+{
+	bAIAttackMode = bValue;
+}
+
 float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);

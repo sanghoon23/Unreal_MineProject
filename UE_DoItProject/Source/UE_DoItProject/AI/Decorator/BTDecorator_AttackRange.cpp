@@ -19,6 +19,8 @@ bool UBTDecorator_AttackRange::CalculateRawConditionValue(UBehaviorTreeComponent
 		= Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("Target"));
 	IfNullRetResult(Target, false);
 
+	float AttackRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat("AttackRange");
+
 	Result = (Target->GetDistanceTo(ControlPawn) <= AttackRange);
 	return Result;
 }

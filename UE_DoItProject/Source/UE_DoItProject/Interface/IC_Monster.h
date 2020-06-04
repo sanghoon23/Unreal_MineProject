@@ -46,6 +46,10 @@ public:
 	virtual void SetAIRunningPossible(bool bValue) = 0;
 	virtual bool GetAIRunningPossible() const = 0;
 
+	/* 타겟을 발견하고 공격모드로 전환 AnimInst 연동 */
+	virtual void SetAIAttackMode(bool bValue) = 0;
+	virtual bool GetAIAttackMode() const = 0;
+
 	/* CHumaniodMonster 멤버로 뺌. */
 //private:
 //	bool bAIRunningPossible = true;

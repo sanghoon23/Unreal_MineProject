@@ -26,13 +26,11 @@ bool UBTDecorator_IsBattle::CalculateRawConditionValue(UBehaviorTreeComponent & 
 		bool bBeating = I_Charactor->GetIHitComp()->IsBeated();
 		if (bAttacking == true && bBeating == true)
 		{
-			Result = true;
+			return true;
 		}
 	}
 
-	//IfTrueRet(Player->GetIAttackComp()->GetCurrentIBaseAttack()->GetAttacking()); //@Attacking
 
-	CLog::Print(Result);
 
-	return Result;
+	return false;
 }

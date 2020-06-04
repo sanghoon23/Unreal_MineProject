@@ -15,6 +15,9 @@ void UCHMBaseAnimInst::NativeBeginPlay()
 
 	I_Charactor = Cast<IIC_Charactor>(Monster);
 	IfNullRet(I_Charactor);
+
+	I_Monster = Cast<IIC_Monster>(Monster);
+	IfNullRet(I_Monster);
 }
 
 void UCHMBaseAnimInst::NativeUpdateAnimation(float DeltaSeconds)
@@ -27,11 +30,6 @@ void UCHMBaseAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 
 	bDeath = I_Charactor->IsDeath();
 
-	//Test Code
-	////@몽타주가 실행 중일 때, 죽음이 호출될 시
-	//if (bDeath == true && bIsRunningMontage == true)
-	//{
-
-	//}
+	bAttackMode = I_Monster->GetAIAttackMode();
 }
 

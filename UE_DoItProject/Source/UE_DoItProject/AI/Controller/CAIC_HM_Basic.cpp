@@ -22,26 +22,6 @@ ACAIC_HM_Basic::ACAIC_HM_Basic()
 	if (bt.Succeeded())
 		BT = bt.Object;
 
-
-
-	//// AI Perception Component
-	//{
-	//	Perception = CreateDefaultSubobject<UAIPerceptionComponent>("Perception");
-
-	//	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>("Sight");
-	//	Sight->SightRadius = 400.0f;
-	//	Sight->LoseSightRadius = 500.0f;
-	//	Sight->PeripheralVisionAngleDegrees = 45.0f;
-	//	Sight->SetMaxAge(5.0f);
-
-	//	Sight->DetectionByAffiliation.bDetectEnemies = true;
-	//	Sight->DetectionByAffiliation.bDetectFriendlies = false;
-	//	Sight->DetectionByAffiliation.bDetectNeutrals = false;
-
-	//	Perception->ConfigureSense(*Sight);
-	//	Perception->SetDominantSense(*Sight->GetSenseImplementation());
-	//}
-
 }
 
 void ACAIC_HM_Basic::BeginPlay()
@@ -69,6 +49,7 @@ void ACAIC_HM_Basic::OnPossess(APawn * InPawn)
 		Blackboard->SetValueAsFloat("PatrolRadius", PatrolRadius);
 		Blackboard->SetValueAsFloat("DetectRadius", DetectRadius);
 		Blackboard->SetValueAsFloat("HangAround", HangAround);
+		Blackboard->SetValueAsFloat("AttackRange", AttackRange);
 
 		RunBehaviorTree(BT);
 	}

@@ -43,7 +43,7 @@ void UCDamageType_Air::OnHittingProcess(AActor * Subject, AActor * DamagedActor,
 		if (I_Charactor->IsDontMontagePlay() == false)
 		{
 			FVector Location = DamagedActor->GetActorLocation();
-			Location.Z += 200.0f;
+			Location.Z += 300.0f;
 			DamagedActor->SetActorLocation(Location);
 
 			// @속력 줄이기 - 중력끄고 바로 해줘야함

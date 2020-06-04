@@ -69,6 +69,10 @@ void UCPL_HitComp::BeginPlay()
 void UCPL_HitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// Test Code
+	//bool bBeated = Super::IsBeated();
+	//CLog::Print(bBeated);
 }
 
 void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, float DamageAmount)

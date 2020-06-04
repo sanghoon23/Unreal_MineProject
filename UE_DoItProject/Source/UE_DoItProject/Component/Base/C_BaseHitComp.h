@@ -53,7 +53,7 @@ protected:
 		/* Freeze ConditionData 에서 사용할 Particle */
 		class UParticleSystem* FreezeParticle;
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	/* HitComp Owner 가 맞고 있는지 - 몽타주 실행시, CN_BeginBeat */
 	bool bBeated = false;

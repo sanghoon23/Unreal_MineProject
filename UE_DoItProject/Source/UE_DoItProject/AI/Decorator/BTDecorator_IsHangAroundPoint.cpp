@@ -21,12 +21,22 @@ bool UBTDecorator_IsHangAroundPoint::CalculateRawConditionValue(UBehaviorTreeCom
 
 	// @계산된 도착 지점에 도착하지 않았다면 리턴,
 	float HangAround = OwnerComp.GetBlackboardComponent()->GetValueAsFloat("HangAround");
+	float DetectRadius = OwnerComp.GetBlackboardComponent()->GetValueAsFloat("DetectRadius");
 
-	if (ControlPawn->GetDistanceTo(Target) < HangAround)
+	if (ControlPawn->GetDistanceTo(Target) <= HangAround)
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector("Origin_PatrolTargetAround", ControlPawn->GetActorLocation());
 		return true;
 	}
+	else
+	{
+		FVector Dir = Target->GetActorLocation() - ControlPawn->GetActorLocation();
+		Dir.Normalize();
+		FVector Dest = ControlPawn->GetActorLocation() + (Dir * (DetectRadius - HangAround));
 
-	return false; //@ 이때, Target 으로 이동한다.
+		//@Set Destination
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector("Destination", Dest);
+
+		return false;
+	}
 }

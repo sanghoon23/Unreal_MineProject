@@ -35,43 +35,42 @@ EBTNodeResult::Type UBTTask_PatrolTargetAround::ExecuteTask(UBehaviorTreeCompone
 	IfNullRetResult(Target, EBTNodeResult::Failed);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////@Calc - Destination
-	//FVector Dir = Target->GetActorLocation() - Pawn->GetActorLocation();
-	//Dir.Normalize();
 
-	//FVector CrossVec = FVector::CrossProduct(FVector(1.0f, 0.0f, 0.0f), Dir);
-	//CrossVec.Normalize();
+	FVector Center = Pawn->GetActorLocation();
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(400.0f);
+	FCollisionQueryParams Params(NAME_None, false, Pawn);
 
-	//float Inner = 0.0f;
-	////@오른쪽에 존재한다면,
-	//if (CrossVec.Z >= 0)
-	//{
-	//	Inner = Dir | FVector(1.0f, 0.0f, 0.0f);
-	//}
-	//else
-	//{
-	//	Inner = Dir | FVector(1.0f, 0.0f, 0.0f);
-	//	Inner *= (-1);
-	//}
+	TArray<FOverlapResult> overlapResults;
+	bool bHit = GetWorld()->OverlapMultiByChannel
+	(
+		overlapResults,
+		Center,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel6, //@TragetSystem TraceChannel
+		Sphere,
+		Params
+	);
 
+	overlapResults.StableSort([&](const FOverlapResult& A, const FOverlapResult& B)
+	{
+		float DistanceToA = Pawn->GetDistanceTo(A.GetActor());
+		float DistanceToB = Pawn->GetDistanceTo(B.GetActor());
 
-	//float Radian = FMath::Acos(Inner);
-	//float Angle = FMath::RadiansToDegrees(Radian);
+		if (DistanceToA < DistanceToB)
+			return true;
+		else return false;
+	});
 
-	////CLog::Print(Angle);
-
-	//bRandomDir = !bRandomDir;
-	//(bRandomDir)
-	//	? Angle += 10.0f
-	//	: Angle -= 10.0f;
-
-	////aCLog::Print(Angle);
-
-	//FRotator Rotate = FRotator(0.0f, Angle, 0.0f);
-	//FVector Temp = FQuat(Rotate).GetForwardVector();
-
-	//float AroundDistance = OwnerComp.GetBlackboardComponent()->GetValueAsFloat("AroundDistanceToTarget");
-	//Temp *= AroundDistance;
+	if (bHit == true)
+	{
+		if (Pawn->GetDistanceTo(overlapResults[0].GetActor()) < 200.0f)
+		{
+			FNavLocation CalcVec;
+			FVector ActorLocation = overlapResults[0].GetActor()->GetActorLocation();
+			Nav->GetRandomReachablePointInRadius(ActorLocation, 300.0f, CalcVec);
+			OwnerComp.GetBlackboardComponent()->SetValueAsVector("Origin_PatrolTargetAround", CalcVec);
+		}
+	}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -81,23 +80,11 @@ EBTNodeResult::Type UBTTask_PatrolTargetAround::ExecuteTask(UBehaviorTreeCompone
 	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector("Origin_PatrolTargetAround");
 
 	// Random 위치 구하기 후, Succeeded
-	if (Nav->GetRandomPointInNavigableRadius(Origin, 100.0f, NextLocation))
+	if (Nav->GetRandomReachablePointInRadius(Origin, 100.0f, NextLocation))
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector("Destination", NextLocation);
 		return EBTNodeResult::Succeeded;
 	}
-
-	////@Result
-	//NextLocation = Temp;
-	//NextLocation.Z = Pawn->GetActorLocation().Z;
-
-	//CLog::Print(NextLocation);
-
-	////@Set
-	//OwnerComp.GetBlackboardComponent()->SetValueAsVector("Destination", NextLocation);
-
-	//@Target 바라보기
-	UCFL_ActorAgainst::LookAtTarget(OwnerComp.GetAIOwner(), Target);
 
 	return EBTNodeResult::Failed;
 }
