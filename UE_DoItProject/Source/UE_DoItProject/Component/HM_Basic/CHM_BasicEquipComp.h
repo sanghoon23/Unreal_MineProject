@@ -34,6 +34,7 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	/* Virtual Function */
 public:
 	bool GetEquiping() const override { return bEquiping; }
 	void SetEquiping(bool bValue) override { bEquiping = bValue; }
@@ -50,11 +51,9 @@ private:
 	bool					bArmed = false;
 
 	int						CurrentWeaponNum = -1;
-	class ACItem_Hand*	CurrentWeapon;
+	class ACItem_Hand*		CurrentWeapon;
 
 	TMap<UItemType, TArray<class ACItem_Hand*> > DisplayMap;
-
-	class ACPlayer* Player;
 	FVector AttachTransform;
 
 	#pragma endregion

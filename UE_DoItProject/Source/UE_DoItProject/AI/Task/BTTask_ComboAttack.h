@@ -20,8 +20,5 @@ protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds);
 
 private:
-	FDelegateHandle DelegateHandle;
-
 	uint8 AttackTypeNum = 0;
-	bool bIsFinishing = true;
 };

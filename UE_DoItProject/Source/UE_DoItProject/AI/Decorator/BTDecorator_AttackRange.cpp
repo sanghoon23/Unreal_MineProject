@@ -1,8 +1,6 @@
 #include "BTDecorator_AttackRange.h"
 #include "Global.h"
 
-#include "AI/Controller/CAIC_HM_Basic.h"
-
 UBTDecorator_AttackRange::UBTDecorator_AttackRange()
 {
 	NodeName = L"AttackRange";

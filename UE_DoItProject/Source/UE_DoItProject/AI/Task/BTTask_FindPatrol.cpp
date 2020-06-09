@@ -1,7 +1,7 @@
 #include "BTTask_FindPatrol.h"
 #include "Global.h"
 
-#include "AI/Controller/CAIC_HM_Basic.h"
+#include "AIController.h"
 #include "NavigationSystem.h"
 
 UBTTask_FindPatrol::UBTTask_FindPatrol()
@@ -18,7 +18,7 @@ EBTNodeResult::Type UBTTask_FindPatrol::ExecuteTask(UBehaviorTreeComponent & Own
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	// this Controller
-	ACAIC_HM_Basic* controller = Cast<ACAIC_HM_Basic>(OwnerComp.GetAIOwner());
+	AAIController* controller = OwnerComp.GetAIOwner();
 	IfNullRetResult(controller, EBTNodeResult::Failed);
 
 	// this Pawn

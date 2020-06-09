@@ -7,19 +7,8 @@ ACHumanoidMonster::ACHumanoidMonster()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Set AI
-	FString path = L"";
-	{
-		path = L"Blueprint'/Game/_Mine/_MyBlueprint/AI/Controller/BpCAIC_HM_Basic.BpCAIC_HM_Basic_C'";
-		ConstructorHelpers::FClassFinder<ACAIC_HM_Basic> controller(*path);
-		if (controller.Succeeded())
-		{
-			MonAIControllerClass = controller.Class;
-			AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-			AIControllerClass = MonAIControllerClass;
-		}
-	}
-
+	//@AI
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ACHumanoidMonster::BeginPlay()

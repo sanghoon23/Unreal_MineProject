@@ -62,9 +62,11 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 			ACharacter* Charactor = Cast<ACharacter>(OverlapResult.GetActor());
 			if (Charactor != nullptr && Charactor->GetController()->IsPlayerController())
 			{
+				//@Debug
+				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
+				//DrawDebugLine(World, ControlPawn->GetActorLocation(), Charactor->GetActorLocation(), FColor::Blue, false, 1.0f);
+
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", Charactor);
-				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
-				DrawDebugLine(World, ControlPawn->GetActorLocation(), Charactor->GetActorLocation(), FColor::Blue, false, 1.0f);
 
 				//@Target ¹ß°ß ½Ã AttackMODE ON
 				I_Monster->SetAIAttackMode(true);
@@ -77,6 +79,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 				I_Monster->SetAIAttackMode(false);
 
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
+				OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", static_cast<uint8>(EAIState_Basic::NONE));
 			}
 		}
 	}
@@ -86,6 +89,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 		I_Monster->SetAIAttackMode(false);
 
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", static_cast<uint8>(EAIState_Basic::NONE));
 	}
 }
 

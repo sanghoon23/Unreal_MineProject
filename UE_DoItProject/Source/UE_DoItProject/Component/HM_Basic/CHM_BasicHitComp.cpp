@@ -8,12 +8,6 @@
 #include "Charactor/Monster/CHM_Basic.h"
 #include "DamageType/Base/CDamageType_Base.h"
 
-#include "DamagedConditionType/Base/CBaseConditionType.h"
-#include "DamagedConditionType/UpsetCondition/CUpset_Stun.h"
-#include "DamagedConditionType/UpsetCondition/CUpset_Burn.h"
-#include "DamagedConditionType/UpsetCondition/CUpset_Poision.h"
-#include "DamagedConditionType/UpsetCondition/CUpset_Freeze.h"
-
 UCHM_BasicHitComp::UCHM_BasicHitComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;

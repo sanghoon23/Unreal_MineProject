@@ -28,8 +28,6 @@ void ACAIC_HM_Basic::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ACAIC_HM_Basic::OnSensingTarget);
-
 	Blackboard->SetValueAsVector("Destination", FVector(0.0f));
 }
 
@@ -51,6 +49,9 @@ void ACAIC_HM_Basic::OnPossess(APawn * InPawn)
 		Blackboard->SetValueAsFloat("HangAround", HangAround);
 		Blackboard->SetValueAsFloat("AttackRange", AttackRange);
 
+		/* NONE - ÃÊ±âÈ­ (AIState) */
+		Blackboard->SetValueAsEnum("AIState", static_cast<uint8>(CurrentAIState));
+
 		RunBehaviorTree(BT);
 	}
 }
@@ -59,19 +60,3 @@ void ACAIC_HM_Basic::OnUnPossess()
 {
 	Super::OnUnPossess();
 }
-
-//void ACAIC_HM_Basic::OnSensingTarget(AActor * Actor, FAIStimulus Stimulus)
-//{
-//	if (Stimulus.WasSuccessfullySensed())
-//	{
-//		//FString str = Actor->GetName() + FString(L" Success!");
-//		//CLog::Print(str, 10.0f, FColor::Red, 10);
-//
-//		Blackboard->SetValueAsObject("Target", Actor);
-//	}
-//	else
-//	{
-//		// CLog::Print(L"Failed", 10.0f, FColor::Red, 10);
-//		Blackboard->SetValueAsObject("Target", nullptr);
-//	}
-//}

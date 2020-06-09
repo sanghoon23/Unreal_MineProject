@@ -13,11 +13,8 @@ UBTTask_ComboAttack::UBTTask_ComboAttack()
 	NodeName = L"ComboAtatck";
 
 	bNotifyTick = true; // Tick True;
-	bIsFinishing = false;
 }
 
-// Task 가 실행되면, BeginAttack 을 실행시키고, EndAttack의 Lamda 삽입.
-// @Warning - 해당 클래스 bIsFinishing 을 따로 체크함.
 EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
@@ -33,18 +30,9 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 
 	// BaseAttack
 	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->SetAttackTypeRetIBaseAttack(AttackTypeNum);
-	// BaseAttack->BeginAttack(MonsterPawn);
+	BaseAttack->BeginAttack(MonsterPawn);
 
-	// Set Lamda - 현재 클래스 bIsFinishing 을 다룸.
-	bIsFinishing = true;
-
-	// Delegate Handle
-	DelegateHandle = BaseAttack->EndAttackDeleFunc.AddLambda([&]() 
-	{
-		bIsFinishing = false;
-	});
-
-	return EBTNodeResult::InProgress; //@InProgress
+	return EBTNodeResult::InProgress;
 }
 
 /* MonsterPawn 의 BeginAttack 을 계속 실행 */
@@ -57,21 +45,19 @@ void UBTTask_ComboAttack::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * N
 	IfNullRet(Charactor);
 
 	// @Combo 가 끝나면 bIsFinishing == false 가 됨.
-	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->SetAttackTypeRetIBaseAttack(AttackTypeNum);
+	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
 	check(BaseAttack);
 
+	bool bAttacking = BaseAttack->GetAttacking();
+
 	// 1. 콤보가 종료됐다면,
-	if (bIsFinishing == false)
+	if (bAttacking == false)
 	{
-		// ReMove DelegateHandle - (Lambda)
-		BaseAttack->EndAttackDeleFunc.Remove(DelegateHandle);
+		//CLog::Print(L"Combo End!!");
+
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", static_cast<uint8>(EAIState_Basic::NONE));
 
 		// Quit Tick Task
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	}
-	// 2. 아니라면,
-	else
-	{
-		BaseAttack->BeginAttack(MonsterPawn);
 	}
 }

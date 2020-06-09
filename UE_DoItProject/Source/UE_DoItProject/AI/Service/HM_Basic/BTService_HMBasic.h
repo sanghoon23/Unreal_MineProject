@@ -15,4 +15,9 @@ public:
 
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
+	/* Member */
+private:
+	float Timer = 0.0f;
+	float EndHangAroundTime = 10.0f;
 };

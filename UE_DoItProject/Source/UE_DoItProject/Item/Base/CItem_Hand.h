@@ -8,7 +8,8 @@ UENUM()
 enum class UHandItemType : uint8
 {
 	SWORD = 0,
-	END = 1,
+	STICK = 1,
+	END = 2,
 };
 
 UCLASS()
@@ -49,6 +50,9 @@ public:
 
 	virtual void OnEquip();
 	virtual void UnEquip();
+
+public:
+	UHandItemType GetHandItemType() const { return HandItemType; }
 
 	/* Member */
 public:

@@ -41,7 +41,7 @@ ACHM_BasicSword::ACHM_BasicSword()
 			SkeletalMesh->SetSkeletalMesh(mesh.Object);
 	}
 
-	// @Montage
+	// @Attach, Detach Monatge .. NONE
 	{
 		//// AttachMontage
 		//FString path = L"";

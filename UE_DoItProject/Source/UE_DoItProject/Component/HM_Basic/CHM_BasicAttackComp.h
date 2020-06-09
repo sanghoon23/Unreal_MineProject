@@ -23,7 +23,7 @@ class UE_DOITPROJECT_API UCHM_BasicAttackComp
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
-		TArray<class UCHM_BasicBaseAttack*> BasicAttackStateArray;
+		TArray<class UC_BaseAttackState*> BasicAttackStateArray;
 
 	#pragma endregion
 

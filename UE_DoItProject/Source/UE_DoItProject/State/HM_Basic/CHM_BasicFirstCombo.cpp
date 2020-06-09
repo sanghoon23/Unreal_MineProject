@@ -90,9 +90,10 @@ void UCHM_BasicFirstCombo::BeginAttack(AActor * DoingActor)
 			AttackMontages[0], /* @FirstMontage == Combo1 */
 			0.9f, false
 		);
-	}
-	else if (bAttacking == true)
-	{
+
+		//@#Edit 0605 
+		// 콤보를 나누지 않고 몽타주를 하나로 만들어 하려했는데,
+		// 동작이 이상해짐 (Blend In Out)
 		bComboCheck = true;
 	}
 }
@@ -105,7 +106,8 @@ void UCHM_BasicFirstCombo::OnComboSet(AActor * DoingActor)
 	IIC_Charactor* Pawn = Cast<IIC_Charactor>(DoingActor);
 	check(Pawn);
 
-	bComboCheck = false;
+	//@#Edit 0605
+	//bComboCheck = false;
 	++CurrentComboNum;
 
 	// 조건 검사.( CurrentComboNum = 0 ~ MaxCombo 까지 )

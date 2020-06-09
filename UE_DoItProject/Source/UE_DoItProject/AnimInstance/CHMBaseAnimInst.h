@@ -4,6 +4,7 @@
 #include "Animation/AnimInstance.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
+#include "Charactor/Monster/Base/CHumanoidMonster.h"
 #include "Charactor/Monster/CHM_Basic.h"
 
 #include "CHMBaseAnimInst.generated.h"
@@ -45,7 +46,7 @@ protected:
 
 	// Member
 private:
-	ACHM_Basic* Monster;
+	ACHumanoidMonster* Monster;
 	IIC_Charactor* I_Charactor;
 	IIC_Monster* I_Monster;
 };

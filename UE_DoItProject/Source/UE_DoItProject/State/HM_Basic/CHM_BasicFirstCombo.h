@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "State/HM_Basic/Base/CHM_BasicBaseAttack.h"
-#include "Interface/IC_BaseAttack.h"
 
 #include "DamageType/CDamageType_Normal.h"
 

@@ -6,10 +6,11 @@
 #include "CAIC_HM_Basic.generated.h"
 
 UENUM(BlueprintType)
-enum class AIBehaviorState : uint8
+enum class EAIState_Basic : uint8
 {
-	NONE = 0,
-
+	NONE		= 0, /* NONE - √ ±‚»≠ (AIState) */
+	HANGAROUND	= 1,
+	CANATTACK	= 2,
 };
 
 UCLASS()
@@ -20,12 +21,6 @@ class UE_DOITPROJECT_API ACAIC_HM_Basic
 
 	#pragma region Reflection
 private:
-	//UPROPERTY(VisibleAnywhere, Category = "AIControl")
-	//	class UAIPerceptionComponent* Perception;
-
-	//UPROPERTY(VisibleAnywhere, Category = "AIControl")
-	//	class UAISenseConfig_Sight* Sight;
-
 	UPROPERTY(EditAnywhere, Category = "AIControl")
 		float PatrolRadius = 600.0f;
 
@@ -38,11 +33,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AIControl")
 		float AttackRange = 220.0f;
 
-	//UPROPERTY(VisibleAnywhere, Category = "Behavior")
-	//	class UBehaviorTree* BT;
-
-	//UPROPERTY(VisibleAnywhere, Category = "Behavior")
-	//	class UBlackboardData* BB;
+	UPROPERTY(VisibleAnywhere, Category = "AIControl")
+		EAIState_Basic CurrentAIState = EAIState_Basic::NONE;
 
 	#pragma endregion
 
@@ -53,10 +45,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
-
-private:
-	//UFUNCTION()
-	//	void OnSensingTarget(AActor* Actor, FAIStimulus Stimulus);
 
 private:
 	class UBehaviorTree* BT;

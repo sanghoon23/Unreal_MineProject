@@ -3,8 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-#include "AI/Controller/CAIC_HM_Basic.h"
-#include "DamageType/CDamageType_Normal.h"
+#include "AI/Controller/CAIC_HM_Shaman.h"
 
 ACHM_Basic::ACHM_Basic()
 {

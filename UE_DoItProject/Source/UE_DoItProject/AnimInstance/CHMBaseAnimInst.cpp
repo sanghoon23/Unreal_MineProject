@@ -10,7 +10,7 @@ UCHMBaseAnimInst::UCHMBaseAnimInst()
 
 void UCHMBaseAnimInst::NativeBeginPlay()
 {
-	Monster = Cast<ACHM_Basic>(TryGetPawnOwner());
+	Monster = Cast<ACHumanoidMonster>(TryGetPawnOwner());
 	IfNullRet(Monster);
 
 	I_Charactor = Cast<IIC_Charactor>(Monster);
@@ -26,7 +26,7 @@ void UCHMBaseAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	Speed = Monster->GetVelocity().Size();
 	bInAir = Monster->GetCharacterMovement()->IsFalling();
 	Direction = CalculateDirection(Monster->GetVelocity(), Monster->GetActorRotation());
-	bIsRunningMontage = Montage_IsPlaying(Monster->GetCurrentApplyedMontage());
+	bIsRunningMontage = Montage_IsPlaying(I_Charactor->GetCurrentApplyedMontage());
 
 	bDeath = I_Charactor->IsDeath();
 

@@ -15,7 +15,7 @@ class UE_DOITPROJECT_API ACHumanoidMonster
 	#pragma	region Reflection
 protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
-		TSubclassOf<class ACAIC_HM_Basic> MonAIControllerClass;
+		TSubclassOf<class AAIController> MonAIControllerClass;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 		float WalkSpeed = 300.0f;

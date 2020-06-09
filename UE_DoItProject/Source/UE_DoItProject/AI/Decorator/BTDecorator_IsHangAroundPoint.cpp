@@ -25,7 +25,12 @@ bool UBTDecorator_IsHangAroundPoint::CalculateRawConditionValue(UBehaviorTreeCom
 
 	if (ControlPawn->GetDistanceTo(Target) <= HangAround)
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsVector("Origin_PatrolTargetAround", ControlPawn->GetActorLocation());
+		FVector Dir = ControlPawn->GetActorLocation() - Target->GetActorLocation();
+		Dir.Normalize();
+		float RandomDistance = FMath::RandRange(10.0f, HangAround);;
+		FVector Dest = ControlPawn->GetActorLocation() + (Dir * (RandomDistance));
+
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector("Origin_PatrolTargetAround", Dest);
 		return true;
 	}
 	else
