@@ -1,12 +1,11 @@
 #include "BTTask_ComboAttack.h"
 #include "Global.h"
 #include "NavigationSystem.h"
+#include "AIController.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAttack.h"
-
-#include "AI/Controller/CAIC_HM_Basic.h"
 
 UBTTask_ComboAttack::UBTTask_ComboAttack()
 {
@@ -32,12 +31,16 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->SetAttackTypeRetIBaseAttack(AttackTypeNum);
 	BaseAttack->BeginAttack(MonsterPawn);
 
+	CLog::Print(L"AI BeginAttack!!");
+
 	return EBTNodeResult::InProgress;
 }
 
 /* MonsterPawn 의 BeginAttack 을 계속 실행 */
 void UBTTask_ComboAttack::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory, float DeltaSeconds)
 {
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+
 	APawn* MonsterPawn = OwnerComp.GetAIOwner()->GetPawn();
 	IfNullRet(MonsterPawn);
 
@@ -48,14 +51,17 @@ void UBTTask_ComboAttack::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * N
 	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
 	check(BaseAttack);
 
-	bool bAttacking = BaseAttack->GetAttacking();
+	CLog::Print(L"In Task!!");
 
-	// 1. 콤보가 종료됐다면,
+	bool bAttacking = BaseAttack->GetAttacking();
 	if (bAttacking == false)
 	{
-		//CLog::Print(L"Combo End!!");
+		CLog::Print(L"Combo End!!");
 
-		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", static_cast<uint8>(EAIState_Basic::NONE));
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum
+		(
+			"AIState", 0 //@NONE
+		);
 
 		// Quit Tick Task
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);

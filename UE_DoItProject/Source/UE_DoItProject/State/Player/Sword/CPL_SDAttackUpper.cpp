@@ -367,11 +367,12 @@ void UCPL_SDAttackUpper::AttackOtherPawn()
 	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
 	FCollisionQueryParams CollisionQueryParm(NAME_None, false, Player);
 
-	FHitResult HitResult;
+	TArray<FHitResult> HitResults;
 	float DebugLifeTime = 1.0f;
-	bool bHit = GetWorld()->SweepSingleByChannel //@Single - 단일.
+	//#Edit 0610 - 특정 공격을 제외한 모든 공격을 다중 공격
+	bool bHit = GetWorld()->SweepMultiByChannel
 	(
-		HitResult
+		HitResults
 		, Start
 		, End
 		, FQuat::Identity
@@ -388,41 +389,44 @@ void UCPL_SDAttackUpper::AttackOtherPawn()
 
 	if (bHit == true)
 	{
-		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
-		if (Charactor != nullptr)
+		for (FHitResult& HitResult : HitResults)
 		{
-			// 1. Get Interface HitComp
-			IIC_HitComp* HitComp = Charactor->GetIHitComp();
-			if (HitComp != nullptr)
+			IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
+			if (Charactor != nullptr)
 			{
-				// 1.1 Set Hit Attribute
-				FVector HitDirection = Player->GetActorForwardVector();
-				HitDirection.Z = 0.0f;
-				HitComp->SetHitDirection(HitDirection);
+				// 1. Get Interface HitComp
+				IIC_HitComp* HitComp = Charactor->GetIHitComp();
+				if (HitComp != nullptr)
+				{
+					// 1.1 Set Hit Attribute
+					FVector HitDirection = Player->GetActorForwardVector();
+					HitDirection.Z = 0.0f;
+					HitComp->SetHitDirection(HitDirection);
 
-				// 1.2 Hit Delegate - Air(DamageType)
-				if (CurrentComboNum == 0)
-				{
-					HitComp->SetHitMoveSpeed(0.3f);
-					HitComp->OnHit(Player, DT_Air, 5.0f);
-				}
-				else if (CurrentComboNum > 0 && CurrentComboNum < static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
-				{
-					HitComp->SetHitMoveSpeed(0.3f);
-					HitComp->OnHit(Player, DT_AirAttack, 5.0f);
-				}
-				else if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
-				{
-					HitComp->SetHitMoveSpeed(500.0f);
-					HitComp->OnHit(Player, DT_StrongAttack, 5.0f);
-				}
+					// 1.2 Hit Delegate - Air(DamageType)
+					if (CurrentComboNum == 0)
+					{
+						HitComp->SetHitMoveSpeed(0.3f);
+						HitComp->OnHit(Player, DT_Air, 5.0f);
+					}
+					else if (CurrentComboNum > 0 && CurrentComboNum < static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
+					{
+						HitComp->SetHitMoveSpeed(0.3f);
+						HitComp->OnHit(Player, DT_AirAttack, 5.0f);
+					}
+					else if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
+					{
+						HitComp->SetHitMoveSpeed(500.0f);
+						HitComp->OnHit(Player, DT_StrongAttack, 5.0f);
+					}
 
-			}//(HitComp != nullptr)
+				}//(HitComp != nullptr)
+				else
+					UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
+			}//(Charactor != nullptr)
 			else
-				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
-		}//(Charactor != nullptr)
-		else
-			UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
+				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
+		}//for(HitResults)
 	}//(bHit == true)
 }
 

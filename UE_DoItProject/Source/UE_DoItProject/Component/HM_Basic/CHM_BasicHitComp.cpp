@@ -23,6 +23,15 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 	}
 
 	#pragma region Hit Montages
+	//@Super
+	{
+		// 'CanHitCom' Montage
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_HitCombo.HM_Basic_HitCombo'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> comboHit(*Path);
+		if (comboHit.Succeeded())
+			HitComboMon = comboHit.Object;
+	}
+
 	// 'Normal' Hit Montage
 	{
 		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_NormalHit1.HM_Basic_NormalHit1'";
@@ -176,8 +185,24 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type,
 	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
 	IfTrueRet(bBlockDamagedMontage);
 
+	//@콤보가 가능한지,
+	if (bCanHitCombo == true)
+	{
+		if (HitComboMon != nullptr)
+		{
+			HM_Basic->ActorAnimMonPlay(HitComboMon, 0.6f, true);
+			SetCanHittedCombo(false); //@false
+			return; //@return
+		}
+	}
+
+	//@else
 	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	if (MontageNum >= DamagedMontages.Num()) return;
+	if (MontageNum >= DamagedMontages.Num())
+	{
+		UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
+		return;
+	}
 	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
 	if (RunMontage != nullptr)
 	{

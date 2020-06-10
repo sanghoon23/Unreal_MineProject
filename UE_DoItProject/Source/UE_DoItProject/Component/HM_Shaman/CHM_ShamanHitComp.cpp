@@ -64,6 +64,18 @@ void UCHM_ShamanHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type
 	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
 	IfTrueRet(bBlockDamagedMontage);
 
+	//@콤보가 가능한지,
+	if (bCanHitCombo == true)
+	{
+		if (HitComboMon != nullptr)
+		{
+			HM_Shaman->ActorAnimMonPlay(HitComboMon, 0.6f, true);
+			SetCanHittedCombo(false); //@false
+			return; //@return
+		}
+	}
+
+	//@else
 	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
 	if (MontageNum >= DamagedMontages.Num()) return;
 	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];

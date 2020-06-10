@@ -144,7 +144,7 @@ void UCPL_SDAttackBackRange::AttackOtherPawn()
 
 	float DebugLifeTime = 1.0f;
 	TArray<FOverlapResult> OverlapResults;
-	bool bOverlap = GetWorld()->OverlapMultiByChannel //@Single - ´ÜÀÏ.
+	bool bOverlap = GetWorld()->OverlapMultiByChannel
 	(
 		OverlapResults
 		, Position

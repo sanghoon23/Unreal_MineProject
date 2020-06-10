@@ -34,8 +34,16 @@ protected:
 		/* HitComp 에 해당하는 몽타주들의 실행 여부 */
 		bool bBlockDamagedMontage = false;
 
+	/* DamageType 별로 정의된 Damage Montage */
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> DamagedMontages;
+
+	/*
+	맞은 상태 에서 콤보가 실행될 Montage 
+	@조건 - Montage CNS
+	*/
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		class UAnimMontage* HitComboMon;
 
 	UPROPERTY(VisibleAnywhere, Category = "ConditionData")
 		/* Poision ConditionData 에서 사용할 Material */
@@ -83,6 +91,8 @@ public:
 	virtual const bool IsBeated() const override { return bBeated; }
 	virtual void SetBeated(bool bValue) override { bBeated = bValue; }
 
+	virtual void SetCanHittedCombo(bool bValue) { bCanHitCombo = bValue; }
+
 	virtual UCBaseConditionType* GetConditionData(int Index) override;
 
 	/* IC_HitComp 참조 */
@@ -109,6 +119,9 @@ public:
 	class UAnimMontage* GetDamagedMontageOrNull(const uint8 ArrayNum);
 
 	virtual void SetBlockDamagedMontage(bool bValue) override { bBlockDamagedMontage = bValue; }
+
+protected:
+	bool bCanHitCombo = false;
 
 private:
 

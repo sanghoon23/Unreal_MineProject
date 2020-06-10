@@ -1,11 +1,11 @@
 #include "BTService_BasicDetect.h"
 #include "Global.h"
+#include "GameFramework/Character.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
 
-#include "AI/Controller/CAIC_HM_Basic.h"
-#include "Charactor/Monster/CHM_Basic.h"
+#include "AIController.h"
 
 UBTService_BasicDetect::UBTService_BasicDetect()
 {

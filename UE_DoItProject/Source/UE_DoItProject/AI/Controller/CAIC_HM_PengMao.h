@@ -21,7 +21,7 @@ class UE_DOITPROJECT_API ACAIC_HM_PengMao
 	#pragma region Reflection
 private:
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float PatrolRadius = 600.0f;
+		float PatrolRadius = 300.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
 		float DetectRadius = 900.0f;

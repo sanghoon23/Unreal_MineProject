@@ -19,5 +19,5 @@ protected:
 	/* Member */
 private:
 	float Timer = 0.0f;
-	float EndHangAroundTime = 10.0f;
+	float EndHangAroundTime = 2.0f;
 };

@@ -69,6 +69,8 @@ public:
 public:
 	virtual void SetBlockDamagedMontage(bool bValue) = 0;
 
+	virtual void SetCanHittedCombo(bool bValue) = 0;
+
 public:
 	/* Hit 당했을 때, 움직일 '방향' */
 	FVector GetHitDirection() { return HitDirection; }

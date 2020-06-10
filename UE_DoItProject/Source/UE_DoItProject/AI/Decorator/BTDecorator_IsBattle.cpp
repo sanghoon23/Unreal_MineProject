@@ -30,7 +30,5 @@ bool UBTDecorator_IsBattle::CalculateRawConditionValue(UBehaviorTreeComponent & 
 		}
 	}
 
-
-
 	return false;
 }
