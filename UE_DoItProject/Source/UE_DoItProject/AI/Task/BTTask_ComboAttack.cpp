@@ -31,8 +31,6 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->SetAttackTypeRetIBaseAttack(AttackTypeNum);
 	BaseAttack->BeginAttack(MonsterPawn);
 
-	CLog::Print(L"AI BeginAttack!!");
-
 	return EBTNodeResult::InProgress;
 }
 
@@ -51,13 +49,9 @@ void UBTTask_ComboAttack::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * N
 	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
 	check(BaseAttack);
 
-	CLog::Print(L"In Task!!");
-
 	bool bAttacking = BaseAttack->GetAttacking();
 	if (bAttacking == false)
 	{
-		CLog::Print(L"Combo End!!");
-
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum
 		(
 			"AIState", 0 //@NONE

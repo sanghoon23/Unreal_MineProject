@@ -10,8 +10,6 @@ UBTTask_PatrolTargetAround::UBTTask_PatrolTargetAround()
 {
 	// Name
 	NodeName = L"PatrolTargetAround";
-
-	// @Tick
 	bNotifyTick = true;
 }
 
@@ -52,6 +50,7 @@ EBTNodeResult::Type UBTTask_PatrolTargetAround::ExecuteTask(UBehaviorTreeCompone
 		Params
 	);
 
+	//@자기자신과 제일 가까운 순서로 정렬
 	overlapResults.StableSort([&](const FOverlapResult& A, const FOverlapResult& B)
 	{
 		float DistanceToA = Pawn->GetDistanceTo(A.GetActor());
@@ -66,9 +65,6 @@ EBTNodeResult::Type UBTTask_PatrolTargetAround::ExecuteTask(UBehaviorTreeCompone
 	{
 		if (Pawn->GetDistanceTo(overlapResults[0].GetActor()) < 200.0f)
 		{
-			// TODO : Target 기준으로 원으로 둘러쌓이게 만들기.
-			// 조건 다시 생각해보자.
-
 			FNavLocation CalcVec;
 			FVector ActorLocation = overlapResults[0].GetActor()->GetActorLocation();
 			Nav->GetRandomReachablePointInRadius(ActorLocation, 300.0f, CalcVec);

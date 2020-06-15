@@ -38,17 +38,22 @@ void UBTService_HMBasic::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * No
 			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Target);
 			if (I_Charactor != nullptr)
 			{
+				OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", static_cast<uint8>(EAIState_Basic::CANATTACK));
+
+				//Test Code 
+				//TODO ://
 				//bool bAttacking = I_Charactor->GetIAttackComp()->GetCurrentIBaseAttack()->GetAttacking();
-				bool bBeating = I_Charactor->GetIHitComp()->IsBeated();
-				if (bBeating == false)
-				{
-					OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", static_cast<uint8>(EAIState_Basic::CANATTACK));
-				}
+				//bool bBeating = I_Charactor->GetIHitComp()->IsBeated();
+				//if (bBeating == false)
+				//{
+				//}
 			}
 		}
 	}
 	else if (CurrentAIState == EAIState_Basic::CANATTACK)
 	{
 	}
-
+	else if (CurrentAIState == EAIState_Basic::FINDATTACKPOINT)
+	{
+	}
 }

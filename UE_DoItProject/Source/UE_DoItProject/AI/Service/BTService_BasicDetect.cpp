@@ -29,6 +29,8 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 	UWorld* World = ControlPawn->GetWorld();
 	IfNullRet(World);
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	// 위치
 	FVector Center = ControlPawn->GetActorLocation();
 	
@@ -50,7 +52,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 	);
 
 #if  ENABLE_DRAW_DEBUG
-	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 2.0f);
+	//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 2.0f);
 #endif // DRAW _ DEBUG
 
 	// 감지되었다면,
@@ -79,7 +81,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 				I_Monster->SetAIAttackMode(false);
 
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
-				OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", static_cast<uint8>(EAIState_Basic::NONE));
+				OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", 0); //@NONE
 			}
 		}
 	}
@@ -89,7 +91,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 		I_Monster->SetAIAttackMode(false);
 
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
-		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", static_cast<uint8>(EAIState_Basic::NONE));
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", 0); //@NONE
 	}
 }
 

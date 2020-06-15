@@ -208,7 +208,8 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 	TArray<FHitResult> HitResults;
 	bool bHit = UKismetSystemLibrary::LineTraceMulti
 	(
-		GetWorld(), RayStart, RayEnd, UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		GetWorld(), RayStart, RayEnd,
+		UEngineTypes::ConvertToTraceType(ECC_Visibility),
 		false, Ignore, Debug, HitResults, true
 	);
 

@@ -11,6 +11,7 @@ enum class EAIState_Basic : uint8
 	NONE		= 0, /* NONE - √ ±‚»≠ (AIState) */
 	HANGAROUND	= 1,
 	CANATTACK	= 2,
+	FINDATTACKPOINT	= 3,
 };
 
 UCLASS()
@@ -36,6 +37,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "AIControl")
 		EAIState_Basic CurrentAIState = EAIState_Basic::NONE;
 
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		TArray<AActor*> IgnoreActors;
+
 	#pragma endregion
 
 public:
@@ -45,6 +49,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
+
+public:
+	virtual void Tick(float DeltaTime) override;
 
 private:
 	class UBehaviorTree* BT;
