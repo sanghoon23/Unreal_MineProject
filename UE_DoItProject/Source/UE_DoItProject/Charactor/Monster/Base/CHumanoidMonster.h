@@ -2,6 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
+#include "Custom/CCharactorMovementComp.h"
+
 #include "CHumanoidMonster.generated.h"
 
 
@@ -14,6 +17,9 @@ class UE_DOITPROJECT_API ACHumanoidMonster
 
 	#pragma	region Reflection
 protected:
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//	class UCCharactorMovementComp* CustomMovementComp;
+
 	UPROPERTY(EditAnywhere, Category = "AI")
 		TSubclassOf<class AAIController> MonAIControllerClass;
 
@@ -37,6 +43,8 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	//virtual UPawnMovementComponent* GetMovementComponent() const override;
 
 public:
 	virtual float TakeDamage

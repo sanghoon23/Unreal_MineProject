@@ -2,10 +2,10 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 
+#include "AIController.h"
+
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
-
-#include "AIController.h"
 
 UBTService_BasicDetect::UBTService_BasicDetect()
 {
@@ -81,7 +81,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 				I_Monster->SetAIAttackMode(false);
 
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
-				OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", 0); //@NONE
+				//OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", 0); //@NONE
 			}
 		}
 	}
@@ -91,7 +91,7 @@ void UBTService_BasicDetect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 
 		I_Monster->SetAIAttackMode(false);
 
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
-		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", 0); //@NONE
+		//OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", 0); //@NONE
 	}
 }
 

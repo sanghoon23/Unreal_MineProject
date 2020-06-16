@@ -54,7 +54,7 @@ bool UBTDecorator_ExistOtherFrontRange::CalculateRawConditionValue(UBehaviorTree
 	);
 
 #if  ENABLE_DRAW_DEBUG
-	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 2.0f);
+	//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 2.0f);
 #endif // DRAW _ DEBUG
 
 	if (bResult == true)

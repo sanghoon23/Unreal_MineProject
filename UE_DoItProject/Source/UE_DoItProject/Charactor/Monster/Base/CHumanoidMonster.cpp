@@ -9,6 +9,14 @@ ACHumanoidMonster::ACHumanoidMonster()
 
 	//@AI
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	////@Create
+	//{
+	//	CustomMovementComp = CreateDefaultSubobject<UCCharactorMovementComp>("CustomMovementComp");
+	//	CustomMovementComp->UpdatedComponent = RootComponent;
+	//}
+
+	//CharacterMovementComponentName = "CustomMovementComp";
 }
 
 void ACHumanoidMonster::BeginPlay()
@@ -35,3 +43,7 @@ float ACHumanoidMonster::TakeDamage(float DamageAmount, FDamageEvent const & Dam
 	return Damage;
 }
 
+//UPawnMovementComponent* ACHumanoidMonster::GetMovementComponent() const
+//{
+//	return CustomMovementComp;
+//}

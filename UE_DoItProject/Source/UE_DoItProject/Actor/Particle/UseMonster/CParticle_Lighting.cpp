@@ -1,11 +1,12 @@
-#include "CParticle_FireRain.h"
+#include "CParticle_Lighting.h"
 #include "Global.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
+#include "Interface/IC_Player.h"
 #include "Interface/IC_HitComp.h"
 
-ACParticle_FireRain::ACParticle_FireRain()
+ACParticle_Lighting::ACParticle_Lighting()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -23,10 +24,10 @@ ACParticle_FireRain::ACParticle_FireRain()
 		ParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("FireRangeParticleComp");
 		ParticleComp->SetupAttachment(CollisionBox);
 
-		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Attack/P_MGAttack_FireRange.P_MGAttack_FireRange'";
-		ConstructorHelpers::FObjectFinder<UParticleSystem> FireRangeParticle(*strPath);
-		if (FireRangeParticle.Succeeded())
-			ParticleComp->SetTemplate(FireRangeParticle.Object);
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Shaman/Shaman_FirstAttack_Lighting.Shaman_FirstAttack_Lighting'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> LightingRangeParticle(*strPath);
+		if (LightingRangeParticle.Succeeded())
+			ParticleComp->SetTemplate(LightingRangeParticle.Object);
 	}
 
 	#pragma endregion
@@ -43,19 +44,20 @@ ACParticle_FireRain::ACParticle_FireRain()
 		ParticleComp->SetRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
 	}
 
-	#pragma region DamageType
+#pragma region DamageType
 
 	DT_Normal = NewObject<UCDamageType_Normal>();
 
-	DT_Burn = NewObject<UCDamageType_Burn>();
-	DT_Burn->SetSecondDamageValue(3.0f);
-	DT_Burn->SetBurnTime(5.0f);
+	//TODO : Stun 으로 정의
+	//DT_Burn = NewObject<UCDamageType_Burn>();
+	//DT_Burn->SetSecondDamageValue(3.0f);
+	//DT_Burn->SetBurnTime(5.0f);
 
-	#pragma endregion
+#pragma endregion
 
 }
 
-void ACParticle_FireRain::BeginPlay()
+void ACParticle_Lighting::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -63,11 +65,11 @@ void ACParticle_FireRain::BeginPlay()
 	SetActorTickEnabled(false);
 
 	//@AddDynamic
-	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ACParticle_FireRain::OnBeginOverlap);
-	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ACParticle_FireRain::OnEndOverlap);
+	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ACParticle_Lighting::OnBeginOverlap);
+	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ACParticle_Lighting::OnEndOverlap);
 }
 
-void ACParticle_FireRain::Tick(float DeltaTime)
+void ACParticle_Lighting::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -75,13 +77,10 @@ void ACParticle_FireRain::Tick(float DeltaTime)
 	if (TickTimer > AttackRepeatTime)
 	{
 		TickTimer = 0.0f;
-
-		//@계속 겹침이 일어날 때, Update
-		OnAttackingOverlap();
 	}
 }
 
-void ACParticle_FireRain::OnStartActor(FVector Position)
+void ACParticle_Lighting::OnStartActor(FVector Position)
 {
 	//@Tick ON
 	SetActorTickEnabled(true);
@@ -94,7 +93,7 @@ void ACParticle_FireRain::OnStartActor(FVector Position)
 	OnAttackingOverlap();
 }
 
-void ACParticle_FireRain::OffEndActor()
+void ACParticle_Lighting::OffEndActor()
 {
 	//@Tick OFF
 	SetActorTickEnabled(false);
@@ -103,17 +102,17 @@ void ACParticle_FireRain::OffEndActor()
 	ParticleComp->SetActive(false);
 }
 
-void ACParticle_FireRain::SetBoxExtentScale(float fValue)
+void ACParticle_Lighting::SetBoxExtentScale(float fValue)
 {
 	CollisionBox->SetBoxExtent(FVector(fValue, fValue, 32.0f));
 }
 
-void ACParticle_FireRain::SetBoxExtentScale(FVector VecScale)
+void ACParticle_Lighting::SetBoxExtentScale(FVector VecScale)
 {
 	CollisionBox->SetBoxExtent(FVector(VecScale.X, VecScale.Y, 32.0f));
 }
 
-void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void ACParticle_Lighting::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
@@ -132,7 +131,7 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 	bool bOverlapValue = GetWorld()->OverlapMultiByChannel
 	(
 		OverlapResults, Position, FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2, //@Player Attack
+		ECollisionChannel::ECC_GameTraceChannel3, //@Monster Attack
 		FCollisionShape::MakeSphere(ActorOverlapSphereRadius),
 		Param
 	);
@@ -141,8 +140,8 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 	{
 		for (FOverlapResult& OverlapResult : OverlapResults)
 		{
-			IIC_Monster* Monster = Cast<IIC_Monster>(OverlapResult.GetActor());
-			if (Monster != nullptr)
+			IIC_Player* Player = Cast<IIC_Player>(OverlapResult.GetActor());
+			if (Player != nullptr)
 			{
 				IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
 				if (Charactor != nullptr)
@@ -159,7 +158,7 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 
 						// 1.2 Hit Delegate - DT_Burn
 						HitComp->SetHitMoveSpeed(0.0f);
-						HitComp->OnHit(this, DT_Burn, 5.0f);
+						HitComp->OnHit(this, DT_Stun, 5.0f);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"Particle_FireRain BeginOverlap - HitComp Null!!");
@@ -169,7 +168,7 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 	}//(bOverlapValue == true)
 }
 
-void ACParticle_FireRain::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+void ACParticle_Lighting::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
@@ -181,7 +180,7 @@ void ACParticle_FireRain::OnEndOverlap(UPrimitiveComponent * OverlappedComponent
 	bCollisioning = false;
 }
 
-void ACParticle_FireRain::OnAttackingOverlap()
+void ACParticle_Lighting::OnAttackingOverlap()
 {
 	TArray<FOverlapResult> OverlapResults;
 	FVector Position = GetActorLocation();
@@ -200,8 +199,8 @@ void ACParticle_FireRain::OnAttackingOverlap()
 	{
 		for (FOverlapResult& OverlapResult : OverlapResults)
 		{
-			IIC_Monster* Monster = Cast<IIC_Monster>(OverlapResult.GetActor());
-			if (Monster != nullptr)
+			IIC_Player* Player = Cast<IIC_Player>(OverlapResult.GetActor());
+			if (Player != nullptr)
 			{
 				IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
 				if (Charactor != nullptr)
@@ -217,7 +216,7 @@ void ACParticle_FireRain::OnAttackingOverlap()
 						HitComp->SetHitDirection(HitDirection);
 						HitComp->SetHitMoveSpeed(2.0f);
 
-						// 1.2 Hit Delegate - Air(DamageType)
+						// 1.2 Hit Delegate -
 						HitComp->OnHit(this, DT_Normal, 10.0f);
 					}
 					else
@@ -227,3 +226,4 @@ void ACParticle_FireRain::OnAttackingOverlap()
 		}//for(OverlapResult)
 	}//(bOverlapValue == true)
 }
+

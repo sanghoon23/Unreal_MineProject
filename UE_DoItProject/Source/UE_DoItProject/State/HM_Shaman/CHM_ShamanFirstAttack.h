@@ -5,10 +5,10 @@
 
 #include "DamageType/CDamageType_Normal.h"
 
-#include "CHM_BasicFirstCombo.generated.h"
+#include "CHM_ShamanFirstAttack.generated.h"
 
 UENUM()
-enum class UHM_BasicFirstComboType : uint8
+enum class EHM_ShamanFirstAttackType : uint8
 {
 	COMBO_ONE = 0,
 	COMBO_TWO = 1,
@@ -17,24 +17,24 @@ enum class UHM_BasicFirstComboType : uint8
 };
 
 UCLASS()
-class UE_DOITPROJECT_API UCHM_BasicFirstCombo 
+class UE_DOITPROJECT_API UCHM_ShamanFirstAttack 
 	: public UC_BaseAttackState
 {
 	GENERATED_BODY()
 
-	#pragma region Reflection
+#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> AttackMontages;
 
-	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	NormalDamageType;
+	UPROPERTY(VisibleAnywhere, Category = "Actor")
+		/* FireRainActor 에서 BeginOverlap 으로 Monster Attacking */
+		class ACParticle_Lighting* LightingActor;
 
-	#pragma endregion
+#pragma endregion
 
 public:
-	UCHM_BasicFirstCombo();
+	UCHM_ShamanFirstAttack();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
@@ -43,19 +43,18 @@ protected:
 	//
 public:
 	void BeginAttack(AActor * DoingActor) override;
-	void OnComboSet(AActor * DoingActor) override;
-	bool IsLastCombo() const override;
+	//void OnComboSet(AActor * DoingActor) override;
+	//bool IsLastCombo() const override;
 
-	void AttackOtherPawn() override;
+	//void AttackOtherPawn() override;
 
-	#pragma region Member
+#pragma region Member
 private:
-	class ACHM_Basic*	HM_Basic;
+	class ACHM_Shaman*	HM_Shaman;
 
 	// @공격범위, Target과 이 범위 안에 들어와야지만 공격가능 - Default
 	float AttackRange = 200.0f;
 
 	float AttackRadius = 100.0f;
-
-	#pragma endregion
+	
 };

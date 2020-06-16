@@ -1,7 +1,7 @@
 #include "CHM_BasicAttackComp.h"
 #include "Global.h"
 
-#include "State/HM_Basic/Base/CHM_BasicBaseAttack.h"
+#include "State/Base/C_BaseAttackState.h"
 #include "State/HM_Basic/CHM_BasicFirstCombo.h"
 
 UCHM_BasicAttackComp::UCHM_BasicAttackComp()
@@ -11,7 +11,7 @@ UCHM_BasicAttackComp::UCHM_BasicAttackComp()
 	#pragma region Create State
 	// @FirstCombo
 	{
-		UCHM_BasicBaseAttack* FirstAttack = CreateDefaultSubobject<UCHM_BasicFirstCombo>("HMBasic_FirstCombo");
+		UC_BaseAttackState* FirstAttack = CreateDefaultSubobject<UCHM_BasicFirstCombo>("HMBasic_FirstCombo");
 		BasicAttackStateArray.Emplace(FirstAttack);
 	}
 	#pragma endregion

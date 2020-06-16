@@ -8,10 +8,9 @@
 UENUM(BlueprintType)
 enum class EAIState_Basic : uint8
 {
-	NONE		= 0, /* NONE - 초기화 (AIState) */
-	HANGAROUND	= 1,
-	CANATTACK	= 2,
-	FINDATTACKPOINT	= 3,
+	DISCOVERY		= 0, //@적발견
+	TRYATTACK		= 1, //@공격 시도
+	FINDATTACKPOINT	= 2, //@
 };
 
 UCLASS()
@@ -29,16 +28,7 @@ private:
 		float DetectRadius = 800.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float HangAround = 400.0f;
-
-	UPROPERTY(EditAnywhere, Category = "AIControl")
 		float AttackRange = 220.0f;
-
-	UPROPERTY(VisibleAnywhere, Category = "AIControl")
-		EAIState_Basic CurrentAIState = EAIState_Basic::NONE;
-
-	UPROPERTY(VisibleAnywhere, Category = "Data")
-		TArray<AActor*> IgnoreActors;
 
 	#pragma endregion
 

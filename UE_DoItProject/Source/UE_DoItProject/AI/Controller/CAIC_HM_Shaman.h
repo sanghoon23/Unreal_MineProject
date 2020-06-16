@@ -27,13 +27,7 @@ private:
 		float DetectRadius = 800.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float HangAround = 400.0f;
-
-	UPROPERTY(EditAnywhere, Category = "AIControl")
 		float AttackRange = 220.0f;
-
-	UPROPERTY(VisibleAnywhere, Category = "AIControl")
-		EAIState_Shaman InputFirstAIState = EAIState_Shaman::NONE;
 
 	#pragma endregion
 

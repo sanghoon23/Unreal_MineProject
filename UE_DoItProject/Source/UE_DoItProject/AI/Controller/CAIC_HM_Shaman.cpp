@@ -43,11 +43,7 @@ void ACAIC_HM_Shaman::OnPossess(APawn * InPawn)
 		Blackboard->SetValueAsVector("Home", InPawn->GetActorLocation());
 		Blackboard->SetValueAsFloat("PatrolRadius", PatrolRadius);
 		Blackboard->SetValueAsFloat("DetectRadius", DetectRadius);
-		Blackboard->SetValueAsFloat("HangAround", HangAround);
 		Blackboard->SetValueAsFloat("AttackRange", AttackRange);
-
-		/* NONE - ÃÊ±âÈ­ (AIState) */
-		Blackboard->SetValueAsEnum("AIState", static_cast<uint8>(InputFirstAIState));
 
 		RunBehaviorTree(BT);
 	}

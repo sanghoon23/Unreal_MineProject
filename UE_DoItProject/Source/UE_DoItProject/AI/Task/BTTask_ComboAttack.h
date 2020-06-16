@@ -10,6 +10,10 @@ class UE_DOITPROJECT_API UBTTask_ComboAttack
 {
 	GENERATED_BODY()
 	
+private:
+	UPROPERTY(EditAnywhere, Category = "AIControl")
+		uint8 AttackTypeNum = 0;
+
 public:
 	UBTTask_ComboAttack();
 
@@ -18,7 +22,4 @@ private:
 
 protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds);
-
-private:
-	uint8 AttackTypeNum = 0;
 };
