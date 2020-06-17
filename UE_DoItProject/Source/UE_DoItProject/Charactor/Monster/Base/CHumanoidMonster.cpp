@@ -1,7 +1,7 @@
 #include "CHumanoidMonster.h"
 #include "Global.h"
 
-#include "AI/Controller/CAIC_HM_Basic.h"
+#include "AIController.h"
 
 ACHumanoidMonster::ACHumanoidMonster()
 {

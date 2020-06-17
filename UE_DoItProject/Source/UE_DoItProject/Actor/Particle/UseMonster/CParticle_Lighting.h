@@ -15,7 +15,7 @@ class UE_DOITPROJECT_API ACParticle_Lighting
 	GENERATED_BODY()
 	
 private:
-	const float AttackRepeatTime = 1.0f;
+	//const float AttackRepeatTime = 1.0f;
 	const float ActorOverlapSphereRadius = 200.0f;
 
 	#pragma	region Reflection
@@ -26,12 +26,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* ParticleComp;
 
-	// @DamageType
+	/* BeginOverlap 에서 쓰일 DamageType */
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Normal;
-
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Stun*	DT_Stun;
+		UCDamageType_Base* DT_UseBeginOverlap;
 
 	/* 다른 액터와 겹침이 일어났을 때, - AddDynamic */
 	UFUNCTION()
@@ -41,9 +38,9 @@ private:
 	UFUNCTION()
 		void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UFUNCTION()
-		/* 다른 액터와 계속 겹침될 때, */
-		void OnAttackingOverlap();
+	//UFUNCTION()
+	//	/* 다른 액터와 계속 겹침될 때, */
+	//	void OnAttackingOverlap();
 
 	#pragma endregion
 
@@ -62,11 +59,16 @@ public:
 	void OnStartActor(FVector Position);
 	void OffEndActor();
 
+public:
+	void SetDamageType(UCDamageType_Base* UseBeginOverlap);
+
 	/* FVector(fValue, fValue, 32.0f) - Z 값 32.0f 로 고정 */
 	void SetBoxExtentScale(float fValue);
 
 	/* FVector(Vec.X, Vec.Y, 32.0f) - Z 값 32.0f 로 고정 */
 	void SetBoxExtentScale(FVector VecScale);
+
+	void SetParticleCompRelative(FTransform Transform);
 
 	/* Member */
 private:

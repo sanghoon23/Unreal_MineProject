@@ -14,7 +14,119 @@ UCHM_ShamanHitComp::UCHM_ShamanHitComp()
 
 	FString Path = L"";
 
+#pragma region Hit Montages
+	//@Super
+	{
+		// 'CanHitCom' Montage
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Shaman/Hit/HM_ShamanMon_HitCombo.HM_ShamanMon_HitCombo'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> comboHit(*Path);
+		if (comboHit.Succeeded())
+			HitComboMon = comboHit.Object;
+	}
 
+	// 'Normal' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Shaman/Hit/HM_ShamanMon_NormalHit1.HM_ShamanMon_NormalHit1'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit(*Path);
+		if (normalHit.Succeeded())
+			NormalHitMontage = normalHit.Object;
+	}
+
+	// 'AirHitFirst' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Shaman/Hit/HM_ShamanMon_AirHitFirst.HM_ShamanMon_AirHitFirst'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> airHit(*Path);
+		if (airHit.Succeeded())
+			AirHitMontage = airHit.Object;
+	}
+
+	// 'AirAttack' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Shaman/Hit/HM_ShamanMon_AirAttackHit.HM_ShamanMon_AirAttackHit'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> airAttackHit(*Path);
+		if (airAttackHit.Succeeded())
+			AirAttackHitMontage = airAttackHit.Object;
+	}
+
+	// 'StrongAttack' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Shaman/Hit/HM_ShamanMon_StrongAttack.HM_ShamanMon_StrongAttack'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> strongAttackHit(*Path);
+		if (strongAttackHit.Succeeded())
+			StrongAttackHitMontage = strongAttackHit.Object;
+	}
+
+	// 'Stun' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Shaman/Hit/HM_ShamanMon_Stun_.HM_ShamanMon_Stun_'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> stunHit(*Path);
+		if (stunHit.Succeeded())
+			StunHitMontage = stunHit.Object;
+	}
+
+#pragma endregion
+
+#pragma region Set MontagesArray - (BaseHitComp)
+	//@Set Montage
+	//...
+
+	uint8 NormalNum = static_cast<uint8>(FDamageType::NORMAL);
+	DamagedMontages[NormalNum] = NormalHitMontage;
+
+	uint8 AirNum = static_cast<uint8>(FDamageType::AIR);
+	DamagedMontages[AirNum] = AirHitMontage;
+
+	uint8 AirAttackNum = static_cast<uint8>(FDamageType::AIRATTACK);
+	DamagedMontages[AirAttackNum] = AirAttackHitMontage;
+
+	uint8 StrongAttackNum = static_cast<uint8>(FDamageType::STRONGATTACK);
+	DamagedMontages[StrongAttackNum] = StrongAttackHitMontage;
+
+	uint8 StunNum = static_cast<uint8>(FDamageType::STUN);
+	DamagedMontages[StunNum] = StunHitMontage;
+
+#pragma endregion
+
+	//@LOAD Stun Head Particle
+	{
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_StunActor.PS_StunActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_StunHead(*Path);
+		if (P_StunHead.Succeeded())
+		{
+			StunHeadParticle = P_StunHead.Object;
+		}
+	}
+
+	// TODO : Poision Material ¸¸µé±â
+	////@LOAD Poision Material
+	//{
+	//	Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
+	//	ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
+	//	if (PoisionMat.Succeeded())
+	//	{
+	//		PoisionMaterial = PoisionMat.Object;
+	//	}
+	//}
+
+	//@LOAD Burn Particle - ParticleComp
+	{
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_BurningActor.PS_BurningActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> BurnPT(*Path);
+		if (BurnPT.Succeeded())
+		{
+			BurnParticle = BurnPT.Object;
+		}
+	}
+
+	//@LOAD Freeze Particle - ParticleComp
+	{
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_FreezingActor.PS_FreezingActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> FreezePT(*Path);
+		if (FreezePT.Succeeded())
+		{
+			FreezeParticle = FreezePT.Object;
+		}
+	}
 
 }
 

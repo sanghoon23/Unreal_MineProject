@@ -222,3 +222,14 @@ IIC_MeshParticle * ACHM_Basic::GetIMeshParticle()
 	IfTrueRetResult(MeshParticleComponent == nullptr, nullptr); // @Return Null
 	return Cast<IIC_MeshParticle>(MeshParticleComponent);
 }
+
+AActor * ACHM_Basic::GetTargetInAI()
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+	check(AIController);
+
+	AActor* RetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("Target"));
+	check(RetActor);
+
+	return RetActor;
+}

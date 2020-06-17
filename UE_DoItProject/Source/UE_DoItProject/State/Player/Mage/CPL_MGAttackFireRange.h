@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_MageBaseAttack.h"
 #include "Interface/IC_Component.h"
+
+#include "DamageType/CDamageType_Normal.h"
 #include "DamageType/CDamageType_Burn.h"
 
 #include "CPL_MGAttackFireRange.generated.h"
@@ -21,6 +23,13 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Actor")
 		/* FireRainActor 에서 BeginOverlap 으로 Monster Attacking */
 		class ACParticle_FireRain* FireRainActor;
+
+	// @DamageType
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_Normal*	DT_Normal;
+
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_Burn*	DT_Burn;
 
 	#pragma endregion
 

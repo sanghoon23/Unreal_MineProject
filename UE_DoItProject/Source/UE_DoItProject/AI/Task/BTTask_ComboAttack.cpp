@@ -31,33 +31,33 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->SetAttackTypeRetIBaseAttack(AttackTypeNum);
 	BaseAttack->BeginAttack(MonsterPawn);
 
-	return EBTNodeResult::InProgress;
+	return EBTNodeResult::Succeeded;
 }
 
-/* MonsterPawn 의 BeginAttack 을 계속 실행 */
 void UBTTask_ComboAttack::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	APawn* MonsterPawn = OwnerComp.GetAIOwner()->GetPawn();
-	IfNullRet(MonsterPawn);
+	//APawn* MonsterPawn = OwnerComp.GetAIOwner()->GetPawn();
+	//IfNullRet(MonsterPawn);
 
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MonsterPawn);
-	IfNullRet(Charactor);
+	//IIC_Charactor* Charactor = Cast<IIC_Charactor>(MonsterPawn);
+	//IfNullRet(Charactor);
 
-	// @Combo 가 끝나면 bIsFinishing == false 가 됨.
-	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
-	check(BaseAttack);
+	//// @Combo 가 끝나면 bIsFinishing == false 가 됨.
+	//IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
+	//check(BaseAttack);
 
-	bool bAttacking = BaseAttack->GetAttacking();
-	if (bAttacking == false)
-	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsEnum
-		(
-			"AIState", 0 //@NONE
-		);
+	//bool bAttacking = BaseAttack->GetAttacking();
+	//if (bAttacking == false)
+	//{
+	//	OwnerComp.GetBlackboardComponent()->SetValueAsEnum
+	//	(
+	//		"AIState", 0 //@NONE
+	//	);
 
-		// Quit Tick Task
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	}
+
+	//	// Quit Tick Task
+	//	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	//}
 }

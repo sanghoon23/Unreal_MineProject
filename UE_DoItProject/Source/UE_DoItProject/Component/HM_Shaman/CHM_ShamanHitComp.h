@@ -12,9 +12,6 @@ class UE_DOITPROJECT_API UCHM_ShamanHitComp
 	
 	#pragma region Reflection
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Montage")
-		class UAnimMontage* CommonDeathMontage;
-
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* NormalHitMontage;
 

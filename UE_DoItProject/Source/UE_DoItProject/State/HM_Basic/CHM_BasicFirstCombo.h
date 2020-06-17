@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "State/Base/C_BaseAttackState.h"
-
 #include "DamageType/CDamageType_Normal.h"
 
 #include "CHM_BasicFirstCombo.generated.h"
@@ -39,6 +38,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	/* Pure Virtual Function - IC_Component */
+	//virtual void IsRunTick(bool bRunning) override;
 
 	//
 public:

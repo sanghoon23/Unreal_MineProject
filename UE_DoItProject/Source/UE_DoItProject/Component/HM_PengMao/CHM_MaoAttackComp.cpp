@@ -1,7 +1,8 @@
 #include "CHM_MaoAttackComp.h"
 #include "Global.h"
+#include "Interface/IC_Component.h"
 
-#include "State/HM_Basic/Base/CHM_BasicBaseAttack.h"
+#include "State/Base/C_BaseAttackState.h"
 
 UCHM_MaoAttackComp::UCHM_MaoAttackComp()
 {
@@ -37,11 +38,47 @@ IIC_BaseAttack * UCHM_MaoAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 		nullptr
 	);
 
-	// @SetType
-	HM_PengMaoAttackType SetType = static_cast<HM_PengMaoAttackType>(Type);
-	AttackType = SetType;
+	// @기존 AttackType Num
+	uint8 BeforeTypeNum = static_cast<uint8>(AttackType);
 
-	return Cast<IIC_BaseAttack>(BasicAttackStateArray[Type]);
+	// @들어온 Type
+	HM_PengMaoAttackType SetType = static_cast<HM_PengMaoAttackType>(Type);
+	if (AttackType == SetType)
+	{
+		// @Tick true
+		IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[Type]);
+		if (IC_Comp != nullptr)
+		{
+			IC_Comp->IsRunTick(true);
+		}
+
+		return Cast<IIC_BaseAttack>(BasicAttackStateArray[Type]); //@return
+	}
+	else if (AttackType != SetType)
+	{
+		// @Tick false
+		IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[BeforeTypeNum]);
+		if (IC_Comp != nullptr)
+		{
+			IC_Comp->IsRunTick(false);
+		}
+
+		// @EndAttack Call
+		BasicAttackStateArray[BeforeTypeNum]->EndAttackDeleFunc.Broadcast();
+
+		AttackType = SetType;
+	}
+
+	uint8 AfterTypeNum = static_cast<uint8>(AttackType);
+
+	// @Tick true
+	IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[AfterTypeNum]);
+	if (IC_Comp != nullptr)
+	{
+		IC_Comp->IsRunTick(true);
+	}
+
+	return Cast<IIC_BaseAttack>(BasicAttackStateArray[AfterTypeNum]);
 }
 
 // - IC_AttackComp 참고.

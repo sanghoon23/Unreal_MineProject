@@ -44,6 +44,18 @@ UCPL_MGAttackFireRange::UCPL_MGAttackFireRange()
 	}
 		
 	#pragma endregion
+
+	#pragma region DamageType
+
+	DT_Normal = NewObject<UCDamageType_Normal>();
+	DT_Normal->SetDamageImpulse(10.0f);
+
+	DT_Burn = NewObject<UCDamageType_Burn>();
+	DT_Burn->SetDamageImpulse(0.0f);
+	DT_Burn->SetSecondDamageValue(3.0f);
+	DT_Burn->SetBurnTime(5.0f);
+
+	#pragma endregion
 }
 
 void UCPL_MGAttackFireRange::BeginPlay()
@@ -67,6 +79,7 @@ void UCPL_MGAttackFireRange::BeginPlay()
 	Params.Owner = GetOwner();
 	FireRainActor = GetWorld()->SpawnActor<ACParticle_FireRain>(ACParticle_FireRain::StaticClass(), Transform, Params);
 	FireRainActor->OffEndActor();
+	FireRainActor->SetDamageType(DT_Burn, DT_Normal);
 
 	#pragma endregion
 
@@ -169,6 +182,9 @@ void UCPL_MGAttackFireRange::TickComponent(float DeltaTime, ELevelTick TickType,
 
 			//@ON Particle Object
 			FireRainActor->OnStartActor(AttackPosition);
+			FTransform Transform;
+			Transform.SetLocation(FVector(0.0f, 0.0f, 500.0f));
+			FireRainActor->SetParticleCompRelative(Transform);
 
 			//@다시 줄어드는 Filling
 			bFillOutGauge = true;

@@ -37,24 +37,13 @@ ACParticle_Lighting::ACParticle_Lighting()
 		CollisionBox->SetGenerateOverlapEvents(true);
 		CollisionBox->SetCollisionProfileName("OverlapOnlyPawn");
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		CollisionBox->SetBoxExtent(FVector(200.0f, 200.0f, 32.0f));
+		CollisionBox->SetBoxExtent(FVector(100.0f, 100.0f, 32.0f));
 		CollisionBox->SetRelativeLocation(FVector(0.0f, 0.0f, 16.0f));
 
 		ParticleComp->bAutoActivate = false;
-		ParticleComp->SetRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
+		ParticleComp->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+		ParticleComp->SetRelativeScale3D(FVector(2.0f));
 	}
-
-#pragma region DamageType
-
-	DT_Normal = NewObject<UCDamageType_Normal>();
-
-	//TODO : Stun 으로 정의
-	//DT_Burn = NewObject<UCDamageType_Burn>();
-	//DT_Burn->SetSecondDamageValue(3.0f);
-	//DT_Burn->SetBurnTime(5.0f);
-
-#pragma endregion
-
 }
 
 void ACParticle_Lighting::BeginPlay()
@@ -73,11 +62,7 @@ void ACParticle_Lighting::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	TickTimer += DeltaTime;
-	if (TickTimer > AttackRepeatTime)
-	{
-		TickTimer = 0.0f;
-	}
+	/* 이 엑터는 계속 유지되지 않음 그래서 AttackOverlap 을 쓰지 않음 */
 }
 
 void ACParticle_Lighting::OnStartActor(FVector Position)
@@ -90,7 +75,7 @@ void ACParticle_Lighting::OnStartActor(FVector Position)
 	SetActorLocation(Position);
 
 	//@Begin Attack
-	OnAttackingOverlap();
+	//OnAttackingOverlap();
 }
 
 void ACParticle_Lighting::OffEndActor()
@@ -100,6 +85,12 @@ void ACParticle_Lighting::OffEndActor()
 
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ParticleComp->SetActive(false);
+}
+
+void ACParticle_Lighting::SetDamageType(UCDamageType_Base * UseBeginOverlap)
+{
+	check(UseBeginOverlap);
+	DT_UseBeginOverlap = UseBeginOverlap;
 }
 
 void ACParticle_Lighting::SetBoxExtentScale(float fValue)
@@ -112,8 +103,17 @@ void ACParticle_Lighting::SetBoxExtentScale(FVector VecScale)
 	CollisionBox->SetBoxExtent(FVector(VecScale.X, VecScale.Y, 32.0f));
 }
 
+void ACParticle_Lighting::SetParticleCompRelative(FTransform Transform)
+{
+	ParticleComp->SetRelativeLocation(Transform.GetLocation());
+	ParticleComp->SetRelativeRotation(FRotator(Transform.GetRotation()));
+	ParticleComp->SetRelativeScale3D(Transform.GetScale3D());
+}
+
 void ACParticle_Lighting::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+	return;
+
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
@@ -140,6 +140,7 @@ void ACParticle_Lighting::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 	{
 		for (FOverlapResult& OverlapResult : OverlapResults)
 		{
+			//@Player 를 받음
 			IIC_Player* Player = Cast<IIC_Player>(OverlapResult.GetActor());
 			if (Player != nullptr)
 			{
@@ -158,7 +159,7 @@ void ACParticle_Lighting::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 
 						// 1.2 Hit Delegate - DT_Burn
 						HitComp->SetHitMoveSpeed(0.0f);
-						HitComp->OnHit(this, DT_Stun, 5.0f);
+						HitComp->OnHit(this, DT_UseBeginOverlap, DT_UseBeginOverlap->DamageImpulse);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"Particle_FireRain BeginOverlap - HitComp Null!!");
@@ -178,52 +179,5 @@ void ACParticle_Lighting::OnEndOverlap(UPrimitiveComponent * OverlappedComponent
 	IfTrueRet(OtherActor == GetOwner());
 
 	bCollisioning = false;
-}
-
-void ACParticle_Lighting::OnAttackingOverlap()
-{
-	TArray<FOverlapResult> OverlapResults;
-	FVector Position = GetActorLocation();
-	FCollisionQueryParams Param(NAME_None, false, this);
-
-	//@충돌 시행
-	bool bOverlapValue = GetWorld()->OverlapMultiByChannel
-	(
-		OverlapResults, Position, FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2, //@Player Attack
-		FCollisionShape::MakeSphere(ActorOverlapSphereRadius),
-		Param
-	);
-
-	if (bOverlapValue == true)
-	{
-		for (FOverlapResult& OverlapResult : OverlapResults)
-		{
-			IIC_Player* Player = Cast<IIC_Player>(OverlapResult.GetActor());
-			if (Player != nullptr)
-			{
-				IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
-				if (Charactor != nullptr)
-				{
-					// 1. Get Interface HitComp
-					IIC_HitComp* HitComp = Charactor->GetIHitComp();
-					if (HitComp != nullptr)
-					{
-						// 1.1 Set Hit Attribute
-						FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - GetActorLocation();
-						HitDirection.Z = 0.0f;
-						HitDirection.Normalize();
-						HitComp->SetHitDirection(HitDirection);
-						HitComp->SetHitMoveSpeed(2.0f);
-
-						// 1.2 Hit Delegate -
-						HitComp->OnHit(this, DT_Normal, 10.0f);
-					}
-					else
-						UE_LOG(LogTemp, Warning, L"Particle_FireRain OnUpdateOverlap - HitComp Null!!");
-				}
-			}
-		}//for(OverlapResult)
-	}//(bOverlapValue == true)
 }
 

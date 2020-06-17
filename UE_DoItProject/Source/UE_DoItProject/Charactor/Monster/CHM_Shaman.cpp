@@ -205,3 +205,13 @@ IIC_MeshParticle * ACHM_Shaman::GetIMeshParticle()
 	return Cast<IIC_MeshParticle>(MeshParticleComponent);
 }
 
+AActor * ACHM_Shaman::GetTargetInAI()
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+	check(AIController);
+
+	AActor* RetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("Target"));
+	check(RetActor);
+
+	return RetActor;
+}

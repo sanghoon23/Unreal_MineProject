@@ -12,7 +12,7 @@ UCDamageType_Base::UCDamageType_Base()
 	bScaleMomentumByMass = true;
 	bRadialDamageVelChange = false;
 
-	DamageImpulse = 100.0f;
+	DamageImpulse = 0.0f;
 	DestructibleImpulse = 100.0f;
 	DestructibleDamageSpreadScale = 100.0f;
 }

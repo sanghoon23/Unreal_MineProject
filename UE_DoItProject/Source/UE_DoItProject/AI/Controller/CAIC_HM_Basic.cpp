@@ -121,7 +121,7 @@ void ACAIC_HM_Basic::Tick(float DeltaTime)
 //			FVector Dir = (MineLocation - OverlapLocation);
 //			Dir.Normalize();
 //
-//			//TODO : Test Code
+//			
 //			FAIMoveRequest Request;
 //			Request.SetGoalLocation(MineLocation + (Dir * 1000.0f));
 //			MoveTo(Request);

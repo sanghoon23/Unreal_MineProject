@@ -19,9 +19,20 @@ UCHM_ShamanFirstAttack::UCHM_ShamanFirstAttack()
 		AttackRange = 1000.0f;
 	}
 
-#pragma region FirstAttack
-
 	FString Path = L"";
+
+	//@LOAD Particle
+	{
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Shaman/Shaman_FirstAttack_Casting.Shaman_FirstAttack_Casting'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_LightingCast(*Path);
+		if (P_LightingCast.Succeeded())
+		{
+			ParticleLightingCast = P_LightingCast.Object;
+		}
+	}
+
+	#pragma region FirstAttack
+
 	// Setting
 	{
 		UAnimMontage* Shaman_FirstAttack = nullptr;
@@ -34,7 +45,16 @@ UCHM_ShamanFirstAttack::UCHM_ShamanFirstAttack()
 		AttackMontages.Emplace(Shaman_FirstAttack);
 	}
 
-#pragma endregion
+	#pragma endregion
+
+	#pragma region DamageType
+
+	DT_Stun = NewObject<UCDamageType_Stun>();
+	DT_Stun->SetDamageImpulse(10.0f);
+	DT_Stun->SetStunTime(2.0f);
+
+	#pragma endregion
+
 }
 
 void UCHM_ShamanFirstAttack::BeginPlay()
@@ -45,15 +65,16 @@ void UCHM_ShamanFirstAttack::BeginPlay()
 	HM_Shaman = Cast<ACHM_Shaman>(GetOwner());
 	check(HM_Shaman);
 
-#pragma region Spawn Particle Object
+	#pragma region Spawn Particle Object
 
 	FTransform Transform = FTransform::Identity;
 	FActorSpawnParameters Params;
 	Params.Owner = GetOwner();
 	LightingActor = GetWorld()->SpawnActor<ACParticle_Lighting>(ACParticle_Lighting::StaticClass(), Transform, Params);
 	LightingActor->OffEndActor();
+	LightingActor->SetDamageType(DT_Stun);
 
-#pragma endregion
+	#pragma endregion
 
 	// @EndAttack Delegate
 	EndAttackDeleFunc.AddLambda([&]()
@@ -67,9 +88,46 @@ void UCHM_ShamanFirstAttack::BeginPlay()
 void UCHM_ShamanFirstAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	/* 이 공격이 실행된다면 IsRunTick 에 의해서 Tick 이 호출되므로 항상 bAttacking == true */
+	if (bAttacking == true)
+	{
+		FName CurrentSectionName = HM_Shaman->GetMesh()->GetAnimInstance()->Montage_GetCurrentSection(AttackMontages[0]);
+		if (CurrentSectionName == SectionStartName)
+		{
+			//Particle
+			UParticleSystemComponent* ParticleComp = UGameplayStatics::SpawnEmitterAttached
+			(
+				ParticleLightingCast,
+				HM_Shaman->GetMesh(),
+				FName("hand_r"),
+				FVector(0.0f), FRotator(0.0f), EAttachLocation::SnapToTarget
+			);
+
+			ParticleComp->SetRelativeScale3D(FVector(0.3f));
+		}
+		else
+		{
+			//@On Particle Object
+			LightingActor->OnStartActor
+			(
+				HM_Shaman->GetTargetInAI()->GetActorLocation()
+			);
+
+			FTransform Transform;
+			Transform.SetLocation(FVector(0.0f, 0.0f, -50.0f));
+			Transform.SetRotation(FQuat(FRotator(0.0f)));
+			Transform.SetScale3D(FVector(1.5f));
+			LightingActor->SetParticleCompRelative(Transform);
+		}
+	}
 }
 
-//TODO : Shaman 마법 번개 완성하기, 데미지타입 - 기본, 스턴
+void UCHM_ShamanFirstAttack::IsRunTick(bool bRunning)
+{
+	SetComponentTickEnabled(bRunning);
+}
+
 void UCHM_ShamanFirstAttack::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
@@ -81,10 +139,6 @@ void UCHM_ShamanFirstAttack::BeginAttack(AActor * DoingActor)
 	// @IF TRUE RETURN
 	IfTrueRet(Pawn->GetCharacterMovement()->IsFalling()); //@Jump Check
 	IfTrueRet(Pawn->GetIEquipComp()->GetEquiping()); //@Equping Check
-
-	//@IsLastCombo - 
-	// AI 에서 BeginAttack 을 계속 호출하기 때문에,
-	// Player 랑 다르게 제어가 필요하다.
 	IfTrueRet(IsLastCombo());
 
 	if (bAttacking == false)

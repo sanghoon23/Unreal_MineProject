@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Component/Base/C_BaseAttackComp.h"
-#include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAttack.h"
 
 #include "CHM_ShamanAttackComp.generated.h"
@@ -10,7 +9,7 @@
 UENUM()
 enum class HM_ShamanAttackType
 {
-	BASIC = 0,
+	FIRSTATTACK = 0,
 	END = 1,
 };
 
@@ -42,7 +41,7 @@ public:
 
 	#pragma	region Member
 private:
-	HM_ShamanAttackType AttackType = HM_ShamanAttackType::END;
+	HM_ShamanAttackType AttackType = HM_ShamanAttackType::FIRSTATTACK;
 
 	#pragma endregion
 

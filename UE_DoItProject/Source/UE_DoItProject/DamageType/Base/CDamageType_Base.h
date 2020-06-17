@@ -39,8 +39,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "DamageType")
 		FDamageType DamageType;
 
-
-
 	#pragma endregion
 
 public:

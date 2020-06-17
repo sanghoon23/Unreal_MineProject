@@ -81,6 +81,8 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//@Virtual Pure Function - (IC_Monster)
 public:
+	virtual AActor* GetTargetInAI() override;
+
 	virtual const FMonsterInfo& GetMonsterInfo() const override { return Info; };
 
 	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }

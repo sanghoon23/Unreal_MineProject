@@ -1,5 +1,6 @@
 #include "CProjectile_MagicBall.h"
 #include "Global.h"
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
@@ -95,6 +96,8 @@ void ACProjectile_MagicBall::Tick(float DeltaTime)
 
 	if (FollowingTarget != nullptr)
 	{
+		UCFL_ActorAgainst::LookAtTarget(this, FollowingTarget);
+
 		FVector TargetLocation = FollowingTarget->GetActorLocation();
 		FVector Location = GetActorLocation();
 		Direction = TargetLocation - Location;

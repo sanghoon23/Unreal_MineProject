@@ -49,9 +49,6 @@ public:
 
 	/* Function */
 protected:
-	///* AutoAttack 을 사용하지만, 꺼야할 상황에서 쓰임. Ex) FinishedAttack */
-	//void StopAutoAttack() { bAutoAttackCall = false; }
-
 	//* 공격 가능한지 파생 클래스에서 알기 위해 사용 */
 	virtual bool GetAttackPossible() const { return bAttackPossible; }
 

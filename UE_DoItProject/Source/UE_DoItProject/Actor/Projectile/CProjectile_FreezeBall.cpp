@@ -1,5 +1,6 @@
 #include "CProjectile_FreezeBall.h"
 #include "Global.h"
+#include "_FunctionLibrary/CFL_ActorAgainst.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"
@@ -97,6 +98,8 @@ void ACProjectile_FreezeBall::Tick(float DeltaTime)
 
 	if (FollowingTarget != nullptr)
 	{
+		UCFL_ActorAgainst::LookAtTarget(this, FollowingTarget);
+
 		//@Target 이 움직일 수도 있어서 계산해주어야 함
 		FVector TargetLocation = FollowingTarget->GetActorLocation();
 		FVector Location = GetActorLocation();

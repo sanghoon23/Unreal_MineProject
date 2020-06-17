@@ -2,12 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "Component/Base/C_BaseAttackComp.h"
+#include "Interface/IC_BaseAttack.h"
+
 #include "CHM_MaoAttackComp.generated.h"
 
 UENUM()
 enum class HM_PengMaoAttackType
 {
-	BASIC = 0,
+	FIRSTATTACK = 0,
 	END = 1,
 };
 
@@ -41,7 +43,7 @@ public:
 
 	#pragma	region Member
 private:
-	HM_PengMaoAttackType AttackType = HM_PengMaoAttackType::END;
+	HM_PengMaoAttackType AttackType = HM_PengMaoAttackType::FIRSTATTACK;
 
 	#pragma endregion
 

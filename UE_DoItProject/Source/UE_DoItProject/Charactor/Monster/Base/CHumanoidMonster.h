@@ -7,8 +7,6 @@
 
 #include "CHumanoidMonster.generated.h"
 
-
-
 UCLASS()
 class UE_DOITPROJECT_API ACHumanoidMonster 
 	: public ACharacter
@@ -20,8 +18,8 @@ protected:
 	//UPROPERTY(VisibleAnywhere, Category = "Component")
 	//	class UCCharactorMovementComp* CustomMovementComp;
 
-	UPROPERTY(EditAnywhere, Category = "AI")
-		TSubclassOf<class AAIController> MonAIControllerClass;
+	//UPROPERTY(EditAnywhere, Category = "AI")
+	//	TSubclassOf<class AAIController> MonAIControllerClass;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 		float WalkSpeed = 300.0f;
@@ -46,6 +44,11 @@ public:
 
 	//virtual UPawnMovementComponent* GetMovementComponent() const override;
 
+	/* Pure Virtual Function - (IC_Monster) */
+public:
+
+
+	/* Function */
 public:
 	virtual float TakeDamage
 	(

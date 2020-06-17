@@ -14,14 +14,6 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 
 	FString Path = L"";
 
-	//Create Common Death Montage
-	Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_BasicMon_Die01.HM_BasicMon_Die01'";
-	ConstructorHelpers::FObjectFinder<UAnimMontage> DeathMon(*Path);
-	if (DeathMon.Succeeded())
-	{
-		CommonDeathMontage = DeathMon.Object;
-	}
-
 	#pragma region Hit Montages
 	//@Super
 	{
@@ -40,7 +32,7 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 			NormalHitMontage = normalHit.Object;
 	}
 
-	// 'Air' Hit Montage
+	// 'AirHitFirst' Hit Montage
 	{
 		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_AirHitFirst.HM_Basic_AirHitFirst'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> airHit(*Path);
@@ -98,7 +90,7 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 
 	#pragma endregion
 
-	//@LOAD Stun HEad Particle
+	//@LOAD Stun Head Particle
 	{
 		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_StunActor.PS_StunActor'";
 		ConstructorHelpers::FObjectFinder<UParticleSystem> P_StunHead(*Path);

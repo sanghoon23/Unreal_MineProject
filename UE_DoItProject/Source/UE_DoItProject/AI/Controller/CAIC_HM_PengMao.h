@@ -7,9 +7,9 @@
 UENUM(BlueprintType)
 enum class EAIState_PengMao : uint8
 {
-	NONE = 0, /* NONE - 초기화 (AIState) */
-	HANGAROUND = 1,
-	CANATTACK = 2,
+	DISCOVERY = 0, //@적발견
+	TRYATTACK = 1, //@공격 시도
+	FINDATTACKPOINT = 2, //@
 };
 
 UCLASS()

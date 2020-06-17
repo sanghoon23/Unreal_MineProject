@@ -8,8 +8,8 @@ ACHM_ShamanMagicStick::ACHM_ShamanMagicStick()
 
 	// Super
 	HandItemType = UHandItemType::STICK;
-	ItemAttachName = L"index_01_r";
-	ItemEquipName = L"index_01_r";
+	ItemAttachName = L"hand_r";
+	ItemEquipName = L"hand_r";
 
 	// @Create Component
 	{
@@ -42,7 +42,6 @@ ACHM_ShamanMagicStick::ACHM_ShamanMagicStick()
 	}
 
 	// @Attach, Detach Monatge .. NONE
-
 }
 
 void ACHM_ShamanMagicStick::BeginPlay()

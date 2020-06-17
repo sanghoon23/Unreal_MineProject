@@ -39,10 +39,11 @@ class UE_DOITPROJECT_API IIC_Monster
 
 	/* Pure Virtual Function */
 public:
+	virtual AActor* GetTargetInAI() = 0;
+
+public:
 	virtual const FMonsterInfo& GetMonsterInfo() const = 0;
 
-	/* Member */
-public:
 	virtual void SetAIRunningPossible(bool bValue) = 0;
 	virtual bool GetAIRunningPossible() const = 0;
 

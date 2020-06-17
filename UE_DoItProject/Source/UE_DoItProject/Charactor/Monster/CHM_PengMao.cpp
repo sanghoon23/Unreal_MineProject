@@ -211,3 +211,13 @@ IIC_MeshParticle * ACHM_PengMao::GetIMeshParticle()
 	return Cast<IIC_MeshParticle>(MeshParticleComponent);
 }
 
+AActor * ACHM_PengMao::GetTargetInAI()
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+	check(AIController);
+
+	AActor* RetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("Target"));
+	check(RetActor);
+
+	return RetActor;
+}

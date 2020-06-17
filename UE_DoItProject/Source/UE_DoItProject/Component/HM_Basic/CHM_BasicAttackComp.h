@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Component/Base/C_BaseAttackComp.h"
-#include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAttack.h"
 
 #include "CHM_BasicAttackComp.generated.h"
@@ -42,7 +41,7 @@ public:
 
 #pragma	region Member
 private:
-	HM_BasicAttackType AttackType = HM_BasicAttackType::END;
+	HM_BasicAttackType AttackType = HM_BasicAttackType::BASIC;
 
 #pragma endregion
 };

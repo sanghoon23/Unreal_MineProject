@@ -7,9 +7,9 @@
 UENUM(BlueprintType)
 enum class EAIState_Shaman : uint8
 {
-	NONE = 0, /* NONE - 초기화 (AIState) */
-	HANGAROUND = 1,
-	CANATTACK = 2,
+	DISCOVERY = 0, //@적발견
+	TRYATTACK = 1, //@공격 시도
+	FINDATTACKPOINT = 2, //@
 };
 
 UCLASS()
@@ -27,7 +27,7 @@ private:
 		float DetectRadius = 800.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float AttackRange = 220.0f;
+		float AttackRange = 1000.0f;
 
 	#pragma endregion
 

@@ -42,17 +42,6 @@ ACParticle_FireRain::ACParticle_FireRain()
 		ParticleComp->bAutoActivate = false;
 		ParticleComp->SetRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
 	}
-
-	#pragma region DamageType
-
-	DT_Normal = NewObject<UCDamageType_Normal>();
-
-	DT_Burn = NewObject<UCDamageType_Burn>();
-	DT_Burn->SetSecondDamageValue(3.0f);
-	DT_Burn->SetBurnTime(5.0f);
-
-	#pragma endregion
-
 }
 
 void ACParticle_FireRain::BeginPlay()
@@ -71,12 +60,13 @@ void ACParticle_FireRain::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/* Actor 를 지속함으로써 그 범위에서 항상 맞도록 */
 	TickTimer += DeltaTime;
 	if (TickTimer > AttackRepeatTime)
 	{
 		TickTimer = 0.0f;
 
-		//@계속 겹침이 일어날 때, Update
+		//@계속 겹침이 일어날 때, OverlapCheck
 		OnAttackingOverlap();
 	}
 }
@@ -103,6 +93,15 @@ void ACParticle_FireRain::OffEndActor()
 	ParticleComp->SetActive(false);
 }
 
+void ACParticle_FireRain::SetDamageType(UCDamageType_Base * UseBeginOverlap, UCDamageType_Base * UseAttackRepeat)
+{
+	check(UseBeginOverlap);
+	check(UseAttackRepeat);
+
+	DT_UseBeginOverlap = UseBeginOverlap;
+	DT_DT_UseAttackRepeat = UseAttackRepeat;
+}
+
 void ACParticle_FireRain::SetBoxExtentScale(float fValue)
 {
 	CollisionBox->SetBoxExtent(FVector(fValue, fValue, 32.0f));
@@ -113,6 +112,13 @@ void ACParticle_FireRain::SetBoxExtentScale(FVector VecScale)
 	CollisionBox->SetBoxExtent(FVector(VecScale.X, VecScale.Y, 32.0f));
 }
 
+void ACParticle_FireRain::SetParticleCompRelative(FTransform Transform)
+{
+	ParticleComp->SetRelativeLocation(Transform.GetLocation());
+	ParticleComp->SetRelativeRotation(FRotator(Transform.GetRotation()));
+	ParticleComp->SetRelativeScale3D(Transform.GetScale3D());
+}
+
 void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	IfNullRet(OverlappedComponent);
@@ -121,6 +127,15 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 
 	IfTrueRet(OtherActor == this);
 	IfTrueRet(OtherActor == GetOwner());
+
+	check(DT_UseBeginOverlap);
+	if (DT_UseBeginOverlap == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, L"Particle_FireRain DT_UseBeginOverlap NULL!!");
+		return;
+	}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bCollisioning = true;
 
@@ -159,7 +174,7 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 
 						// 1.2 Hit Delegate - DT_Burn
 						HitComp->SetHitMoveSpeed(0.0f);
-						HitComp->OnHit(this, DT_Burn, 5.0f);
+						HitComp->OnHit(this, DT_UseBeginOverlap, DT_UseBeginOverlap->DamageImpulse);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"Particle_FireRain BeginOverlap - HitComp Null!!");
@@ -183,6 +198,15 @@ void ACParticle_FireRain::OnEndOverlap(UPrimitiveComponent * OverlappedComponent
 
 void ACParticle_FireRain::OnAttackingOverlap()
 {
+	check(DT_DT_UseAttackRepeat);
+	if (DT_DT_UseAttackRepeat == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, L"Particle_FireRain DT_UseAttackRepeat NULL!!");
+		return;
+	}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	TArray<FOverlapResult> OverlapResults;
 	FVector Position = GetActorLocation();
 	FCollisionQueryParams Param(NAME_None, false, this);
@@ -215,13 +239,13 @@ void ACParticle_FireRain::OnAttackingOverlap()
 						HitDirection.Z = 0.0f;
 						HitDirection.Normalize();
 						HitComp->SetHitDirection(HitDirection);
-						HitComp->SetHitMoveSpeed(2.0f);
+						HitComp->SetHitMoveSpeed(0.1f);
 
 						// 1.2 Hit Delegate - Air(DamageType)
-						HitComp->OnHit(this, DT_Normal, 10.0f);
+						HitComp->OnHit(this, DT_DT_UseAttackRepeat, DT_DT_UseAttackRepeat->DamageImpulse);
 					}
 					else
-						UE_LOG(LogTemp, Warning, L"Particle_FireRain OnUpdateOverlap - HitComp Null!!");
+						UE_LOG(LogTemp, Warning, L"Particle_FireRain OnAttackingOverlap - HitComp Null!!");
 				}
 			}
 		}//for(OverlapResult)
