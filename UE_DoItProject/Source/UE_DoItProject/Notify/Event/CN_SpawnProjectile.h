@@ -11,9 +11,6 @@
 @해당 SkeletalMesh 에 Location 을 기준으로 둠.
 @또한 SpawnParameter 의 Owner 는 SkeletalMesh 를 가지고 있는 Actor 로 설정
 
-* 만약 BaseProjectile 을 상속한 Actor 를 만들어서 Spawn 시킬려면
-* "헤더 추가" 해주어야 함.
-
 */
 
 UCLASS()
@@ -28,6 +25,9 @@ public:
 	TSubclassOf<class ACBaseProjectile> SpawnProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Value")
+	float SpeedValue = 700.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Value")
 	FVector LocationOffset;
 
 	UPROPERTY(EditAnywhere, Category = "Value")
@@ -39,8 +39,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Value")
 	FName AttachName;
 
+	UFUNCTION()
+	void SetProjectileDirection(FVector Dir);
+
+	UFUNCTION()
+	void SetProjectileTarget(AActor* Actor);
+
 	#pragma endregion
 	
 private:
 	void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+	
+private:
+	FVector Direction = FVector(0.0f);
+	AActor* Target;
 };

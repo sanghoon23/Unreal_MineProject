@@ -87,6 +87,18 @@ UCHM_ShamanHitComp::UCHM_ShamanHitComp()
 
 #pragma endregion
 
+#pragma region Poision Material
+	//@LOAD Poision Material
+	{
+		Path = L"Material'/Game/_Mine/Mesh/HM_Shaman/ParagonMorigesh/Characters/Heroes/Morigesh/Materials/M_Morigesh_HeadArmsLeg_Poision.M_Morigesh_HeadArmsLeg_Poision'";
+		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
+		if (PoisionMat.Succeeded())
+		{
+			Mat_Poision_0 = PoisionMat.Object;
+		}
+	}
+#pragma endregion
+
 	//@LOAD Stun Head Particle
 	{
 		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_StunActor.PS_StunActor'";
@@ -96,17 +108,6 @@ UCHM_ShamanHitComp::UCHM_ShamanHitComp()
 			StunHeadParticle = P_StunHead.Object;
 		}
 	}
-
-	// TODO : Poision Material 만들기
-	////@LOAD Poision Material
-	//{
-	//	Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
-	//	ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
-	//	if (PoisionMat.Succeeded())
-	//	{
-	//		PoisionMaterial = PoisionMat.Object;
-	//	}
-	//}
 
 	//@LOAD Burn Particle - ParticleComp
 	{
@@ -144,6 +145,12 @@ void UCHM_ShamanHitComp::BeginPlay()
 	{
 		HM_Shaman->OnGravity(); //@중력키기
 	});
+
+	//@Set Poision Material
+	{
+		Map_ChangePoisionMaterial.Add(0, Mat_Poision_0);
+		Map_OriginPoisionMaterial.Add(0, HM_Shaman->GetMesh()->GetMaterial(0));
+	}
 }
 
 void UCHM_ShamanHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -189,7 +196,11 @@ void UCHM_ShamanHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type
 
 	//@else
 	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	if (MontageNum >= DamagedMontages.Num()) return;
+	if (MontageNum >= DamagedMontages.Num())
+	{
+		UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
+		return;
+	}
 	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
 	if (RunMontage != nullptr)
 	{

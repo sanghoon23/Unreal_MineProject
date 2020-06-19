@@ -98,14 +98,27 @@ bool UC_BaseHitComp::AddConditionData(UCBaseConditionType* ConditionData)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //@Get, Set
 
-UMaterialInterface * UC_BaseHitComp::GetPoisionMaterialOrNull() const
+//TMap<int32, class UMaterialInterface*>* UC_BaseHitComp::GetPoisionMaterialMaps()
+//{
+//	return &Map_PoisionMaterial;
+//}
+
+void UC_BaseHitComp::GetOriginPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out)
 {
-	if (PoisionMaterial == nullptr)
+	//@Origin
+	for (auto& Material : Map_OriginPoisionMaterial)
 	{
-		UE_LOG(LogTemp, Warning, L"BaseHitComp PoisionMaterial NOT SETTING!!");
-		return nullptr;
+		Out.Add(Material.Key, Material.Value);
 	}
-	return PoisionMaterial;
+}
+
+void UC_BaseHitComp::GetPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out)
+{
+	//@Change
+	for (auto& Material : Map_ChangePoisionMaterial)
+	{
+		Out.Add(Material.Key, Material.Value);
+	}
 }
 
 UParticleSystem * UC_BaseHitComp::GetBurnParticleOrNull() const

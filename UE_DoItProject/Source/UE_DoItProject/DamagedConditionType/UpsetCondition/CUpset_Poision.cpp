@@ -32,13 +32,14 @@ void UCUpset_Poision::EndCondition(APawn * Owner)
 	ACharacter* Charactor = Cast<ACharacter>(Owner);
 	if (Charactor != nullptr)
 	{
-		//#Edit 0509 -
-		//@원래 Material 로 전환
-		check(OriginMaterial);
-		if (OriginMaterial != nullptr)
+		if (Map_OriginMaterial.Num() <= 0) return;
+
+		for (auto& Material : Map_OriginMaterial)
 		{
-			Charactor->GetMesh()->SetMaterial(0, OriginMaterial);
+			Charactor->GetMesh()->SetMaterial(Material.Key, Material.Value);
 		}
+
+		Map_OriginMaterial.Empty();
 	}
 }
 
@@ -59,16 +60,22 @@ void UCUpset_Poision::ConditionOverlap(UCBaseConditionType* OverlappedCondition)
 	SecondDamage += InputConditionDamage;
 
 	CLog::Print(L"Poision Overlap!!");
-	CLog::Print(SecondDamage);
 }
 
-void UCUpset_Poision::SetOriginMaterial(UMaterialInterface * Mat)
+void UCUpset_Poision::SetOriginMaterial(TMap<int32, class UMaterialInterface*>& In)
 {
-	//#Edit 0509 -
-	//@우선은 Material 값을 check 함으로써 Material 은 무조건 유효한 값이라 정의
+	for (auto& Material : In)
+	{
+		Map_OriginMaterial.Emplace(Material.Key, Material.Value);
+	}
+}
+
+void UCUpset_Poision::SetOriginMaterial(int32 Index, UMaterialInterface * Mat)
+{
+	//#Edit 0619 - TMap 구현
 	check(Mat);
 	if (Mat != nullptr)
 	{
-		OriginMaterial = Mat;
+		Map_OriginMaterial.Emplace(Index, Mat);
 	}
 }

@@ -13,7 +13,7 @@ class UE_DOITPROJECT_API UCUpset_Stun
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Montage")
-		class UAnimMontage* NonActionMon = nullptr;
+		class UAnimMontage* StunActionMon = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* StunHeadParticle;

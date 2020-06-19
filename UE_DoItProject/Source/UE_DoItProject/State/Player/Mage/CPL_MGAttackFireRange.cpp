@@ -24,8 +24,6 @@ UCPL_MGAttackFireRange::UCPL_MGAttackFireRange()
 	{
 		CurrentComboNum = 0;
 		MaxComboNum = 1;
-
-		AttackRange = 1000.0f;
 	}
 
 	FString Path = L"";

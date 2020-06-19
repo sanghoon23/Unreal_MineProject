@@ -94,11 +94,11 @@ void ACProjectile_MagicBall::Tick(float DeltaTime)
 		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_MagicBall::Explosion, DeathTime);
 	}
 
-	if (FollowingTarget != nullptr)
+	if (SettingTarget != nullptr)
 	{
-		UCFL_ActorAgainst::LookAtTarget(this, FollowingTarget);
+		UCFL_ActorAgainst::LookAtTarget(this, SettingTarget);
 
-		FVector TargetLocation = FollowingTarget->GetActorLocation();
+		FVector TargetLocation = SettingTarget->GetActorLocation();
 		FVector Location = GetActorLocation();
 		Direction = TargetLocation - Location;
 		Direction.Normalize();
@@ -131,22 +131,31 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 	IfTrueRet(OtherActor == this);
 
 	//@Following Target Check
-	if (FollowingTarget != nullptr)
+	if (SettingTarget != nullptr)
 	{
-		IfFalseRet(OtherActor == FollowingTarget);
+		IfFalseRet(OtherActor == SettingTarget);
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	TArray<FOverlapResult> OverlapResults;
 	const FVector Position = GetActorLocation();
-	FCollisionQueryParams Param(NAME_None, false, this);
+	FCollisionQueryParams Param(NAME_None, false, GetOwner());
+
+
+	//#Edit 0619 - I_Charactor ->GetUsingChannel 생성,
+	//TODO : CHANNEL 이 문제임. -> Prjectile 은 끝냄, 나머지 다른 부분도 이 방식으로 정리.
+	ECollisionChannel Channel;
+	IIC_Charactor* const OwnerCharactor = Cast<IIC_Charactor>(GetOwner());
+	(OwnerCharactor != nullptr)
+		? Channel = OwnerCharactor->GetCharactorUsingChannel()
+		: Channel = ECollisionChannel::ECC_Visibility; //@Default
 
 	//@충돌 시행
 	bool bOverlapValue = GetWorld()->OverlapMultiByChannel
 	(
 		OverlapResults, Position, FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2, //@Player Attack
+		Channel, //@CharactorUsingChannel
 		FCollisionShape::MakeSphere(CollisionSphereRadius),
 		Param
 	);
@@ -155,30 +164,28 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 	{
 		for (FOverlapResult& OverlapResult : OverlapResults)
 		{
-			IIC_Monster* Monster = Cast<IIC_Monster>(OverlapResult.GetActor());
-			if (Monster != nullptr)
+			//캐릭터 타입이 같지 않다면,
+			IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
+			if (Charactor != nullptr && OwnerCharactor != nullptr &&
+				Charactor->GetCharactorType() != OwnerCharactor->GetCharactorType())
 			{
-				IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
-				if (Charactor != nullptr)
+				// 1. Get Interface HitComp
+				IIC_HitComp* HitComp = Charactor->GetIHitComp();
+				if (HitComp != nullptr)
 				{
-					// 1. Get Interface HitComp
-					IIC_HitComp* HitComp = Charactor->GetIHitComp();
-					if (HitComp != nullptr)
-					{
-						// 1.1 Set Hit Attribute
-						FVector ActorLocation = GetActorLocation();
-						FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - ActorLocation;
-						HitDirection.Normalize();
-						HitDirection.Z = 0.0f;
-						HitComp->SetHitDirection(HitDirection);
-						HitComp->SetHitMoveSpeed(0.3f);
+					// 1.1 Set Hit Attribute
+					FVector ActorLocation = GetActorLocation();
+					FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - ActorLocation;
+					HitDirection.Normalize();
+					HitDirection.Z = 0.0f;
+					HitComp->SetHitDirection(HitDirection);
+					HitComp->SetHitMoveSpeed(0.3f);
 
-						// 1.2 Hit Delegate - Air(DamageType)
-						HitComp->OnHit(this, DT_Normal, 10.0f);
-					}
-					else
-						UE_LOG(LogTemp, Warning, L"ACProjectile MagicBall CallAttack - HitComp Null!!");
+					// 1.2 Hit Delegate - Air(DamageType)
+					HitComp->OnHit(this, DT_Normal, 10.0f);
 				}
+				else
+					UE_LOG(LogTemp, Warning, L"ACProjectile MagicBall CallAttack - HitComp Null!!");
 			}
 		}//for(OverlapResult)
 

@@ -56,7 +56,7 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	AController* const PawnController = DamagedPawn->GetController();
 	check(PawnController);
 
-	//@Set Montage && StunParticle
+	//@Set UpsetStun Setting
 	UCUpset_Stun* UpsetStun = NewObject<UCUpset_Stun>();
 	UpsetStun->ApplyTime = GetStunTime();
 	UpsetStun->SetDamageSubjectController(PawnController);
@@ -71,11 +71,12 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	{
 		UpsetStun->SetStunHeadPrticle(StunHeadParticle);
 	}
-
-	//@Damage Class
 	FDamageEvent DamageEvent;
 	DamageEvent.DamageTypeClass = GetClass();
-	UpsetStun->SetDamageEvent(DamageEvent);
+	UpsetStun->SetDamageEvent(DamageEvent); //@Set
+
+	//@Take Damage
+	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
 
 	UTexture2D* Texture = GetUITexture();
 	if (Texture != nullptr)
@@ -88,7 +89,6 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	{
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp STUN AddConditionData Derived NULL!!");
 	}
-
 }
 
 void UCDamageType_Stun::OnDamageDelegate(AActor* DamagedActor)

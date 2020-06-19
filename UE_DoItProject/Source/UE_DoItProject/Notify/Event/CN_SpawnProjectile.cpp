@@ -17,10 +17,7 @@ void UCN_SpawnProjectile::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	FTransform SpawnTransform = FTransform::Identity;
-	FActorSpawnParameters Params;
-
 	SpawnTransform = OwnerActor->GetTransform();
-	Params.Owner = OwnerActor;
 
 	if (AttachName.GetStringLength() > 0)
 	{
@@ -41,21 +38,44 @@ void UCN_SpawnProjectile::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 	SpawnLocation	+= LocationOffset;
 	SpawnRotation	+= RotationOffset;
 	SpawnScale		+= ScaleOffset;
-
-	//@Set
 	SpawnTransform.SetLocation(SpawnLocation);
 	SpawnTransform.SetRotation(FQuat(SpawnRotation));
 	SpawnTransform.SetScale3D(SpawnScale);
 
-	/* 헤더 추가해주어야 함. */
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//@Spawn
 	UWorld* const World = MeshComp->GetWorld();
-
-	IfNullRet(SpawnProjectileClass);
-	if (SpawnProjectileClass != nullptr)
+	if (SpawnProjectileClass == nullptr)
 	{
-		World->SpawnActor<ACBaseProjectile>(SpawnProjectileClass, SpawnTransform, Params);
-	}
-	else
 		UE_LOG(LogTemp, Warning, L"CN_SpawnProjectile UClass NULL!!");
+		return;
+	}
+
+	FActorSpawnParameters Params;
+	Params.Owner = OwnerActor;
+	ACBaseProjectile* SpawnProjectile = World->SpawnActor<ACBaseProjectile>(SpawnProjectileClass, SpawnTransform, Params);
+	if (SpawnProjectile != nullptr)
+	{
+		//@Set Value
+		SpawnProjectile->SettingSpeed(SpeedValue);
+		SpawnProjectile->SettingDirection(Direction);
+		if (Target != nullptr)
+		{
+			SpawnProjectile->SettingTargetActor(Target);
+		}
+	}
+	else if(SpawnProjectile == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, L"CN_SpawnProjectile SpawnProjectile NULL!!");
+	}
+}
+
+void UCN_SpawnProjectile::SetProjectileDirection(FVector Dir)
+{
+	Direction = Dir;
+}
+
+void UCN_SpawnProjectile::SetProjectileTarget(AActor * Actor)
+{
+	Target = Actor;
 }

@@ -97,6 +97,12 @@ protected:
 
 	/* Pure Virtual Function - (IIC_Charactor) */
 public:
+	virtual ECollisionChannel GetCharactorUsingChannel() const override 
+	{
+		return ECollisionChannel::ECC_GameTraceChannel2; 
+	}
+	virtual ECharactorType GetCharactorType() const override { return CharactorType; }
+
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void OnDeath() override; //죽음
 	virtual void CanMove() override { bCanMove = true; } // 이동 가능.
@@ -116,6 +122,14 @@ public:
 
 /* Pure Virtual Function - (IIC_Player) */
 public:
+	// Block Input
+	virtual void OnBlockKeyInput() override;
+	virtual void OffBlockKeyInput() override;
+
+	// Block Action
+	virtual void OnBlockAction() override { bBlockAction = true; }
+	virtual void OffBlockAction()override { bBlockAction = false; }
+
 	/* Player 안에 기본적 내장되어있는 Paritlce 켜기 */
 	virtual void OnParticleInPlayer() override;
 
@@ -145,10 +159,7 @@ public:
 	virtual IIC_EquipComp* GetIEquipComp() override;
 	virtual IIC_MeshParticle* GetIMeshParticle() override;
 
-/* Virtual - (IC_Player) */
 public:
-	virtual IIC_AbilityComp* GetIAbilityComp();
-
 /* Class Virtual */
 	//@return float - 현재 남은 체력 - (PlayerInfo.CurrentHP)
 	virtual float TakeDamage
@@ -159,16 +170,10 @@ public:
 		AActor * DamageCauser
 	) override;
 
+	virtual IIC_AbilityComp* GetIAbilityComp();
+
 	/* Function */
 public:
-	// Block Input
-	void OnBlockKeyInput();
-	void OffBlockKeyInput();
-
-	// Block Action
-	void OnBlockAction()	{ bBlockAction = true; }
-	void OffBlockAction()	{ bBlockAction = false; }
-
 	/* LeftHand == 0, RightHand == 1, 로 설정되어있음 그 이외의 값은 return*/
 	void OnHandIK(uint8 HandNumber);
 
@@ -253,6 +258,9 @@ public:
 	void SetEvadeSpeed(float Speed) { EvadeSpeed = Speed; }
 
 private:
+	// Type
+	ECharactorType CharactorType = ECharactorType::PLAYER;
+
 	// Info
 	FPlayerInfo Info;
 

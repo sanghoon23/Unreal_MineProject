@@ -36,14 +36,12 @@ void UCDamageType_Normal::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 
 	//@Take Damage
 	APawn* DamagedPawn = Cast<APawn>(DamagedActor);
-	if (DamagedPawn != nullptr)
-	{
-		AController* PawnController = Cast<AController>(Cast<APawn>(DamagedActor));
+	check(DamagedPawn);
+	AController* PawnController = Cast<AController>(Cast<APawn>(DamagedActor));
 
-		FDamageEvent DamageEvent;
-		DamageEvent.DamageTypeClass = GetClass();
-		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
-	}
+	FDamageEvent DamageEvent;
+	DamageEvent.DamageTypeClass = GetClass();
+	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
 }
 
 void UCDamageType_Normal::OnDamageDelegate(AActor* DamagedActor)

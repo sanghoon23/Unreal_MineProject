@@ -53,6 +53,12 @@ public:
 
 	/* Pure Virtual Function In Interface - (IC_Charactor) */
 public:
+	virtual ECollisionChannel GetCharactorUsingChannel() const override
+	{
+		return ECollisionChannel::ECC_GameTraceChannel3; //@Monster Attack
+	}
+	virtual ECharactorType GetCharactorType() const override { return CharactorType; }
+
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void OnDeath() override; //Á×À½
 	virtual void CanMove() override { bCanMove = true; }
@@ -112,6 +118,9 @@ private:
 
 	#pragma region Member
 private:
+	// Type
+	ECharactorType CharactorType = ECharactorType::MONSTER;
+
 	/* IC_Monster Member */
 	FMonsterInfo Info;
 

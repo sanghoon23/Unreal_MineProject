@@ -15,8 +15,6 @@ UCHM_ShamanFirstAttack::UCHM_ShamanFirstAttack()
 	{
 		CurrentComboNum = 0;
 		MaxComboNum = 1;
-
-		AttackRange = 1000.0f;
 	}
 
 	FString Path = L"";
@@ -49,9 +47,9 @@ UCHM_ShamanFirstAttack::UCHM_ShamanFirstAttack()
 
 	#pragma region DamageType
 
-	DT_Stun = NewObject<UCDamageType_Stun>();
-	DT_Stun->SetDamageImpulse(10.0f);
-	DT_Stun->SetStunTime(2.0f);
+	//DT_Stun = NewObject<UCDamageType_Stun>();
+	//DT_Stun->SetDamageImpulse(10.0f);
+	//DT_Stun->SetStunTime(2.0f);
 
 	#pragma endregion
 
@@ -72,6 +70,10 @@ void UCHM_ShamanFirstAttack::BeginPlay()
 	Params.Owner = GetOwner();
 	LightingActor = GetWorld()->SpawnActor<ACParticle_Lighting>(ACParticle_Lighting::StaticClass(), Transform, Params);
 	LightingActor->OffEndActor();
+
+	DT_Stun = NewObject<UCDamageType_Stun>();
+	DT_Stun->SetDamageImpulse(10.0f);
+	DT_Stun->SetStunTime(0.8f);
 	LightingActor->SetDamageType(DT_Stun);
 
 	#pragma endregion
@@ -109,16 +111,20 @@ void UCHM_ShamanFirstAttack::TickComponent(float DeltaTime, ELevelTick TickType,
 		else
 		{
 			//@On Particle Object
-			LightingActor->OnStartActor
-			(
-				HM_Shaman->GetTargetInAI()->GetActorLocation()
-			);
+			AActor* TargetInAI = HM_Shaman->GetTargetInAI();
+			if (TargetInAI != nullptr)
+			{
+				LightingActor->OnStartActor
+				(
+					TargetInAI->GetActorLocation()
+				);
 
-			FTransform Transform;
-			Transform.SetLocation(FVector(0.0f, 0.0f, -50.0f));
-			Transform.SetRotation(FQuat(FRotator(0.0f)));
-			Transform.SetScale3D(FVector(1.5f));
-			LightingActor->SetParticleCompRelative(Transform);
+				FTransform Transform;
+				Transform.SetLocation(FVector(0.0f, 0.0f, -50.0f));
+				Transform.SetRotation(FQuat(FRotator(0.0f)));
+				Transform.SetScale3D(FVector(1.5f));
+				LightingActor->SetParticleCompRelative(Transform);
+			}
 		}
 	}
 }

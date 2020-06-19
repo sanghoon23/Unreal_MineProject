@@ -49,6 +49,12 @@ class UE_DOITPROJECT_API IIC_Player
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Pure Virtual Function */
 public:
+	virtual void OnBlockKeyInput() = 0;
+	virtual void OffBlockKeyInput() = 0;
+
+	virtual void OnBlockAction() = 0;
+	virtual void OffBlockAction() = 0;
+
 	virtual void OnParticleInPlayer() = 0;
 	virtual void OffParticleInPlayer() = 0;
 

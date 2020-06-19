@@ -4,6 +4,7 @@
 
 #include "State/Base/C_BaseAttackState.h"
 #include "State/HM_Shaman/CHM_ShamanFirstAttack.h"
+#include "State/HM_Shaman/CHM_ShamanEnergyPa.h"
 
 UCHM_ShamanAttackComp::UCHM_ShamanAttackComp()
 {
@@ -12,8 +13,14 @@ UCHM_ShamanAttackComp::UCHM_ShamanAttackComp()
 	#pragma region Create State
 	// @FirstCombo
 	{
-		UC_BaseAttackState* FirstAttack = CreateDefaultSubobject<UCHM_ShamanFirstAttack>("HMShaman_FirstAttack");
-		BasicAttackStateArray.Emplace(FirstAttack);
+		UC_BaseAttackState* FirstAttack = CreateDefaultSubobject<UCHM_ShamanFirstAttack>("HM_Shaman_First");
+		AttackStateArray.Emplace(FirstAttack);
+	}
+
+	// @SecondCombo
+	{
+		UC_BaseAttackState* SecondAttack = CreateDefaultSubobject<UCHM_ShamanEnergyPa>("HM_Shaman_Second");
+		AttackStateArray.Emplace(SecondAttack);
 	}
 	#pragma endregion
 }
@@ -47,39 +54,38 @@ IIC_BaseAttack * UCHM_ShamanAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	if (AttackType == SetType)
 	{
 		// @Tick true
-		IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[Type]);
+		IIC_Component* IC_Comp = Cast<IIC_Component>(AttackStateArray[Type]);
 		if (IC_Comp != nullptr)
 		{
 			IC_Comp->IsRunTick(true);
 		}
 
-		return Cast<IIC_BaseAttack>(BasicAttackStateArray[Type]); //@return
+		return Cast<IIC_BaseAttack>(AttackStateArray[Type]); //@return
 	}
 	else if (AttackType != SetType)
 	{
 		// @Tick false
-		IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[BeforeTypeNum]);
+		IIC_Component* IC_Comp = Cast<IIC_Component>(AttackStateArray[BeforeTypeNum]);
 		if (IC_Comp != nullptr)
 		{
 			IC_Comp->IsRunTick(false);
 		}
 
 		// @EndAttack Call
-		BasicAttackStateArray[BeforeTypeNum]->EndAttackDeleFunc.Broadcast();
-
+		AttackStateArray[BeforeTypeNum]->EndAttackDeleFunc.Broadcast();
 		AttackType = SetType;
 	}
 
 	uint8 AfterTypeNum = static_cast<uint8>(AttackType);
 
 	// @Tick true
-	IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[AfterTypeNum]);
+	IIC_Component* IC_Comp = Cast<IIC_Component>(AttackStateArray[AfterTypeNum]);
 	if (IC_Comp != nullptr)
 	{
 		IC_Comp->IsRunTick(true);
 	}
 
-	return Cast<IIC_BaseAttack>(BasicAttackStateArray[AfterTypeNum]);
+	return Cast<IIC_BaseAttack>(AttackStateArray[AfterTypeNum]);
 }
 
 // - IC_AttackComp Âü°í.
@@ -87,11 +93,11 @@ IIC_BaseAttack * UCHM_ShamanAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 IIC_BaseAttack * UCHM_ShamanAttackComp::GetCurrentIBaseAttack()
 {
 	int CurrentType = static_cast<int>(AttackType);
-	if (CurrentType > BasicAttackStateArray.Num() - 1)
+	if (CurrentType > AttackStateArray.Num() - 1)
 	{
 		CLog::Print(L"MGAttackComp IBaseAttack Array Excess!!");
 		return nullptr; /*@Return*/
 	}
 
-	return Cast<IIC_BaseAttack>(BasicAttackStateArray[CurrentType]);
+	return Cast<IIC_BaseAttack>(AttackStateArray[CurrentType]);
 }

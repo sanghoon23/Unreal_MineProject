@@ -3,11 +3,6 @@
 
 #include "Interface/IC_Charactor.h"
 
-/* MoveSpeed & Direction */
-float ACBaseProjectile::MoveSpeed = 0.0f;
-FVector ACBaseProjectile::Direction = FVector(0.0f);
-AActor* ACBaseProjectile::SettingTarget = nullptr;
-
 ACBaseProjectile::ACBaseProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -72,23 +67,17 @@ void ACBaseProjectile::Death()
 	Destroy();
 }
 
-void ACBaseProjectile::SettingProjectile(FVector Dir, float Speed)
+void ACBaseProjectile::SettingDirection(FVector Dir)
 {
 	Direction = Dir;
+}
+
+void ACBaseProjectile::SettingSpeed(float Speed)
+{
 	MoveSpeed = Speed;
 }
 
-void ACBaseProjectile::SettingProjectile(AActor * FollowingActor, FVector Dir, float Speed)
+void ACBaseProjectile::SettingTargetActor(AActor * Target)
 {
-	check(FollowingActor);
-	SettingTarget = FollowingActor;
-	Direction = Dir;
-	MoveSpeed = Speed;
-}
-
-void ACBaseProjectile::SettingProjectile(const FProjectileData & Data)
-{
-	Direction = Data.Direction;
-	MoveSpeed = Data.MoveSpeed;
-	SettingTarget = Data.FollowingTarget;
+	SettingTarget = Target;
 }

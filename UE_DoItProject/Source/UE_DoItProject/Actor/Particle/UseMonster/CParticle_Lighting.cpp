@@ -85,6 +85,8 @@ void ACParticle_Lighting::OffEndActor()
 
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ParticleComp->SetActive(false);
+
+	CLog::Print(L"Lighting OffEndActor!!");
 }
 
 void ACParticle_Lighting::SetDamageType(UCDamageType_Base * UseBeginOverlap)
@@ -112,8 +114,6 @@ void ACParticle_Lighting::SetParticleCompRelative(FTransform Transform)
 
 void ACParticle_Lighting::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	return;
-
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
@@ -159,7 +159,11 @@ void ACParticle_Lighting::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 
 						// 1.2 Hit Delegate - DT_Burn
 						HitComp->SetHitMoveSpeed(0.0f);
-						HitComp->OnHit(this, DT_UseBeginOverlap, DT_UseBeginOverlap->DamageImpulse);
+						HitComp->OnHit
+						(
+							GetOwner(), 
+							DT_UseBeginOverlap, DT_UseBeginOverlap->DamageImpulse
+						);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"Particle_FireRain BeginOverlap - HitComp Null!!");

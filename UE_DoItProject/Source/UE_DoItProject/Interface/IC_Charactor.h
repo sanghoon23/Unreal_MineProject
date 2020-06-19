@@ -12,6 +12,13 @@
 
 #include "IC_Charactor.generated.h"
 
+UENUM(BlueprintType)
+enum class ECharactorType : uint8
+{
+	PLAYER = 0,
+	MONSTER = 1,
+};
+
 UINTERFACE(MinimalAPI)
 class UIC_Charactor : public UInterface
 {
@@ -40,16 +47,20 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Pure Virtual Function */
 public:
-	virtual bool IsDeath() = 0;
-	virtual void OnDeath() = 0;
-	virtual void CanMove() = 0;
-	virtual void CanNotMove() = 0;
+	virtual ECollisionChannel GetCharactorUsingChannel() const = 0;
+	virtual ECharactorType GetCharactorType() const = 0;
 
-	virtual void OnGravity() = 0;
-	virtual void OffGravity() = 0;
+	virtual bool IsDeath()		= 0;
+	virtual void OnDeath()		= 0;
 
-	virtual bool IsJumping() = 0;
-	virtual void OffJumping() = 0;
+	virtual void CanMove()		= 0;
+	virtual void CanNotMove()	= 0;
+
+	virtual void OnGravity()	= 0;
+	virtual void OffGravity()	= 0;
+
+	virtual bool IsJumping()	= 0;
+	virtual void OffJumping()	= 0;
 
 	// @Charactor 의 현재상태 - ( AnimInst 에서 쓰임 )
 	virtual int GetCurrentStateType() const = 0;

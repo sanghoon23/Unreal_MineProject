@@ -295,6 +295,18 @@ void ACPlayer::OffBlockKeyInput()
 	}
 }
 
+void ACPlayer::OnParticleInPlayer()
+{
+	LeftParticle->SetVisibility(true);
+	RightParticle->SetVisibility(true);
+}
+
+void ACPlayer::OffParticleInPlayer()
+{
+	LeftParticle->SetVisibility(false);
+	RightParticle->SetVisibility(false);
+}
+
 /* CInverseKinematic HandIK Mapping */
 // LeftHand == 0, RightHand == 1
 void ACPlayer::OnHandIK(uint8 HandNumber)
@@ -325,18 +337,6 @@ void ACPlayer::OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* Standar
 void ACPlayer::OffUsingDecalMouseControl()
 {
 	MouseController->OffUsingDecalMouseControl();
-}
-
-void ACPlayer::OnParticleInPlayer()
-{
-	LeftParticle->SetVisibility(true);
-	RightParticle->SetVisibility(true);
-}
-
-void ACPlayer::OffParticleInPlayer()
-{
-	LeftParticle->SetVisibility(false);
-	RightParticle->SetVisibility(false);
 }
 
 void ACPlayer::OnMoveForward(float Value)

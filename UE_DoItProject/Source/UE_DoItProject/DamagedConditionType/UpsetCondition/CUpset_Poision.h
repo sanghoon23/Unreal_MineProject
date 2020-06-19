@@ -16,7 +16,10 @@ private:
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Material")
-		class UMaterialInterface* OriginMaterial = nullptr;
+		TMap<int32, class UMaterialInterface*> Map_OriginMaterial;
+
+	//UPROPERTY(VisibleAnywhere, Category = "Material")
+	//	class UMaterialInterface* OriginMaterial = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		/* 시간 마다 들어갈 데미지, */
@@ -44,7 +47,8 @@ public:
 	float GetSecondDamage() const { return SecondDamage; }
 	void SetSecondDamage(float fValue) { SecondDamage = fValue; }
 
-	void SetOriginMaterial(class UMaterialInterface* Mat);
+	void SetOriginMaterial(TMap<int32, class UMaterialInterface*>& In);
+	void SetOriginMaterial(int32 Index, class UMaterialInterface* Mat);
 
 	/* Member */
 private:

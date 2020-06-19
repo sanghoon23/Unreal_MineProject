@@ -70,28 +70,20 @@ public:
 public:
 	virtual void Explosion() {}
 
-	/* Function */
-public:
-	/* Montage 에서 Projectile 을 Spawn 하기 위해서 static 설정 */
-	static void SettingProjectile(FVector Dir, float Speed = 10.0f);
-
-	/* Montage 에서 Projectile 을 Spawn 하기 위해서 static 설정 */
-	static void SettingProjectile(AActor* FollowingActor, FVector Dir, float Speed = 10.0f);
-
-	/* Montage 에서 Projectile 을 Spawn 하기 위해서 static 설정 */
-	static void SettingProjectile(const FProjectileData& Data);
-
 	#pragma region Member 
 	/* Member */
 public:
+	void SettingDirection(FVector Dir);
+	void SettingSpeed(float Speed);
+	void SettingTargetActor(AActor* Target);
 
 
 protected:
-	static float MoveSpeed;
-	static FVector Direction;
+	float MoveSpeed = 10.0f;
+	FVector Direction = FVector(0.0f);
 
 	/* ( 전역 ) Projectile 이 따라갈 Target 설정 */
-	static AActor* SettingTarget;
+	AActor* SettingTarget = nullptr;
 
 private:
 	bool bOverlap = false;

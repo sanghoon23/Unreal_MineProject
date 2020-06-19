@@ -24,7 +24,7 @@ void UCFL_ActorAgainst::LookAtTarget(AActor * Subject, AActor* Target)
 		bool bDontMontagePlay = I_Charactor->IsDontMontagePlay();
 		if (bDontMontagePlay == true)
 		{
-			return; //@return
+			return;
 		}
 	}
 

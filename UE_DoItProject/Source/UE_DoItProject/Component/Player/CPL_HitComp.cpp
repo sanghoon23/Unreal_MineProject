@@ -164,7 +164,7 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 
 	if (Type->GetConditionType() == FDamageType::END)
 	{
-		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp OnHit - ConditionTtpe END!!");
+		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp OnHit - ConditionType END!!");
 		verify(Type->GetConditionType() == FDamageType::END);
 	}
 
@@ -181,8 +181,24 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 	//@공격하고 있을땐 맞는 몽타주 실행하지 않음
 	IfTrueRet(Player->GetIAttackComp()->GetCurrentIBaseAttack()->GetAttacking());
 
+	//@Player 는 Combo 적용하지 않음.
+	//if (bCanHitCombo == true)
+	//{
+	//	if (HitComboMon != nullptr)
+	//	{
+	//		Player->ActorAnimMonPlay(HitComboMon, 0.6f, true);
+	//		SetCanHittedCombo(false); //@false
+	//		return; //@return
+	//	}
+	//}
+
+	//@else
 	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	if (MontageNum >= DamagedMontages.Num()) return;
+	if (MontageNum >= DamagedMontages.Num())
+	{
+		UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
+		return;
+	}
 	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
 	if (RunMontage != nullptr)
 	{
@@ -190,3 +206,4 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 	}
 
 }
+

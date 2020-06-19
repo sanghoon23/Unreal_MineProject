@@ -45,9 +45,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* HitComboMon;
 
-	UPROPERTY(VisibleAnywhere, Category = "ConditionData")
-		/* Poision ConditionData 에서 사용할 Material */
-		class UMaterialInterface* PoisionMaterial = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = "Material")
+		TMap<int32, class UMaterialInterface*> Map_OriginPoisionMaterial;
+
+	UPROPERTY(VisibleAnywhere, Category = "Material")
+		TMap<int32, class UMaterialInterface*> Map_ChangePoisionMaterial;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		/* Stun ConditionData 에서 사용할 머리 위 표시할 Particle */
@@ -111,7 +113,8 @@ public:
 
 	#pragma	region Member
 public:
-	class UMaterialInterface* GetPoisionMaterialOrNull() const;
+	void GetOriginPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out);
+	void GetPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out);
 	class UParticleSystem* GetBurnParticleOrNull() const;
 	class UParticleSystem* GetFreezeParticleOrNull() const;
 	class UParticleSystem* GetStunHeadParticleOrNull() const;

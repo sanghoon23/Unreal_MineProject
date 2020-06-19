@@ -52,11 +52,6 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 	check(PoisionConditionData);
 	PoisionConditionData->ApplyTime = GetPoisioningTime();
 	PoisionConditionData->SetDamageSubjectController(PawnController);
-	ACharacter* DamagedCharactor = Cast<ACharacter>(DamagedPawn);
-	if (DamagedCharactor != nullptr)
-	{
-		PoisionConditionData->SetOriginMaterial(DamagedCharactor->GetMesh()->GetMaterial(0));
-	}
 	PoisionConditionData->SetSecondDamage(GetSecondDamageValue());
 
 	//@Damage Class
@@ -80,17 +75,43 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 		PoisionConditionData->TextureUI = Texture;
 	}
 
-	//@Poision Material 변경
-	if (DamagedCharactor != nullptr)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	TMap<int32, class UMaterialInterface*> ChangeMaterialMap;
+	DamagedActorHitComp->GetPoisionMaterialMaps(ChangeMaterialMap);
+	if (ChangeMaterialMap.Num() <= 0)
 	{
-		DamagedCharactor->GetMesh()->SetMaterial(0, DamagedActorHitComp->GetPoisionMaterialOrNull());
+		UE_LOG(LogTemp, Warning, L"CDamageType_Poision Map NULL!! And Not ADD Condition");
 	}
+	else
+	{
+		ACharacter* DamagedCharactor = Cast<ACharacter>(DamagedPawn);
+		check(DamagedCharactor);
+		USkeletalMeshComponent* const SkeletalMesh = DamagedCharactor->GetMesh();
+		check(SkeletalMesh);
+		for (auto& Material : ChangeMaterialMap)
+		{
+			int Num = Material.Key;
+			UMaterialInterface* GetOrigin = SkeletalMesh->GetMaterial(Num);
+
+			DamagedCharactor->GetMesh()->SetMaterial(Num, Material.Value); //@Poision Material 변경
+		}
+		TMap<int32, class UMaterialInterface*> OriginMaterialMap;
+		DamagedActorHitComp->GetOriginPoisionMaterialMaps(OriginMaterialMap);
+		PoisionConditionData->SetOriginMaterial(OriginMaterialMap); //@Origin 적용
+	}//else
 
 	bool bAddResult = DamagedActorHitComp->AddConditionData(PoisionConditionData);
 	if (bAddResult == false)
 	{
-		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp BURN AddConditionData Derived NULL!!");
+		UE_LOG(LogTemp, Warning, L"CDamageType_Poision AddConditionData Derived NULL!!");
 	}
+
+	////@Poision Material 변경
+//if (DamagedCharactor != nullptr)
+//{
+//	DamagedCharactor->GetMesh()->SetMaterial(0, DamagedActorHitComp->GetPoisionMaterialOrNull());
+//}
 }
 
 void UCDamageType_Poision::OnDamageDelegate(AActor * DamagedActor)

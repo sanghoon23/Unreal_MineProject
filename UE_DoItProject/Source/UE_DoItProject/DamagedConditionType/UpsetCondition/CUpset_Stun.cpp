@@ -43,10 +43,7 @@ void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 {
 	//@ApplyTime -= DeltaTime
 	Super::UpdateCondition(Owner, DeltaTime);
-
 	check(Owner);
-	//@TakeDamage
-	// ...
 
 	ACharacter* Charactor = Cast<ACharacter>(Owner);
 	if (Charactor != nullptr)
@@ -58,36 +55,38 @@ void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 		bool IsOtherMonPlaying = AnimInst->IsAnyMontagePlaying();
 
 		//@NonAction 에 설정된 Montage 가 실행되는지,
-		bool IsPlayingNonAction = AnimInst->Montage_IsPlaying(NonActionMon);
+		bool IsPlayingNonAction = AnimInst->Montage_IsPlaying(StunActionMon);
 
 		//@JumpSection - 아직 ApplyTime 이 남아있다면,
 		IIC_Monster* I_Monster = Cast<IIC_Monster>(Charactor);
 		if (ApplyTime > 0.0f && IsOtherMonPlaying == false)
 		{
 			//@AI OFF
-			I_Monster->SetAIRunningPossible(false);
+			if(I_Monster != nullptr)
+				I_Monster->SetAIRunningPossible(false);
 
 			//@RUN Montage
 			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Charactor);
 			if (I_Charactor != nullptr)
 			{
-				I_Charactor->ActorAnimMonPlay(NonActionMon, 0.6f, true);
+				I_Charactor->ActorAnimMonPlay(StunActionMon, 0.6f, true);
 				AnimInst->Montage_JumpToSection
 				(
-					FName("Looping"), NonActionMon //@Looping
+					FName("Looping"), StunActionMon //@Looping
 				);
 			}
 		}
 		//@ApplyTime 이 지났다면,
 		else if (ApplyTime <= 0.0f)
 		{
+			//@AI ON
+			if (I_Monster != nullptr)
+				I_Monster->SetAIRunningPossible(true);
+
 			if (IsPlayingNonAction == true)
 			{
-				AnimInst->Montage_Stop(0.5f, NonActionMon);
+				AnimInst->Montage_Stop(0.5f, StunActionMon);
 			}
-
-			//@AI ON
-			I_Monster->SetAIRunningPossible(true);
 		}
 	}
 }
@@ -126,5 +125,5 @@ void UCUpset_Stun::SetStunHeadPrticle(UParticleSystem * PT)
 void UCUpset_Stun::SetMontage(UAnimMontage * Montage)
 {
 	check(Montage);
-	NonActionMon = Montage;
+	StunActionMon = Montage;
 }

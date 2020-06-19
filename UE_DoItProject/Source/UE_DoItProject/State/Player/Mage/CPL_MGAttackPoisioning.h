@@ -50,6 +50,7 @@ private:
 
 	FTimerDelegate MontagePauseDel;
 
+	TArray<class UCN_SpawnProjectile*> Notifies_SpawnProjectile;
 	#pragma endregion
 
 };

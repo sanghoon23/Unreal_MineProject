@@ -149,14 +149,20 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 	FVector End = GetActorLocation() + 10.0f;
 
 	FCollisionShape Sphere = FCollisionShape::MakeSphere(CollisionSphereRadius);
-	FCollisionQueryParams Param(NAME_None, false, this);
+	FCollisionQueryParams Param(NAME_None, false, GetOwner());
+
+	ECollisionChannel Channel;
+	IIC_Charactor* const OwnerCharactor = Cast<IIC_Charactor>(GetOwner());
+	(OwnerCharactor != nullptr)
+		? Channel = OwnerCharactor->GetCharactorUsingChannel()
+		: Channel = ECollisionChannel::ECC_Visibility; //@Default
 
 	//@충돌 시행
 	bool bHit = GetWorld()->SweepSingleByChannel
 	(
 		HitResult, Start, End,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2, //@Player Attack
+		Channel, //@CharactorUsingChannel
 		Sphere,
 		Param
 	);
@@ -169,28 +175,26 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 
 	if (bHit == true)
 	{
-		IIC_Monster* Monster = Cast<IIC_Monster>(HitResult.GetActor());
-		if (Monster != nullptr)
+		//캐릭터 타입이 같지 않다면,
+		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
+		if (Charactor != nullptr && OwnerCharactor != nullptr &&
+			Charactor->GetCharactorType() != OwnerCharactor->GetCharactorType())
 		{
-			IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
-			if (Charactor != nullptr)
+			// 1. Get Interface HitComp
+			IIC_HitComp* HitComp = Charactor->GetIHitComp();
+			if (HitComp != nullptr)
 			{
-				// 1. Get Interface HitComp
-				IIC_HitComp* HitComp = Charactor->GetIHitComp();
-				if (HitComp != nullptr)
-				{
-					// 1.1 Set Hit Attribute
-					HitComp->SetHitDirection(FVector(0.0f));
-					HitComp->SetHitMoveSpeed(0.0f);
+				// 1.1 Set Hit Attribute
+				HitComp->SetHitDirection(FVector(0.0f));
+				HitComp->SetHitMoveSpeed(0.0f);
 
-					// 1.2 Hit Delegate - Normal(DamageType)
-					HitComp->OnHit(this, DamageType_Poision, 10.0f);
-				}
-				else
-					UE_LOG(LogTemp, Warning, L"Projectile Poisionball OnBeginOverlap - HitComp Null!!");
+				// 1.2 Hit Delegate - Normal(DamageType)
+				HitComp->OnHit(this, DamageType_Poision, 10.0f);
+			}
+			else
+				UE_LOG(LogTemp, Warning, L"Projectile Poisionball OnBeginOverlap - HitComp Null!!");
 
-			}//(Interface Charactor)
-		}//(Interface Monster)
+		}//(Interface Charactor)
 	}//(bHit)
 
 

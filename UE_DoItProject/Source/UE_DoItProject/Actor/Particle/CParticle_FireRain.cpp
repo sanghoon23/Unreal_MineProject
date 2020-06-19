@@ -174,7 +174,11 @@ void ACParticle_FireRain::OnBeginOverlap(UPrimitiveComponent* OverlappedComponen
 
 						// 1.2 Hit Delegate - DT_Burn
 						HitComp->SetHitMoveSpeed(0.0f);
-						HitComp->OnHit(this, DT_UseBeginOverlap, DT_UseBeginOverlap->DamageImpulse);
+						HitComp->OnHit
+						(
+							GetOwner(), 
+							DT_UseBeginOverlap, DT_UseBeginOverlap->DamageImpulse
+						);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"Particle_FireRain BeginOverlap - HitComp Null!!");
@@ -242,7 +246,11 @@ void ACParticle_FireRain::OnAttackingOverlap()
 						HitComp->SetHitMoveSpeed(0.1f);
 
 						// 1.2 Hit Delegate - Air(DamageType)
-						HitComp->OnHit(this, DT_DT_UseAttackRepeat, DT_DT_UseAttackRepeat->DamageImpulse);
+						HitComp->OnHit
+						(
+							GetOwner(),
+							DT_DT_UseAttackRepeat, DT_DT_UseAttackRepeat->DamageImpulse
+						);
 					}
 					else
 						UE_LOG(LogTemp, Warning, L"Particle_FireRain OnAttackingOverlap - HitComp Null!!");

@@ -10,7 +10,8 @@ UENUM()
 enum class HM_ShamanAttackType
 {
 	FIRSTATTACK = 0,
-	END = 1,
+	SECONDATTACK = 1,
+	END = 2,
 };
 
 UCLASS()
@@ -22,7 +23,7 @@ class UE_DOITPROJECT_API UCHM_ShamanAttackComp
 	#pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
-		TArray<class UC_BaseAttackState*> BasicAttackStateArray;
+		TArray<class UC_BaseAttackState*> AttackStateArray;
 
 	#pragma endregion
 

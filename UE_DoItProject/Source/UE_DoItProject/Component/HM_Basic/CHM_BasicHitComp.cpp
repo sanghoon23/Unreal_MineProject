@@ -14,7 +14,7 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 
 	FString Path = L"";
 
-	#pragma region Hit Montages
+#pragma region Hit Montages
 	//@Super
 	{
 		// 'CanHitCom' Montage
@@ -64,9 +64,9 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 			StunHitMontage = stunHit.Object;
 	}
 
-	#pragma endregion
+#pragma endregion
 
-	#pragma region Set MontagesArray - (BaseHitComp)
+#pragma region Set MontagesArray - (BaseHitComp)
 	//@Set Montage
 	//...
 
@@ -88,7 +88,19 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 	//uint8 FreezeNum = static_cast<uint8>(FDamageType::FREEZE);
 	//DamagedMontages[FreezeNum] = NormalHitMontage;
 
-	#pragma endregion
+#pragma endregion
+
+#pragma region Poision Material
+	//@LOAD Poision Material
+	{
+		Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
+		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
+		if (PoisionMat.Succeeded())
+		{
+			Mat_Poision_0 = PoisionMat.Object;
+		}
+	}
+#pragma endregion
 
 	//@LOAD Stun Head Particle
 	{
@@ -97,16 +109,6 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 		if (P_StunHead.Succeeded())
 		{
 			StunHeadParticle = P_StunHead.Object;
-		}
-	}
-
-	//@LOAD Poision Material
-	{
-		Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
-		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
-		if (PoisionMat.Succeeded())
-		{
-			PoisionMaterial = PoisionMat.Object;
 		}
 	}
 
@@ -145,6 +147,12 @@ void UCHM_BasicHitComp::BeginPlay()
 	{
 		HM_Basic->OnGravity(); //@중력키기
 	});
+
+	//@Set Poision Material
+	{
+		Map_ChangePoisionMaterial.Add(0, Mat_Poision_0);
+		Map_OriginPoisionMaterial.Add(0, HM_Basic->GetMesh()->GetMaterial(0));
+	}
 }
 
 
@@ -170,9 +178,6 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type,
 
 	///DamageType Process
 	Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
-
-	//#Edit 0510 - 
-	//@Death Animation 은 AnimInstance 의 LocoMotion 을 이용
 
 	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
 	IfTrueRet(bBlockDamagedMontage);

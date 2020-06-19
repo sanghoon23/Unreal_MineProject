@@ -10,7 +10,9 @@
 #include "Interface/IC_Monster.h"
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
+
 #include "Actor/Projectile/CProjectile_MagicBall.h"
+#include "Notify/Event/CN_SpawnProjectile.h"
 
 //Widget
 #include "UI/HUD_Main.h"
@@ -53,14 +55,14 @@ void UCPL_MGAttackMagicBall::BeginPlay()
 	//@Running Tick
 	IsRunTick(false);
 
-	#pragma region Super
+#pragma region Super
 
 	//@Auto AttackDecision System
 	AttackDecision->OnAble(Player, AttackRange);
 
-	#pragma endregion
+#pragma endregion
 
-	#pragma region Set Delegate
+#pragma region Set Delegate
 	// Set Delegate "OnActionReset" - IIC_Charactor
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
 	check(IC_Charactor);
@@ -88,7 +90,7 @@ void UCPL_MGAttackMagicBall::BeginPlay()
 		SkillCastWidget->EndProgress();
 	});
 
-	#pragma endregion
+#pragma endregion
 
 	//@UI
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -97,6 +99,19 @@ void UCPL_MGAttackMagicBall::BeginPlay()
 		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
 		check(MainHUD);
 		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	}
+
+	//@Notify Reference
+	TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;
+	MageAttackMontages[0]->GetAnimNotifies(0, 10.0f, false, NotifyEvent_Mon_0);
+	for (auto& Ref : NotifyEvent_Mon_0) //@AttackMontage[0]
+	{
+		const FAnimNotifyEvent* Event = Ref.GetNotify();
+		UCN_SpawnProjectile* Notify = Cast<UCN_SpawnProjectile>(Event->Notify);
+		if (Notify != nullptr)
+		{
+			Notifies_SpawnProjectile.Add(Notify);
+		}
 	}
 }
 
@@ -173,16 +188,13 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 	// @타겟 바라보게 하기
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
-	// @Projectile 설정. -> Montage 에서 Spawn
-	FVector Dir = Target->GetActorLocation() - Player->GetActorLocation();
-	Dir.Normalize();
-	float Speed = 2000.0f;
-	FProjectileData ProjectileData;
-	ProjectileData.Direction = Dir;
-	ProjectileData.MoveSpeed = Speed;
-	ProjectileData.FollowingTarget = Target;
-
-	ACProjectile_MagicBall::SettingProjectile(ProjectileData);
+	//@Notify Ref - Setting Target
+	for (auto& Notify : Notifies_SpawnProjectile)
+	{
+		Notify->SpeedValue = 800.0f;
+		Notify->SetProjectileDirection(Target->GetActorLocation() - Player->GetActorLocation());
+		Notify->SetProjectileTarget(Target);
+	}
 
 	// @공격 실행
 	if (bAttacking == false)
