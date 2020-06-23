@@ -14,6 +14,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AIControl")
 		uint8 AttackTypeNum = 0;
 
+	UPROPERTY(EditAnywhere, Category = "AIControl")
+		bool bUsingRange = false;
+
+	UPROPERTY(EditAnywhere, Category = "AIControl")
+		int32 MinAttackRange;
+
+	UPROPERTY(EditAnywhere, Category = "AIControl")
+		int32 MaxAttackRange;
+
 public:
 	UBTTask_ComboAttack();
 

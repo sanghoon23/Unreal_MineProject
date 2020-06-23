@@ -17,10 +17,10 @@ UCPL_SDAttackFinish::UCPL_SDAttackFinish()
 
 	// Super Setting
 	{
-		CurrentComboNum = static_cast<UINT>(USD_FinalAttack::COMBO_ONE);
-		MaxComboNum = static_cast<UINT>(USD_FinalAttack::END);
+		CurrentComboNum = static_cast<UINT>(ESD_FinalAttack::COMBO_ONE);
+		MaxComboNum = static_cast<UINT>(ESD_FinalAttack::END);
 
-		AttackRange = 230.0f;
+		AttackRange = 130.0f;
 	}
 
 	FString Path = L"";
@@ -29,28 +29,12 @@ UCPL_SDAttackFinish::UCPL_SDAttackFinish()
 	{
 		// @1
 		UAnimMontage* Sword_FinalAttack_1 = nullptr;
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/SwordMon_FinishAttack_1.SwordMon_FinishAttack_1'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/SwordMon_FinishAttack_Final.SwordMon_FinishAttack_Final'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> MFinalAttack_1(*Path);
 		if (MFinalAttack_1.Succeeded())
 			Sword_FinalAttack_1 = MFinalAttack_1.Object;
 
-		// @2
-		UAnimMontage* Sword_FinalAttack_2 = nullptr;
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/SwordMon_FinishAttack_2.SwordMon_FinishAttack_2'";
-		ConstructorHelpers::FObjectFinder<UAnimMontage> MFinalAttack_2(*Path);
-		if (MFinalAttack_2.Succeeded())
-			Sword_FinalAttack_2 = MFinalAttack_2.Object;
-
-		// @3
-		UAnimMontage* Sword_FinalAttack_3 = nullptr;
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/SwordMon_FinishAttack_3.SwordMon_FinishAttack_3'";
-		ConstructorHelpers::FObjectFinder<UAnimMontage> MFinalAttack_3(*Path);
-		if (MFinalAttack_3.Succeeded())
-			Sword_FinalAttack_3 = MFinalAttack_3.Object;
-
 		SwordAttackMontages.Emplace(Sword_FinalAttack_1);
-		SwordAttackMontages.Emplace(Sword_FinalAttack_2);
-		SwordAttackMontages.Emplace(Sword_FinalAttack_3);
 	}
 
 	#pragma endregion
@@ -58,7 +42,10 @@ UCPL_SDAttackFinish::UCPL_SDAttackFinish()
 	#pragma region DamageType
 
 	DT_Noraml		= NewObject<UCDamageType_Normal>();
+	DT_Noraml->SetDamageImpulse(10.0f);
+
 	DT_StrongAttack = NewObject<UCDamageType_StrongAttack>();
+	DT_StrongAttack->SetDamageImpulse(20.0f);
 
 	#pragma endregion
 }
@@ -90,8 +77,30 @@ void UCPL_SDAttackFinish::BeginPlay()
 	PlayerController = Cast<APlayerController>(Player->GetController());
 	check(PlayerController);
 
+#pragma region Set Delegate
+	// Set Delegate "OnActionReset" - IIC_Charactor
+	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
+	check(IC_Charactor);
+
+	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
+	{
+		//@ON AI - Target
+		if (Target != nullptr)
+		{
+			IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
+			if (I_Monster != nullptr)
+			{
+				I_Monster->SetAIRunningPossible(true);
+			}
+
+			Target = nullptr;
+		}
+	});
+
 	//BeginAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::DelegateBeginAttack);
 	EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::EndAttack);
+
+#pragma endregion
 }
 
 // - IBaseAttack 참고.
@@ -135,24 +144,18 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 		}
 	}
 
+	//@TODO : Target 이 마지막 일격을 가할 체력이 아니라면,
+	//@0623 우선 카메라 RelativePosition 다시 설정하자....
+	// 안내문 띄우기.
+	// 공격 계속 누르면서 맞을 때의 상황에서 어떻게,
+	// 검(Sword) 는 화염, 독, 아이스 패시브 스킬..
+	// 화염은 공격이 좋음, 독은 독에 걸림, 아이스는 일정확률로 빙결.
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//@ON BlockInput
 	Player->OnBlockKeyInput();
-
-	//@카메라 전환
-	{
-		AActor* BlendCameraActor = Player->GetBlendCameraComp()->GetBlendCamera(EBlendCameraPositionType::RightSideFace);
-		if (BlendCameraActor != nullptr)
-		{
-			PlayerController->SetViewTargetWithBlend(BlendCameraActor);
-		}
-		else
-			UE_LOG(LogTemp, Warning, L"FinalAttack BeginAttack(COMBO_ONE) - BlendCamera Null!!")
-	}
-
-	//@세계 시간 느리게 적용.
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.7f);
 
 	//@OFF AI - Target
 	IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
@@ -188,113 +191,30 @@ void UCPL_SDAttackFinish::EndAttack()
 {
 	Super::EndAttack();
 
-	//@Target NULL
-	//Target = nullptr;
-
-	//@세계 원상복구.
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
-
 	//@OFF BlockInput
 	Player->OffBlockKeyInput();
 
-	//@Camera 원상복귀
-	PlayerController->SetViewTargetWithBlend(Player);
-}
-
-// - IBaseAttack 참고.
-// @Warning - bComboCheck = false 하지 않음.
-// @Warning - Target 을 변수로 저장하고 있음.
-// 이 동작은 도중에 Target을 ESC 해서 nullptr 이 되버려도 실행되게끔 함.
-void UCPL_SDAttackFinish::OnComboSet(AActor * DoingActor)
-{
-	Super::OnComboSet(DoingActor);
-	check(DoingActor);
-
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(DoingActor);
-	check(Charactor);
-
-	//Target = Player->GetFindAttackTarget();
-	//check(Target);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//@++
-	++CurrentComboNum;
-
-	//COMBO_TWO
-	if (CurrentComboNum == static_cast<uint8>(USD_FinalAttack::COMBO_TWO))
+	//@ON AI - Target
+	if (Target != nullptr)
 	{
-		//@카메라 전환
-		AActor* BlendCameraActor = Player->GetBlendCameraComp()->GetBlendCamera(EBlendCameraPositionType::LeftSideFace);
-		if (BlendCameraActor != nullptr)
-		{
-			PlayerController->SetViewTargetWithBlend(BlendCameraActor);
-		}
-		else
-			UE_LOG(LogTemp, Warning, L"FinalAttack ComboSet(COMBO_TWO) - BlendCamera Null!!")
-
-		//@세계 시간 느리게 적용.
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
-	}
-
-	//COMBO_THREE
-	else if (CurrentComboNum == static_cast<uint8>(USD_FinalAttack::COMBO_THREE))
-	{
-		//@카메라 전환
-		AActor* BlendCameraActor = Player->GetBlendCameraComp()->GetBlendCamera(EBlendCameraPositionType::ForwardFace);
-		if (BlendCameraActor != nullptr)
-		{
-			PlayerController->SetViewTargetWithBlend(BlendCameraActor, 2.0f);
-		}
-		else
-			UE_LOG(LogTemp, Warning, L"FinalAttack ComboSet(COMBO_THREE) - BlendCamera Null!!")
-
-		//@세계 시간 느리게 적용.
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.5f);
-
-		//@ON AI - Target
 		IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
 		if (I_Monster != nullptr)
 		{
 			I_Monster->SetAIRunningPossible(true);
 		}
-	}
 
-	// @Input 고정
-	Player->CanNotMove();
-
-	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Player, Target);
-
-	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
-	AttackMoveDir = Player->GetActorForwardVector();
-	AttackMoveSpeed = 1.2f;
-
-	// 조건 검사.( CurrentComboNum = 0 ~ MaxCombo 까지 )
-	CurrentComboNum = FMath::Clamp<UINT>(CurrentComboNum, 0, MaxComboNum);
-	if (CurrentComboNum < MaxComboNum)
-	{
-		Charactor->ActorAnimMonPlay
-		(
-			SwordAttackMontages[CurrentComboNum],
-			1.2f, false
-		);
-	}
-	else
-	{
-		EndAttack();
+		Target = nullptr;
 	}
 }
 
-/* @Combo 의 마지막 구간을 정확히 알기 위해서. */
+// @Combo 의 마지막 구간을 정확히 알기 위해서.
 bool UCPL_SDAttackFinish::IsLastCombo() const
 {
-	if (CurrentComboNum == static_cast<uint8>(USD_FinalAttack::COMBO_THREE))
+	if (CurrentComboNum == static_cast<uint8>(ESD_FinalAttack::END))
 		return true;
 
 	return false;
 }
-
 
 /* 다른 Pawn 을 공격 처리 함수 */
 // @DoingActor - Attack 을 할 객체 즉, 여기선 Player (Owner)
@@ -309,11 +229,10 @@ void UCPL_SDAttackFinish::AttackOtherPawn()
 	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
 	FCollisionQueryParams CollisionQueryParm(NAME_None, false, Player);
 
-	FHitResult HitResult;
-	float DebugLifeTime = 1.0f;
-	bool bHit = GetWorld()->SweepSingleByChannel //@Single - 단일.
+	TArray<FHitResult> HitResults;
+	bool bHit = GetWorld()->SweepMultiByChannel
 	(
-		HitResult
+		HitResults
 		, Start
 		, End
 		, FQuat::Identity
@@ -324,41 +243,53 @@ void UCPL_SDAttackFinish::AttackOtherPawn()
 
 #if  ENABLE_DRAW_DEBUG
 
-	DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
+	float DebugLifeTime = 1.0f;
+	//DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
 
 #endif //  ENABLE_DRAW_DEBUG
 
 	if (bHit == true)
 	{
-		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
-		if (Charactor != nullptr)
+		for (FHitResult& HitResult : HitResults)
 		{
-			// 1. Get Interface HitComp
-			IIC_HitComp* HitComp = Charactor->GetIHitComp();
-			if (HitComp != nullptr)
+			IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
+			if (Charactor != nullptr)
 			{
-				// 1.1 Set Hit Attribute
-				FVector HitDirection = Player->GetActorForwardVector();
-				HitDirection.Z = 0.0f;
-				HitComp->SetHitDirection(HitDirection);
-
-				// 1.2 Hit Delegate - (DamageType)
-				if (CurrentComboNum != static_cast<uint8>(USD_FinalAttack::COMBO_THREE))
+				// 1. Get Interface HitComp
+				IIC_HitComp* HitComp = Charactor->GetIHitComp();
+				if (HitComp != nullptr)
 				{
-					HitComp->SetHitMoveSpeed(0.3f);
-					HitComp->OnHit(Player, DT_Noraml, 50.0f);
-				}
+					if (HitResult.GetActor() == Target)
+					{
+						++CurrentComboNum; //@콤보 늘려주기
+					}
+					
+					if (IsLastCombo() == true)
+					{
+						//@마지막 일격 - StrongAttack
+						FVector HitDirection = Player->GetActorForwardVector();
+						HitDirection.Z = 0.0f;
+						HitComp->SetHitDirection(HitDirection);
+						HitComp->SetHitMoveSpeed(0.3f);
+						HitComp->OnHit(Player, DT_StrongAttack, 0.0f);
+					}
+					else
+					{
+						//@NormalAttack - Speed(0.0f)
+						FVector HitDirection = Player->GetActorForwardVector();
+						HitDirection.Z = 0.0f;
+						HitComp->SetHitDirection(HitDirection);
+						HitComp->SetHitMoveSpeed(0.0f);
+						HitComp->OnHit(Player, DT_Noraml, 0.0f);
+					}
+
+				}//(HitComp != nullptr)
 				else
-				{
-					HitComp->SetHitMoveSpeed(0.3f);
-					HitComp->OnHit(Player, DT_StrongAttack, 50.0f);
-				}
-
-			}//(HitComp != nullptr)
+					UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
+			}//(Charactor != nullptr)
 			else
-				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
-		}//(Charactor != nullptr)
-		else
-			UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
+				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
+
+		}//for(HitResult)
 	}//(bHit == true)
 }

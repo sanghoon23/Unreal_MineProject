@@ -193,6 +193,10 @@ void ACPlayer::BeginPlay()
 		{
 			bEvade = false;		//@Evade
 			bJumping = false;	//@Jumping
+			CanMove();
+			OnGravity();
+			OffBlockAction();	//@OFF Block 'Action'
+			OffBlockKeyInput();	//@OFF Block 'KeyInput'
 		});
 
 		// @'On' MageState

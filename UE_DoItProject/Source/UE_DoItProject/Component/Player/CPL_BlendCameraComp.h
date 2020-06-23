@@ -4,7 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "CPL_BlendCameraComp.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EBlendCameraPositionType : uint8
 {
 	RightSideFace	= 0,

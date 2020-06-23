@@ -153,7 +153,7 @@ void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCom
 	ECollisionChannel Channel;
 	IIC_Charactor* const OwnerCharactor = Cast<IIC_Charactor>(GetOwner());
 	(OwnerCharactor != nullptr)
-		? Channel = OwnerCharactor->GetCharactorUsingChannel()
+		? Channel = OwnerCharactor->GetCharactorUsingAttackChannel()
 		: Channel = ECollisionChannel::ECC_Visibility; //@Default
 
 	//@충돌 시행

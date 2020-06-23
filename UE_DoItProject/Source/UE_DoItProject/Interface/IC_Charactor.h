@@ -47,7 +47,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Pure Virtual Function */
 public:
-	virtual ECollisionChannel GetCharactorUsingChannel() const = 0;
+	virtual ECollisionChannel GetCharactorUsingAttackChannel() const = 0;
 	virtual ECharactorType GetCharactorType() const = 0;
 
 	virtual bool IsDeath()		= 0;

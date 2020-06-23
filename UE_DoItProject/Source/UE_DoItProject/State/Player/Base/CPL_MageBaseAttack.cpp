@@ -30,8 +30,6 @@ void UCPL_MageBaseAttack::BeginPlay()
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
 		bInputAttackCall = false; //@Attack Call
-		Player->CanMove(); //@이동가능
-		Player->OnGravity(); //@중력키기
 	});
 
 	// Set Delegate "End Attack" - IIC_BaseAttack

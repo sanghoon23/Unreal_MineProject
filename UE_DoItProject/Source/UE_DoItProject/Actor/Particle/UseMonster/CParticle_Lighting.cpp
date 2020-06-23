@@ -85,8 +85,6 @@ void ACParticle_Lighting::OffEndActor()
 
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ParticleComp->SetActive(false);
-
-	CLog::Print(L"Lighting OffEndActor!!");
 }
 
 void ACParticle_Lighting::SetDamageType(UCDamageType_Base * UseBeginOverlap)

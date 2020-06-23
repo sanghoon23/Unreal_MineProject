@@ -86,9 +86,9 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	/* Pure Virtual Function */
+	/* Pure Virtual Function - (IC_HitComp Âü°í) */
 public:
-	virtual void OnHit(AActor* AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount) override {}
+	virtual void OnHit(AActor* AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount) override;
 
 	virtual const bool IsBeated() const override { return bBeated; }
 	virtual void SetBeated(bool bValue) override { bBeated = bValue; }
@@ -110,6 +110,7 @@ public:
 	/* Function */
 public:
 	bool AddConditionData(UCBaseConditionType* ConditionData);
+
 
 	#pragma	region Member
 public:

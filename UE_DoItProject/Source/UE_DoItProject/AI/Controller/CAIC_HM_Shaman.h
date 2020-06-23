@@ -24,10 +24,10 @@ private:
 		float PatrolRadius = 400.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float DetectRadius = 800.0f;
+		float DetectRadius = 900.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float AttackRange = 1000.0f;
+		float AttackRange = 500.0f;
 
 	#pragma endregion
 

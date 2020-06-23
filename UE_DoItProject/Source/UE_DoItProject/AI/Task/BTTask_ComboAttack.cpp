@@ -28,8 +28,23 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	IfNullRetResult(Nav, EBTNodeResult::Failed);
 
 	// BaseAttack
-	IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->SetAttackTypeRetIBaseAttack(AttackTypeNum);
-	BaseAttack->BeginAttack(MonsterPawn);
+	if (bUsingRange == false)
+	{
+		IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->SetAttackTypeRetIBaseAttack(AttackTypeNum);
+		check(BaseAttack);
+		BaseAttack->BeginAttack(MonsterPawn);
+	}
+	else
+	{
+		//@·£´ý Attack Type - BeginAttack
+		//int32 Lower = AttackTypeRange.GetLowerBoundValue();
+		//int32 Higher = AttackTypeRange.GetUpperBoundValue();
+		int Input = UKismetMathLibrary::RandomIntegerInRange(MinAttackRange, MaxAttackRange);
+		CLog::Print(Input);
+		IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->SetAttackTypeRetIBaseAttack(Input);
+		check(BaseAttack);
+		BaseAttack->BeginAttack(MonsterPawn);
+	}
 
 	return EBTNodeResult::Succeeded;
 }

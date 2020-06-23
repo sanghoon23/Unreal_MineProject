@@ -12,6 +12,8 @@ class UE_DOITPROJECT_API ACPL_BlendCameraActor
 	
 	#pragma	region Reflection
 private:
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//	class USceneComponent* SceneComp;
 
 	#pragma endregion
 

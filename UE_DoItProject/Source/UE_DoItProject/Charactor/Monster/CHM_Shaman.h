@@ -53,7 +53,7 @@ public:
 
 	/* Pure Virtual Function In Interface - (IC_Charactor) */
 public:
-	virtual ECollisionChannel GetCharactorUsingChannel() const override
+	virtual ECollisionChannel GetCharactorUsingAttackChannel() const override
 	{
 		return ECollisionChannel::ECC_GameTraceChannel3; //@Monster Attack
 	}

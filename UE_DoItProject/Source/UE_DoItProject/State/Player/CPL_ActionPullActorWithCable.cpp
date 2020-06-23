@@ -30,9 +30,7 @@ UCPL_ActionPullActorWithCable::UCPL_ActionPullActorWithCable()
 	#pragma region DamageType
 
 	DT_Stun = NewObject<UCDamageType_Stun>();
-
-	//@Stun 시간 지정
-	DT_Stun->SetStunTime(10.0f);
+	DT_Stun->SetStunTime(10.0f); //@Stun 시간 지정
 
 	#pragma endregion
 }
@@ -44,6 +42,25 @@ void UCPL_ActionPullActorWithCable::BeginPlay()
 	//@Get Player Pointer
 	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
+
+#pragma region Set Delegate
+	//@Set Delegate "OnActionReset" - IIC_Charactor
+	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
+	check(IC_Charactor);
+
+	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
+	{
+		//@Target Init
+		Target = nullptr;
+
+		//@Montage
+		bNextMontage = false;
+
+		////@CableObject Reset
+		//CableObject->ResetState();
+	});
+#pragma endregion
+
 }
 
 void UCPL_ActionPullActorWithCable::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -101,6 +118,8 @@ void UCPL_ActionPullActorWithCable::BeginActionState()
 	//@Get CableObject Pointer
 	CableObject = Player->GetCableObject();
 	check(CableObject);
+
+	CableObject->ResetState();
 
 	////@Get Taget
 	//AActor* Target = Player->GetFindAttackTarget();

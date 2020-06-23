@@ -137,14 +137,6 @@ void UCPL_HitComp::BeginPlay()
 
 	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
-
-	// Set Delegate "OnActionReset" - IIC_Charactor
-	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
-	check(IC_Charactor);
-	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
-	{
-		Player->OnGravity(); //@중력키기
-	});
 }
 
 void UCPL_HitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -168,9 +160,6 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 		verify(Type->GetConditionType() == FDamageType::END);
 	}
 
-	//@Delegate 실행.
-	Player->OnActionResetState.Broadcast(Player);
-
 	///DamageType Process
 	Type->OnHittingProcess(AttackingActor, Player, this, DamageAmount);
 
@@ -191,6 +180,9 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 	//		return; //@return
 	//	}
 	//}
+
+	//@Delegate 실행.
+	Player->OnActionResetState.Broadcast(Player);
 
 	//@else
 	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());

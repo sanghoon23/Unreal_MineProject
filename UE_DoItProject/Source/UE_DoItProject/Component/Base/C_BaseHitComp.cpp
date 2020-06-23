@@ -70,6 +70,11 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	}
 }
 
+void UC_BaseHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount)
+{
+
+}
+
 bool UC_BaseHitComp::AddConditionData(UCBaseConditionType* ConditionData)
 {
 	check(ConditionData);

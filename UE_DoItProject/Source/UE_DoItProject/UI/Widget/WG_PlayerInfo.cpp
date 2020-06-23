@@ -11,6 +11,7 @@ UWG_PlayerInfo::UWG_PlayerInfo(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
+
 void UWG_PlayerInfo::NativeConstruct()
 {
 	Super::NativeConstruct();

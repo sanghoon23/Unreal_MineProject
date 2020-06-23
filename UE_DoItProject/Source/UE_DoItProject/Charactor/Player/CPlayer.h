@@ -97,7 +97,7 @@ protected:
 
 	/* Pure Virtual Function - (IIC_Charactor) */
 public:
-	virtual ECollisionChannel GetCharactorUsingChannel() const override 
+	virtual ECollisionChannel GetCharactorUsingAttackChannel() const override
 	{
 		return ECollisionChannel::ECC_GameTraceChannel2; 
 	}

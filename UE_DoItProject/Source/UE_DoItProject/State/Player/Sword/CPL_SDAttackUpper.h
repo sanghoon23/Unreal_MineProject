@@ -64,26 +64,12 @@ public:
 	void ImpulseAttack(float intensity) override {}
 	void CheckProcedural() override {}
 
-	/* Function */
-private:
-
-	// BlendCameraActorFunc
-	void BlendCameraFunc();
-	void EndAttackBlendCameraFunc();
-	void TimerFunc();
-
 	#pragma region Member
 private:
 	float AttackRadius = 100.0f;
 
 	APlayerController* PlayerController;
-
 	//APawn* Target;
-
-	FTimerHandle EndBlendTimerHandle;
-
-	FDelegateHandle	CutOutBlendCameraFunc;
-	FDelegateHandle	LastOutBlendCameraFunc;
 
 	/* 일정 높이 이상일때, 두번째 콤보부터 나가기 위한 높이 값 */
 	float AirComboCanHeight = 220.0f;

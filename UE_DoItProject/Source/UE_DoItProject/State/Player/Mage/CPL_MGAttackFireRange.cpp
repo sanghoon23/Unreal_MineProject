@@ -94,8 +94,6 @@ void UCPL_MGAttackFireRange::BeginPlay()
 
 		//@StopMontage
 		Player->ActorStopAnimMon(MageAttackMontages[0]);
-
-		Player->OffBlockAction();
 	});
 
 	// @EndAttack Delegate

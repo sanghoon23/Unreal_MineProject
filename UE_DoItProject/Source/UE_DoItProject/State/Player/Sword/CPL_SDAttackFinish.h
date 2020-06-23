@@ -10,12 +10,14 @@
 #include "CPL_SDAttackFinish.generated.h"
 
 UENUM()
-enum class USD_FinalAttack : uint8
+enum class ESD_FinalAttack : uint8
 {
 	COMBO_ONE = 0,
 	COMBO_TWO = 1,
 	COMBO_THREE = 2,
-	END = 3,
+	COMBO_FOUR = 3,
+	COMBO_FIVE = 4,
+	END = 5,
 };
 
 UCLASS()
@@ -51,7 +53,7 @@ public:
 	void BeginAttack(AActor * DoingActor) override;
 	void EndAttack() override;
 
-	void OnComboSet(AActor * DoingActor) override;
+	//void OnComboSet(AActor * DoingActor) override;
 	bool IsLastCombo() const override;
 
 	/* Virtual */
@@ -63,10 +65,11 @@ public:
 	#pragma region Member
 private:
 	float AttackRadius = 100.0f;
-	float StartAttackActionDistance = 200.0f;
 
 	APlayerController* PlayerController;
 
 	APawn* Target;
+
+
 	#pragma endregion
 };
