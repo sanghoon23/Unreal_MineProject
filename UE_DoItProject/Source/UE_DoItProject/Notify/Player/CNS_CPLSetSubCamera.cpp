@@ -14,7 +14,7 @@ void UCNS_CPLSetSubCamera::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimS
 	ACPlayer* Player = Cast<ACPlayer>(MeshComp->GetOwner());
 	IfNullRet(Player);
 
-	PlayerController = Cast<APlayerController>(Player->GetController());
+	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 	IfNullRet(PlayerController);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,16 +31,14 @@ void UCNS_CPLSetSubCamera::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimS
 				//FTransform BlendActorTransform = SceneComp->GetRelativeLocation();
 				//@Get
 				FVector		BlendActorLocation = SceneComp->GetRelativeLocation();
-				//FRotator	BlendActorRotation = BlendActorTransform.GetRotation().Rotator();
-
-				CLog::Print(BlendActorLocation);
+				FRotator	BlendActorRotation = SceneComp->GetRelativeRotation();
 
 				//@Calc
 				BlendActorLocation += LocationOffset;
-				//BlendActorRotation += RotationOffset;
+				BlendActorRotation += RotationOffset;
 
 				SceneComp->SetRelativeLocation(BlendActorLocation);
-				//BlendCameraActor->SetActorRotation(BlendActorRotation);
+				SceneComp->SetRelativeRotation(BlendActorRotation);
 			}
 		}
 
@@ -69,7 +67,7 @@ void UCNS_CPLSetSubCamera::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSeq
 	ACPlayer* Player = Cast<ACPlayer>(MeshComp->GetOwner());
 	IfNullRet(Player);
 
-	PlayerController = Cast<APlayerController>(Player->GetController());
+	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 	IfNullRet(PlayerController);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

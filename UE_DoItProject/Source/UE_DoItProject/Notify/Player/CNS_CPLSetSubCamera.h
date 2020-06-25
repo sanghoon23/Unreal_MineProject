@@ -51,7 +51,5 @@ private:
 	
 	/* Member */
 private:
-	class ACPlayer* Player;
-	APlayerController* PlayerController;
 
 };

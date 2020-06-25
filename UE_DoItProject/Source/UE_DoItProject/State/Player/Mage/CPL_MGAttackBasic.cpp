@@ -105,15 +105,11 @@ void UCPL_MGAttackBasic::BeginAttack(AActor * DoingActor)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	APawn* Target = Player->GetFindAttackTarget();
-	if (Target == nullptr)
+	if (Target != nullptr)
 	{
-		EndAttackDeleFunc.Broadcast();
-		return;
+		//@ 타겟 바라보게 하기
+		UCFL_ActorAgainst::LookAtTarget(Player, Target);
 	}
-	check(Target);
-
-	//@ 타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -142,21 +138,16 @@ void UCPL_MGAttackBasic::OnComboSet(AActor * DoingActor)
 	check(Charactor);
 
 	APawn* Target = Player->GetFindAttackTarget();
-	if (Target == nullptr)
+	if (Target != nullptr)
 	{
-		EndAttackDeleFunc.Broadcast();
-		Player->ActorStopAnimMon(MageAttackMontages[CurrentComboNum]);
-		return;
+		//@ 타겟 바라보게 하기
+		UCFL_ActorAgainst::LookAtTarget(Player, Target);
 	}
-	check(Target);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bComboCheck = false;
 	++CurrentComboNum;
-
-	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @공격 중 조금씩 이동 - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
@@ -235,11 +226,11 @@ void UCPL_MGAttackBasic::AttackOtherPawn()
 				// 1.2 Hit Delegate - Normal(DamageType)
 				if (CurrentComboNum < static_cast<uint8>(UMG_BasicAttack::COMBO_THREE))
 				{
-					HitComp->OnHit(Player, DT_Normal, 50.0f);
+					HitComp->OnHit(Player, DT_Normal, 10.0f);
 				}
 				else if (CurrentComboNum == static_cast<uint8>(UMG_BasicAttack::COMBO_THREE))
 				{
-					HitComp->OnHit(Player, DT_StrongAttack, 50.0f);
+					HitComp->OnHit(Player, DT_StrongAttack, 15.0f);
 				}
 
 			}//(HitComp != nullptr)

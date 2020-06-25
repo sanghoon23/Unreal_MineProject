@@ -1,4 +1,4 @@
-#include "CPL_SDAttackFinish.h"
+ï»¿#include "CPL_SDAttackFinish.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -10,6 +10,8 @@
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
 #include "Component/Player/CPL_BlendCameraComp.h"
+
+#include "UI/HUD_Main.h"
 
 UCPL_SDAttackFinish::UCPL_SDAttackFinish()
 {
@@ -70,12 +72,17 @@ void UCPL_SDAttackFinish::BeginPlay()
 	#pragma region Super
 
 	//@Auto AttackDecision System
-	AttackDecision->OnAble(Player, AttackRange);
+	AttackDecision->OnAble(Player, AttackRange + 200.0f);
 
 	#pragma endregion
 
-	PlayerController = Cast<APlayerController>(Player->GetController());
-	check(PlayerController);
+
+#pragma region UI
+	//@UI
+	check(MainHUD);
+	TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+
+#pragma endregion
 
 #pragma region Set Delegate
 	// Set Delegate "OnActionReset" - IIC_Charactor
@@ -103,12 +110,12 @@ void UCPL_SDAttackFinish::BeginPlay()
 #pragma endregion
 }
 
-// - IBaseAttack Âü°í.
-// @param DoingActor - °ø°İÇÏ´Â ÁÖÃ¼
+// - IBaseAttack ì°¸ê³ .
+// @param DoingActor - ê³µê²©í•˜ëŠ” ì£¼ì²´
 // #Edit *0310
 // @Warning - 
-// ¸ùÅ¸ÁÖ¸¦ ³ª´²¼­ ¾²°í ÀÖÀ½. ±×·¡¼­ Player ÀÇ Input °ªÀÌ ¾ø¾îµµ
-// ¿¬¼ÓÀûÀ¸·Î µ¿ÀÛÇÏ±â À§ÇØ¼­ Ç×»ó, ComboCheck = true
+// ëª½íƒ€ì£¼ë¥¼ ë‚˜ëˆ ì„œ ì“°ê³  ìˆìŒ. ê·¸ë˜ì„œ Player ì˜ Input ê°’ì´ ì—†ì–´ë„
+// ì—°ì†ì ìœ¼ë¡œ ë™ì‘í•˜ê¸° ìœ„í•´ì„œ í•­ìƒ, ComboCheck = true
 void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 {
 	Super::BeginAttack(DoingActor);
@@ -116,7 +123,7 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 
 	// Super
 	{
-		IfFalseRet(GetAttackPossible()); // @Super::Tick ¿¡¼­ Ã³¸® Áß.
+		IfFalseRet(GetAttackPossible()); // @Super::Tick ì—ì„œ ì²˜ë¦¬ ì¤‘.
 	}
 
 	//@IF TRUE RETURN
@@ -128,12 +135,27 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 	Target = Player->GetFindAttackTarget();
 	if (Target == nullptr)
 	{
+		//@
 		EndAttackDeleFunc.Broadcast();
 		return;
 	}
 	check(Target);
 
-	// @Target ÀÌ °øÁß ÀÖ´Ù¸é °ø°İ ¸í·É Áß´Ü.
+	//@UI
+	check(TargetInfoWidget);
+	if (TargetInfoWidget->GetInfoMonsterPercentHP() > 0.3f) //@30í¼ ì´ìƒì´ë©´,
+	{
+		FString Input = L"ê³µê²© ì¡°ê±´ì´ ì¶©ì¡±í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤!!";
+		MainHUD->VisibleUITextNotify(Input, 3.0f);
+		return;
+	}
+	else
+	{
+		//@ë§ˆë¬´ë¦¬ ì¼ê²©ì„ ìœ„í•œ ë°ë¯¸ì§€ ì„¸íŒ…
+		DT_StrongAttack->SetDamageImpulse(TargetInfoWidget->GetInfoMonsterCurrentHP() + 0.1f);
+	}
+
+	// @Target ì´ ê³µì¤‘ ìˆë‹¤ë©´ ê³µê²© ëª…ë ¹ ì¤‘ë‹¨.
 	ACharacter* TargetCharactor = Cast<ACharacter>(Target);
 	if (TargetCharactor != nullptr)
 	{
@@ -144,13 +166,14 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 		}
 	}
 
-	//@TODO : Target ÀÌ ¸¶Áö¸· ÀÏ°İÀ» °¡ÇÒ Ã¼·ÂÀÌ ¾Æ´Ï¶ó¸é,
-	//@0623 ¿ì¼± Ä«¸Ş¶ó RelativePosition ´Ù½Ã ¼³Á¤ÇÏÀÚ....
-	// ¾È³»¹® ¶ç¿ì±â.
-	// °ø°İ °è¼Ó ´©¸£¸é¼­ ¸ÂÀ» ¶§ÀÇ »óÈ²¿¡¼­ ¾î¶»°Ô,
-	// °Ë(Sword) ´Â È­¿°, µ¶, ¾ÆÀÌ½º ÆĞ½Ãºê ½ºÅ³..
-	// È­¿°Àº °ø°İÀÌ ÁÁÀ½, µ¶Àº µ¶¿¡ °É¸², ¾ÆÀÌ½º´Â ÀÏÁ¤È®·ü·Î ºù°á.
-
+	//@TODO : Target ì´ ë§ˆì§€ë§‰ ì¼ê²©ì„ ê°€í•  ì²´ë ¥ì´ ì•„ë‹ˆë¼ë©´,
+	// ì•ˆë‚´ë¬¸ ë„ìš°ê¸°. - ( O )
+	// ê²€(Sword) ëŠ” í™”ì—¼, ë…, ì•„ì´ìŠ¤ íŒ¨ì‹œë¸Œ ìŠ¤í‚¬..
+	// í™”ì—¼ì€ ê³µê²©ì´ ì¢‹ìŒ, ë…ì€ ë…ì— ê±¸ë¦¼, ì•„ì´ìŠ¤ëŠ” ì¼ì •í™•ë¥ ë¡œ ë¹™ê²°.
+	// ë•¡ê²¼ì„ ë•Œ, AI ëŒì•„ê°€ë‹¤ ìŠ¤í„´ ìƒíƒœë¡œ ë˜ëŒì•„ê°€ëŠ” ê²ƒ
+	// ë§ˆë¬´ë¦¬ ì¼ê²© ì¤‘ì—” ë‹¤ë¥¸ AI ë“¤ì´ ê±´ë“¤ì§€ ëª»í•˜ê²Œ, í•˜ëŠ” ì–´ë–¤ ê¸°ëŠ¥ì„ ë§Œë“¤ì–´ì•¼ ë ë“¯
+	// CableAction ì— ê±°ë¦¬ê°€ ì•ˆë˜ë©´ Notify ë„£ê¸°, ë‹¤ë¥¸ ì•¡ì…˜ë“¤, ê³µê²©ë“¤ì—ë„ ì¶”ê°€ì ìœ¼ë¡œ ë„£ê¸°.
+	// Procedural ì ˆë‘ì²´ ì½”ë“œ,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -164,13 +187,13 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 		I_Monster->SetAIRunningPossible(false);
 	}
 
-	//@Å¸°Ù ¹Ù¶óº¸°Ô ÇÏ±â
+	//@íƒ€ê²Ÿ ë°”ë¼ë³´ê²Œ í•˜ê¸°
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
-	//@°Å¸® ¹ú¸®°í, ³ôÀÌ ¸ÂÃß±â
+	//@ê±°ë¦¬ ë²Œë¦¬ê³ , ë†’ì´ ë§ì¶”ê¸°
 	UCFL_ActorAgainst::ActorLocateFrontTarget(Target, Player, AttackRange, true);
 
-	//@°ø°İ Áß Á¶±İ¾¿ ÀÌµ¿ - AttackMoveDir(I_BaseAttack Value)
+	//@ê³µê²© ì¤‘ ì¡°ê¸ˆì”© ì´ë™ - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
 	AttackMoveSpeed = 0.7f;
 
@@ -179,11 +202,11 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 		Player->ActorAnimMonPlay
 		(
 			SwordAttackMontages[0], /* @FirstMontage == Combo1 */
-			1.1f, true				// @AnimPlay ¹«Á¶°Ç ½ÇÇà.
+			1.1f, true				// @AnimPlay ë¬´ì¡°ê±´ ì‹¤í–‰.
 		);
 	}
 
-	// @ComboCheck == true ·Î ÇÔ
+	// @ComboCheck == true ë¡œ í•¨
 	bComboCheck = true;
 }
 
@@ -207,7 +230,7 @@ void UCPL_SDAttackFinish::EndAttack()
 	}
 }
 
-// @Combo ÀÇ ¸¶Áö¸· ±¸°£À» Á¤È®È÷ ¾Ë±â À§ÇØ¼­.
+// @Combo ì˜ ë§ˆì§€ë§‰ êµ¬ê°„ì„ ì •í™•íˆ ì•Œê¸° ìœ„í•´ì„œ.
 bool UCPL_SDAttackFinish::IsLastCombo() const
 {
 	if (CurrentComboNum == static_cast<uint8>(ESD_FinalAttack::END))
@@ -216,8 +239,8 @@ bool UCPL_SDAttackFinish::IsLastCombo() const
 	return false;
 }
 
-/* ´Ù¸¥ Pawn À» °ø°İ Ã³¸® ÇÔ¼ö */
-// @DoingActor - Attack À» ÇÒ °´Ã¼ Áï, ¿©±â¼± Player (Owner)
+/* ë‹¤ë¥¸ Pawn ì„ ê³µê²© ì²˜ë¦¬ í•¨ìˆ˜ */
+// @DoingActor - Attack ì„ í•  ê°ì²´ ì¦‰, ì—¬ê¸°ì„  Player (Owner)
 void UCPL_SDAttackFinish::AttackOtherPawn()
 {
 	Super::AttackOtherPawn();
@@ -261,21 +284,20 @@ void UCPL_SDAttackFinish::AttackOtherPawn()
 				{
 					if (HitResult.GetActor() == Target)
 					{
-						++CurrentComboNum; //@ÄŞº¸ ´Ã·ÁÁÖ±â
+						++CurrentComboNum; //@ì½¤ë³´ ëŠ˜ë ¤ì£¼ê¸°
 					}
 					
 					if (IsLastCombo() == true)
 					{
-						//@¸¶Áö¸· ÀÏ°İ - StrongAttack
+						//@ë§ˆì§€ë§‰ ì¼ê²© - StrongAttack
 						FVector HitDirection = Player->GetActorForwardVector();
 						HitDirection.Z = 0.0f;
 						HitComp->SetHitDirection(HitDirection);
 						HitComp->SetHitMoveSpeed(0.3f);
-						HitComp->OnHit(Player, DT_StrongAttack, 0.0f);
+						HitComp->OnHit(Player, DT_StrongAttack, DT_StrongAttack->DamageImpulse);
 					}
 					else
 					{
-						//@NormalAttack - Speed(0.0f)
 						FVector HitDirection = Player->GetActorForwardVector();
 						HitDirection.Z = 0.0f;
 						HitComp->SetHitDirection(HitDirection);

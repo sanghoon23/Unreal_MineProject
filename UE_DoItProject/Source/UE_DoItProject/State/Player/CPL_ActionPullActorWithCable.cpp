@@ -51,7 +51,7 @@ void UCPL_ActionPullActorWithCable::BeginPlay()
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
 		//@Target Init
-		Target = nullptr;
+		//Target = nullptr;
 
 		//@Montage
 		bNextMontage = false;
@@ -76,14 +76,6 @@ void UCPL_ActionPullActorWithCable::OnAction()
 		IfTrueRet(BaseAttack->GetAttacking()); // @IF TRUE RETURN
 	}
 
-	// @IF NULL RETURN
-	Target = Player->GetFindAttackTarget();
-	IfNullRet(Target); //@Target 이 설정되지 않았으면, return;
-
-	// @대상과의 거리가 너무 멀 시,
-	float DistanceToTarget = Player->GetDistanceTo(Target);
-	IfTrueRet(DistanceToTarget > UsingActionRange);
-
 	// @IF TRUE RETURN
 	IfTrueRet(Player->GetEvade()); //@Evade Check
 	IfTrueRet(Player->IsJumping());
@@ -92,6 +84,14 @@ void UCPL_ActionPullActorWithCable::OnAction()
 
 	// @IF FALSE RETURN
 	IfFalseRet(Player->GetCanMove());
+
+	// @IF NULL RETURN
+	Target = Player->GetFindAttackTarget();
+	IfNullRet(Target); //@Target 이 설정되지 않았으면, return;
+
+	// @대상과의 거리가 너무 멀 시,
+	float DistanceToTarget = Player->GetDistanceTo(Target);
+	IfTrueRet(DistanceToTarget > UsingActionRange);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

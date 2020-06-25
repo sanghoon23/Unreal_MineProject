@@ -154,9 +154,6 @@ void ACPlayer::BeginPlay()
 	#pragma region Player Setting
 	//Player Setting
 	{
-		// @CurrentStateType - 현재 상태 MAGE
-		CurrentStateType = EPlayerStateType::MAGE;
-
 		/* ControllerRot - 처음 Controller 위치를 조정하기 위해서, */
 		AddControllerPitchInput(13.f);
 
@@ -222,7 +219,7 @@ void ACPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// @StateMachine 에서 StateType 값 받아옴.
-	CurrentStateType = StateManager->GetCurrentStateType();
+	//CurrentStateType = StateManager->GetCurrentAttackStateType();
 
 	// Test Code
 	//InputComponent->bBlockInput = false;
@@ -640,6 +637,11 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Get, Set
+
+int ACPlayer::GetCurrentAttackStateType()
+{
+	return static_cast<int>(StateManager->GetCurrentStateType());
+}
 
 /* I_Charactor 에 CurrentBaseAction Setting */
 void ACPlayer::SetCurrentBaseAction(IIC_BaseAction * IBaseAction)

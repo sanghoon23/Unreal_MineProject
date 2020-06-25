@@ -1,4 +1,4 @@
-#include "CPL_SDAttackUpper.h"
+ï»¿#include "CPL_SDAttackUpper.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -10,6 +10,8 @@
 #include "Charactor/Player/CPlayer.h"
 #include "Component/Player/CPL_SwordAttackComp.h"
 #include "Component/Player/CPL_BlendCameraComp.h"
+
+#include "UI/HUD_Main.h"
 
 UCPL_SDAttackUpper::UCPL_SDAttackUpper()
 {
@@ -100,18 +102,15 @@ void UCPL_SDAttackUpper::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//@Running Tick
-	IsRunTick(false);
-
-	#pragma region Super
+#pragma region Super
 
 	//@Auto AttackDecision System
 	AttackDecision->OnAble(Player, AttackRange);
 
-	#pragma endregion
+#pragma endregion
 
-	PlayerController = Cast<APlayerController>(Player->GetController());
-	check(PlayerController);
+	//@Running Tick
+	IsRunTick(false);
 }
 
 void UCPL_SDAttackUpper::IsRunTick(bool bRunning)
@@ -119,14 +118,14 @@ void UCPL_SDAttackUpper::IsRunTick(bool bRunning)
 	SetComponentTickEnabled(bRunning);
 }
 
-// - IBaseAttack Âü°í.
-// @param DoingActor - °ø°İÇÏ´Â ÁÖÃ¼
+// - IBaseAttack ì°¸ê³ .
+// @param DoingActor - ê³µê²©í•˜ëŠ” ì£¼ì²´
 /* 
 @Warning 
- #Edit *0220 - °ø°İ Anim Àº ¹«Á¶°Ç true ·Î ½ÇÇà
-¿¬¼ÓÀûÀ¸·Î InputKey °¡ µé¾î¿Ã¶§, ÀÌÀüÀÇ ¸ùÅ¸ÁÖ°¡ ÇöÀçÀÇ ¸ùÅ¸ÁÖÀÇ bAttacking == false ·Î ¸¸µë.(ComboNotify ÀÇ EndAttack ÀÌ)
- #Edit *0312, CameraActor Blend ÇÏ±â À§ÇØ¼­ Delegate - CutOutBlendCameraFunc(Ãß°¡), LastOutBlendCameraFunc(»èÁ¦)
- #Edit *0623, CNS_CPLSetSubCamera ·Î ¼öÁ¤
+ #Edit *0220 - ê³µê²© Anim ì€ ë¬´ì¡°ê±´ true ë¡œ ì‹¤í–‰
+ì—°ì†ì ìœ¼ë¡œ InputKey ê°€ ë“¤ì–´ì˜¬ë•Œ, ì´ì „ì˜ ëª½íƒ€ì£¼ê°€ í˜„ì¬ì˜ ëª½íƒ€ì£¼ì˜ bAttacking == false ë¡œ ë§Œë“¬.(ComboNotify ì˜ EndAttack ì´)
+ #Edit *0312, CameraActor Blend í•˜ê¸° ìœ„í•´ì„œ Delegate - CutOutBlendCameraFunc(ì¶”ê°€), LastOutBlendCameraFunc(ì‚­ì œ)
+ #Edit *0623, CNS_CPLSetSubCamera ë¡œ ìˆ˜ì •
 */
 void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 {
@@ -135,7 +134,7 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 
 	// Super
 	{
-		IfFalseRet(GetAttackPossible()); // @Super::Tick ¿¡¼­ Ã³¸® Áß.
+		IfFalseRet(GetAttackPossible()); // @Super::Tick ì—ì„œ ì²˜ë¦¬ ì¤‘.
 	}
 
 	// @IF TRUE RETURN
@@ -152,12 +151,11 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 		EndAttackDeleFunc.Broadcast();
 		return;
 	}
-	check(Target);
 
-	//@ Å¸°Ù ¹Ù¶óº¸°Ô ÇÏ±â
+	//@ íƒ€ê²Ÿ ë°”ë¼ë³´ê²Œ í•˜ê¸°
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
-	// @°ø°İ Áß Á¶±İ¾¿ ÀÌµ¿ - AttackMoveDir(I_BaseAttack Value)
+	// @ê³µê²© ì¤‘ ì¡°ê¸ˆì”© ì´ë™ - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
 	AttackMoveSpeed = 0.7f;
 
@@ -167,8 +165,8 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 		ACharacter* CharactorTarget = Cast<ACharacter>(Target);
 		if (CharactorTarget != nullptr)
 		{
-			//@°øÁß¿¡ ÀÖÀ¸¸é ¸®ÅÏÇÏÁö¸¸, 
-			// ÀÏÁ¤³ôÀÌ ÀÌ»ó( AirComboCanHeight )  ÀÌ¸é µÎ¹øÂ° °ø°İ(¿¬¼Ó±â) ºÎÅÍ ½ÃÇàÇÔ.
+			//@ê³µì¤‘ì— ìˆìœ¼ë©´ ë¦¬í„´í•˜ì§€ë§Œ, 
+			// ì¼ì •ë†’ì´ ì´ìƒ( AirComboCanHeight )  ì´ë©´ ë‘ë²ˆì§¸ ê³µê²©(ì—°ì†ê¸°) ë¶€í„° ì‹œí–‰í•¨.
 			if (UCFL_ActorAgainst::IsTargetInAir(CharactorTarget) == true)
 			{
 				bInAir = true;
@@ -187,11 +185,11 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 
 		if (bInAir == false)
 		{
-			//@±âº» µ¿ÀÛ
+			//@ê¸°ë³¸ ë™ì‘
 			Player->ActorAnimMonPlay
 			(
 				SwordAttackMontages[0], /* @FirstMontage == Combo1 */
-				1.3f, true				// @AnimPlay ¹«Á¶°Ç ½ÇÇà.
+				1.3f, true				// @AnimPlay ë¬´ì¡°ê±´ ì‹¤í–‰.
 			);
 		}//(bInAir==false)
 	}//(bAttacking==false)
@@ -201,15 +199,15 @@ void UCPL_SDAttackUpper::BeginAttack(AActor * DoingActor)
 	}
 }
 
-// - IBaseAttack Âü°í.
+// - IBaseAttack ì°¸ê³ .
 /*
 @Warning
- #Edit *0312, CameraActor Blend ÇÏ±â À§ÇØ¼­ 
-¸¶Áö¸· °ø°İ COMBO_SIX ºÎºĞ¿¡ Delegate - CutOutBlendCameraFunc(»èÁ¦), LastOutBlendCameraFunc(Ãß°¡)
-#Edit *0623, CNS_CPLSetSubCamera ·Î ¼öÁ¤
+ #Edit *0312, CameraActor Blend í•˜ê¸° ìœ„í•´ì„œ 
+ë§ˆì§€ë§‰ ê³µê²© COMBO_SIX ë¶€ë¶„ì— Delegate - CutOutBlendCameraFunc(ì‚­ì œ), LastOutBlendCameraFunc(ì¶”ê°€)
+#Edit *0623, CNS_CPLSetSubCamera ë¡œ ìˆ˜ì •
 */
-// @Warning - Target À» º¯¼ö·Î ÀúÀåÇÏ°í ÀÖÀ½. - Finish Attack °ú µ¿ÀÏ
-// ÀÌ µ¿ÀÛÀº µµÁß¿¡ TargetÀ» ESC ÇØ¼­ nullptr ÀÌ µÇ¹ö·Áµµ ½ÇÇàµÇ°Ô²û ÇÔ.
+// @Warning - Target ì„ ë³€ìˆ˜ë¡œ ì €ì¥í•˜ê³  ìˆìŒ. - Finish Attack ê³¼ ë™ì¼
+// ì´ ë™ì‘ì€ ë„ì¤‘ì— Targetì„ ESC í•´ì„œ nullptr ì´ ë˜ë²„ë ¤ë„ ì‹¤í–‰ë˜ê²Œë” í•¨.
 void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 {
 	Super::OnComboSet(DoingActor);
@@ -226,7 +224,7 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 	}
 	check(Target);
 
-	//@°øÁß¿¡ ÀÖÀ½À» È®ÀÎ,
+	//@ê³µì¤‘ì— ìˆìŒì„ í™•ì¸,
 	ACharacter* CharactorTarget = Cast<ACharacter>(Target);
 	if (CharactorTarget != nullptr)
 	{
@@ -245,27 +243,27 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 	//COMBO_TWO
 	if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_TWO))
 	{
-		// @°Å¸® ¹ú¸®°í, ³ôÀÌ ¸ÂÃß±â - Combo ½Ã Target À§Ä¡ ¾Õ¿¡¼­ °ø°İÇÏ±â
+		// @ê±°ë¦¬ ë²Œë¦¬ê³ , ë†’ì´ ë§ì¶”ê¸° - Combo ì‹œ Target ìœ„ì¹˜ ì•ì—ì„œ ê³µê²©í•˜ê¸°
 		UCFL_ActorAgainst::ActorLocateFrontTarget(Target, Player, AttackRange, true);
 
-		// @Áß·Â ²ô±â
+		// @ì¤‘ë ¥ ë„ê¸°
 		Charactor->OffGravity();
 
-		// @¼Ó·Â ÁÙÀÌ±â - Áß·Â²ô°í ¹Ù·Î ÇØÁà¾ßÇÔ
+		// @ì†ë ¥ ì¤„ì´ê¸° - ì¤‘ë ¥ë„ê³  ë°”ë¡œ í•´ì¤˜ì•¼í•¨
 		Player->GetCharacterMovement()->Velocity = FVector(0.0f);
 	}
 
-	// @Input °íÁ¤
+	// @Input ê³ ì •
 	Player->CanNotMove();
 
-	// @Å¸°Ù ¹Ù¶óº¸°Ô ÇÏ±â
+	// @íƒ€ê²Ÿ ë°”ë¼ë³´ê²Œ í•˜ê¸°
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
-	// @°ø°İ Áß Á¶±İ¾¿ ÀÌµ¿ - AttackMoveDir(I_BaseAttack Value)
+	// @ê³µê²© ì¤‘ ì¡°ê¸ˆì”© ì´ë™ - AttackMoveDir(I_BaseAttack Value)
 	AttackMoveDir = Player->GetActorForwardVector();
 	AttackMoveSpeed = 0.2f;
 
-	// Á¶°Ç °Ë»ç.( CurrentComboNum = 0 ~ MaxCombo ±îÁö )
+	// ì¡°ê±´ ê²€ì‚¬.( CurrentComboNum = 0 ~ MaxCombo ê¹Œì§€ )
 	CurrentComboNum = FMath::Clamp<UINT>(CurrentComboNum, 0, MaxComboNum);
 	if (CurrentComboNum < MaxComboNum)
 	{
@@ -281,7 +279,7 @@ void UCPL_SDAttackUpper::OnComboSet(AActor * DoingActor)
 	}
 }
 
-// @Combo ÀÇ ¸¶Áö¸· ±¸°£À» Á¤È®È÷ ¾Ë±â À§ÇØ¼­.
+// @Combo ì˜ ë§ˆì§€ë§‰ êµ¬ê°„ì„ ì •í™•íˆ ì•Œê¸° ìœ„í•´ì„œ.
 bool UCPL_SDAttackUpper::IsLastCombo() const
 {
 	if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
@@ -291,8 +289,8 @@ bool UCPL_SDAttackUpper::IsLastCombo() const
 }
 
 
-/* ´Ù¸¥ Pawn À» °ø°İ Ã³¸® ÇÔ¼ö */
-// @DoingActor - Attack À» ÇÒ °´Ã¼ Áï, ¿©±â¼± Player (Owner)
+/* ë‹¤ë¥¸ Pawn ì„ ê³µê²© ì²˜ë¦¬ í•¨ìˆ˜ */
+// @DoingActor - Attack ì„ í•  ê°ì²´ ì¦‰, ì—¬ê¸°ì„  Player (Owner)
 void UCPL_SDAttackUpper::AttackOtherPawn()
 {
 	Super::AttackOtherPawn();
@@ -306,7 +304,7 @@ void UCPL_SDAttackUpper::AttackOtherPawn()
 
 	TArray<FHitResult> HitResults;
 	float DebugLifeTime = 1.0f;
-	//#Edit 0610 - Æ¯Á¤ °ø°İÀ» Á¦¿ÜÇÑ ¸ğµç °ø°İÀ» ´ÙÁß °ø°İ
+	//#Edit 0610 - íŠ¹ì • ê³µê²©ì„ ì œì™¸í•œ ëª¨ë“  ê³µê²©ì„ ë‹¤ì¤‘ ê³µê²©
 	bool bHit = GetWorld()->SweepMultiByChannel
 	(
 		HitResults
@@ -367,19 +365,19 @@ void UCPL_SDAttackUpper::AttackOtherPawn()
 	}//(bHit == true)
 }
 
-///* COMBO ¸¶Áö¸·À» Á¦¿ÜÇÑ °ø°İ CameraBlend Ã³¸® */
+///* COMBO ë§ˆì§€ë§‰ì„ ì œì™¸í•œ ê³µê²© CameraBlend ì²˜ë¦¬ */
 //void UCPL_SDAttackUpper::BlendCameraFunc()
 //{
 //	PlayerController->SetViewTargetWithBlend(Player);
 //}
 //
-///* COMBO ¸Ç ¸¶Áö¸· °ø°İÀÇ CameraBlend Ã³¸® */
+///* COMBO ë§¨ ë§ˆì§€ë§‰ ê³µê²©ì˜ CameraBlend ì²˜ë¦¬ */
 //void UCPL_SDAttackUpper::EndAttackBlendCameraFunc()
 //{
 //	GetWorld()->GetTimerManager().SetTimer(EndBlendTimerHandle, this, &UCPL_SDAttackUpper::TimerFunc, 2.0f);
 //}
 //
-///* COMBO ¸Ç ¸¶Áö¸· °ø°İ SetTimer Binding Function.*/
+///* COMBO ë§¨ ë§ˆì§€ë§‰ ê³µê²© SetTimer Binding Function.*/
 //void UCPL_SDAttackUpper::TimerFunc()
 //{
 //	Player->OffBlockKeyInput();

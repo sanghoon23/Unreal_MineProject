@@ -92,13 +92,16 @@ void UCPL_MGAttackFreezing::BeginPlay()
 #pragma endregion
 
 	//@UI
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC != nullptr)
-	{
-		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
-		check(MainHUD);
-		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
-	}
+	//APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//if (MainHUD != nullptr)
+	//{
+	//	AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+	//	check(MainHUD);
+	//	SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	//}
+
+	check(MainHUD);
+	SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
 
 	//@Notify Reference
 	TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;
@@ -179,6 +182,7 @@ void UCPL_MGAttackFreezing::BeginAttack(AActor * DoingActor)
 	APawn* Target = Player->GetFindAttackTarget();
 	if (Target == nullptr)
 	{
+		//@
 		EndAttackDeleFunc.Broadcast();
 		return;
 	}

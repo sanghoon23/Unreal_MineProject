@@ -93,14 +93,17 @@ void UCPL_MGAttackPoisioning::BeginPlay()
 
 #pragma endregion
 
+	//APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//if (PC != nullptr)
+	//{
+	//	AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+	//	check(MainHUD);
+	//	SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	//}
+
 	//@UI
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC != nullptr)
-	{
-		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
-		check(MainHUD);
-		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
-	}
+	check(MainHUD);
+	SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
 
 	//@Notify Reference
 	TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;
@@ -182,6 +185,7 @@ void UCPL_MGAttackPoisioning::BeginAttack(AActor * DoingActor)
 	APawn* Target = Player->GetFindAttackTarget();
 	if (Target == nullptr)
 	{
+		//@
 		EndAttackDeleFunc.Broadcast();
 		return;
 	}

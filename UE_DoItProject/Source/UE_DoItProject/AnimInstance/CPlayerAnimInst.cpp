@@ -65,7 +65,7 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 	IfNullRet(Charactor);
-	CurrentStateType = Charactor->GetCurrentStateType();
+	CurrentStateType = Player->GetCurrentAttackStateType();
 	bArmed = Charactor->GetIEquipComp()->GetArmed();
 
 	//IfNullRet(BaseAttack);

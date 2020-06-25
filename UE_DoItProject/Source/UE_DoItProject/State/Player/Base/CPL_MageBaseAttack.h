@@ -43,6 +43,10 @@ public:
 protected:
 	class ACPlayer*		Player;
 
+	//@UI
+	APlayerController* PlayerController;
+	class AHUD_Main* MainHUD;
+
 	// @공격범위, Target과 이 범위 안에 들어와야지만 공격가능
 	float AttackRange = 200.0f;
 

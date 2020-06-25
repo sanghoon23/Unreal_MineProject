@@ -1,4 +1,4 @@
-#include "CPL_SDAttackBackRange.h"
+ï»¿#include "CPL_SDAttackBackRange.h"
 #include "Global.h"
 
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
@@ -6,6 +6,8 @@
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
+
+#include "UI/HUD_Main.h"
 
 UCPL_SDAttackBackRange::UCPL_SDAttackBackRange()
 {
@@ -81,7 +83,7 @@ void UCPL_SDAttackBackRange::BeginAttack(AActor * DoingActor)
 
 	// Super
 	{
-		IfFalseRet(GetAttackPossible()); // @Super::Tick ¿¡¼­ Ã³¸® Áß.
+		IfFalseRet(GetAttackPossible()); // @Super::Tick ì—ì„œ ì²˜ë¦¬ ì¤‘.
 	}
 
 	// @IF TRUE RETURN
@@ -99,7 +101,7 @@ void UCPL_SDAttackBackRange::BeginAttack(AActor * DoingActor)
 	}
 	check(Target);
 
-	// @Å¸°Ù ¹Ù¶óº¸°Ô ÇÏ±â
+	// @íƒ€ê²Ÿ ë°”ë¼ë³´ê²Œ í•˜ê¸°
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @ON BLOCK KEY INPUT
@@ -118,7 +120,7 @@ void UCPL_SDAttackBackRange::BeginAttack(AActor * DoingActor)
 		Player->ActorAnimMonPlay
 		(
 			SwordAttackMontages[0],
-			1.0f, true				// @AnimPlay ¹«Á¶°Ç ½ÇÇà.
+			1.0f, true				// @AnimPlay ë¬´ì¡°ê±´ ì‹¤í–‰.
 		);
 	}
 	//Player->GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("Start"), SwordAttackMontages[0]);
@@ -211,9 +213,9 @@ void UCPL_SDAttackBackRange::GoBackToTarget(AActor * Target)
 	FVector Direction = TargetLoaction - PlayerLocation;
 	Direction.Normalize();
 
-	//@Player À§Ä¡ ¼³Á¤ ÈÄ ´Ù½Ã,
+	//@Player ìœ„ì¹˜ ì„¤ì • í›„ ë‹¤ì‹œ,
 	Player->SetActorLocation(TargetLoaction + (Direction * 200.0f));
 
-	//@Å¸°Ù ¹Ù¶óº¸±â
+	//@íƒ€ê²Ÿ ë°”ë¼ë³´ê¸°
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 }

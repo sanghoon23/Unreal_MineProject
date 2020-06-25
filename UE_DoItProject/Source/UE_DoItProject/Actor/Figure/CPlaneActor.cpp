@@ -23,7 +23,7 @@ ACPlaneActor::ACPlaneActor()
 	//@Setting - 기본적으로 NoCollision 으로 가정
 	StaticMesh->SetGenerateOverlapEvents(false);
 	StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	StaticMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -45.0f));
+	StaticMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -30.0f));
 }
 
 void ACPlaneActor::BeginPlay()

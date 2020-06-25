@@ -112,8 +112,6 @@ public:
 	virtual bool IsJumping() override { return bJumping; };
 	virtual void OffJumping() override { bJumping = false; }
 
-	virtual int GetCurrentStateType() const override { return static_cast<int>(CurrentStateType); }
-
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
 	virtual void ActorStopCurrentAnimMon() override;
 	virtual void ActorStopAnimMon(class UAnimMontage* Montage) override;
@@ -217,6 +215,8 @@ private:
 
 	#pragma	region Member
 public:
+	int GetCurrentAttackStateType();
+
 	// @Interface Value
 	void SetCurrentBaseAction(IIC_BaseAction* IBaseAction);
 
@@ -270,7 +270,6 @@ private:
 	bool bBlockAction		= false;
 
 	// State
-	EPlayerStateType CurrentStateType;
 	bool bChangeStateSwap	= false;
 
 	// Move

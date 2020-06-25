@@ -68,8 +68,6 @@ public:
 	virtual bool IsJumping() override;
 	virtual void OffJumping() override {} //@CharactorMovement 를 써서 따로 정의하지않음.
 
-	virtual int GetCurrentStateType() const override { return -1; }
-
 	virtual void ActorAnimMonPlay(class UAnimMontage* Montage, float Speed, bool bAlways) override;
 	virtual void ActorStopCurrentAnimMon() override;
 	virtual void ActorStopAnimMon(class UAnimMontage* Montage) override;

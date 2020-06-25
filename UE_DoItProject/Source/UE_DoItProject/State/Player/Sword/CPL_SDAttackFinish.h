@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
@@ -66,10 +66,10 @@ public:
 private:
 	float AttackRadius = 100.0f;
 
-	APlayerController* PlayerController;
-
 	APawn* Target;
 
+	//@UI
+	class UWG_TargetInfo* TargetInfoWidget;
 
 	#pragma endregion
 };

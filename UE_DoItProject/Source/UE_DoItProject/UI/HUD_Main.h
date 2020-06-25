@@ -1,10 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "UI/Widget/WG_PlayerInfo.h"
 #include "UI/Widget/WG_TargetInfo.h"
 #include "UI/Widget/WG_SkillCastingBar.h"
+#include "UI/Widget/WG_TextNotify.h"
 
 #include "HUD_Main.generated.h"
 
@@ -30,8 +31,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Visible")
 		TSubclassOf<class UUserWidget> CastingWidgetClass;
 
-	//UPROPERTY(EditAnywhere, Category = "Health")
-	//	class UUserWidget* HealthWidget;
+	UPROPERTY(EditAnywhere, Category = "Visible")
+		TSubclassOf<class UUserWidget> TextNotifyWidgetClass;
 
 	#pragma endregion	
 
@@ -43,6 +44,9 @@ public:
 
 	virtual void BeginPlay() override;
 
+	/* Function */
+public:
+	void VisibleUITextNotify(const FString& InputText, float fTime = 0.0f);
 
 	/* Memeber */
 public:
@@ -55,6 +59,8 @@ private:
 	UWG_TargetInfo*			TargetInfoWidget;
 	
 	UWG_SkillCastingBar*	CastingWidget;
+
+	UWG_TextNotify*			TextNotifyWidget;
 
 	//Test Code
 	UUserWidget* InputWidget;

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
@@ -68,10 +68,9 @@ public:
 private:
 	float AttackRadius = 100.0f;
 
-	APlayerController* PlayerController;
 	//APawn* Target;
 
-	/* ÀÏÁ¤ ³ôÀÌ ÀÌ»óÀÏ¶§, µÎ¹øÂ° ÄŞº¸ºÎÅÍ ³ª°¡±â À§ÇÑ ³ôÀÌ °ª */
+	/* ì¼ì • ë†’ì´ ì´ìƒì¼ë•Œ, ë‘ë²ˆì§¸ ì½¤ë³´ë¶€í„° ë‚˜ê°€ê¸° ìœ„í•œ ë†’ì´ ê°’ */
 	float AirComboCanHeight = 220.0f;
 
 	#pragma endregion

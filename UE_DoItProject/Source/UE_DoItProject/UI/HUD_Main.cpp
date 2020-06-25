@@ -1,4 +1,4 @@
-#include "HUD_Main.h"
+ï»¿#include "HUD_Main.h"
 #include "ConstructorHelpers.h"
 #include "DrawDebugHelpers.h"
 
@@ -29,6 +29,14 @@ AHUD_Main::AHUD_Main()
 	if (CastingClass.Succeeded())
 	{
 		CastingWidgetClass = CastingClass.Class;
+	}
+
+	//Text Notify
+	strPath = L"WidgetBlueprint'/Game/_Mine/_MyBlueprint/Widget/BpCWG_TextNotify.BpCWG_TextNotify_C'";
+	ConstructorHelpers::FClassFinder<UUserWidget> TextNotifyClass(*strPath);
+	if (TextNotifyClass.Succeeded())
+	{
+		TextNotifyWidgetClass = TextNotifyClass.Class;
 	}
 
 	#pragma endregion
@@ -75,6 +83,22 @@ void AHUD_Main::BeginPlay()
 			CastingWidget->AddToViewport();
 		}
 	}
+
+	//@Text Notify
+	if (TextNotifyWidgetClass != nullptr)
+	{
+		TextNotifyWidget = CreateWidget<UWG_TextNotify>(GetWorld(), TextNotifyWidgetClass);
+		if (TextNotifyWidget)
+		{
+			TextNotifyWidget->SetVisibility(ESlateVisibility::Hidden);
+			TextNotifyWidget->AddToViewport();
+		}
+	}
+}
+
+void AHUD_Main::VisibleUITextNotify(const FString& InputText, float fTime)
+{
+	TextNotifyWidget->CallingUITextNotify(InputText, fTime);
 }
 
 void AHUD_Main::SetInputWidget(TSubclassOf<UUserWidget> InsertWidget)
@@ -90,7 +114,7 @@ void AHUD_Main::SetInputWidget(TSubclassOf<UUserWidget> InsertWidget)
 		InputWidget = CreateWidget<UUserWidget>(GetWorld(), InsertWidget);
 		if (InputWidget != nullptr)
 		{
-			InputWidget->AddToViewport(); //@ViewPort »ðÀÔ
+			InputWidget->AddToViewport(); //@ViewPort ì‚½ìž…
 		}
 	}
 }

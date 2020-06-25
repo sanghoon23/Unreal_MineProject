@@ -62,9 +62,6 @@ public:
 	virtual bool IsJumping()	= 0;
 	virtual void OffJumping()	= 0;
 
-	// @Charactor 의 현재상태 - ( AnimInst 에서 쓰임 )
-	virtual int GetCurrentStateType() const = 0;
-
 	// @현재 적용된, 혹은 적용되어졌던 Montage
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const = 0;
 

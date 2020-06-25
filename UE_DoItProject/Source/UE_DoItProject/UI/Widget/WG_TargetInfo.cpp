@@ -45,11 +45,10 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 		return;
 	}
 
-	//@Get
 	FVector PlayerLocation = Player->GetActorLocation();
 	FVector TargetLocation = Target->GetActorLocation();
 
-	//@IC_Monster
+	//@IC_Monster - TargetInfo 가져오기
 	IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
 	if (I_Monster != nullptr)
 	{
@@ -76,8 +75,6 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 			);
 		}
 	}
-
-	//CLog::Print(TargetInfo.CurrentHP);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +94,11 @@ void UWG_TargetInfo::InsertTargetInfo(const FMonsterInfo & Insert)
 	TargetInfo.MaxHP = Insert.MaxHP;
 	TargetInfo.CurrentHP = Insert.CurrentHP;
 	//TargetInfo.Distance = 0.0f;
+}
+
+float UWG_TargetInfo::GetInfoMonsterPercentHP() const
+{
+	return TargetInfo.CurrentHP / TargetInfo.MaxHP;
 }
 
 UTexture2D * UWG_TargetInfo::GetInfoConditionTextureUI(int ArrayNumber)

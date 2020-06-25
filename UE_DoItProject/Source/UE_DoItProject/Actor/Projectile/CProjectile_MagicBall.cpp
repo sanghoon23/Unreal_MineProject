@@ -144,7 +144,6 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 
 
 	//#Edit 0619 - I_Charactor ->GetUsingChannel 생성,
-	//TODO : CHANNEL 이 문제임. -> Prjectile 은 끝냄, 나머지 다른 부분도 이 방식으로 정리.
 	ECollisionChannel Channel;
 	IIC_Charactor* const OwnerCharactor = Cast<IIC_Charactor>(GetOwner());
 	(OwnerCharactor != nullptr)

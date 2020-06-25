@@ -1,4 +1,4 @@
-#include "CPL_MageBaseAttack.h"
+ï»¿#include "CPL_MageBaseAttack.h"
 #include "Global.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -6,6 +6,8 @@
 #include "Interface/IC_BaseAttack.h"
 #include "Charactor/Player/CPlayer.h"
 #include "System/CS_AttackDecision.h"
+
+#include "UI/HUD_Main.h"
 
 UCPL_MageBaseAttack::UCPL_MageBaseAttack()
 {
@@ -23,6 +25,18 @@ void UCPL_MageBaseAttack::BeginPlay()
 	// @Set Player
 	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
+
+#pragma region UI
+	//@UI
+	PlayerController = Cast<APlayerController>(Player->GetController());
+	check(PlayerController);
+	if (PlayerController != nullptr)
+	{
+		MainHUD = Cast<AHUD_Main>(PlayerController->GetHUD());
+		check(MainHUD);
+	}
+
+#pragma endregion
 
 	// Set Delegate "On Hit" - IIC_Charactor
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
@@ -52,7 +66,7 @@ void UCPL_MageBaseAttack::TickComponent(float DeltaTime, ELevelTick TickType, FA
 			BeginAttack(Player);
 		}
 
-		// @ÀÌµ¿ ¹æÇâÅ° ´©¸£¸é, ÀÚµ¿ Å¸°Ù °ø°İ Ãë¼Ò
+		// @ì´ë™ ë°©í–¥í‚¤ ëˆ„ë¥´ë©´, ìë™ íƒ€ê²Ÿ ê³µê²© ì·¨ì†Œ
 		APlayerController* controller = Cast<APlayerController>(Player->GetController());
 		if (controller != nullptr /* && bAttacking == false */)
 		{
@@ -81,11 +95,18 @@ void UCPL_MageBaseAttack::BeginAttack(AActor * DoingActor)
 	bInputAttackCall = true;
 	if (AttackDecision->GetAble() == EAutoAttackable::USE)
 	{
-		// Target ÀÌ ÀÖ´ÂÁö È®ÀÎ
+		// Target ì´ ìˆëŠ”ì§€ í™•ì¸
 		APawn* FindAttackTarget = Player->GetFindAttackTarget();
 		if (FindAttackTarget != nullptr)
 		{
 			AttackDecision->StartAttackTrace(FindAttackTarget);
+		}
+		else
+		{
+			//@UI
+			check(MainHUD);
+			FString Input = L"Tab ì„ ëˆŒëŸ¬ íƒ€ê²Ÿì„ ì§€ì •í•˜ì„¸ìš”!!";
+			MainHUD->VisibleUITextNotify(Input, 3.0f);
 		}
 	}
 	else
@@ -99,8 +120,8 @@ void UCPL_MageBaseAttack::EndAttack()
 	Super::EndAttack();
 
 	bInputAttackCall = false;
-	Player->CanMove(); //@ÀÌµ¿°¡´É
-	Player->OnGravity(); //@Áß·ÂÅ°±â
+	Player->CanMove(); //@ì´ë™ê°€ëŠ¥
+	Player->OnGravity(); //@ì¤‘ë ¥í‚¤ê¸°
 }
 
 void UCPL_MageBaseAttack::OnComboSet(AActor * DoingActor)

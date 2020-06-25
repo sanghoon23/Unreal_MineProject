@@ -28,6 +28,9 @@ public:
 		float GetInfoMonsterCurrentHP() const { return TargetInfo.CurrentHP; }
 
 	UFUNCTION(BlueprintCallable, Category = "DataValue")
+		float GetInfoMonsterPercentHP() const;
+
+	UFUNCTION(BlueprintCallable, Category = "DataValue")
 		float GetInfoMonsterDistance() const { return TargetInfo.Distance; }
 
 	UFUNCTION(BlueprintCallable, Category = "ConditionData")

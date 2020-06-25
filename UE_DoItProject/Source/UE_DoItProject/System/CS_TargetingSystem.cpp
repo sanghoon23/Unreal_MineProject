@@ -228,14 +228,15 @@ APawn * UCS_TargetingSystem::GetSelectedMonsterArray(uint8 Index)
 
 APawn * UCS_TargetingSystem::GetCurrentFindAttackTarget()
 {
+	if (CurrentFindAttackTarget == nullptr)
+		return nullptr;
+
 	//@Á×¾úÀ» ¶§,
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(CurrentFindAttackTarget);
 	if (Charactor != nullptr)
 	{
 		bool bDeath = Charactor->IsDeath();
 	}
-	if (CurrentFindAttackTarget == nullptr)
-		return nullptr;
 
 	return CurrentFindAttackTarget;
 }

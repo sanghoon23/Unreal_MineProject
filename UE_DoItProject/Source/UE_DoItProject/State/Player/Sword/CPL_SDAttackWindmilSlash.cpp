@@ -82,16 +82,16 @@ void UCPL_SDAttackWindmilSlash::BeginAttack(AActor * DoingActor)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	APawn* Target = Player->GetFindAttackTarget();
-	if (Target == nullptr)
-	{
-		EndAttackDeleFunc.Broadcast();
-		return;
-	}
-	check(Target);
-
-	// @타겟 바라보게 하기
-	UCFL_ActorAgainst::LookAtTarget(Player, Target);
+	//@Before
+	//APawn* Target = Player->GetFindAttackTarget();
+	//if (Target == nullptr)
+	//{
+	//	EndAttackDeleFunc.Broadcast();
+	//	return;
+	//}
+	//check(Target);
+	//// @타겟 바라보게 하기
+	//UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
 	// @ON Block Key
 	Player->OnBlockKeyInput();
@@ -159,7 +159,7 @@ void UCPL_SDAttackWindmilSlash::AttackOtherPawn()
 					HitDirection.Normalize();
 					HitDirection.Z = 0.0f;
 					HitComp->SetHitDirection(HitDirection);
-					HitComp->SetHitMoveSpeed(0.3f);
+					HitComp->SetHitMoveSpeed(0.15f);
 
 					// 1.2 Hit Delegate - Air(DamageType)
 					HitComp->OnHit(Player, DT_Air, 5.0f);
