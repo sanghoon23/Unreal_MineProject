@@ -43,6 +43,13 @@ ACHM_Shaman::ACHM_Shaman()
 void ACHM_Shaman::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// @IC_Charactor
+	OnActionResetState.AddLambda([&](AActor*)
+	{
+		CanMove();
+		OnGravity();
+	});
 }
 
 void ACHM_Shaman::Tick(float DeltaTime)

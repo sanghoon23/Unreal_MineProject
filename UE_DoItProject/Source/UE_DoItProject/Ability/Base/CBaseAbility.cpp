@@ -7,7 +7,7 @@ UCBaseAbility::UCBaseAbility()
 
 const bool UCBaseAbility::IsTimeOut() const
 {
-	if (AbilityValue.Timer < 0.0f)
+	if (AbilityValue.Timer <= 0.0f)
 		return true;
 	else
 		return false;

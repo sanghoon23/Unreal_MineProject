@@ -52,27 +52,4 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 void UBTTask_ComboAttack::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
-	//APawn* MonsterPawn = OwnerComp.GetAIOwner()->GetPawn();
-	//IfNullRet(MonsterPawn);
-
-	//IIC_Charactor* Charactor = Cast<IIC_Charactor>(MonsterPawn);
-	//IfNullRet(Charactor);
-
-	//// @Combo 가 끝나면 bIsFinishing == false 가 됨.
-	//IIC_BaseAttack* BaseAttack = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
-	//check(BaseAttack);
-
-	//bool bAttacking = BaseAttack->GetAttacking();
-	//if (bAttacking == false)
-	//{
-	//	OwnerComp.GetBlackboardComponent()->SetValueAsEnum
-	//	(
-	//		"AIState", 0 //@NONE
-	//	);
-
-
-	//	// Quit Tick Task
-	//	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	//}
 }

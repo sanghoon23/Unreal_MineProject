@@ -37,6 +37,8 @@ void UCPL_MGActionJump::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UCPL_MGActionJump::OnAction()
 {
+	Super::OnAction();
+
 	IIC_BaseAttack* BaseAttack = Player->GetIAttackComp()->GetCurrentIBaseAttack();
 	if (BaseAttack != nullptr)
 	{

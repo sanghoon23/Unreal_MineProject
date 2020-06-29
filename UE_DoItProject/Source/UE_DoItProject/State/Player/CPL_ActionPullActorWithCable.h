@@ -47,6 +47,10 @@ private:
 	class ACPL_CableObject* CableObject;
 	APawn* Target = nullptr;
 
+	//@UI
+	APlayerController* PlayerController;
+	class AHUD_Main* MainHUD;
+
 	// Value
 	float UsingActionRange = 1700.0f;
 

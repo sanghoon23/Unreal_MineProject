@@ -38,6 +38,8 @@ void UCPL_PakrouClimbingIdle::TickComponent(float DeltaTime, ELevelTick TickType
 // @Warning - SetCurrentBaseAction Setting
 void UCPL_PakrouClimbingIdle::OnAction()
 {
+	Super::OnAction();
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// @SetCurrentBaseAction

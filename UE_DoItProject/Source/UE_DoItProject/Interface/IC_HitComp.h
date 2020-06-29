@@ -67,21 +67,27 @@ public:
 
 	#pragma region Member
 public:
+	/* 맞는 몽타주 실행되지않음 */
 	virtual void SetBlockDamagedMontage(bool bValue) = 0;
 
+	/* 다른 Actor 가 때릴 수 있는지 */
+	virtual bool IsCanAttackedFromOther() const = 0;
+	virtual void SetCanAttackedFromOther(bool bValue) = 0;
+
+	/* 다른 Actor 에게 데미지를 입을 수 있는지 */
+	virtual bool IsDamagedFromOther() const = 0;
+	virtual void SetDamagedFromOther(bool bValue) = 0;
+
+	/* 콤보가 가능한 구역 - (NotifyState 처리) */
 	virtual void SetCanHittedCombo(bool bValue) = 0;
 
 public:
 	/* Hit 당했을 때, 움직일 '방향' */
 	FVector GetHitDirection() { return HitDirection; }
-
-	/* Hit 당했을 때, 움직일 '방향' */
 	void SetHitDirection(FVector Direction) { HitDirection = Direction; }
 
 	/* Hit 당했을 때, 움직일 '속도' */
 	float GetHitMoveSpeed() const { return HitMoveSpeed; }
-
-	/* Hit 당했을 때, 움직일 '속도' */
 	void SetHitMoveSpeed(float fValue) { HitMoveSpeed = fValue; }
 
 protected:

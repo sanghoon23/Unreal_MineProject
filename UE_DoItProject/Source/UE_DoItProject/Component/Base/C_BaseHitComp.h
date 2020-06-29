@@ -30,10 +30,23 @@ private:
 
 	#pragma	region Reflection
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		/* HitComp Owner 가 맞고 있는지 - 몽타주 실행시, CN_BeginBeat */
+		bool bBeated = false;
+
 	UPROPERTY(EditAnywhere, Category = "Data")
-		/* HitComp 에 해당하는 몽타주들의 실행 여부 */
+		/* HitComp 에 해당하는 몽타주들의 실행 여부 - 데미지 가능, 몽타주 불가, */
 		bool bBlockDamagedMontage = false;
 
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		/* 다른 액터가 현재 객체를 때릴 수 있는지 - 데미지 불가, 몽타주 불가 */
+		bool bCanAttackFromOther = true;
+
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		/* 다른 액터가 현재 객체에게 데미지를 줄 수 있는지 데미지 불가, 몽타주 가능 */
+		bool bDamaged = true;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* DamageType 별로 정의된 Damage Montage */
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> DamagedMontages;
@@ -64,10 +77,6 @@ protected:
 		class UParticleSystem* FreezeParticle;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Data")
-	/* HitComp Owner 가 맞고 있는지 - 몽타주 실행시, CN_BeginBeat */
-	bool bBeated = false;
-
 	/*
 	@상태이상, 행동불가 를 다음 ConditionData TArray 
 	* UHitUpsetConditionData(상태이상) , * UHitNonActionConditionData(행동불가)
@@ -106,6 +115,17 @@ public:
 	/* IC_HitComp 참조 */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) override;
 
+	/* 맞는 몽타주 Block */
+	virtual void SetBlockDamagedMontage(bool bValue) override { bBlockDamagedMontage = bValue; }
+
+	/* IC_HitComp 참조 */
+	virtual bool IsCanAttackedFromOther() const override { return bCanAttackFromOther; };
+	virtual void SetCanAttackedFromOther(bool bValue) override { bCanAttackFromOther = bValue; }
+
+	/* IC_HitComp 참조 */
+	virtual bool IsDamagedFromOther() const override { return bDamaged; };
+	virtual void SetDamagedFromOther(bool bValue) override { bDamaged = bValue; }
+
 
 	/* Function */
 public:
@@ -121,8 +141,6 @@ public:
 	class UParticleSystem* GetStunHeadParticleOrNull() const;
 
 	class UAnimMontage* GetDamagedMontageOrNull(const uint8 ArrayNum);
-
-	virtual void SetBlockDamagedMontage(bool bValue) override { bBlockDamagedMontage = bValue; }
 
 protected:
 	bool bCanHitCombo = false;

@@ -37,6 +37,8 @@ void UCPL_PakrouJumpOver::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UCPL_PakrouJumpOver::OnAction()
 {
+	Super::OnAction();
+
 	// @Reset
 	// Player->OnActionResetState.Broadcast(Player);
 

@@ -30,7 +30,7 @@ void UCHM_MaoHitComp::BeginPlay()
 	check(IC_Charactor);
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
-		HM_PengMao->OnGravity(); //@중력키기
+		bCanHitCombo = false;
 	});
 }
 
@@ -45,6 +45,8 @@ void UCHM_MaoHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, f
 	check(AttackingActor);
 	check(Type);
 
+	IfFalseRet(bCanAttackFromOther);
+
 	if (Type->GetConditionType() == FDamageType::END)
 	{
 		UE_LOG(LogTemp, Warning, L"HM_PengMaoHitComp OnHit - ConditionTtpe END!!");
@@ -56,8 +58,10 @@ void UCHM_MaoHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, f
 	HM_PengMao->OnActionResetState.Broadcast(HM_PengMao);
 
 	///DamageType Process
-	Type->OnHittingProcess(AttackingActor, HM_PengMao, this, DamageAmount);
-
+	if (IsDamagedFromOther() == true)
+	{
+		Type->OnHittingProcess(AttackingActor, HM_PengMao, this, DamageAmount);
+	}
 	//#Edit 0510 - 
 	//@Death Animation 은 AnimInstance 의 LocoMotion 을 이용
 

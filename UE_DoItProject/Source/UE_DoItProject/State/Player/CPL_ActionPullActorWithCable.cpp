@@ -1,4 +1,4 @@
-#include "CPL_ActionPullActorWithCable.h"
+ï»¿#include "CPL_ActionPullActorWithCable.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -8,6 +8,8 @@
 #include "Interface/IC_BaseAttack.h"
 #include "Charactor/Player/CPlayer.h"
 #include "Actor/Cable/CPL_CableObject.h"
+
+#include "UI/HUD_Main.h"
 
 UCPL_ActionPullActorWithCable::UCPL_ActionPullActorWithCable()
 {
@@ -30,7 +32,7 @@ UCPL_ActionPullActorWithCable::UCPL_ActionPullActorWithCable()
 	#pragma region DamageType
 
 	DT_Stun = NewObject<UCDamageType_Stun>();
-	DT_Stun->SetStunTime(10.0f); //@Stun ½Ã°£ ÁöÁ¤
+	DT_Stun->SetStunTime(10.0f); //@Stun ì‹œê°„ ì§€ì •
 
 	#pragma endregion
 }
@@ -42,6 +44,18 @@ void UCPL_ActionPullActorWithCable::BeginPlay()
 	//@Get Player Pointer
 	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
+
+#pragma region UI
+	//@UI
+	PlayerController = Cast<APlayerController>(Player->GetController());
+	check(PlayerController);
+	if (PlayerController != nullptr)
+	{
+		MainHUD = Cast<AHUD_Main>(PlayerController->GetHUD());
+		check(MainHUD);
+	}
+
+#pragma endregion
 
 #pragma region Set Delegate
 	//@Set Delegate "OnActionReset" - IIC_Charactor
@@ -70,6 +84,8 @@ void UCPL_ActionPullActorWithCable::TickComponent(float DeltaTime, ELevelTick Ti
 
 void UCPL_ActionPullActorWithCable::OnAction()
 {
+	Super::OnAction();
+
 	IIC_BaseAttack* BaseAttack = Player->GetIAttackComp()->GetCurrentIBaseAttack();
 	if (BaseAttack != nullptr)
 	{
@@ -87,11 +103,31 @@ void UCPL_ActionPullActorWithCable::OnAction()
 
 	// @IF NULL RETURN
 	Target = Player->GetFindAttackTarget();
-	IfNullRet(Target); //@Target ÀÌ ¼³Á¤µÇÁö ¾Ê¾ÒÀ¸¸é, return;
+	if (Target == nullptr) //@Target ì´ ì„¤ì •ë˜ì§€ ì•Šì•˜ìœ¼ë©´, return;
+	{
+		//@UI
+		check(MainHUD);
+		MainHUD->VisibleUITextNotify
+		(
+			FString(L"Tab ì„ ëˆŒëŸ¬ íƒ€ê²Ÿì„ ì§€ì •í•˜ì„¸ìš”!!"),
+			3.0f
+		);
+		return;
+	}
 
-	// @´ë»ó°úÀÇ °Å¸®°¡ ³Ê¹« ¸Ö ½Ã,
+	// @ëŒ€ìƒê³¼ì˜ ê±°ë¦¬ê°€ ë„ˆë¬´ ë©€ ì‹œ,
 	float DistanceToTarget = Player->GetDistanceTo(Target);
-	IfTrueRet(DistanceToTarget > UsingActionRange);
+	if (DistanceToTarget > UsingActionRange)
+	{
+		//@UI
+		check(MainHUD);
+		MainHUD->VisibleUITextNotify
+		(
+			FString(L"ëŒ€ìƒê³¼ì˜ ê±°ë¦¬ê°€ ë©‰ë‹ˆë‹¤.."),
+			3.0f
+		);
+		return;
+	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -101,7 +137,7 @@ void UCPL_ActionPullActorWithCable::OnAction()
 	// @SetCurrentBaseAction
 	Player->SetCurrentBaseAction(this);
 
-	// @¸ùÅ¸ÁÖ ½ÇÇà
+	// @ëª½íƒ€ì£¼ ì‹¤í–‰
 	Player->ActorAnimMonPlay(PullReadyMontage, 1.0f, true);
 	Player->GetMesh()->GetAnimInstance()->Montage_JumpToSection
 	(
@@ -109,8 +145,8 @@ void UCPL_ActionPullActorWithCable::OnAction()
 	);
 }
 
-// @Warning - Target À» º¯¼ö·Î ÀúÀåÇÏ°í ÀÖÀ½. - Finish Attack °ú µ¿ÀÏ
-// ÀÌ µ¿ÀÛÀº µµÁß¿¡ TargetÀ» ESC ÇØ¼­ nullptr ÀÌ µÇ¹ö·Áµµ ½ÇÇàµÇ°Ô²û ÇÔ.
+// @Warning - Target ì„ ë³€ìˆ˜ë¡œ ì €ì¥í•˜ê³  ìˆìŒ. - Finish Attack ê³¼ ë™ì¼
+// ì´ ë™ì‘ì€ ë„ì¤‘ì— Targetì„ ESC í•´ì„œ nullptr ì´ ë˜ë²„ë ¤ë„ ì‹¤í–‰ë˜ê²Œë” í•¨.
 void UCPL_ActionPullActorWithCable::BeginActionState()
 {
 	Super::BeginActionState();
@@ -130,14 +166,14 @@ void UCPL_ActionPullActorWithCable::BeginActionState()
 	//@'Action' Block
 	Player->OnBlockAction();
 
-	//@´ë»ó ¹Ù¶óº¸±â
+	//@ëŒ€ìƒ ë°”ë¼ë³´ê¸°
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
-	//@ÃÊ±â LerpValue ¼³Á¤ - PullRange ÀÇ ºñÀ²
+	//@ì´ˆê¸° LerpValue ì„¤ì • - PullRange ì˜ ë¹„ìœ¨
 	float InitDistance = Player->GetDistanceTo(Target);
 	LerpValue = (InitDistance - PullRange) / PullRange;
 
-	//@Å¸°Ù ¼¼ÆÃ
+	//@íƒ€ê²Ÿ ì„¸íŒ…
 	CableObject->SetPullStartTarget(Target);
 }
 
@@ -154,7 +190,7 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 	//check(Target);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//@²ø¾î ´ç°ÜÁú ¶§,
+	//@ëŒì–´ ë‹¹ê²¨ì§ˆ ë•Œ,
 	IfFalseRet(CableObject->GetPulling());
 	if (bNextMontage == false)
 	{
@@ -184,7 +220,7 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 		bNextMontage = true;
 	}//@bNextMontage
 
-	//@´ç°ÜÁö´Â Áß, TargetLocation Setting
+	//@ë‹¹ê²¨ì§€ëŠ” ì¤‘, TargetLocation Setting
 	PullingTargetLocation(Target);
 }
 
@@ -207,8 +243,8 @@ void UCPL_ActionPullActorWithCable::EndActionState()
 	Player->OffBlockAction();
 }
 
-/* Target À» ²ø¾î¿À´Â µ¿¾È À§Ä¡ Á¶Á¤ */
-// @Warning - BeginAction ±¸ÇÑ °ªÀÎ LerpValue »ç¿ë.
+/* Target ì„ ëŒì–´ì˜¤ëŠ” ë™ì•ˆ ìœ„ì¹˜ ì¡°ì • */
+// @Warning - BeginAction êµ¬í•œ ê°’ì¸ LerpValue ì‚¬ìš©.
 void UCPL_ActionPullActorWithCable::PullingTargetLocation(AActor * PulledTarget)
 {
 	check(PulledTarget);

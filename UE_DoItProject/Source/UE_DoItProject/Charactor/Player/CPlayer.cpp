@@ -620,8 +620,16 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 	float InputDamageAmount = DamageAmount;
 	if (Info.BarrierAmount > 0.0f) //@Barrier
 	{
-		Info.BarrierAmount -= InputDamageAmount;
-		InputDamageAmount -= Info.BarrierAmount;
+		if (Info.BarrierAmount > InputDamageAmount) //@방어막 값보다 작으면
+		{
+			Info.BarrierAmount -= InputDamageAmount;
+			return Info.CurrentHP;
+		}
+		else
+		{
+			Info.BarrierAmount = 0.0f;
+			InputDamageAmount -= Info.BarrierAmount;
+		}
 	}
 	if (InputDamageAmount > 0.0f) //@CurrentHP
 	{

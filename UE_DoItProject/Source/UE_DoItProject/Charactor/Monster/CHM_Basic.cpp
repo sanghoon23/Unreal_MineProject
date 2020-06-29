@@ -43,6 +43,13 @@ void ACHM_Basic::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// @IC_Charactor
+	OnActionResetState.AddLambda([&](AActor*)
+	{
+		CanMove();
+		OnGravity();
+	});
+
 	//#Edit 0528 - 순서가 맞지 않아, OnDeath 함수에서 호출
 	//// Set Delegate
 	//{

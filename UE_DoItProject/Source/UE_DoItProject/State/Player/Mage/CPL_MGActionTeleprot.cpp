@@ -73,6 +73,8 @@ void UCPL_MGActionTeleprot::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 void UCPL_MGActionTeleprot::OnAction()
 {
+	Super::OnAction();
+
 	// @IF TRUE RETURN
 	IfTrueRet(Player->GetEvade()); //@Evade Check
 	IfTrueRet(Player->IsJumping());
@@ -98,8 +100,7 @@ void UCPL_MGActionTeleprot::SetPlayAfterMouseControl()
 		TeleprotMontage, 1.3f, true
 	);
 
-	float MontageStartTime;
-	float MontageEndTime;
+	float MontageStartTime, MontageEndTime;
 	TeleprotMontage->GetSectionStartAndEndTime(0, MontageStartTime, MontageEndTime);
 
 	//@Delegate And SetTimer

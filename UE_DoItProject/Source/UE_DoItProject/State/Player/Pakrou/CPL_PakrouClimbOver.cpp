@@ -38,6 +38,8 @@ void UCPL_PakrouClimbOver::TickComponent(float DeltaTime, ELevelTick TickType, F
 // @Warning - SetCurrentBaseAction Setting
 void UCPL_PakrouClimbOver::OnAction()
 {
+	Super::OnAction();
+
 	// @SetCurrentBaseAction
 	Player->SetCurrentBaseAction(this);
 

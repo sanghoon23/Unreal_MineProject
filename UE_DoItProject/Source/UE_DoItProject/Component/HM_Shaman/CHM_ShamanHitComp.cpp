@@ -143,7 +143,7 @@ void UCHM_ShamanHitComp::BeginPlay()
 	check(IC_Charactor);
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
-		HM_Shaman->OnGravity(); //@중력키기
+		bCanHitCombo = false;
 	});
 
 	//@Set Poision Material
@@ -164,6 +164,8 @@ void UCHM_ShamanHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type
 	check(AttackingActor);
 	check(Type);
 
+	IfFalseRet(bCanAttackFromOther);
+
 	if (Type->GetConditionType() == FDamageType::END)
 	{
 		UE_LOG(LogTemp, Warning, L"HM_ShamanHitComp OnHit - ConditionTtpe END!!");
@@ -175,7 +177,10 @@ void UCHM_ShamanHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type
 	HM_Shaman->OnActionResetState.Broadcast(HM_Shaman);
 
 	///DamageType Process
-	Type->OnHittingProcess(AttackingActor, HM_Shaman, this, DamageAmount);
+	if (IsDamagedFromOther() == true)
+	{
+		Type->OnHittingProcess(AttackingActor, HM_Shaman, this, DamageAmount);
+	}
 
 	//#Edit 0510 - 
 	//@Death Animation 은 AnimInstance 의 LocoMotion 을 이용

@@ -137,6 +137,14 @@ void UCPL_HitComp::BeginPlay()
 
 	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
+
+	// Set Delegate "OnActionReset" - IIC_Charactor
+	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(Player);
+	check(IC_Charactor);
+	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
+	{
+		bCanHitCombo = false;
+	});
 }
 
 void UCPL_HitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -154,6 +162,8 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 	check(AttackingActor);
 	check(Type);
 
+	IfFalseRet(bCanAttackFromOther);
+
 	if (Type->GetConditionType() == FDamageType::END)
 	{
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp OnHit - ConditionType END!!");
@@ -161,7 +171,10 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 	}
 
 	///DamageType Process
-	Type->OnHittingProcess(AttackingActor, Player, this, DamageAmount);
+	if (IsDamagedFromOther() == true)
+	{
+		Type->OnHittingProcess(AttackingActor, Player, this, DamageAmount);
+	}
 
 	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
 	IfTrueRet(bBlockDamagedMontage);

@@ -123,7 +123,7 @@ void UCPL_MGAttackFireRange::BeginPlay()
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PC != nullptr)
 	{
-		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+		MainHUD = Cast<AHUD_Main>(PC->GetHUD());
 		check(MainHUD);
 		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
 	}

@@ -145,7 +145,7 @@ void UCHM_BasicHitComp::BeginPlay()
 	check(IC_Charactor);
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
-		HM_Basic->OnGravity(); //@중력키기
+		bCanHitCombo = false;
 	});
 
 	//@Set Poision Material
@@ -167,6 +167,8 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type,
 	check(AttackingActor);
 	check(Type);
 
+	IfFalseRet(bCanAttackFromOther);
+
 	if (Type->GetConditionType() == FDamageType::END)
 	{
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp OnHit - ConditionTtpe END!!");
@@ -177,7 +179,10 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type,
 	HM_Basic->OnActionResetState.Broadcast(HM_Basic);
 
 	///DamageType Process
-	Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
+	if (IsDamagedFromOther() == true)
+	{
+		Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
+	}
 
 	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
 	IfTrueRet(bBlockDamagedMontage);

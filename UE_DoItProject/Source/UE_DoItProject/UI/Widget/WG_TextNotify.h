@@ -40,15 +40,13 @@ public:
 		float GetCurrentTextTimer() const { return CurrentData.Timer; }
 
 	UFUNCTION(BlueprintCallable, Category = "Function")
-		float GetColorOpacity() const { return CurrentData.ColorOpacity; }
+		float GetCurrentTextOpacity() const { return CurrentData.ColorOpacity; }
 
 	UFUNCTION(BlueprintCallable, Category = "Function")
 		/* UI 가 지금 사용 중인지 */
 		bool IsUsingNotify() const { return bTickTimer; }
 
 #pragma endregion
-
-	//TODO : Opacity
 public:
 	void CallingUITextNotify(const FString& InputText, float fTime = 0.0f);
 

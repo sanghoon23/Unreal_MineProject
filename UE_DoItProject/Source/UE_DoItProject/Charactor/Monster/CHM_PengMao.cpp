@@ -43,6 +43,13 @@ ACHM_PengMao::ACHM_PengMao()
 void ACHM_PengMao::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// @IC_Charactor
+	OnActionResetState.AddLambda([&](AActor*)
+	{
+		CanMove();
+		OnGravity();
+	});
 }
 
 void ACHM_PengMao::Tick(float DeltaTime)

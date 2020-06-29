@@ -39,6 +39,8 @@ void UCPL_SDActionRoll::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UCPL_SDActionRoll::OnAction()
 {
+	Super::OnAction();
+
 	// @IF TRUE RETURN
 	IfTrueRet(Player->GetEvade()); //@Evade Check
 	IfTrueRet(Player->IsJumping());

@@ -45,6 +45,8 @@ void UCPL_PakrouWallClimbRun::TickComponent(float DeltaTime, ELevelTick TickType
 // @Warning - SetCurrentBaseAction Setting
 void UCPL_PakrouWallClimbRun::OnAction()
 {
+	Super::OnAction();
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// @SetCurrentBaseAction
