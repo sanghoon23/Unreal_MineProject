@@ -9,6 +9,13 @@
 
 #include "C_BaseHitComp.generated.h"
 
+UENUM()
+enum class EComboOrNot
+{
+	COMBO = 0,
+	NONE = 1,
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @HitComponent
 
@@ -34,13 +41,13 @@ protected:
 		/* HitComp Owner 가 맞고 있는지 - 몽타주 실행시, CN_BeginBeat */
 		bool bBeated = false;
 
-	UPROPERTY(EditAnywhere, Category = "Data")
-		/* HitComp 에 해당하는 몽타주들의 실행 여부 - 데미지 가능, 몽타주 불가, */
-		bool bBlockDamagedMontage = false;
-
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		/* 다른 액터가 현재 객체를 때릴 수 있는지 - 데미지 불가, 몽타주 불가 */
 		bool bCanAttackFromOther = true;
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+		/* HitComp 에 해당하는 몽타주들의 실행 여부 - 데미지 가능, 몽타주 불가, */
+		bool bBlockDamagedMontage = false;
 
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		/* 다른 액터가 현재 객체에게 데미지를 줄 수 있는지 데미지 불가, 몽타주 가능 */
@@ -99,10 +106,9 @@ public:
 public:
 	virtual void OnHit(AActor* AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount) override;
 
+public:
 	virtual const bool IsBeated() const override { return bBeated; }
 	virtual void SetBeated(bool bValue) override { bBeated = bValue; }
-
-	virtual void SetCanHittedCombo(bool bValue) { bCanHitCombo = bValue; }
 
 	virtual UCBaseConditionType* GetConditionData(int Index) override;
 
@@ -115,7 +121,8 @@ public:
 	/* IC_HitComp 참조 */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) override;
 
-	/* 맞는 몽타주 Block */
+	/* IC_HitComp 참조 */
+	virtual bool IsBlockDamagedMontage() const override { return bBlockDamagedMontage; };
 	virtual void SetBlockDamagedMontage(bool bValue) override { bBlockDamagedMontage = bValue; }
 
 	/* IC_HitComp 참조 */
@@ -126,9 +133,13 @@ public:
 	virtual bool IsDamagedFromOther() const override { return bDamaged; };
 	virtual void SetDamagedFromOther(bool bValue) override { bDamaged = bValue; }
 
+	/* IC_HitComp 참조 */
+	virtual bool IsCanHittedCombo() const override { return bCanHitCombo; };
+	virtual void SetCanHittedCombo(bool bValue) { bCanHitCombo = bValue; }
 
 	/* Function */
 public:
+	void RunMontageFromAttackType(EComboOrNot CanCombo, uint8 TypeNum = 0, float MonSpeed = 0.6f, bool bAlways = true);
 	bool AddConditionData(UCBaseConditionType* ConditionData);
 
 
@@ -146,6 +157,7 @@ protected:
 	bool bCanHitCombo = false;
 
 private:
+	class IIC_Charactor* I_Charactor = nullptr;
 
 	#pragma endregion
 };

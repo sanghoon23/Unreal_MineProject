@@ -145,7 +145,7 @@ void UCHM_BasicHitComp::BeginPlay()
 	check(IC_Charactor);
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
-		bCanHitCombo = false;
+		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 	});
 
 	//@Set Poision Material
@@ -179,35 +179,38 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type,
 	HM_Basic->OnActionResetState.Broadcast(HM_Basic);
 
 	///DamageType Process
-	if (IsDamagedFromOther() == true)
-	{
-		Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
-	}
+	//if (IsDamagedFromOther() == true)
+	//{
+	//	Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
+	//}
 
-	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
-	IfTrueRet(bBlockDamagedMontage);
+	Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
 
-	//@콤보가 가능한지,
-	if (bCanHitCombo == true)
-	{
-		if (HitComboMon != nullptr)
-		{
-			HM_Basic->ActorAnimMonPlay(HitComboMon, 0.6f, true);
-			SetCanHittedCombo(false); //@false
-			return; //@return
-		}
-	}
+	////@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
+	//IfTrueRet(bBlockDamagedMontage);
 
-	//@else
-	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	if (MontageNum >= DamagedMontages.Num())
-	{
-		UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
-		return;
-	}
-	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
-	if (RunMontage != nullptr)
-	{
-		HM_Basic->ActorAnimMonPlay(RunMontage, 0.6f, true);
-	}
+	////@콤보가 가능한지,
+	//if (bCanHitCombo == true)
+	//{
+	//	if (HitComboMon != nullptr)
+	//	{
+	//		SetCanHittedCombo(false); //@false
+	//		HM_Basic->ActorAnimMonPlay(HitComboMon, 0.6f, true);
+	//		CLog::Print(L"Can Hit Combo!!");
+	//		return; //@return
+	//	}
+	//}
+
+	////@else
+	//const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
+	//if (MontageNum >= DamagedMontages.Num())
+	//{
+	//	UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
+	//	return;
+	//}
+	//UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
+	//if (RunMontage != nullptr)
+	//{
+	//	HM_Basic->ActorAnimMonPlay(RunMontage, 0.6f, true);
+	//}
 }

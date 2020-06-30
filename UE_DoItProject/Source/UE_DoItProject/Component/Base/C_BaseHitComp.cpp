@@ -21,7 +21,7 @@ void UC_BaseHitComp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(GetOwner());
+	I_Charactor = Cast<IIC_Charactor>(GetOwner());
 	check(I_Charactor);
 	I_Charactor->OnDeathDelegate.AddLambda([&]()
 	{
@@ -72,7 +72,35 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void UC_BaseHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount)
 {
+}
 
+void UC_BaseHitComp::RunMontageFromAttackType(EComboOrNot CanCombo, uint8 TypeNum, float MonSpeed, bool bAlways)
+{
+	if (CanCombo == EComboOrNot::NONE)
+	{
+		const uint8 MontageNum = TypeNum;
+		if (MontageNum >= DamagedMontages.Num())
+		{
+			UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
+			return;
+		}
+
+		UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
+		if (RunMontage != nullptr)
+		{
+			I_Charactor->ActorAnimMonPlay(RunMontage, MonSpeed, bAlways);
+		}
+		else UE_LOG(LogTemp, Warning, L"BaseHitComp RunMontage NULL!!");
+	}
+	else
+	{
+		if (HitComboMon != nullptr)
+		{
+			SetCanHittedCombo(false);
+			I_Charactor->ActorAnimMonPlay(HitComboMon, MonSpeed, bAlways);
+		}
+		else UE_LOG(LogTemp, Warning, L"BaseHitComp HitComboMon NULL!!");
+	}
 }
 
 bool UC_BaseHitComp::AddConditionData(UCBaseConditionType* ConditionData)

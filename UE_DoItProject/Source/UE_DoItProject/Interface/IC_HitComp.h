@@ -68,6 +68,7 @@ public:
 	#pragma region Member
 public:
 	/* 맞는 몽타주 실행되지않음 */
+	virtual bool IsBlockDamagedMontage() const = 0;
 	virtual void SetBlockDamagedMontage(bool bValue) = 0;
 
 	/* 다른 Actor 가 때릴 수 있는지 */
@@ -79,6 +80,7 @@ public:
 	virtual void SetDamagedFromOther(bool bValue) = 0;
 
 	/* 콤보가 가능한 구역 - (NotifyState 처리) */
+	virtual bool IsCanHittedCombo() const = 0;
 	virtual void SetCanHittedCombo(bool bValue) = 0;
 
 public:

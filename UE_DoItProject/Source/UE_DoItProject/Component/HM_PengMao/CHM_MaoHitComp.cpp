@@ -30,7 +30,7 @@ void UCHM_MaoHitComp::BeginPlay()
 	check(IC_Charactor);
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
-		bCanHitCombo = false;
+		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 	});
 }
 

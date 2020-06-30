@@ -62,6 +62,9 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 {
 	Super::OnHittingProcess(Subject, DamagedActor, DamagedActorHitComp, InitialDamageAmount);
 
+	//@예외처리
+	IfFalseRet(DamagedActorHitComp->IsDamagedFromOther());
+
 	APawn* const DamagedPawn = Cast<APawn>(DamagedActor);
 	check(DamagedPawn);
 

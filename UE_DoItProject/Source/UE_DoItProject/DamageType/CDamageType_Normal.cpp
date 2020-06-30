@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 
+#include "Component/Base/C_BaseHitComp.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
 
@@ -35,13 +36,32 @@ void UCDamageType_Normal::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
 
 	//@Take Damage
-	APawn* DamagedPawn = Cast<APawn>(DamagedActor);
-	check(DamagedPawn);
-	AController* PawnController = Cast<AController>(Cast<APawn>(DamagedActor));
+	if (DamagedActorHitComp->IsDamagedFromOther() == true)
+	{
+		APawn* DamagedPawn = Cast<APawn>(DamagedActor);
+		check(DamagedPawn);
+		AController* PawnController = Cast<AController>(Cast<APawn>(DamagedActor));
 
-	FDamageEvent DamageEvent;
-	DamageEvent.DamageTypeClass = GetClass();
-	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+		FDamageEvent DamageEvent;
+		DamageEvent.DamageTypeClass = GetClass();
+		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+	}
+
+	//@Motage
+	{
+		IfTrueRet(DamagedActorHitComp->IsBlockDamagedMontage());
+
+		//@콤보가 가능한지,
+		if (DamagedActorHitComp->IsCanHittedCombo() == true)
+		{
+			DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::COMBO, 0, 0.6f, true);
+		}
+		else //@해당 데미지에 해당하는 몽타주 실행
+		{
+			const uint8 MontageNum = static_cast<uint8>(GetConditionType());
+			DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);
+		}
+	}
 }
 
 void UCDamageType_Normal::OnDamageDelegate(AActor* DamagedActor)

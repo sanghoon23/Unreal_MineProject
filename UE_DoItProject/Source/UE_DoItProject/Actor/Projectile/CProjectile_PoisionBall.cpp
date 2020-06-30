@@ -175,6 +175,8 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 
 	if (bHit == true)
 	{
+		CLog::Print(HitResult.GetActor()->GetName());
+
 		//캐릭터 타입이 같지 않다면,
 		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
 		if (Charactor != nullptr && OwnerCharactor != nullptr &&
@@ -194,12 +196,11 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 			else
 				UE_LOG(LogTemp, Warning, L"Projectile Poisionball OnBeginOverlap - HitComp Null!!");
 
+			//@폭발
+			Explosion();
+
 		}//(Interface Charactor)
 	}//(bHit)
-
-
-	//@폭발
-	Explosion();
 }
 
 void ACProjectile_PoisionBall::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)

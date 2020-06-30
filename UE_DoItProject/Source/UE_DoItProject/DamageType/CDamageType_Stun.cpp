@@ -47,6 +47,9 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 {
 	Super::OnHittingProcess(Subject, DamagedActor, DamagedActorHitComp, InitialDamageAmount);
 
+	//@예외처리
+	IfFalseRet(DamagedActorHitComp->IsDamagedFromOther());
+
 	//@때린 대상 바라보기
 	UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
 
@@ -55,6 +58,8 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 
 	AController* const PawnController = DamagedPawn->GetController();
 	check(PawnController);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//@Set UpsetStun Setting
 	UCUpset_Stun* UpsetStun = NewObject<UCUpset_Stun>();
@@ -89,6 +94,18 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	{
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp STUN AddConditionData Derived NULL!!");
 	}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//@Motage
+	{
+		IfTrueRet(DamagedActorHitComp->IsBlockDamagedMontage());
+
+		const uint8 MontageNum = static_cast<uint8>(GetConditionType());
+		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);
+	}
+
 }
 
 void UCDamageType_Stun::OnDamageDelegate(AActor* DamagedActor)

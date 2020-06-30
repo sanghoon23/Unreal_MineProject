@@ -47,6 +47,9 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 	AController* const PawnController = DamagedPawn->GetController();
 	check(PawnController);
 
+	//@예외처리
+	IfFalseRet(DamagedActorHitComp->IsDamagedFromOther());
+
 	//@Create ConditionData
 	UCUpset_Poision* PoisionConditionData = NewObject<UCUpset_Poision>();
 	check(PoisionConditionData);

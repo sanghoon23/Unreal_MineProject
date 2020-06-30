@@ -57,6 +57,9 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	AController* const PawnController = DamagedPawn->GetController();
 	check(PawnController);
 
+	//@예외처리
+	IfFalseRet(DamagedActorHitComp->IsDamagedFromOther());
+
 	//@Create ConditionData
 	UCUpset_Burn* BurnConditionData = NewObject<UCUpset_Burn>();
 	check(BurnConditionData);

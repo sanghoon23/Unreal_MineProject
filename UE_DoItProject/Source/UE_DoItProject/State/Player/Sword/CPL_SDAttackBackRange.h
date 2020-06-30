@@ -4,6 +4,7 @@
 #include "State/Player/Base/CPL_SwordBaseAttack.h"
 #include "Interface/IC_Component.h"
 
+#include "DamageType/CDamageType_Air.h"
 #include "DamageType/CDamageType_StrongAttack.h"
 
 #include "CPL_SDAttackBackRange.generated.h"
@@ -17,6 +18,9 @@ class UE_DOITPROJECT_API UCPL_SDAttackBackRange
 	#pragma region Reflection
 private:
 	// @DamageType
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_Air*			DT_Air;
+
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_StrongAttack*	DT_Strong;
 

@@ -41,6 +41,7 @@ UCPL_SDAttackBackRange::UCPL_SDAttackBackRange()
 
 	#pragma region Create DamageType
 
+	DT_Air = NewObject<UCDamageType_Air>();
 	DT_Strong = NewObject<UCDamageType_StrongAttack>();
 
 	#pragma endregion
@@ -182,7 +183,7 @@ void UCPL_SDAttackBackRange::AttackOtherPawn()
 					HitComp->SetHitMoveSpeed(0.3f);
 
 					// 1.2 Hit Delegate - Air(DamageType)
-					HitComp->OnHit(Player, DT_Strong, 5.0f);
+					HitComp->OnHit(Player, DT_Air, 5.0f);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"SDAttackBackRange CallAttack - HitComp Null!!");

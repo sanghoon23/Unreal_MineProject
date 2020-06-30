@@ -143,6 +143,8 @@ void UCPL_HitComp::BeginPlay()
 	check(IC_Charactor);
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
+		//bCanAttackFromOther = true;
+		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 		bCanHitCombo = false;
 	});
 }

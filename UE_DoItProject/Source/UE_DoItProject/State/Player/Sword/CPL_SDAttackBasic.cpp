@@ -34,17 +34,17 @@ UCPL_SDAttackBasic::UCPL_SDAttackBasic()
 		UAnimMontage* Sword_BasicAttack_2 = nullptr;
 		UAnimMontage* Sword_BasicAttack_3 = nullptr;
 
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/Sword_BasicAttack1.Sword_BasicAttack1'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/SwordAnim_BasicAttack_1_Montage.SwordAnim_BasicAttack_1_Montage'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> MBasicAttack_1(*Path);
 		if (MBasicAttack_1.Succeeded())
 			Sword_BasicAttack_1 = MBasicAttack_1.Object;
 
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/Sword_BasicAttack2.Sword_BasicAttack2'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/SwordAnim_BasicAttack_2_Montage.SwordAnim_BasicAttack_2_Montage'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> MBasicAttack_2(*Path);
 		if (MBasicAttack_2.Succeeded())
 			Sword_BasicAttack_2 = MBasicAttack_2.Object;
 
-		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/Sword_BasicAttack3.Sword_BasicAttack3'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/MAttack/SwordAnim_BasicAttack_3_Montage.SwordAnim_BasicAttack_3_Montage'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> MBasicAttack_3(*Path);
 		if (MBasicAttack_3.Succeeded())
 			Sword_BasicAttack_3 = MBasicAttack_3.Object;

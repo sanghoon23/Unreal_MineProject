@@ -4,6 +4,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 
+#include "Component/Base/C_BaseHitComp.h"
+
 UCDamageType_StrongAttack::UCDamageType_StrongAttack()
 {
 	// Super
@@ -32,14 +34,25 @@ void UCDamageType_StrongAttack::OnHittingProcess(AActor * Subject, AActor * Dama
 	UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
 
 	//@Take Damage
-	APawn* DamagedPawn = Cast<APawn>(DamagedActor);
-	if (DamagedPawn != nullptr)
+	if (DamagedActorHitComp->IsDamagedFromOther() == true)
 	{
-		AController* PawnController = Cast<AController>(Cast<APawn>(DamagedActor));
+		APawn* DamagedPawn = Cast<APawn>(DamagedActor);
+		if (DamagedPawn != nullptr)
+		{
+			AController* PawnController = Cast<AController>(Cast<APawn>(DamagedActor));
 
-		FDamageEvent DamageEvent;
-		DamageEvent.DamageTypeClass = GetClass();
-		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+			FDamageEvent DamageEvent;
+			DamageEvent.DamageTypeClass = GetClass();
+			DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+		}
+	}
+
+	//@Motage
+	{
+		IfTrueRet(DamagedActorHitComp->IsBlockDamagedMontage());
+
+		const uint8 MontageNum = static_cast<uint8>(GetConditionType());
+		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);
 	}
 }
 
