@@ -18,8 +18,8 @@ class UIC_HitComp : public UInterface
 	GENERATED_BODY()
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitFunc, AActor*)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitResetState, AActor*)
+DECLARE_MULTICAST_DELEGATE_OneParam(FBeginBeatedFunc, AActor*)
+DECLARE_MULTICAST_DELEGATE_OneParam(FEndBeatedFunc, AActor*)
 
 class UE_DOITPROJECT_API IIC_HitComp
 {
@@ -27,10 +27,14 @@ class UE_DOITPROJECT_API IIC_HitComp
 
 public:
 	// - Hit 됐을 때, 실행할 함수 Delegate
+	FBeginBeatedFunc BeginBeatedFunc;
+
 	// @param AActor* - 함수를 수행할 Hitted(Hit 당하는 ) 객체
 	// FOnHitFunc				OnHitFunc;
 
 	// - Hit 됐을 때, 기존 상태값들을 원래로 되돌리는 Delegate
+	FEndBeatedFunc EndBeatedFunc;
+
 	// @param AActor* - Hitted( Hit 당하는 ) 객체
 	// FOnHitResetState		OnHitResetState;
 

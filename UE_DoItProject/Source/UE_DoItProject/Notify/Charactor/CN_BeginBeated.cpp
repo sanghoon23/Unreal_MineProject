@@ -17,4 +17,7 @@ void UCN_BeginBeated::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 	IfNullRet(I_HitComp);
 
 	I_HitComp->SetBeated(true);
+
+	I_HitComp->BeginBeatedFunc.Broadcast(MeshComp->GetOwner());
+	I_HitComp->BeginBeatedFunc.Clear();
 }

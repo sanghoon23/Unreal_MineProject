@@ -59,4 +59,5 @@ private:
 
 	bool bSkillCasting = false;
 	
+#pragma endregion
 };

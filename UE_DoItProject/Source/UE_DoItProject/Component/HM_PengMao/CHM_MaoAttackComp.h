@@ -10,7 +10,8 @@ UENUM()
 enum class HM_PengMaoAttackType
 {
 	FIRSTATTACK = 0,
-	END = 1,
+	SECONDATTACK = 1,
+	END = 2,
 };
 
 UCLASS()

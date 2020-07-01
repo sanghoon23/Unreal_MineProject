@@ -3,6 +3,8 @@
 #include "Interface/IC_Component.h"
 
 #include "State/Base/C_BaseAttackState.h"
+#include "State/HM_PengMao/CHM_MaoFirstAttack.h"
+#include "State/HM_PengMao/CHM_MaoSecondAttack.h"
 
 UCHM_MaoAttackComp::UCHM_MaoAttackComp()
 {
@@ -11,8 +13,11 @@ UCHM_MaoAttackComp::UCHM_MaoAttackComp()
 	#pragma region Create State
 	// @FirstCombo
 	{
-		//UCHM_BasicBaseAttack* FirstAttack = CreateDefaultSubobject<UCHM_BasicFirstCombo>("HMBasic_FirstCombo");
-		//BasicAttackStateArray.Emplace(FirstAttack);
+		UC_BaseAttackState* HMMao_FirstAttack = CreateDefaultSubobject<UCHM_MaoFirstAttack>("FirstAttack_WindMil");
+		BasicAttackStateArray.Emplace(HMMao_FirstAttack);
+
+		UC_BaseAttackState* HMMao_SecondAttack = CreateDefaultSubobject<UCHM_MaoSecondAttack>("SecondAttack_FlyDown");
+		BasicAttackStateArray.Emplace(HMMao_SecondAttack);
 	}
 	#pragma endregion
 }

@@ -22,7 +22,7 @@ EBTNodeResult::Type UBTTask_LookAtTarget::ExecuteTask(UBehaviorTreeComponent & O
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	// this Controller
-	ACAIC_HM_Basic* Controller = Cast<ACAIC_HM_Basic>(OwnerComp.GetAIOwner());
+	AAIController* Controller = Cast<AAIController>(OwnerComp.GetAIOwner());
 	IfNullRetResult(Controller, EBTNodeResult::Failed);
 
 	// this Pawn

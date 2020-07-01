@@ -172,45 +172,46 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 		verify(Type->GetConditionType() == FDamageType::END);
 	}
 
-	///DamageType Process
-	if (IsDamagedFromOther() == true)
-	{
-		Type->OnHittingProcess(AttackingActor, Player, this, DamageAmount);
-	}
-
-	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
-	IfTrueRet(bBlockDamagedMontage);
-
-	//#Edit - 0601
-	//@공격하고 있을땐 맞는 몽타주 실행하지 않음
-	IfTrueRet(Player->GetIAttackComp()->GetCurrentIBaseAttack()->GetAttacking());
-
-	//@Player 는 Combo 적용하지 않음.
-	//if (bCanHitCombo == true)
+	/////DamageType Process
+	//if (IsDamagedFromOther() == true)
 	//{
-	//	if (HitComboMon != nullptr)
-	//	{
-	//		Player->ActorAnimMonPlay(HitComboMon, 0.6f, true);
-	//		SetCanHittedCombo(false); //@false
-	//		return; //@return
-	//	}
 	//}
 
 	//@Delegate 실행.
 	Player->OnActionResetState.Broadcast(Player);
 
-	//@else
-	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	if (MontageNum >= DamagedMontages.Num())
-	{
-		UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
-		return;
-	}
-	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
-	if (RunMontage != nullptr)
-	{
-		Player->ActorAnimMonPlay(RunMontage, 0.6f, true);
-	}
+	Type->OnHittingProcess(AttackingActor, Player, this, DamageAmount);
+
+	////@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
+	//IfTrueRet(bBlockDamagedMontage);
+
+	////#Edit - 0601
+	////@공격하고 있을땐 맞는 몽타주 실행하지 않음
+	//IfTrueRet(Player->GetIAttackComp()->GetCurrentIBaseAttack()->GetAttacking());
+
+	////@Player 는 Combo 적용하지 않음.
+	////if (bCanHitCombo == true)
+	////{
+	////	if (HitComboMon != nullptr)
+	////	{
+	////		Player->ActorAnimMonPlay(HitComboMon, 0.6f, true);
+	////		SetCanHittedCombo(false); //@false
+	////		return; //@return
+	////	}
+	////}
+
+	////@else
+	//const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
+	//if (MontageNum >= DamagedMontages.Num())
+	//{
+	//	UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
+	//	return;
+	//}
+	//UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
+	//if (RunMontage != nullptr)
+	//{
+	//	Player->ActorAnimMonPlay(RunMontage, 0.6f, true);
+	//}
 
 }
 

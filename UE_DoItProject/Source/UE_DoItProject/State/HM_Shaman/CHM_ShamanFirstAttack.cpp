@@ -29,7 +29,7 @@ UCHM_ShamanFirstAttack::UCHM_ShamanFirstAttack()
 		}
 	}
 
-	#pragma region FirstAttack
+#pragma region FirstAttack
 
 	// Setting
 	{
@@ -43,15 +43,15 @@ UCHM_ShamanFirstAttack::UCHM_ShamanFirstAttack()
 		AttackMontages.Emplace(Shaman_FirstAttack);
 	}
 
-	#pragma endregion
+#pragma endregion
 
-	#pragma region DamageType
+#pragma region DamageType
 
 	//DT_Stun = NewObject<UCDamageType_Stun>();
 	//DT_Stun->SetDamageImpulse(10.0f);
 	//DT_Stun->SetStunTime(2.0f);
 
-	#pragma endregion
+#pragma endregion
 
 }
 
