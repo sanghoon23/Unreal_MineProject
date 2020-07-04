@@ -272,6 +272,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("PullActorWithCableAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnPullActorWithCableAction);
 }
 
+#pragma region Input
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //@Custom
 
@@ -540,6 +541,33 @@ void ACPlayer::OnPullActorWithCableAction()
 	StateManager->OnPullActorWithCable();
 }
 
+#pragma endregion
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//@UI
+
+void ACPlayer::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
+{
+	//@HitComp
+	TArray<UCBaseConditionType*> ConditionTypes;
+	HitComp->GetConditionDatasOutArray(&ConditionTypes);
+	for (UCBaseConditionType* ConditionType : ConditionTypes)
+	{
+		FViewConditionState Insert;
+		Insert.TextureUI = ConditionType->GetTextureUI();
+		Insert.ColorAndOpacity = ConditionType->ColorAndOpacity;
+		Insert.ApplyTime = ConditionType->ApplyTime;
+
+		OutArray->Emplace(Insert);
+	}
+
+	//@AbilityComp
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//@Interface
+
 void ACPlayer::OnDeath()
 {
 	//TODO : 죽음 구현 - 현재 체력이 0 이하 일때,
@@ -593,11 +621,17 @@ void ACPlayer::ActorStopAnimMon(class UAnimMontage* Montage)
 void ACPlayer::ActorPausedAnimMonResume()
 {
 	GetMesh()->GetAnimInstance()->Montage_Resume(CurrentMontage);
+
+	//@Off Block Key Input
+	OffBlockKeyInput();
 }
 
 void ACPlayer::ActorAnimMonPause()
 {
 	GetMesh()->GetAnimInstance()->Montage_Pause(CurrentMontage);
+
+	//@On Block Key Input
+	OnBlockKeyInput();
 }
 
 void ACPlayer::OnCollision()

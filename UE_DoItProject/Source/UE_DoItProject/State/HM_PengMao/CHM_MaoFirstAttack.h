@@ -6,6 +6,9 @@
 
 #include "DamageType/CDamageType_Normal.h"
 #include "DamageType/CDamageType_StrongAttack.h"
+#include "DamageType/CDamageType_Slower.h"
+
+#include "Ability/Player/CPLAbility_SpeedDown.h"
 
 #include "CHM_MaoFirstAttack.generated.h"
 
@@ -31,13 +34,27 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> AttackMontages;
 
-
 	// @DamageType
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_Normal*	DT_Noraml;
 
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_StrongAttack*	DT_Strong;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SlowerParticle_Root;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SlowerParticle_Body;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* SlowerParticleComp_Root;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* SlowerParticleComp_Body;
+
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+		class UCPLAbility_SpeedDown* AbilitySpeedDowner;
 
 #pragma endregion
 
@@ -59,8 +76,14 @@ public:
 	virtual void AttackOtherPawn() override;
 
 private:
+	//@Delegate - HitComp
 	void BeginBeatedFunction(AActor* Subject);
 	void EndBeatedFunction(AActor* Subject);
+
+
+	//@Delegate - Ability
+	void BeginAbilityFunction(AActor* Subject);
+	void EndAbilityFunction(AActor* Subject);
 
 #pragma region Member
 private:
@@ -72,5 +95,7 @@ private:
 	TArray<float> AttackRadiusVec; //@공격 둘레 - Sphere
 
 #pragma endregion
+
+	float AbilityDownSpeedValue = -300.0f;
 
 };

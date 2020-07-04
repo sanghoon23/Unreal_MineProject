@@ -115,8 +115,8 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 {
 	Super::ApplyEvent(EventedActor);
 
-	IIC_Player* I_Player = Cast<IIC_Player>(EventedActor);
-	if (I_Player != nullptr)
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(EventedActor);
+	if (I_Charactor != nullptr)
 	{
 		//@Collision OFF
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -125,7 +125,7 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 		SetActorHiddenInGame(true);
 
 		//@Ability Ãß°¡
-		IIC_AbilityComp* I_AbilityComp = I_Player->GetIAbilityComp();
+		IIC_AbilityComp* I_AbilityComp = I_Charactor->GetIAbilityComp();
 		if (I_AbilityComp != nullptr)
 		{
 			//@Create Ability

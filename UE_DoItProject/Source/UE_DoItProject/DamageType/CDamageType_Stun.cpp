@@ -28,7 +28,7 @@ UCDamageType_Stun::UCDamageType_Stun()
 
 	FString strPath = L"";
 
-	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/Test_UI_StunWithTargetInfo.Test_UI_StunWithTargetInfo'";
+	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_StunTypeFill.Tex_StunTypeFill'";
 	ConstructorHelpers::FObjectFinder<UTexture2D> StunTexture(*strPath);
 	if (StunTexture.Succeeded())
 	{
@@ -86,7 +86,7 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	UTexture2D* Texture = GetUITexture();
 	if (Texture != nullptr)
 	{
-		UpsetStun->TextureUI = Texture;
+		UpsetStun->SetTextureUI(Texture);
 	}
 
 	bool bAddResult = DamagedActorHitComp->AddConditionData(UpsetStun);

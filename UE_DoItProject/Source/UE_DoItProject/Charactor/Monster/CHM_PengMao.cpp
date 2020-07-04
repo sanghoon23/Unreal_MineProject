@@ -34,7 +34,7 @@ ACHM_PengMao::ACHM_PengMao()
 	Info.MaxHP = 100.0f;
 	Info.CurrentHP = 100.0f;
 	Info.Name = FName(L"HM_PengMao");
-	Info.InfoConditionDataArray.Init(nullptr, 5);
+	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
 
@@ -55,6 +55,22 @@ void ACHM_PengMao::BeginPlay()
 void ACHM_PengMao::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACHM_PengMao::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
+{
+	//@HitComp
+	TArray<UCBaseConditionType*> ConditionTypes;
+	HitComp->GetConditionDatasOutArray(&ConditionTypes);
+	for (UCBaseConditionType* ConditionType : ConditionTypes)
+	{
+		FViewConditionState Insert;
+		Insert.TextureUI = ConditionType->GetTextureUI();
+		Insert.ColorAndOpacity = ConditionType->ColorAndOpacity;
+		Insert.ApplyTime = ConditionType->ApplyTime;
+
+		OutArray->Emplace(Insert);
+	}
 }
 
 void ACHM_PengMao::OnDeath()

@@ -16,7 +16,8 @@ enum class FDamageType
 	BURN			= 5,
 	POISION			= 6,
 	FREEZE			= 7,
-	END				= 8,
+	SLOWER			= 8,
+	END				= 9,
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDamageFunc, AActor*)

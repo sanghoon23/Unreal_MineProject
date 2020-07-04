@@ -6,6 +6,9 @@
 
 #include "DamageType/CDamageType_Normal.h"
 #include "DamageType/CDamageType_StrongAttack.h"
+#include "DamageType/CDamageType_Slower.h"
+
+#include "Ability/Player/CPLAbility_SpeedDown.h"
 
 #include "CHM_MaoSecondAttack.generated.h"
 
@@ -35,6 +38,15 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_StrongAttack*	DT_Strong;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SlowerParticle_Root;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SlowerParticle_Body;
+
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+		class UCPLAbility_SpeedDown* AbilitySpeedDowner;
 
 #pragma endregion
 
@@ -70,6 +82,8 @@ private:
 	float OffSetAttackRangeForStart = 200.0f; //@Collision 시작점(ActorLocation) 의 Offset 앞방향
 	TArray<float> AttackRangeVec; //@공격 거리(Sphere 가 움직일 범위)
 	TArray<float> AttackRadiusVec; //@공격 둘레 - Sphere
+
+	float AbilityDownSpeedValue = -300.0f;
 
 #pragma endregion
 

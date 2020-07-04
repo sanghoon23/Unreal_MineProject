@@ -69,7 +69,8 @@ public:
 public:
 	//void AddParticleCompAtContainer(class UParticleSystemComponent* const PTComp, const EAttachPointTypePoint) override;
 
-	class UParticleSystemComponent* SpawnParticleAtMesh(class UParticleSystem* const PT, const EAttachPointType Point, const EAttachPointRelative Rel, const EAttachLocation::Type AttachLocation) override;
+	virtual class UParticleSystemComponent* SpawnParticleAtMesh(class UParticleSystem* const PT, const EAttachPointType Point, const EAttachPointRelative Rel, const EAttachLocation::Type AttachLocation) override;
+	virtual class UParticleSystemComponent* SpawnParticleAtMesh(class UParticleSystem* const PT, const EAttachPointType Point, const EAttachPointRelative Rel, const EAttachLocation::Type AttachLocation, FTransform Transform) override;
 	bool SetLocationParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const EAttachPointType Point, const EAttachPointRelative Rel) override;
 	void AttachParticleCompAtMesh(class UParticleSystemComponent* const PTComp, const EAttachPointType Point, const EAttachPointRelative Rel) override;
 

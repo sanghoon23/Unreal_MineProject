@@ -15,6 +15,7 @@ class UE_DOITPROJECT_API UC_BaseAbilityComp
 
 	#pragma	region Reflection
 private:
+	UPROPERTY(VisibleAnywhere)
 	TMap<EAbilityType, UCBaseAbility*> AddAbilityMap;
 
 	#pragma endregion
@@ -39,6 +40,8 @@ public:
 	//
 	//2. Timer 가 쓰이지 않고 영구적으로 증가
 	virtual void AddAbility(UCBaseAbility* Ability) override;
+
+	virtual void GetAbilities(TArray<UCBaseAbility*>& OutArray) override;
 
 	/* Memeber */
 private:

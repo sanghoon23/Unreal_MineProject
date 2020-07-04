@@ -2,11 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+
+#include "interface/IC_WidgetInfo.h"
 #include "Interface/IC_Charactor.h"
-#include "Interface//IC_HitComp.h"
-#include "DamagedConditionType/Base/CBaseConditionType.h"
+#include "Interface/IC_HitComp.h"
 
 #include "IC_Monster.generated.h"
+
 
 USTRUCT(BlueprintType)
 struct FMonsterInfo
@@ -15,7 +17,7 @@ struct FMonsterInfo
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Asset")
-	TArray<UCBaseConditionType*> InfoConditionDataArray;
+	TArray<FViewConditionState> InfoConditionDataArray;
 
 public:
 	float MaxHP = 0.0f;

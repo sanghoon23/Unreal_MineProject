@@ -59,15 +59,10 @@ public:
 	/* OutDataArray->Empty(갱신) 후 ConditionDatas 모든 데이터를 OutDataArray->'Push' */
 	//@param - OutDataArray (OUT)
 	//@parma Count - 가져올 갯수 (Default -1, 모두 가져옴)
-	virtual void GetConditionDatasAfterEmpty(TArray<UCBaseConditionType*>* OutDataArray, int Count = -1) = 0;
+	virtual void GetConditionDatasOutArray(TArray<UCBaseConditionType*>* OutDataArray, int Count = -1) = 0;
 
 	/* ConditionDatas 의 [Index] 값을 가져옴  */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) = 0;
-
-	/* ConditionDatas 를 Count(범위) 까지 가져옴 */
-	//@param OutDataArray - OUT
-	//@param Count - 가져올 갯수
-	virtual void GetConditionDatasByCount(TArray<UCBaseConditionType*>* OutDataArray, int IndexCount) = 0;
 
 	#pragma region Member
 public:

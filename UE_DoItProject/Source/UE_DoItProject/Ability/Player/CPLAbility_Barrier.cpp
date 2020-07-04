@@ -61,9 +61,9 @@ void UCPLAbility_Barrier::StartUseTimerAbility()
 	}
 }
 
-void UCPLAbility_Barrier::TickUseTimerAbility()
+void UCPLAbility_Barrier::TickUseTimerAbility(float DeltaTime)
 {
-	Super::TickUseTimerAbility();
+	Super::TickUseTimerAbility(DeltaTime);
 
 	ACPlayer* Player = Cast<ACPlayer>(AppliedActor);
 	if (Player != nullptr)
@@ -103,15 +103,14 @@ void UCPLAbility_Barrier::EndUseTimerAbility()
 		ParticleComp_Barrier->SetActive(false);
 }
 
-bool UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
+void UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
 {
 	Super::OverlapAbility(Ability);
 	check(Ability);
 
 	if (AbilityType != Ability->GetAbilityType())
 	{
-		UE_LOG(LogTemp, Warning, L"UCPLAbility_Speed OverlapAbility Function Same NOT TYPE!!");
-		return false;
+		UE_LOG(LogTemp, Warning, L"UCPLAbility_Barrier OverlapAbility Function Same NOT TYPE!!");
 	}
 
 	//@ '+' Barrier
@@ -125,6 +124,5 @@ bool UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
 	const FAbilityValue& InputAbilityValue = Ability->GetAbilityValue();
 	AbilityValue.Timer += InputAbilityValue.Timer;
 
-	return true;
 }
 

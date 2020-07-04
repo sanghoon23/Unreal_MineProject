@@ -29,12 +29,12 @@ public:
 	virtual void StartUseTimerAbility() override;
 
 	/* Timer 를 사용할 때 AbilityComponent 에서 Tick */
-	virtual void TickUseTimerAbility() override;
+	virtual void TickUseTimerAbility(float DeltaTime) override;
 
 	/* Timer 를 사용한 능력치 적용 종료 */
 	virtual void EndUseTimerAbility() override;
 
-	virtual bool OverlapAbility(class UCBaseAbility* Ability) override;
+	virtual void OverlapAbility(class UCBaseAbility* Ability) override;
 
 	/* Timer 를 사용하지 않고 영구적으로 능력치 적용 */
 	//virtual void ApplyAbility();

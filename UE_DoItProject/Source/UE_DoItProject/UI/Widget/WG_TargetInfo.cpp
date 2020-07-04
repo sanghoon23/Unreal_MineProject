@@ -5,8 +5,8 @@
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
+#include "Interface/IC_WidgetInfo.h"
 #include "Charactor/Player/CPlayer.h"
-#include "DamagedConditionType/Base/CBaseConditionType.h"
 
 UWG_TargetInfo::UWG_TargetInfo(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -60,20 +60,12 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 		TargetInfo.Distance = Player->GetDistanceTo(Target);
 	}
 
-	//@IC_HitComp - 상태이상, ConditionData 를 가져오기 위해,
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Target);
-	if (I_Charactor != nullptr)
+	IIC_WidgetInfo* I_Widget = Cast<IIC_WidgetInfo>(Target);
+	if (I_Widget != nullptr)
 	{
-		IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
-		if (I_HitComp != nullptr)
-		{
-			//@자체적으로 GetConditionDatas 함수에서 Empty 로 갱신.
-			I_HitComp->GetConditionDatasAfterEmpty
-			(
-				&(TargetInfo.InfoConditionDataArray),
-				ConditionUITextureNumber
-			);
-		}
+		//@자체적으로 GetConditionDatas 함수에서 Empty 로 갱신.
+		TargetInfo.InfoConditionDataArray.Empty();
+		I_Widget->GetViewConditionStateForUI(&(TargetInfo.InfoConditionDataArray));
 	}
 }
 
@@ -107,7 +99,8 @@ UTexture2D * UWG_TargetInfo::GetInfoConditionTextureUI(int ArrayNumber)
 	if (ArrayNumber >= ArraySize || ArraySize < 0)
 		return nullptr;
 
-	class UTexture2D* RetTexture = TargetInfo.InfoConditionDataArray[ArrayNumber]->TextureUI;
+	class UTexture2D* RetTexture 
+		= TargetInfo.InfoConditionDataArray[ArrayNumber].TextureUI;
 	if (RetTexture == nullptr)
 		return nullptr;
 
@@ -120,10 +113,10 @@ FLinearColor UWG_TargetInfo::GetInfoConditionDataLinearColor(int ArrayNumber)
 	if (ArrayNumber >= ArraySize || ArraySize < 0)
 		return FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 0.0f)); //@Alpha 0
 
-	if (TargetInfo.InfoConditionDataArray[ArrayNumber] == nullptr)
-		return FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 0.0f)); //@Alpha 0
+	//if (TargetInfo.InfoConditionDataArray[ArrayNumber] == nullptr)
+	//	return FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 0.0f)); //@Alpha 0
 
-	return TargetInfo.InfoConditionDataArray[ArrayNumber]->ColorAndOpacity;
+	return TargetInfo.InfoConditionDataArray[ArrayNumber].ColorAndOpacity;
 }
 
 //UCBaseConditionType * UWG_TargetInfo::GetInfoMonsterConditionData(int ArrayNumber)

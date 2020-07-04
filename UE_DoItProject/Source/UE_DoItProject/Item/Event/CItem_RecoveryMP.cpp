@@ -129,13 +129,13 @@ void ACItem_RecoveryMP::ApplyEvent(AActor * EventedActor)
 {
 	Super::ApplyEvent(EventedActor);
 
-	IIC_Player* I_Player = Cast<IIC_Player>(EventedActor);
-	if (I_Player != nullptr)
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(EventedActor);
+	if (I_Charactor != nullptr)
 	{
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SetActorHiddenInGame(true);
 
-		IIC_AbilityComp* I_AbilityComp = I_Player->GetIAbilityComp();
+		IIC_AbilityComp* I_AbilityComp = I_Charactor->GetIAbilityComp();
 		if (I_AbilityComp != nullptr)
 		{
 			//@ADD Ability
@@ -149,8 +149,6 @@ void ACItem_RecoveryMP::ApplyEvent(AActor * EventedActor)
 		}
 
 		//@Healing 파티클 실행
-		IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(EventedActor);
-		check(I_Charactor);
 		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
 		check(I_MeshParticle);
 

@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/IC_Player.h"
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_WidgetInfo.h"
 #include "Interface/IC_StateManager.h"
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_EquipComp.h"
@@ -15,7 +16,7 @@ enum class EPlayerStateType : uint8;
 
 UCLASS()
 class UE_DOITPROJECT_API ACPlayer 
-	: public ACharacter, public IIC_Player, public IIC_Charactor
+	: public ACharacter, public IIC_Player, public IIC_Charactor, public IIC_WidgetInfo
 {
 	GENERATED_BODY()
 
@@ -94,6 +95,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Pure Virtual Function In Interface - (IC_WidgetInfo) */
+	virtual void GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray) override;
+
 
 	/* Pure Virtual Function - (IIC_Charactor) */
 public:

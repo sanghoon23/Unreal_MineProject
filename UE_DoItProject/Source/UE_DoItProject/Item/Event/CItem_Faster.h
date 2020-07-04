@@ -26,8 +26,30 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UStaticMeshComponent* SM_HologramGlow;
 
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+		class UCPLAbility_SpeedUpper* AbilitySpeedUpper;
+
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* FasterParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SpeedUp_LHand;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SpeedUp_RHand;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* ParticleComp_LHand;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* ParticleComp_RHand;
+
+private:
+	UFUNCTION()
+	void DelegateAbilityStart(AActor* AppliedActor);
+
+	UFUNCTION()
+	void DelegateAbilityEnd(AActor* AppliedActor);
 
 private:
 	UFUNCTION()

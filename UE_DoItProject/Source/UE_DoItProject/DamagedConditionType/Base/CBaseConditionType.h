@@ -3,13 +3,14 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
+
 #include "CBaseConditionType.generated.h"
 
 UENUM()
 /* 상태 이상 종류 */
 enum class EHitUpset : uint8
 {
-	SLOWMOVE	= 0, //이동감속
+	SLOWER		= 0, //이동감속
 	STUN		= 1, //스턴
 	BURN		= 2, //화상
 	POISION		= 3, //중독
@@ -22,6 +23,7 @@ class UE_DOITPROJECT_API UCBaseConditionType
 	: public UObject
 {
 	GENERATED_BODY()
+
 public:
 	UCBaseConditionType() {};
 
@@ -31,19 +33,19 @@ public:
 		/* 상태정보 UI Color&Opacity */
 		FLinearColor ColorAndOpacity = FLinearColor(FVector4(1.0f));
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
-		/* @true - LeftToRight, @false - RightToLeft*/
-		bool bLinerColorDir = true;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
-		/* UI - TargetInfo 표시 Texture */
-		class UTexture2D* TextureUI = nullptr;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Data")
 		/* 상태 적용 시간 */
 		float ApplyTime = 0.0f;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		/* UI - TargetInfo 표시 Texture */
+		class UTexture2D* TextureUI = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		/* @true - LeftToRight, @false - RightToLeft*/
+		bool bLinerColorDir = true;
+
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		EHitUpset State;
 
@@ -58,7 +60,6 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 	/* Virtual Function */
 public:
 	/* 해당 Owner 의 HitComp AddCondition 될 때 실행 함수*/
@@ -72,6 +73,11 @@ public:
 
 	/* 해당 상태가 중첩되었을 때, */
 	virtual void ConditionOverlap(UCBaseConditionType* OverlappedCondition) {}
+
+	/* Function */
+public:
+	class UTexture2D* GetTextureUI() { return TextureUI; }
+	void SetTextureUI(class UTexture2D* Texture);
 
 protected:
 	/* UI Texture Opacity 초기화 */

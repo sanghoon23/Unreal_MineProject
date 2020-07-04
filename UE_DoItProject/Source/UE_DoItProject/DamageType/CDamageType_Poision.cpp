@@ -29,7 +29,7 @@ UCDamageType_Poision::UCDamageType_Poision()
 
 	FString strPath = L"";
 
-	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/Test_UI_PoisionWithTargetInfo.Test_UI_PoisionWithTargetInfo'";
+	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_PoisionTypeFill.Tex_PoisionTypeFill'";
 	ConstructorHelpers::FObjectFinder<UTexture2D> PoisionTexture(*strPath);
 	if (PoisionTexture.Succeeded())
 	{
@@ -75,7 +75,7 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 	UTexture2D* Texture = GetUITexture();
 	if (Texture != nullptr)
 	{
-		PoisionConditionData->TextureUI = Texture;
+		PoisionConditionData->SetTextureUI(Texture);
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

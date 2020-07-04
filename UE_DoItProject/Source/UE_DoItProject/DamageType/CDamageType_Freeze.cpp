@@ -29,7 +29,7 @@ UCDamageType_Freeze::UCDamageType_Freeze()
 
 	FString strPath = L"";
 
-	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/Test_UI_FreezeWithTargetInfo.Test_UI_FreezeWithTargetInfo'";
+	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_FreezeTypeFill.Tex_FreezeTypeFill'";
 	ConstructorHelpers::FObjectFinder<UTexture2D> FreezeTexture(*strPath);
 	if (FreezeTexture.Succeeded())
 	{
@@ -104,7 +104,7 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	UTexture2D* Texture = GetUITexture();
 	if (Texture != nullptr)
 	{
-		FreezeConditionData->TextureUI = Texture;
+		FreezeConditionData->SetTextureUI(Texture);
 	}
 
 	bool bAddResult = DamagedActorHitComp->AddConditionData(FreezeConditionData);

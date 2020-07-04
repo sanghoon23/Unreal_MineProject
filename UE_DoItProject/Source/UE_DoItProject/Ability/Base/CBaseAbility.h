@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+
 #include "CBaseAbility.generated.h"
 
 //@Warning
@@ -10,13 +11,14 @@
 UENUM()
 enum class EAbilityType : int32
 {
-	NONE	= 0,
-	HP		= 1,
-	MP		= 2,
-	BARRIER	= 3,
-	SPEED	= 4,
-	ATK		= 5,
-	DEF		= 6,
+	NONE		= 0,
+	HP			= 1,
+	MP			= 2,
+	BARRIER		= 3,
+	SPEEDUP		= 4,
+	SPEEDDOWN	= 4,
+	ATK			= 5,
+	DEF			= 6,
 };
 
 USTRUCT()
@@ -31,25 +33,60 @@ public:
 	float Value = 0.0f;
 };
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelStartTimerAbility, AActor*)
+DECLARE_MULTICAST_DELEGATE_OneParam(FEndTimerAbility, AActor*)
+
 UCLASS()
 class UE_DOITPROJECT_API UCBaseAbility 
 	: public UObject
 {
 	GENERATED_BODY()
-	
+
+public:
+	/* AbilityComp 에서 Ability 상태가 시작되었을 때, 실행될 Delegate */
+	FDelStartTimerAbility OnDelStartTimerAbility;
+
+	/* AbilityComp 에서 Ability 상태가 종료 되었을 때, 실행될 Delegate */
+	FEndTimerAbility OnEndTimerAbility;
+
+
+#pragma region Reflection
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		/* 상태정보 UI Color&Opacity */
+		FLinearColor ColorAndOpacity = FLinearColor(FVector4(1.0f));
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		/* UI - TargetInfo 표시 Texture */
+		class UTexture2D* TextureUI = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		/* @true - LeftToRight, @false - RightToLeft*/
+		bool bLinerColorDir = true;
+
+private:
+
+#pragma endregion
+
 public:
 	UCBaseAbility();
+
+	/* Pure Viratul Fucntion - IWidget */
+public:
+	class UTexture2D* GetTextureUI() { return TextureUI; }
+	float GetApplyTimer() { return AbilityValue.Timer; }
 
 	/* Virtual Function */
 public:
 	/* Timer 를 사용한 능력치 적용 시작 */
-	virtual void StartUseTimerAbility() {}
+	virtual void StartUseTimerAbility();
 
 	/* Timer 를 사용할 때 AbilityComponent 에서 Tick */
-	virtual void TickUseTimerAbility() {}
+	virtual void TickUseTimerAbility(float DeltaTime);
 
 	/* Timer 를 사용한 능력치 적용 종료 */
-	virtual void EndUseTimerAbility() {}
+	virtual void EndUseTimerAbility();
 
 	/* 
 	Timer 를 사용한 능력치 적용 에서,
@@ -58,14 +95,21 @@ public:
 	@param OverlapAbility - Add될 Ability
 	@return - Overlap(중첩) 되었는지 여부
 	*/
-	virtual bool OverlapAbility(class UCBaseAbility* Ability) { return false; }
+	virtual void OverlapAbility(class UCBaseAbility* Ability);
 
 	/* Timer 를 사용하지 않고 영구적으로 능력치 적용 */
 	virtual void ApplyAbility() {}
 
 	/* Function */
 public:
-	void TimerRunning(float DeltaTime) { AbilityValue.Timer -= DeltaTime; }
+	void TimerRunning(float DeltaTime);
+
+protected:
+	/* UI Texture Opacity 초기화 */
+	void InitUIColorAndOpacity();
+
+	/* UI Texture Opacity 를 이용한 깜빡거림 */
+	void UpdateUIColorAndOpacity();
 
 	/* Member */
 public:
@@ -85,4 +129,10 @@ protected:
 
 	/* 능력치가 적용될 Actor */
 	AActor* AppliedActor;
+
+	// @Target Info UI 에 깜빡임을 시작할 시간
+	float OpacityLinearTimer = 3.0f;
+
+	// @Target Info UI 에 깜빡임의 정도
+	float OpacityLinearSpeed = 0.01f;
 };

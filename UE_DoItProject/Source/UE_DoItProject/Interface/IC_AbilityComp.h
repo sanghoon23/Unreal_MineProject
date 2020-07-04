@@ -23,4 +23,6 @@ public:
 	/* 능력치 추가 */
 	virtual void AddAbility(UCBaseAbility* Ability) = 0;
 
+	/* 능력치 가져오기 */
+	virtual void GetAbilities(TArray<UCBaseAbility*>& OutArray) = 0;
 };

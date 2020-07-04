@@ -40,21 +40,21 @@ void UWG_PlayerInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 		InsertPlayerInfo(I_Player->GetPlayerInfo());
 	}
 
-	//@IC_HitComp - 상태이상, ConditionData 를 가져오기 위해,
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Player);
-	if (I_Charactor != nullptr)
-	{
-		IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
-		if (I_HitComp != nullptr)
-		{
-			//@자체적으로 GetConditionDatas 함수에서 Empty 로 갱신.
-			I_HitComp->GetConditionDatasAfterEmpty
-			(
-				&(PlayerInfo.InfoConditionDataArray),
-				ConditionUITextureNumber
-			);
-		}
-	}
+	////@IC_HitComp - 상태이상, ConditionData 를 가져오기 위해,
+	//IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Player);
+	//if (I_Charactor != nullptr)
+	//{
+	//	IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
+	//	if (I_HitComp != nullptr)
+	//	{
+	//		//@자체적으로 GetConditionDatas 함수에서 Empty 로 갱신.
+	//		I_HitComp->GetConditionDatasOutArray
+	//		(
+	//			&(PlayerInfo.InfoConditionDataArray),
+	//			ConditionUITextureNumber
+	//		);
+	//	}
+	//}
 }
 
 void UWG_PlayerInfo::InitPlayerInfo()

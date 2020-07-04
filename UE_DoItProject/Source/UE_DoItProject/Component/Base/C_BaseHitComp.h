@@ -113,10 +113,7 @@ public:
 	virtual UCBaseConditionType* GetConditionData(int Index) override;
 
 	/* IC_HitComp 참조 */
-	virtual void GetConditionDatasAfterEmpty(TArray<UCBaseConditionType*>* OutDataArray, int Count = -1) override;
-
-	/* IC_HitComp 참조 */
-	virtual void GetConditionDatasByCount(TArray<UCBaseConditionType*>* OutDataArray, int IndexCount) override;
+	virtual void GetConditionDatasOutArray(TArray<UCBaseConditionType*>* OutDataArray, int Count = -1) override;
 
 	/* IC_HitComp 참조 */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) override;

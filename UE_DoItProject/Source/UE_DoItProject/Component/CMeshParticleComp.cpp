@@ -43,6 +43,28 @@ UParticleSystemComponent* UCMeshParticleComp::SpawnParticleAtMesh(UParticleSyste
 	return Ret;
 }
 
+UParticleSystemComponent * UCMeshParticleComp::SpawnParticleAtMesh(UParticleSystem * const PT, const EAttachPointType Point, const EAttachPointRelative Rel, const EAttachLocation::Type AttachLocation, FTransform Transform)
+{
+	check(PT);
+
+	FName AttachName;
+	const bool bResult = CheckAttackName(AttachName, Point, Rel);
+
+	UWorld* const World = CharactorOwner->GetWorld();
+
+	//@Spawn
+	UParticleSystemComponent* Ret = UGameplayStatics::SpawnEmitterAttached
+	(
+		PT, CharactorOwner->GetMesh(), AttachName,
+		Transform.GetLocation(),
+		FRotator(Transform.GetRotation()),
+		Transform.GetScale3D(),
+		AttachLocation
+	);
+
+	return Ret;
+}
+
 bool UCMeshParticleComp::SetLocationParticleCompAtMesh(UParticleSystemComponent * const PTComp, const EAttachPointType Point, const EAttachPointRelative Rel)
 {
 	check(PTComp);

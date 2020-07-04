@@ -4,6 +4,7 @@
 #include "Charactor/Monster/Base/CHumanoidMonster.h"
 #include "Interface/IC_Monster.h"
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_WidgetInfo.h"
 
 #include "Component/HM_Shaman/CHM_ShamanAttackComp.h"
 #include "Component/HM_Shaman/CHM_ShamanEquipComp.h"
@@ -14,7 +15,7 @@
 
 UCLASS()
 class UE_DOITPROJECT_API ACHM_Shaman 
-	: public ACHumanoidMonster, public IIC_Monster, public IIC_Charactor
+	: public ACHumanoidMonster, public IIC_Monster, public IIC_Charactor, public IIC_WidgetInfo
 {
 	GENERATED_BODY()
 	
@@ -48,6 +49,10 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/* Pure Virtual Function In Interface - (IC_WidgetInfo) */
+	virtual void GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray) override;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

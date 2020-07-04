@@ -2,10 +2,11 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Charactor/Monster/CHM_PengMao.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Player.h"
-#include "Charactor/Monster/CHM_PengMao.h"
+#include "Interface/IC_AbilityComp.h"
 
 UCHM_MaoSecondAttack::UCHM_MaoSecondAttack()
 {
@@ -37,6 +38,27 @@ UCHM_MaoSecondAttack::UCHM_MaoSecondAttack()
 	}
 
 #pragma endregion
+
+	//@LOAD Particle - SlowerDamage
+	{
+		//@Root
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_Slower_FromFreeze_Root.PS_Slower_FromFreeze_Root'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> SlowerPT_1(*Path);
+		if (SlowerPT_1.Succeeded())
+			SlowerParticle_Root = SlowerPT_1.Object;
+
+		//@Body
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_Slower_FromFreeze_Body.PS_Slower_FromFreeze_Body'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> SlowerPT_2(*Path);
+		if (SlowerPT_2.Succeeded())
+			SlowerParticle_Body = SlowerPT_2.Object;
+	}
+
+	//@Create Ability
+	{
+		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+		//TODO : Set Delegate
+	}
 }
 
 void UCHM_MaoSecondAttack::BeginPlay()
@@ -158,11 +180,11 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 	{
 		for (FHitResult& HitResult : HitResults)
 		{
-			IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
-			if (Charactor != nullptr)
+			IIC_Charactor* HitI_Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
+			if (HitI_Charactor != nullptr)
 			{
 				// 1. Get Interface HitComp
-				IIC_HitComp* I_HitComp = Charactor->GetIHitComp();
+				IIC_HitComp* I_HitComp = HitI_Charactor->GetIHitComp();
 				if (I_HitComp != nullptr)
 				{
 					// 1.1 Set Hit Attribute
@@ -190,7 +212,23 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
-			}
+
+
+				IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
+				if (HitI_AbilityComp != nullptr)
+				{
+					//CLog::Print(L"AbilityComp Not NULL!!");
+					FAbilityValue InputValue;
+					InputValue.bTimer = true;
+					InputValue.Timer = 3.0f;
+					InputValue.Value = AbilityDownSpeedValue;
+					AbilitySpeedDowner->SetAbilityValue(InputValue);
+
+					AbilitySpeedDowner->SetAppliedActor(HitResult.GetActor());
+					HitI_Charactor->GetIAbilityComp()->AddAbility(AbilitySpeedDowner);
+				}
+
+			}//(Charactor)
 			else
 				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
 		}
@@ -199,17 +237,17 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 
 void UCHM_MaoSecondAttack::BeginBeatedFunction(AActor * Subject)
 {
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
-	if (I_Charactor != nullptr)
+	IIC_Charactor* SubjectCharactorInterface = Cast<IIC_Charactor>(Subject);
+	if (SubjectCharactorInterface != nullptr)
 	{
-		I_Charactor->CanNotMove();
+		SubjectCharactorInterface->CanNotMove();
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack BeginBetedFunc, I_Charactor NULL!!");
 
-	IIC_Player* I_Player = Cast<IIC_Player>(Subject);
-	if (I_Player != nullptr)
+	IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Subject);
+	if (SubjectPlayerInterface != nullptr)
 	{
-		I_Player->OnBlockKeyInput();
+		SubjectPlayerInterface->OnBlockKeyInput();
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack BeginBetedFunc, I_Player NULL!!");
 
@@ -221,17 +259,17 @@ void UCHM_MaoSecondAttack::BeginBeatedFunction(AActor * Subject)
 
 void UCHM_MaoSecondAttack::EndBeatedFunction(AActor * Subject)
 {
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
-	if (I_Charactor != nullptr)
+	IIC_Charactor* SubjectCharactorInterface = Cast<IIC_Charactor>(Subject);
+	if (SubjectCharactorInterface != nullptr)
 	{
-		I_Charactor->CanMove();
+		SubjectCharactorInterface->CanMove();
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBeatedFunc, I_Charactor NULL!!");
 
-	IIC_Player* I_Player = Cast<IIC_Player>(Subject);
-	if (I_Player != nullptr)
+	IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Subject);
+	if (SubjectPlayerInterface != nullptr)
 	{
-		I_Player->OffBlockKeyInput();
+		SubjectPlayerInterface->OffBlockKeyInput();
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBetedFunc, I_Player NULL!!");
 }

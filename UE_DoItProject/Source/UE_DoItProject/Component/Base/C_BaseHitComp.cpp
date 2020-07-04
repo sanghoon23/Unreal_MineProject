@@ -131,10 +131,6 @@ bool UC_BaseHitComp::AddConditionData(UCBaseConditionType* ConditionData)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //@Get, Set
 
-//TMap<int32, class UMaterialInterface*>* UC_BaseHitComp::GetPoisionMaterialMaps()
-//{
-//	return &Map_PoisionMaterial;
-//}
 
 void UC_BaseHitComp::GetOriginPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out)
 {
@@ -209,11 +205,8 @@ UCBaseConditionType * UC_BaseHitComp::GetConditionData(int Index)
 	return ConditionDatas[Index];
 }
 
-void UC_BaseHitComp::GetConditionDatasAfterEmpty(TArray<UCBaseConditionType*>* OutDataArray, int Count)
+void UC_BaseHitComp::GetConditionDatasOutArray(TArray<UCBaseConditionType*>* OutDataArray, int Count)
 {
-	//@Empty - OutTArray
-	OutDataArray->Empty();
-
 	const int DataArraySize = ConditionDatas.Num();
 
 	int Size = 0;
@@ -232,18 +225,6 @@ void UC_BaseHitComp::GetConditionDatasAfterEmpty(TArray<UCBaseConditionType*>* O
 		OutDataArray->Add(ConditionDatas[i]);
 	}
 }
-
-void UC_BaseHitComp::GetConditionDatasByCount(TArray<UCBaseConditionType*>* OutDataArray, int IndexCount)
-{
-	if (ConditionDatas.Num() <= 0) return;
-	if (IndexCount >= ConditionDatas.Num() || IndexCount < 0) return;
-
-	for (int i = 0; i < IndexCount; ++i)
-	{
-		OutDataArray->Add(ConditionDatas[i]);
-	}
-}
-
 
 void UC_BaseHitComp::GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index)
 {

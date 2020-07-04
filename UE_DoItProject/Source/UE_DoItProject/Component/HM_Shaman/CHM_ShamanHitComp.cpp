@@ -176,40 +176,41 @@ void UCHM_ShamanHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type
 	//@Delegate 실행.
 	HM_Shaman->OnActionResetState.Broadcast(HM_Shaman);
 
-	///DamageType Process
-	if (IsDamagedFromOther() == true)
-	{
-		Type->OnHittingProcess(AttackingActor, HM_Shaman, this, DamageAmount);
-	}
+	Type->OnHittingProcess(AttackingActor, HM_Shaman, this, DamageAmount);
+
+	/////DamageType Process
+	//if (IsDamagedFromOther() == true)
+	//{
+	//}
 
 	//#Edit 0510 - 
 	//@Death Animation 은 AnimInstance 의 LocoMotion 을 이용
 
-	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
-	IfTrueRet(bBlockDamagedMontage);
+	////@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
+	//IfTrueRet(bBlockDamagedMontage);
 
-	//@콤보가 가능한지,
-	if (bCanHitCombo == true)
-	{
-		if (HitComboMon != nullptr)
-		{
-			HM_Shaman->ActorAnimMonPlay(HitComboMon, 0.6f, true);
-			SetCanHittedCombo(false); //@false
-			return; //@return
-		}
-	}
+	////@콤보가 가능한지,
+	//if (bCanHitCombo == true)
+	//{
+	//	if (HitComboMon != nullptr)
+	//	{
+	//		HM_Shaman->ActorAnimMonPlay(HitComboMon, 0.6f, true);
+	//		SetCanHittedCombo(false); //@false
+	//		return; //@return
+	//	}
+	//}
 
-	//@else
-	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	if (MontageNum >= DamagedMontages.Num())
-	{
-		UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
-		return;
-	}
-	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
-	if (RunMontage != nullptr)
-	{
-		HM_Shaman->ActorAnimMonPlay(RunMontage, 0.6f, true);
-	}
+	////@else
+	//const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
+	//if (MontageNum >= DamagedMontages.Num())
+	//{
+	//	UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
+	//	return;
+	//}
+	//UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
+	//if (RunMontage != nullptr)
+	//{
+	//	HM_Shaman->ActorAnimMonPlay(RunMontage, 0.6f, true);
+	//}
 
 }

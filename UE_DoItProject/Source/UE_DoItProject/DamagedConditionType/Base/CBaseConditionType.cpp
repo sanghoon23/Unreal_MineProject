@@ -23,6 +23,15 @@ void UCBaseConditionType::EndCondition(APawn * Owner)
 	ApplyTime = 0.0f;
 }
 
+void UCBaseConditionType::SetDamageSubjectController(AController * InputController)
+{
+	check(InputController);
+	DamageSubjectController = InputController;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//@ UI
+
 void UCBaseConditionType::InitUIColorAndOpacity()
 {
 	ColorAndOpacity = FLinearColor(FVector4(1.0f));
@@ -45,8 +54,8 @@ void UCBaseConditionType::UpdateUIColorAndOpacity(UCBaseConditionType* Condition
 	ConditionData->ColorAndOpacity.A = Opacity;
 }
 
-void UCBaseConditionType::SetDamageSubjectController(AController * InputController)
+void UCBaseConditionType::SetTextureUI(UTexture2D * Texture)
 {
-	check(InputController);
-	DamageSubjectController = InputController;
+	check(Texture);
+	TextureUI = Texture;
 }

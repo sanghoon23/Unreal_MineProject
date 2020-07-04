@@ -45,7 +45,7 @@ public:
 
 	/* Member */
 public:
-	void SetBurnTime(float ApplyStunTime) { BurnTime = ApplyStunTime; }
+	void SetBurnTime(float ApplyBurnTime) { BurnTime = ApplyBurnTime; }
 	float GetBurnTime() const { return BurnTime; }
 
 	void SetSecondDamageValue(float ApplyDamage) { SecondDamageValue = ApplyDamage; }

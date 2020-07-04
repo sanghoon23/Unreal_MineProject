@@ -6,7 +6,7 @@
 #include "Interface/IC_AbilityComp.h"
 #include "Interface/IC_MeshParticle.h"
 
-#include "Ability/Player/CPLAbility_Speed.h"
+#include "Ability/Player/CPLAbility_SpeedUpper.h"
 
 ACItem_Faster::ACItem_Faster()
 {
@@ -87,6 +87,25 @@ ACItem_Faster::ACItem_Faster()
 		{
 			FasterParticle = PS_Faster.Object;
 		}
+
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_ApplyFasterWithHand.PS_ApplyFasterWithHand'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_LHandSpeedUp(*strPath);
+		if (P_LHandSpeedUp.Succeeded())
+		{
+			SpeedUp_LHand = P_LHandSpeedUp.Object;
+		}
+
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_ApplyFasterWithHand.PS_ApplyFasterWithHand'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_RHandSpeedUp(*strPath);
+		if (P_RHandSpeedUp.Succeeded())
+		{
+			SpeedUp_RHand = P_RHandSpeedUp.Object;
+		}
+	}
+
+	//@Create Ability
+	{
+		AbilitySpeedUpper = NewObject<UCPLAbility_SpeedUpper>();
 	}
 }
 
@@ -96,6 +115,40 @@ void ACItem_Faster::BeginPlay()
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACItem_Faster::OnBegin);
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ACItem_Faster::OnEnd);
+
+	//@Setting Ability
+	{
+		//@Set Delegate - Start
+		AbilitySpeedUpper->OnDelStartTimerAbility.AddLambda([&](AActor* AppliedActor)
+		{
+			IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
+			if (I_Player != nullptr)
+			{
+				//@기존 Player Particle OFF
+				I_Player->OffParticleInPlayer();
+			}
+		});
+
+		//@Set Delegate - End
+		AbilitySpeedUpper->OnEndTimerAbility.AddLambda([&](AActor* AppliedActor)
+		{
+			IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
+			if (I_Player != nullptr)
+			{
+				//@기존 Player Particle ON
+				I_Player->OnParticleInPlayer();
+			}
+
+			//@Particle OFF
+			if (ParticleComp_LHand != nullptr)
+				ParticleComp_LHand->SetActive(false);
+			else CLog::Print(L"LHand Particle NULL!!");
+
+			if (ParticleComp_RHand != nullptr)
+				ParticleComp_RHand->SetActive(false);
+			else CLog::Print(L"RHand Particle NULL!!");
+		});
+	}
 }
 
 void ACItem_Faster::Tick(float DeltaTime)
@@ -130,8 +183,8 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 {
 	Super::ApplyEvent(EventedActor);
 
-	IIC_Player* I_Player = Cast<IIC_Player>(EventedActor);
-	if (I_Player != nullptr)
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(EventedActor);
+	if (I_Charactor != nullptr)
 	{
 		//@Collision OFF
 		BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -139,27 +192,7 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 		//@UnVisible
 		SetActorHiddenInGame(true);
 
-		//@Ability 추가
-		IIC_AbilityComp* I_AbilityComp = I_Player->GetIAbilityComp();
-		if (I_AbilityComp != nullptr)
-		{
-			//@Create Ability
-			UCPLAbility_Speed* AbilitySpeed = NewObject<UCPLAbility_Speed>();
-			FAbilityValue InputValue;
-			InputValue.bTimer = true;
-			InputValue.Timer = 5.0f;
-			InputValue.Value = AddSpeedValue;
-			AbilitySpeed->SetAbilityValue(InputValue);
-
-			AbilitySpeed->SetAppliedActor(EventedActor);
-
-			I_AbilityComp->AddAbility(AbilitySpeed);
-		}
-
-		//@Healing 파티클 실행
-		IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(EventedActor);
-		check(I_Charactor);
-
+		//@파티클 실행
 		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
 		check(I_MeshParticle);
 
@@ -172,10 +205,85 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 			EAttachLocation::SnapToTarget
 		);
 
+		//@LHand ParticleComp
+		ParticleComp_LHand = I_MeshParticle->SpawnParticleAtMesh
+		(
+			SpeedUp_LHand,
+			EAttachPointType::LHAND,
+			EAttachPointRelative::RELATIVE,
+			EAttachLocation::SnapToTarget
+		);
+
+		//@RHand ParticleComp
+		ParticleComp_RHand = I_MeshParticle->SpawnParticleAtMesh
+		(
+			SpeedUp_RHand,
+			EAttachPointType::RHAND,
+			EAttachPointRelative::RELATIVE,
+			EAttachLocation::SnapToTarget
+		);
+
+		//@Ability 추가
+		IIC_AbilityComp* I_AbilityComp = I_Charactor->GetIAbilityComp();
+		if (I_AbilityComp != nullptr)
+		{
+			//@Create Ability
+			//AbilitySpeedUpper = NewObject<UCPLAbility_SpeedUpper>();
+			FAbilityValue InputValue;
+			InputValue.bTimer = true;
+			InputValue.Timer = 5.0f;
+			InputValue.Value = AddSpeedValue;
+			AbilitySpeedUpper->SetAbilityValue(InputValue);
+
+			////@Set Delegate
+			//AbilitySpeed->OnDelStartTimerAbility.AddUObject(this, &ACItem_Faster::DelegateAbilityStart);
+			//AbilitySpeed->OnEndTimerAbility.AddUObject(this, &ACItem_Faster::DelegateAbilityEnd);
+
+			AbilitySpeedUpper->SetAppliedActor(EventedActor);
+			I_AbilityComp->AddAbility(AbilitySpeedUpper);
+		}
+
 		//@파괴
 		FTimerHandle DeathTimerHandle;
 		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACItem_Faster::Death, DeathTimeAfterRunning);
 
 	}//(I_Player != nullptr)
+
+}
+
+void ACItem_Faster::DelegateAbilityStart(AActor* AppliedActor)
+{
+	CLog::Print(L"Item Faster AbilityStart!!");
+	check(AppliedActor);
+
+	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
+	if (I_Player != nullptr)
+	{
+		//@기존 Player Particle OFF
+		I_Player->OffParticleInPlayer();
+	}
+}
+
+void ACItem_Faster::DelegateAbilityEnd(AActor* AppliedActor)
+{
+	CLog::Print(L"AbilityEnd In!!");
+
+	check(AppliedActor);
+
+	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
+	if (I_Player != nullptr)
+	{
+		//@기존 Player Particle ON
+		I_Player->OnParticleInPlayer();
+	}
+
+	//@Particle OFF
+	if (ParticleComp_LHand != nullptr)
+		ParticleComp_LHand->SetActive(false);
+	else CLog::Print(L"LHand Particle NULL!!");
+
+	if (ParticleComp_RHand != nullptr)
+		ParticleComp_RHand->SetActive(false);
+	else CLog::Print(L"RHand Particle NULL!!");
 
 }

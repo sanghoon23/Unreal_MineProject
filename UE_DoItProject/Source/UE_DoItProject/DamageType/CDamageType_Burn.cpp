@@ -29,7 +29,7 @@ UCDamageType_Burn::UCDamageType_Burn()
 
 	FString strPath = L"";
 
-	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/Test_UI_BurnWithTargetInfo.Test_UI_BurnWithTargetInfo'";
+	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_BurnTypeFill.Tex_BurnTypeFill'";
 	ConstructorHelpers::FObjectFinder<UTexture2D> BurnTexture(*strPath);
 	if (BurnTexture.Succeeded())
 	{
@@ -57,7 +57,7 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	AController* const PawnController = DamagedPawn->GetController();
 	check(PawnController);
 
-	//@예외처리
+	//@예외처리 - Damage 를 받지 않는 상황
 	IfFalseRet(DamagedActorHitComp->IsDamagedFromOther());
 
 	//@Create ConditionData
@@ -95,7 +95,7 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	UTexture2D* Texture = GetUITexture();
 	if (Texture != nullptr)
 	{
-		BurnConditionData->TextureUI = Texture;
+		BurnConditionData->SetTextureUI(Texture);
 	}
 
 	bool bAddResult = DamagedActorHitComp->AddConditionData(BurnConditionData);

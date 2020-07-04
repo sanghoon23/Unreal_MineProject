@@ -8,6 +8,8 @@
 #include "Interface/IC_HitComp.h"
 #include "Interface/IC_EquipComp.h"
 #include "Interface/IC_MeshParticle.h"
+#include "Interface/IC_AbilityComp.h"
+
 #include "Interface/IC_InteractActor.h"
 
 #include "IC_Charactor.generated.h"
@@ -97,6 +99,7 @@ public:
 	virtual IIC_AttackComp* GetIAttackComp() { return nullptr; }
 	virtual IIC_HitComp* GetIHitComp() { return nullptr; }
 	virtual IIC_EquipComp* GetIEquipComp() { return nullptr; }
+	virtual IIC_AbilityComp* GetIAbilityComp() { return nullptr; }
 	virtual IIC_MeshParticle* GetIMeshParticle() { return nullptr; }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
