@@ -26,17 +26,15 @@ class UE_DOITPROJECT_API IIC_HitComp
 	GENERATED_BODY()
 
 public:
-	// - Hit 됐을 때, 실행할 함수 Delegate
+	// - Hit Montage 실행 시, CN_BeginBeated 에서 사용
 	FBeginBeatedFunc BeginBeatedFunc;
 
 	// @param AActor* - 함수를 수행할 Hitted(Hit 당하는 ) 객체
 	// FOnHitFunc				OnHitFunc;
 
-	// - Hit 됐을 때, 기존 상태값들을 원래로 되돌리는 Delegate
+	// - Hit Montage 실행 시, CN_EndBeated 에서 사용
+	//@Warning - Montage 와 관련된 Delegate
 	FEndBeatedFunc EndBeatedFunc;
-
-	// @param AActor* - Hitted( Hit 당하는 ) 객체
-	// FOnHitResetState		OnHitResetState;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Pure Virtual Function */

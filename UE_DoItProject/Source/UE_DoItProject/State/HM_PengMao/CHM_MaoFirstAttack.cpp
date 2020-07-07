@@ -252,7 +252,7 @@ void UCHM_MaoFirstAttack::AttackOtherPawn()
 
 					if ((IsLastCombo() == true))
 					{
-						//@Set Delegate - 마무리 일격만 맞고 KeyInput 을 받지 않음.
+						//@Set Delegate - KeyInputBlock 시키기 위해
 						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoFirstAttack::BeginBeatedFunction);
 						I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_MaoFirstAttack::EndBeatedFunction);
 
@@ -277,7 +277,10 @@ void UCHM_MaoFirstAttack::AttackOtherPawn()
 					//CLog::Print(L"AbilityComp Not NULL!!");
 					FAbilityValue InputValue;
 					InputValue.bTimer = true;
-					InputValue.Timer = 3.0f;
+					(IsLastCombo() == true)
+						? InputValue.Timer = 6.0f
+						: InputValue.Timer = 2.5f;
+
 					InputValue.Value = AbilityDownSpeedValue;
 					AbilitySpeedDowner->SetAbilityValue(InputValue);
 

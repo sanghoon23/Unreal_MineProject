@@ -14,12 +14,18 @@ UCPLAbility_SpeedUpper::UCPLAbility_SpeedUpper()
 
 	//LOAD UI Texture 
 	{
-		strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Origin/Tex_SpeedType.Tex_SpeedType'";
+		strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_SpeedTypeFill.Tex_SpeedTypeFill'";
 		ConstructorHelpers::FObjectFinder<UTexture2D> SpeedUpTexture(*strPath);
 		if (SpeedUpTexture.Succeeded())
 		{
 			TextureUI = SpeedUpTexture.Object;
 		}
+	}
+
+	//@Set UI Color
+	{
+		//@긍정적 효과
+		ColorAndOpacity = FLinearColor(FVector4(0.0f, 1.0f, 1.0f, 1.0f));
 	}
 }
 
@@ -57,9 +63,6 @@ void UCPLAbility_SpeedUpper::EndUseTimerAbility()
 	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
 	if (I_Player != nullptr)
 	{
-		////@기존 Player Particle ON
-		//I_Player->OnParticleInPlayer();
-
 		//@ '-' Speed
 		{
 			ACPlayer* Player = Cast<ACPlayer>(AppliedActor);
@@ -84,17 +87,9 @@ void UCPLAbility_SpeedUpper::OverlapAbility(UCBaseAbility * Ability)
 		UE_LOG(LogTemp, Warning, L"UCPLAbility_SpeedUpper OverlapAbility Function Same NOT TYPE!!");
 	}
 
-	//CLog::Print(L"OverlapAbility!!");
-
 	EndUseTimerAbility();
 
-	//@Copy
-	OnEndTimerAbility.Clear();
-	OnEndTimerAbility = Ability->OnEndTimerAbility;
-	AbilityValue = Ability->GetAbilityValue();
+	Copy(Ability); //@Copy - DelegateRemove 수행
 
 	Ability->StartUseTimerAbility();
-
-	//const FAbilityValue& InputAbilityValue = Ability->GetAbilityValue();
-	//AbilityValue.Timer += InputAbilityValue.Timer;
 }

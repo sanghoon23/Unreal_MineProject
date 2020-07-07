@@ -107,14 +107,16 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 		FreezeConditionData->SetTextureUI(Texture);
 	}
 
+	//@Copy Delegate
+	{
+		FreezeConditionData->OnDelStartCondition = OnLinkStartUpsetCondition;
+		FreezeConditionData->OnDelEndCondition = OnLinkEndUpsetCondition;
+	}
+
+	//@ADD
 	bool bAddResult = DamagedActorHitComp->AddConditionData(FreezeConditionData);
 	if (bAddResult == false)
 	{
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp FREEZE AddConditionData Derived NULL!!");
 	}
-}
-
-void UCDamageType_Freeze::OnDamageDelegate(AActor * DamagedActor)
-{
-	Super::OnDamageDelegate(DamagedActor);
 }

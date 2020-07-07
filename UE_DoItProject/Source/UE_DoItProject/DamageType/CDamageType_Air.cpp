@@ -85,8 +85,3 @@ void UCDamageType_Air::OnHittingProcess(AActor * Subject, AActor * DamagedActor,
 		}
 	}
 }
-
-void UCDamageType_Air::OnDamageDelegate(AActor* DamagedActor)
-{
-	Super::OnDamageDelegate(DamagedActor);
-}

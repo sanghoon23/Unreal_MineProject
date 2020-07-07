@@ -2,9 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+
+#include "interface/IC_WidgetInfo.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_AbilityComp.h"
-#include "DamagedConditionType/Base/CBaseConditionType.h"
 
 #include "IC_Player.generated.h"
 
@@ -15,7 +16,7 @@ struct FPlayerInfo
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Asset")
-		TArray<UCBaseConditionType*> InfoConditionDataArray;
+		TArray<FViewConditionState> InfoConditionDataArray;
 
 public:
 	float MaxHP			= 0.0f;

@@ -73,8 +73,8 @@ ACProjectile_FreezeBall::ACProjectile_FreezeBall()
 
 	#pragma region Create DamageType
 	//@Create DamageType
-	DT_Freezing = NewObject<UCDamageType_Freeze>();
-	DT_Freezing->SetFreezingTime(5.0f);
+	DT_Freeze = NewObject<UCDamageType_Freeze>();
+	DT_Freeze->SetFreezingTime(5.0f);
 
 	#pragma endregion
 }
@@ -190,7 +190,7 @@ void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCom
 				HitComp->SetHitMoveSpeed(0.0f);
 
 				// 1.2 Hit Delegate - Normal(DamageType)
-				HitComp->OnHit(this, DT_Freezing, 21.0f);
+				HitComp->OnHit(this, DT_Freeze, 21.0f);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"Projectile FreezeBall OnBeginOverlap - HitComp Null!!");

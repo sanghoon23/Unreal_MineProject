@@ -39,12 +39,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ConditionData")
 		FLinearColor GetInfoConditionDataLinearColor(int ArrayNumber);
 
-	//UFUNCTION(BlueprintCallable, Category = "ConditionData")
-	//	class UCBaseConditionType* GetInfoMonsterConditionData(int ArrayNumber);
+	UFUNCTION(BlueprintCallable, Category = "ConditionData")
+		FSlateColor GetInfoConditionDataTintColor(int ArrayNumber);
 
-	//UFUNCTION(BlueprintCallable, Category = "ConditionData")
-	//	TArray<class UCBaseConditionType*> GetInfoMonsterConditionDataArray();
-
+public:
 	UFUNCTION(BlueprintCallable, Category = "Function")
 		void WigetVisible();
 

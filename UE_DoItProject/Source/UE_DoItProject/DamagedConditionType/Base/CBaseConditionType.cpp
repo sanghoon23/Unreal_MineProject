@@ -1,6 +1,31 @@
 #include "CBaseConditionType.h"
 #include "Global.h"
 
+UCBaseConditionType::UCBaseConditionType()
+{
+}
+
+void UCBaseConditionType::Copy(const UCBaseConditionType * const In)
+{
+	ColorAndOpacity = In->ColorAndOpacity;
+	TintColor = In->TintColor;
+	ApplyTime = In->ApplyTime;
+	bLinerColorDir = In->bLinerColorDir;
+
+	SetState(In->GetState());
+	SetDamageEvent(In->GetDamageEvent());
+	SetDamageSubjectController(In->DamageSubjectController);
+
+	OpacityLinearTimer = In->OpacityLinearTimer;
+	OpacityLinearSpeed = In->OpacityLinearSpeed;
+}
+
+void UCBaseConditionType::StartCondition(APawn * Owner)
+{
+	check(Owner);
+	OnDelStartCondition.Broadcast(Owner);
+}
+
 void UCBaseConditionType::UpdateCondition(APawn * Owner, float DeltaTime)
 {
 	check(Owner);
@@ -16,6 +41,9 @@ void UCBaseConditionType::UpdateCondition(APawn * Owner, float DeltaTime)
 
 void UCBaseConditionType::EndCondition(APawn * Owner)
 {
+	check(Owner);
+	OnDelEndCondition.Broadcast(Owner);
+
 	//@Init
 	ColorAndOpacity = FLinearColor(FVector4(1.0f));
 	bLinerColorDir = true;

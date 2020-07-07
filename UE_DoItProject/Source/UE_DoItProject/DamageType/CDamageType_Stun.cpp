@@ -89,6 +89,12 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 		UpsetStun->SetTextureUI(Texture);
 	}
 
+	//@Copy Delegate
+	{
+		UpsetStun->OnDelStartCondition = OnLinkStartUpsetCondition;
+		UpsetStun->OnDelEndCondition = OnLinkEndUpsetCondition;
+	}
+
 	bool bAddResult = DamagedActorHitComp->AddConditionData(UpsetStun);
 	if (bAddResult == false)
 	{
@@ -106,9 +112,4 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);
 	}
 
-}
-
-void UCDamageType_Stun::OnDamageDelegate(AActor* DamagedActor)
-{
-	Super::OnDamageDelegate(DamagedActor);
 }

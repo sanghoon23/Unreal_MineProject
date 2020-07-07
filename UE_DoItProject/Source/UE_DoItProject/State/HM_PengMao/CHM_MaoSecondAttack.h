@@ -6,7 +6,7 @@
 
 #include "DamageType/CDamageType_Normal.h"
 #include "DamageType/CDamageType_StrongAttack.h"
-#include "DamageType/CDamageType_Slower.h"
+#include "DamageType/CDamageType_Freeze.h"
 
 #include "Ability/Player/CPLAbility_SpeedDown.h"
 
@@ -39,6 +39,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_StrongAttack*	DT_Strong;
 
+	UPROPERTY(VisibleAnywhere, Category = "DamageType")
+		UCDamageType_Freeze*	DT_Freeze;
+
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SlowerParticle_Root;
 
@@ -47,6 +50,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 		class UCPLAbility_SpeedDown* AbilitySpeedDowner;
+
+public:
+	UFUNCTION()
+		void TimerFreezeHittedActor(AActor* Subject);
 
 #pragma endregion
 
@@ -84,6 +91,8 @@ private:
 	TArray<float> AttackRadiusVec; //@공격 둘레 - Sphere
 
 	float AbilityDownSpeedValue = -300.0f;
+
+	FTimerDelegate FreezeTimerDelegate;
 
 #pragma endregion
 

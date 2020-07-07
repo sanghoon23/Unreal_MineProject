@@ -14,12 +14,18 @@ UCPLAbility_SpeedDown::UCPLAbility_SpeedDown()
 
 	//LOAD UI Texture 
 	{
-		strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Origin/Tex_SpeedType.Tex_SpeedType'";
+		strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_SpeedTypeFill.Tex_SpeedTypeFill'";
 		ConstructorHelpers::FObjectFinder<UTexture2D> SpeedDownTexture(*strPath);
 		if (SpeedDownTexture.Succeeded())
 		{
 			TextureUI = SpeedDownTexture.Object;
 		}
+	}
+
+	//@Set UI Color
+	{
+		//@부정적 효과
+		ColorAndOpacity = FLinearColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 }
 
@@ -58,9 +64,6 @@ void UCPLAbility_SpeedDown::EndUseTimerAbility()
 	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
 	if (I_Player != nullptr)
 	{
-		////@기존 Player Particle ON
-		//I_Player->OnParticleInPlayer();
-
 		//@ '-' Speed
 		{
 			ACPlayer* Player = Cast<ACPlayer>(AppliedActor);
@@ -86,9 +89,9 @@ void UCPLAbility_SpeedDown::OverlapAbility(UCBaseAbility * Ability)
 	EndUseTimerAbility();
 
 	//@Copy
-	OnEndTimerAbility.Clear();
-	OnEndTimerAbility = Ability->OnEndTimerAbility;
-	AbilityValue = Ability->GetAbilityValue();
+	{
+		Copy(Ability); //@Copy - DelegateRemove 수행
+	}
 
 	Ability->StartUseTimerAbility();
 }

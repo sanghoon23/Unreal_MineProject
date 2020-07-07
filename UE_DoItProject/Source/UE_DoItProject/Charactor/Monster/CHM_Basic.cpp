@@ -79,6 +79,7 @@ void ACHM_Basic::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArra
 		FViewConditionState Insert;
 		Insert.TextureUI = ConditionType->GetTextureUI();
 		Insert.ColorAndOpacity = ConditionType->ColorAndOpacity;
+		Insert.TintSlateColor = FSlateColor(ConditionType->TintColor);
 		Insert.ApplyTime = ConditionType->ApplyTime;
 
 		OutArray->Emplace(Insert);

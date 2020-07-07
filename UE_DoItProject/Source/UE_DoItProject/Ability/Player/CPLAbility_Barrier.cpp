@@ -11,6 +11,17 @@ UCPLAbility_Barrier::UCPLAbility_Barrier()
 	AbilityType = EAbilityType::BARRIER;
 
 	FString strPath = L"";
+
+	//LOAD UI Texture 
+	{
+		strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_AmorTypeFill.Tex_AmorTypeFill'";
+		ConstructorHelpers::FObjectFinder<UTexture2D> BarrierTexture(*strPath);
+		if (BarrierTexture.Succeeded())
+		{
+			TextureUI = BarrierTexture.Object;
+		}
+	}
+
 	//@LOAD Particle
 	{
 		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_BarrierEffect.PS_BarrierEffect'";
@@ -21,6 +32,11 @@ UCPLAbility_Barrier::UCPLAbility_Barrier()
 		}
 	}
 
+	//@Set UI Color
+	{
+		//@긍정적 효과
+		ColorAndOpacity = FLinearColor(FVector4(0.0f, 1.0f, 1.0f, 1.0f));
+	}
 }
 
 void UCPLAbility_Barrier::StartUseTimerAbility()
@@ -121,8 +137,15 @@ void UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
 		Player->AddBarrierAmount(InputValue); //@Add Barrier Amount
 	}
 
-	const FAbilityValue& InputAbilityValue = Ability->GetAbilityValue();
-	AbilityValue.Timer += InputAbilityValue.Timer;
+	//@Copy
+	{
+		float BeforeBarrierAmount = GetAbilityValue().Value;
+		float BeforeBarrierTimer = GetAbilityValue().Timer;
+
+		Copy(Ability); //@Copy - DelegateRemove 수행
+
+		AbilityValue.Value += BeforeBarrierAmount;
+		AbilityValue.Timer += BeforeBarrierTimer;
+	}
 
 }
-

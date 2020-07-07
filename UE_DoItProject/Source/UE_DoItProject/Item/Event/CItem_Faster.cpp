@@ -235,6 +235,7 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 			InputValue.Value = AddSpeedValue;
 			AbilitySpeedUpper->SetAbilityValue(InputValue);
 
+			//TODO : Test
 			////@Set Delegate
 			//AbilitySpeed->OnDelStartTimerAbility.AddUObject(this, &ACItem_Faster::DelegateAbilityStart);
 			//AbilitySpeed->OnEndTimerAbility.AddUObject(this, &ACItem_Faster::DelegateAbilityEnd);

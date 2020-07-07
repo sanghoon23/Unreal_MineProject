@@ -60,6 +60,7 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 		TargetInfo.Distance = Player->GetDistanceTo(Target);
 	}
 
+	//@Get Condition Data
 	IIC_WidgetInfo* I_Widget = Cast<IIC_WidgetInfo>(Target);
 	if (I_Widget != nullptr)
 	{
@@ -113,25 +114,17 @@ FLinearColor UWG_TargetInfo::GetInfoConditionDataLinearColor(int ArrayNumber)
 	if (ArrayNumber >= ArraySize || ArraySize < 0)
 		return FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 0.0f)); //@Alpha 0
 
-	//if (TargetInfo.InfoConditionDataArray[ArrayNumber] == nullptr)
-	//	return FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 0.0f)); //@Alpha 0
-
 	return TargetInfo.InfoConditionDataArray[ArrayNumber].ColorAndOpacity;
 }
 
-//UCBaseConditionType * UWG_TargetInfo::GetInfoMonsterConditionData(int ArrayNumber)
-//{
-//	int ArraySize = TargetInfo.InfoConditionDataArray.Num();
-//	if (ArrayNumber >= ArraySize || ArraySize < 0)
-//		return nullptr;
-//
-//	return TargetInfo.InfoConditionDataArray[ArrayNumber];
-//}
-//
-//TArray<class UCBaseConditionType*> UWG_TargetInfo::GetInfoMonsterConditionDataArray()
-//{
-//	return TargetInfo.InfoConditionDataArray;
-//}
+FSlateColor UWG_TargetInfo::GetInfoConditionDataTintColor(int ArrayNumber)
+{
+	int ArraySize = TargetInfo.InfoConditionDataArray.Num();
+	if (ArrayNumber >= ArraySize || ArraySize < 0)
+		return FSlateColor(FLinearColor(FVector4(1.0f, 0.0f, 1.0f, 0.0f)));
+
+	return TargetInfo.InfoConditionDataArray[ArrayNumber].TintSlateColor;
+}
 
 void UWG_TargetInfo::WigetVisible()
 {

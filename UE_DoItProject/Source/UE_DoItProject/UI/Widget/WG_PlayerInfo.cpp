@@ -2,9 +2,9 @@
 #include "CLog.h"
 #include "UMG.h"
 
-#include "Interface/IC_Player.h"
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
+#include "Interface/IC_WidgetInfo.h"
 #include "Charactor/Player/CPlayer.h"
 
 UWG_PlayerInfo::UWG_PlayerInfo(const FObjectInitializer& ObjectInitializer)
@@ -38,6 +38,14 @@ void UWG_PlayerInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 	{
 		//Get PlayerInfo
 		InsertPlayerInfo(I_Player->GetPlayerInfo());
+	}
+
+	IIC_WidgetInfo* I_Widget = Cast<IIC_WidgetInfo>(Player);
+	if (I_Widget != nullptr)
+	{
+		//@자체적으로 GetConditionDatas 함수에서 Empty 로 갱신.
+		PlayerInfo.InfoConditionDataArray.Empty();
+		I_Widget->GetViewConditionStateForUI(&(PlayerInfo.InfoConditionDataArray));
 	}
 
 	////@IC_HitComp - 상태이상, ConditionData 를 가져오기 위해,
@@ -80,6 +88,38 @@ void UWG_PlayerInfo::InsertPlayerInfo(const FPlayerInfo & Insert)
 	//@BarrierAmount Clamp
 	PlayerInfo.BarrierAmount = Insert.BarrierAmount;
 	PlayerInfo.BarrierAmount = FMath::Clamp(PlayerInfo.BarrierAmount, 0.0f, PlayerInfo.MaxHP);
+}
+
+UTexture2D * UWG_PlayerInfo::GetInfoConditionTextureUI(int ArrayNumber)
+{
+	int ArraySize = PlayerInfo.InfoConditionDataArray.Num();
+	if (ArrayNumber >= ArraySize || ArraySize < 0)
+		return nullptr;
+
+	class UTexture2D* RetTexture
+		= PlayerInfo.InfoConditionDataArray[ArrayNumber].TextureUI;
+	if (RetTexture == nullptr)
+		return nullptr;
+
+	return RetTexture;
+}
+
+FLinearColor UWG_PlayerInfo::GetInfoConditionDataLinearColor(int ArrayNumber)
+{
+	int ArraySize = PlayerInfo.InfoConditionDataArray.Num();
+	if (ArrayNumber >= ArraySize || ArraySize < 0)
+		return FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 0.0f)); //@Alpha 0
+
+	return PlayerInfo.InfoConditionDataArray[ArrayNumber].ColorAndOpacity;
+}
+
+FSlateColor UWG_PlayerInfo::GetInfoConditionDataTintColor(int ArrayNumber)
+{
+	int ArraySize = PlayerInfo.InfoConditionDataArray.Num();
+	if (ArrayNumber >= ArraySize || ArraySize < 0)
+		return FSlateColor(FLinearColor(FVector4(1.0f, 0.0f, 1.0f, 0.0f)));
+
+	return PlayerInfo.InfoConditionDataArray[ArrayNumber].TintSlateColor;
 }
 
 void UWG_PlayerInfo::WigetVisible()

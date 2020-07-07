@@ -6,7 +6,6 @@
 
 #include "DamageType/CDamageType_Normal.h"
 #include "DamageType/CDamageType_StrongAttack.h"
-#include "DamageType/CDamageType_Slower.h"
 
 #include "Ability/Player/CPLAbility_SpeedDown.h"
 

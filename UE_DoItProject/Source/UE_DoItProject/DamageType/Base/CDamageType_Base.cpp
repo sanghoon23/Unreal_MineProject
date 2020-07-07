@@ -24,14 +24,6 @@ void UCDamageType_Base::OnHittingProcess(AActor* Subject, AActor* DamagedActor, 
 	check(DamagedActorHitComp);
 }
 
-void UCDamageType_Base::OnDamageDelegate(AActor * DamagedActor)
-{
-	check(DamagedActor);
-
-	// @Delegate ½ÇÇà
-	DamageFunc.Broadcast(DamagedActor);
-}
-
 void UCDamageType_Base::SetDamageImpulse(float DamageAmount)
 {
 	DamageImpulse = DamageAmount;

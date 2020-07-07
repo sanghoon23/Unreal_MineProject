@@ -98,15 +98,15 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 		BurnConditionData->SetTextureUI(Texture);
 	}
 
+	//@Copy Delegate
+	{
+		BurnConditionData->OnDelStartCondition = OnLinkStartUpsetCondition;
+		BurnConditionData->OnDelEndCondition = OnLinkEndUpsetCondition;
+	}
+
 	bool bAddResult = DamagedActorHitComp->AddConditionData(BurnConditionData);
 	if (bAddResult == false)
 	{
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp BURN AddConditionData Derived NULL!!");
 	}
 }
-
-void UCDamageType_Burn::OnDamageDelegate(AActor* DamagedActor)
-{
-	Super::OnDamageDelegate(DamagedActor);
-}
-

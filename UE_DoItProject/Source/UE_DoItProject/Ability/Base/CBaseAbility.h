@@ -43,10 +43,10 @@ class UE_DOITPROJECT_API UCBaseAbility
 	GENERATED_BODY()
 
 public:
-	/* AbilityComp 에서 Ability 상태가 시작되었을 때, 실행될 Delegate */
+	/* AbilityComp 에서 Ability 상태가 '시작' 되었을 때, 실행될 Delegate */
 	FDelStartTimerAbility OnDelStartTimerAbility;
 
-	/* AbilityComp 에서 Ability 상태가 종료 되었을 때, 실행될 Delegate */
+	/* AbilityComp 에서 Ability 상태가 '종료' 되었을 때, 실행될 Delegate */
 	FEndTimerAbility OnEndTimerAbility;
 
 
@@ -55,6 +55,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 		/* 상태정보 UI Color&Opacity */
 		FLinearColor ColorAndOpacity = FLinearColor(FVector4(1.0f));
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		/* 상태정보 - TintColor 로 UI 긍정적 효과 / 부정적 효과 구분 */
+		FLinearColor TintColor = FLinearColor(FVector4(1.0f, 0.0f, 1.0f, 1.0f));
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
@@ -71,6 +75,9 @@ private:
 
 public:
 	UCBaseAbility();
+
+	/* @Warning - Texture 는 포함하지 않음 */
+	void Copy(const UCBaseAbility* const In);
 
 	/* Pure Viratul Fucntion - IWidget */
 public:

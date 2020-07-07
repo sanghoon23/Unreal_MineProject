@@ -124,14 +124,14 @@ ACPlayer::ACPlayer()
 	#pragma region Player Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 100.0f;
-	Info.CurrentHP = 50.0f;
+	Info.MaxHP = 10000.0f;
+	Info.CurrentHP = 10000.0f;
 
 	Info.MaxMP = 100.0f;
 	Info.CurrentMP = 50.0f;
 
 	Info.Name = FName(L"PlayerName");
-	Info.InfoConditionDataArray.Init(nullptr, 5);
+	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
 }
@@ -556,13 +556,27 @@ void ACPlayer::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
 		FViewConditionState Insert;
 		Insert.TextureUI = ConditionType->GetTextureUI();
 		Insert.ColorAndOpacity = ConditionType->ColorAndOpacity;
+		Insert.TintSlateColor = FSlateColor(ConditionType->TintColor);
 		Insert.ApplyTime = ConditionType->ApplyTime;
 
 		OutArray->Emplace(Insert);
 	}
 
 	//@AbilityComp
+	TArray<UCBaseAbility*> Abilities;
+	AbilityComponent->GetAbilities(Abilities);
+	for (UCBaseAbility* Ability : Abilities)
+	{
+		FViewConditionState Insert;
+		Insert.TextureUI = Ability->GetTextureUI();
+		Insert.ColorAndOpacity = Ability->ColorAndOpacity;
+		CLog::Print(FVector(Ability->ColorAndOpacity));
 
+		Insert.TintSlateColor = FSlateColor(Ability->TintColor);
+		Insert.ApplyTime = Ability->GetApplyTimer();
+
+		OutArray->Emplace(Insert);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

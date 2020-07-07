@@ -55,9 +55,3 @@ void UCDamageType_StrongAttack::OnHittingProcess(AActor * Subject, AActor * Dama
 		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);
 	}
 }
-
-void UCDamageType_StrongAttack::OnDamageDelegate(AActor* DamagedActor)
-{
-	Super::OnDamageDelegate(DamagedActor);
-}
-

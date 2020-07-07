@@ -18,6 +18,9 @@ enum class EHitUpset : uint8
 	SLEEP		= 5, //수면
 };
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelStartCondition, AActor*)
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelEndCondition, AActor*)
+
 UCLASS(BlueprintType, ClassGroup = (Custom))
 class UE_DOITPROJECT_API UCBaseConditionType 
 	: public UObject
@@ -25,13 +28,21 @@ class UE_DOITPROJECT_API UCBaseConditionType
 	GENERATED_BODY()
 
 public:
-	UCBaseConditionType() {};
+	/* HitComp 에서 Condition 상황이 '시작' 되었을 때, 실행될 Delegate */
+	FDelStartCondition OnDelStartCondition;
+
+	/* HitComp 에서 Condition 상황이 '종료' 되었을 때, 실행될 Delegate */
+	FDelEndCondition OnDelEndCondition;
 
 	#pragma region Reflection
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 		/* 상태정보 UI Color&Opacity */
-		FLinearColor ColorAndOpacity = FLinearColor(FVector4(1.0f));
+		FLinearColor ColorAndOpacity = FLinearColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		/* 상태정보 - TintColor 로 UI 긍정적 효과 / 부정적 효과 구분 */
+		FLinearColor TintColor = FLinearColor(FVector4(1.0f, 0.0f, 1.0f, 1.0f));
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Data")
 		/* 상태 적용 시간 */
@@ -60,10 +71,17 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+public:
+	UCBaseConditionType();
+
+	/* @Warning - Texture 는 포함하지 않음 */
+	void Copy(const UCBaseConditionType* const In);
+
+
 	/* Virtual Function */
 public:
-	/* 해당 Owner 의 HitComp AddCondition 될 때 실행 함수*/
-	virtual void StartCondition(APawn* Owner) {};
+	/* 해당 Owner 의 HitComp AddCondition 될 때 실행 함수 */
+	virtual void StartCondition(APawn* Owner);
 
 	/* 해당 Owner 의 HitComp Tick 에서 Update */
 	virtual void UpdateCondition(APawn* Owner, float DeltaTime);
@@ -95,7 +113,7 @@ public:
 	void SetDamageEvent(const FDamageEvent& Event) { DamageEvent = Event; }
 
 	AController* GetDamageSubjectController() { return DamageSubjectController; }
-	void SetDamageSubjectController(AController* InputController);
+	void SetDamageSubjectController(class AController* InputController);
 
 protected:
 	// @Target Info UI 에 깜빡임을 시작할 시간

@@ -78,6 +78,12 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 		PoisionConditionData->SetTextureUI(Texture);
 	}
 
+	//@Copy Delegate
+	{
+		PoisionConditionData->OnDelStartCondition = OnLinkStartUpsetCondition;
+		PoisionConditionData->OnDelEndCondition = OnLinkEndUpsetCondition;
+	}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	TMap<int32, class UMaterialInterface*> ChangeMaterialMap;
@@ -109,15 +115,4 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 	{
 		UE_LOG(LogTemp, Warning, L"CDamageType_Poision AddConditionData Derived NULL!!");
 	}
-
-	////@Poision Material º¯°æ
-//if (DamagedCharactor != nullptr)
-//{
-//	DamagedCharactor->GetMesh()->SetMaterial(0, DamagedActorHitComp->GetPoisionMaterialOrNull());
-//}
-}
-
-void UCDamageType_Poision::OnDamageDelegate(AActor * DamagedActor)
-{
-	Super::OnDamageDelegate(DamagedActor);
 }

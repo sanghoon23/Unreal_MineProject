@@ -11,6 +11,13 @@ class UE_DOITPROJECT_API UCDamageType_Burn
 	GENERATED_BODY()
 	
 	#pragma region Reflection
+public:
+	/* UpsetCondition 생성 시, 넘어갈 '시작' Delegate */
+	FDelStartCondition OnLinkStartUpsetCondition;
+
+	/* UpsetCondition 생성 시, 넘어갈 '종료' Delegate */
+	FDelEndCondition OnLinkEndUpsetCondition;
+
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Texture")
@@ -36,8 +43,6 @@ public:
 	//@param InitialDamageAmount - 초기에 들어갈 데미지 값
 	//@param Montage - 맞는 액터가 시행할 Montage (default = nullptr)
 	virtual void OnHittingProcess(AActor* Subject, AActor* DamagedActor, class UC_BaseHitComp* DamagedActorHitComp, float InitialDamageAmount);
-
-	virtual void OnDamageDelegate(AActor* DamagedActor) override;
 
 	/* Function */
 public:

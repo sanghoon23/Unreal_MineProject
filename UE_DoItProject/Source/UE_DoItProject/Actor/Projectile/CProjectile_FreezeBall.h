@@ -16,7 +16,7 @@ class UE_DOITPROJECT_API ACProjectile_FreezeBall
 private:
 	// @DamageType
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Freeze*	DT_Freezing;
+		UCDamageType_Freeze*	DT_Freeze;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UParticleSystemComponent* ParticleComp;

@@ -1,8 +1,28 @@
 #include "CBaseAbility.h"
+#include "Global.h"
 
 UCBaseAbility::UCBaseAbility()
 {
 	AbilityType = EAbilityType::NONE;
+}
+
+void UCBaseAbility::Copy(const UCBaseAbility * const In)
+{
+	OnDelStartTimerAbility.RemoveAll(this);
+	OnEndTimerAbility.RemoveAll(this); //기존의 것 제거
+
+	OnDelStartTimerAbility = In->OnDelStartTimerAbility;
+	OnEndTimerAbility = In->OnEndTimerAbility;
+	ColorAndOpacity = In->ColorAndOpacity;
+	TintColor = In->TintColor;
+	bLinerColorDir = In->bLinerColorDir;
+
+	AbilityType = In->GetAbilityType();
+	SetAbilityValue(In->GetAbilityValue());
+	SetAppliedActor(In->AppliedActor);
+
+	OpacityLinearTimer = In->OpacityLinearTimer;
+	OpacityLinearSpeed = In->OpacityLinearSpeed;
 }
 
 void UCBaseAbility::StartUseTimerAbility()

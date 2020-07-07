@@ -35,6 +35,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "DataValue")
 		float GetInfoPlayerBarrierAmount() const { return PlayerInfo.BarrierAmount; }
 
+	UFUNCTION(BlueprintCallable, Category = "ConditionData")
+		class UTexture2D* GetInfoConditionTextureUI(int ArrayNumber);
+
+	UFUNCTION(BlueprintCallable, Category = "ConditionData")
+		FLinearColor GetInfoConditionDataLinearColor(int ArrayNumber);
+
+	UFUNCTION(BlueprintCallable, Category = "ConditionData")
+		FSlateColor GetInfoConditionDataTintColor(int ArrayNumber);
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Function")
 		void WigetVisible();

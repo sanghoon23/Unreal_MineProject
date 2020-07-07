@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/DamageType.h"
+#include "DamagedConditionType/Base/CBaseConditionType.h"
 
 #include "CDamageType_Base.generated.h"
 
@@ -20,8 +21,6 @@ enum class FDamageType
 	END				= 9,
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FDamageFunc, AActor*)
-
 UCLASS()
 class UE_DOITPROJECT_API UCDamageType_Base
 	: public UDamageType
@@ -30,8 +29,6 @@ class UE_DOITPROJECT_API UCDamageType_Base
 	
 	#pragma region Reflection
 public:
-	//UFUNCTION(BlueprintCallable, Category = "Texture")
-	//	virtual class UTexture2D* GetDamageTypeTexture() {}
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "DamageType")
@@ -57,10 +54,6 @@ public:
 	//@param Montage - 맞는 액터가 시행할 Montage (default = nullptr)
 	virtual void OnHittingProcess(AActor* Subject, AActor* DamagedActor, class UC_BaseHitComp* DamagedActorHitComp, float InitialDamageAmount);
 
-	// @DamageFunc Delegate 수행 
-	// @param Actor - 공격당하는, 데미지 받는 Actor
-	virtual void OnDamageDelegate(AActor* DamagedActor);
-
 	#pragma region Member
 	/* Virutla Member */
 public:
@@ -69,14 +62,10 @@ public:
 	virtual void SetDestructibleDamageSpreadScale(float SpreadScale);
 
 public:
-	FDamageFunc& GetDamageDelegate() { return DamageFunc; }
-
 	int GetTypeNumber() const { return TypeNumber; }
 	FDamageType GetConditionType() const { return DamageType; }
 
 protected:
-	/* @HitComp 에 들어갔을 때, 수행할 Delegate */
-	FDamageFunc DamageFunc;
 
 	#pragma endregion
 };

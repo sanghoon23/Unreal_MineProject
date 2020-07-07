@@ -57,7 +57,6 @@ UCHM_MaoSecondAttack::UCHM_MaoSecondAttack()
 	//@Create Ability
 	{
 		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
-		//TODO : Set Delegate
 	}
 }
 
@@ -81,7 +80,31 @@ void UCHM_MaoSecondAttack::BeginPlay()
 	DT_Strong = NewObject<UCDamageType_StrongAttack>();
 	DT_Strong->SetDamageImpulse(20.0f);
 
+	DT_Freeze = NewObject<UCDamageType_Freeze>();
+	DT_Freeze->SetDamageImpulse(10.0f);
+	DT_Freeze->SetFreezingTime(2.0f);
+
 #pragma endregion
+
+	////@Set Delegate
+	//{
+	//	DT_Freeze->OnLinkEndUpsetCondition.AddLambda([&](AActor* Owner)
+	//	{
+	//		IIC_Charactor* SubjectCharactorInterface = Cast<IIC_Charactor>(Owner);
+	//		if (SubjectCharactorInterface != nullptr)
+	//		{
+	//			SubjectCharactorInterface->CanMove();
+	//		}
+	//		else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBeatedFunc, I_Charactor NULL!!");
+
+	//		IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Owner);
+	//		if (SubjectPlayerInterface != nullptr)
+	//		{
+	//			SubjectPlayerInterface->OffBlockKeyInput();
+	//		}
+	//		else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBetedFunc, I_Player NULL!!");
+	//	});
+	//}
 
 	//@Setting Value
 	{
@@ -197,12 +220,26 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 
 					if ((IsLastCombo() == true))
 					{
-						I_HitComp->SetHitMoveSpeed(3.0f);
+						//@Set Delegate - OnKeyInputBlock 시키기 위해
+						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
+
+						I_HitComp->SetHitMoveSpeed(4.0f);
 						I_HitComp->OnHit(HM_PengMao, DT_Strong, DT_Strong->DamageImpulse);
 
-						//@Set Delegate
-						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
-						I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
+						//@Set Delegate - OffKeyInputBlock
+						DT_Freeze->OnLinkEndUpsetCondition.RemoveAll(DT_Freeze);
+						DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
+
+						//@Freeze Timer
+						FTimerHandle FreezeTimerHandle;
+						FreezeTimerDelegate = FTimerDelegate::CreateUObject(this, &UCHM_MaoSecondAttack::TimerFreezeHittedActor, HitResult.GetActor());
+						HitResult.GetActor()->GetWorldTimerManager().SetTimer
+						(
+							FreezeTimerHandle, 
+							FreezeTimerDelegate,
+							1.0f,
+							false
+						);
 					}
 					else
 					{
@@ -213,14 +250,14 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 				else
 					UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
 
-
+				//@Ability Insert - 부정적 효과 넣기
 				IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
-				if (HitI_AbilityComp != nullptr)
+				if (HitI_AbilityComp != nullptr && (IsLastCombo() == false))
 				{
 					//CLog::Print(L"AbilityComp Not NULL!!");
 					FAbilityValue InputValue;
 					InputValue.bTimer = true;
-					InputValue.Timer = 3.0f;
+					InputValue.Timer = 5.0f;
 					InputValue.Value = AbilityDownSpeedValue;
 					AbilitySpeedDowner->SetAbilityValue(InputValue);
 
@@ -249,12 +286,7 @@ void UCHM_MaoSecondAttack::BeginBeatedFunction(AActor * Subject)
 	{
 		SubjectPlayerInterface->OnBlockKeyInput();
 	}
-	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack BeginBetedFunc, I_Player NULL!!");
-
-	//IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
-	//if (I_HitComp != nullptr)
-	//{
-	//}
+	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack BeginBetedFunc, I_Player NULL!!")
 }
 
 void UCHM_MaoSecondAttack::EndBeatedFunction(AActor * Subject)
@@ -272,5 +304,18 @@ void UCHM_MaoSecondAttack::EndBeatedFunction(AActor * Subject)
 		SubjectPlayerInterface->OffBlockKeyInput();
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBetedFunc, I_Player NULL!!");
+}
+
+void UCHM_MaoSecondAttack::TimerFreezeHittedActor(AActor * Subject)
+{
+	IIC_Charactor* SubjectI_Charactor = Cast<IIC_Charactor>(Subject);
+	if (SubjectI_Charactor != nullptr)
+	{
+		IIC_HitComp* SubjectI_HitComp = SubjectI_Charactor->GetIHitComp();
+		if (SubjectI_HitComp != nullptr)
+		{
+			SubjectI_HitComp->OnHit(HM_PengMao, DT_Freeze, DT_Freeze->DamageImpulse);
+		}
+	}
 }
 
