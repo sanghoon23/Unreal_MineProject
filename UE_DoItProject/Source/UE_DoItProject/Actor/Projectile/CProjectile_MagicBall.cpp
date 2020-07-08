@@ -82,6 +82,7 @@ void ACProjectile_MagicBall::BeginPlay()
 	Super::BeginPlay();
 }
 
+//#Edit 0708 - @Warning - CNS_SpawnProjectile 로 생성되어져 나가는 것을 기억해라.
 void ACProjectile_MagicBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -91,7 +92,7 @@ void ACProjectile_MagicBall::Tick(float DeltaTime)
 	{
 		bSpawned = true;
 		FTimerHandle DeathTimerHandle;
-		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_MagicBall::Explosion, DeathTime);
+		//GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_MagicBall::Death, DeathTime);
 	}
 
 	if (SettingTarget != nullptr)
@@ -205,6 +206,15 @@ void ACProjectile_MagicBall::OnEndOverlap(UPrimitiveComponent * OverlappedCompon
 
 void ACProjectile_MagicBall::Explosion()
 {
+	//@NoCollision
+	SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	//@None Running Actor Tick
+	SetActorTickEnabled(false);
+
+	//@Visible
+	ParticleComp->SetActive(false);
+
 	//@터지는 파티클 실행
 	FTransform P_Transform;
 	P_Transform.SetLocation(GetActorLocation());

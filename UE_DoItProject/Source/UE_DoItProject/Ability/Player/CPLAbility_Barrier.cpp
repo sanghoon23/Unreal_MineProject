@@ -22,16 +22,6 @@ UCPLAbility_Barrier::UCPLAbility_Barrier()
 		}
 	}
 
-	//@LOAD Particle
-	{
-		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_BarrierEffect.PS_BarrierEffect'";
-		ConstructorHelpers::FObjectFinder<UParticleSystem> P_Barrier(*strPath);
-		if (P_Barrier.Succeeded())
-		{
-			ParticleBarrier = P_Barrier.Object;
-		}
-	}
-
 	//@Set UI Color
 	{
 		//@긍정적 효과
@@ -57,24 +47,6 @@ void UCPLAbility_Barrier::StartUseTimerAbility()
 	}
 	else
 		UE_LOG(LogTemp, Warning, L"UCPLAbility_Barrier I_Player NULL!!");
-
-	//@파티클 적용
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(AppliedActor);
-	if (I_Charactor != nullptr)
-	{
-		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
-		if (I_MeshParticle != nullptr)
-		{
-			//@Barrier ParticleComp
-			ParticleComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
-			(
-				ParticleBarrier, 
-				EAttachPointType::BODY,
-				EAttachPointRelative::RELATIVE,
-				EAttachLocation::SnapToTarget
-			);
-		}
-	}
 }
 
 void UCPLAbility_Barrier::TickUseTimerAbility(float DeltaTime)
@@ -113,10 +85,6 @@ void UCPLAbility_Barrier::EndUseTimerAbility()
 			Player->AddBarrierAmount(BarrierAmount);
 		}
 	}
-
-	//@Particle OFF
-	if (ParticleComp_Barrier != nullptr)
-		ParticleComp_Barrier->SetActive(false);
 }
 
 void UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
@@ -137,6 +105,8 @@ void UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
 		Player->AddBarrierAmount(InputValue); //@Add Barrier Amount
 	}
 
+	EndUseTimerAbility();
+
 	//@Copy
 	{
 		float BeforeBarrierAmount = GetAbilityValue().Value;
@@ -148,4 +118,5 @@ void UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
 		AbilityValue.Timer += BeforeBarrierTimer;
 	}
 
+	StartUseTimerAbility();
 }

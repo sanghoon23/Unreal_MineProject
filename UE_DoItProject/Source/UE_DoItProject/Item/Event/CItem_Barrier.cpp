@@ -55,10 +55,10 @@ ACItem_Barrier::ACItem_Barrier()
 	//@LOAD Mesh
 	{
 		strPath = L"StaticMesh'/Game/_Mine/Mesh/Item/SM_Barrier.SM_Barrier'";
-		ConstructorHelpers::FObjectFinder<UStaticMesh> SM_RecoveryHp(*strPath);
-		if (SM_RecoveryHp.Succeeded())
+		ConstructorHelpers::FObjectFinder<UStaticMesh> SM_Barrier(*strPath);
+		if (SM_Barrier.Succeeded())
 		{
-			StaticMesh->SetStaticMesh(SM_RecoveryHp.Object);
+			StaticMesh->SetStaticMesh(SM_Barrier.Object);
 		}
 
 		strPath = L"StaticMesh'/Engine/BasicShapes/Cylinder.Cylinder'";
@@ -66,6 +66,16 @@ ACItem_Barrier::ACItem_Barrier()
 		if (MeshHologram.Succeeded())
 		{
 			SM_HologramGlow->SetStaticMesh(MeshHologram.Object);
+		}
+	}
+
+	//@LOAD Particle
+	{
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_BarrierEffect.PS_BarrierEffect'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_Barrier(*strPath);
+		if (P_Barrier.Succeeded())
+		{
+			ParticleBarrier = P_Barrier.Object;
 		}
 	}
 
@@ -78,6 +88,11 @@ ACItem_Barrier::ACItem_Barrier()
 			SM_HologramGlow->SetMaterial(0, Mat_Hologram.Object);
 		}
 	}
+
+	//@Create Ability
+	{
+		AbilityBarrier = NewObject<UCPLAbility_Barrier>();
+	}
 }
 
 void ACItem_Barrier::BeginPlay()
@@ -86,6 +101,21 @@ void ACItem_Barrier::BeginPlay()
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACItem_Barrier::OnBegin);
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ACItem_Barrier::OnEnd);
+
+	//@Setting Delegate
+	{
+		AbilityBarrier->OnEndTimerAbility.AddUObject(this, &ACItem_Barrier::DelegateAbilityEnd);
+
+		//AbilityBarrier->OnEndTimerAbility.AddLambda([&](AActor*)
+		//{
+		//	CLog::Print(L"ParticleComp_Barrier Lambda IN!!");
+
+		//	//@Particle OFF
+		//	if (ParticleComp_Barrier != nullptr)
+		//		ParticleComp_Barrier->SetActive(false);
+		//	else CLog::Print(L"ParticleComp_Barrier NULL!!");
+		//});
+	}
 }
 
 void ACItem_Barrier::Tick(float DeltaTime)
@@ -124,24 +154,47 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 		//@UnVisible
 		SetActorHiddenInGame(true);
 
+		//@파티클 실행
+		{
+			IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
+			check(I_MeshParticle);
+
+			//@Barrier Effect
+			ParticleComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
+			(
+				ParticleBarrier,
+				EAttachPointType::BODY,
+				EAttachPointRelative::NONE,
+				EAttachLocation::SnapToTarget
+			);
+		}
+
 		//@Ability 추가
 		IIC_AbilityComp* I_AbilityComp = I_Charactor->GetIAbilityComp();
 		if (I_AbilityComp != nullptr)
 		{
 			//@Create Ability
-			UCPLAbility_Barrier* AbilityBarrier = NewObject<UCPLAbility_Barrier>();
 			FAbilityValue InputValue;
 			InputValue.bTimer = true;
-			InputValue.Timer = 5.0f;
+			InputValue.Timer = UsingAbilityTime;
 			InputValue.Value = AddBarrierAmount;
 			AbilityBarrier->SetAbilityValue(InputValue);
-			AbilityBarrier->SetAppliedActor(EventedActor); //@Set Actor
 
+			AbilityBarrier->SetAppliedActor(EventedActor); //@Set Actor
 			I_AbilityComp->AddAbility(AbilityBarrier);
 		}
-
-		//@파괴
-		FTimerHandle DeathTimerHandle;
-		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACItem_Barrier::Death, DeathTimeAfterRunning);
 	}
+}
+
+void ACItem_Barrier::DelegateAbilityEnd(AActor* AppliedActor)
+{
+	check(AppliedActor);
+
+	//@Particle OFF
+	if (ParticleComp_Barrier != nullptr)
+		ParticleComp_Barrier->SetActive(false);
+	else CLog::Print(L"ParticleComp_Barrier NULL!!");
+
+	//@DeathCall
+	Death();
 }

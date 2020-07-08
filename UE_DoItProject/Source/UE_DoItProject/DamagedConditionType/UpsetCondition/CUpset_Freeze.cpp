@@ -71,13 +71,13 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 
 	}//(I_Charactor != nullptr)
 
-	///
-	IIC_Monster* I_Monster = Cast<IIC_Monster>(Owner);
-	if (I_Monster != nullptr)
-	{
-		//@AI OFF
-		I_Monster->SetAIRunningPossible(false);
-	}
+	/////
+	//IIC_Monster* I_Monster = Cast<IIC_Monster>(Owner);
+	//if (I_Monster != nullptr)
+	//{
+	//	//@AI OFF
+	//	I_Monster->SetAIRunningPossible(false);
+	//}
 }
 
 void UCUpset_Freeze::UpdateCondition(APawn * Owner, float DeltaTime)
@@ -121,12 +121,12 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 			UE_LOG(LogTemp, Warning, L"CUPset_Freeze EndCondition FreezeUnderParticleComp NULL!!");
 	}
 
-	IIC_Monster* I_Monster = Cast<IIC_Monster>(Owner);
-	if (I_Monster != nullptr)
-	{
-		//@AI ON
-		I_Monster->SetAIRunningPossible(true);
-	}
+	//IIC_Monster* I_Monster = Cast<IIC_Monster>(Owner);
+	//if (I_Monster != nullptr)
+	//{
+	//	//@AI ON
+	//	I_Monster->SetAIRunningPossible(true);
+	//}
 
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
 	if (I_Charactor != nullptr)

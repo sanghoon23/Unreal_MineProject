@@ -58,6 +58,7 @@ ACProjectile_FreezeBall::ACProjectile_FreezeBall()
 			ParticleComp->SetTemplate(PT.Object);
 		}
 
+		ParticleComp->bAutoActivate = true;
 		ParticleComp->SetRelativeLocation(FVector(10.0f, 0.0f, 0.0f));
 		ParticleComp->SetRelativeScale3D(FVector(0.3f));
 	}
@@ -70,20 +71,64 @@ ACProjectile_FreezeBall::ACProjectile_FreezeBall()
 	{
 		P_ExplosionFreezeBall = PT_Explo.Object;
 	}
-
-	#pragma region Create DamageType
-	//@Create DamageType
-	DT_Freeze = NewObject<UCDamageType_Freeze>();
-	DT_Freeze->SetFreezingTime(5.0f);
-
-	#pragma endregion
 }
 
 void ACProjectile_FreezeBall::BeginPlay()
 {
 	Super::BeginPlay();
+
+#pragma region Create DamageType
+	//@Create DamageType
+	DT_Freeze = NewObject<UCDamageType_Freeze>();
+	DT_Freeze->SetFreezingTime(FreezeingTime);
+
+	////@Set Delegate - Start
+	////'=' 값 캡처
+	//DT_Freeze->OnLinkStartUpsetCondition.AddLambda([](AActor* AppliedActor)
+	//{
+	//	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(AppliedActor);
+	//	if (SubjectI_Monster != nullptr)
+	//	{
+	//		SubjectI_Monster->SetAIRunningPossible(false);
+	//	}
+	//});
+
+	////'=' 값 캡처
+	//DT_Freeze->OnLinkEndUpsetCondition.AddLambda([](AActor* AppliedActor)
+	//{
+	//	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(AppliedActor);
+	//	if (SubjectI_Monster != nullptr)
+	//	{
+	//		SubjectI_Monster->SetAIRunningPossible(true);
+	//	}
+	//});
+
+	//DT_Freeze->OnLinkStartUpsetCondition.AddWeakLambda(this, [](AActor* AppliedActor)
+	//{
+	//	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(AppliedActor);
+	//	if (SubjectI_Monster != nullptr)
+	//	{
+	//		SubjectI_Monster->SetAIRunningPossible(false);
+	//	}
+	//});
+
+	////'=' 값 캡처
+	//DT_Freeze->OnLinkEndUpsetCondition.AddWeakLambda(this, [](AActor* AppliedActor)
+	//{
+	//	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(AppliedActor);
+	//	if (SubjectI_Monster != nullptr)
+	//	{
+	//		SubjectI_Monster->SetAIRunningPossible(true);
+	//	}
+	//});
+
+	DT_Freeze->OnLinkStartUpsetCondition.AddUObject(this, &ACProjectile_FreezeBall::FreezeStartDel);
+	DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &ACProjectile_FreezeBall::FreezeEndDel);
+
+#pragma endregion
 }
 
+//#Edit 0708 - @Warning - CNS_SpawnProjectile 로 생성되어져 나가는 것을 기억해라.
 void ACProjectile_FreezeBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -93,15 +138,15 @@ void ACProjectile_FreezeBall::Tick(float DeltaTime)
 	{
 		bSpawned = true;
 		FTimerHandle DeathTimerHandle;
-		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_FreezeBall::Explosion, DeathTime);
+		//GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_FreezeBall::Explosion, DeathTime);
 	}
 
-	if (FollowingTarget != nullptr)
+	if (SettingTarget != nullptr)
 	{
-		UCFL_ActorAgainst::LookAtTarget(this, FollowingTarget);
+		UCFL_ActorAgainst::LookAtTarget(this, SettingTarget);
 
 		//@Target 이 움직일 수도 있어서 계산해주어야 함
-		FVector TargetLocation = FollowingTarget->GetActorLocation();
+		FVector TargetLocation = SettingTarget->GetActorLocation();
 		FVector Location = GetActorLocation();
 		Direction = TargetLocation - Location;
 		Direction.Normalize();
@@ -134,9 +179,9 @@ void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCom
 	IfTrueRet(OtherActor == this);
 
 	//@Following Target Check
-	if (FollowingTarget != nullptr)
+	if (SettingTarget != nullptr)
 	{
-		IfFalseRet(OtherActor == FollowingTarget);
+		IfFalseRet(OtherActor == SettingTarget);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,8 +219,6 @@ void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCom
 
 	if (bHit == true)
 	{
-		CLog::Print(HitResult.GetActor()->GetName());
-
 		//캐릭터 타입이 같지 않다면,
 		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
 		if (Charactor != nullptr && OwnerCharactor != nullptr &&
@@ -185,12 +228,21 @@ void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCom
 			IIC_HitComp* HitComp = Charactor->GetIHitComp();
 			if (HitComp != nullptr)
 			{
+				//@Particle OFF
+				ParticleComp->SetVisibility(false);
+
+				//@NoCollision
+				SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+				//@None Running Tick
+				SetActorTickEnabled(false);
+
 				// 1.1 Set Hit Attribute
 				HitComp->SetHitDirection(FVector(0.0f));
 				HitComp->SetHitMoveSpeed(0.0f);
 
-				// 1.2 Hit Delegate - Normal(DamageType)
-				HitComp->OnHit(this, DT_Freeze, 21.0f);
+				// 1.2 Hit Delegate - BeginPlay(DT_Freeze ADD Delegate)
+				HitComp->OnHit(this, DT_Freeze, 20.0f);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"Projectile FreezeBall OnBeginOverlap - HitComp Null!!");
@@ -218,7 +270,43 @@ void ACProjectile_FreezeBall::Explosion()
 	P_Transform.SetLocation(GetActorLocation());
 	P_Transform.SetScale3D(FVector(2.0f));
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionFreezeBall, P_Transform, true);
+}
+
+void ACProjectile_FreezeBall::FreezeStartDel(AActor * Subject)
+{
+	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+	if (SubjectI_Monster != nullptr)
+	{
+		SubjectI_Monster->SetAIRunningPossible(false);
+	}
+}
+
+void ACProjectile_FreezeBall::FreezeEndDel(AActor * Subject)
+{
+	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+	if (SubjectI_Monster != nullptr)
+	{
+		SubjectI_Monster->SetAIRunningPossible(true);
+	}
 
 	//@Projectile 파괴.
 	Death();
 }
+
+//void FreezeStartDel(AActor * Subject)
+//{
+//	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+//	if (SubjectI_Monster != nullptr)
+//	{
+//		SubjectI_Monster->SetAIRunningPossible(false);
+//	}
+//}
+//
+//void FreezeEndDel(AActor * Subject)
+//{
+//	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+//	if (SubjectI_Monster != nullptr)
+//	{
+//		SubjectI_Monster->SetAIRunningPossible(true);
+//	}
+//}

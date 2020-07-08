@@ -4,25 +4,6 @@
 #include "GameFramework/Actor.h"
 #include "CBaseProjectile.generated.h"
 
-USTRUCT()
-struct FProjectileData
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	FProjectileData() {};
-
-public:
-	UPROPERTY(VisibleAnywhere, Category = "Data")
-	float MoveSpeed = 10.0f;
-
-	UPROPERTY(VisibleAnywhere, Category = "Data")
-	FVector Direction = FVector(0.0f);
-
-	UPROPERTY(VisibleAnywhere, Category = "Data")
-	AActor* FollowingTarget = nullptr;
-};
-
 UCLASS()
 class UE_DOITPROJECT_API ACBaseProjectile 
 	: public AActor
@@ -37,7 +18,8 @@ public:
 protected:
 	/* */
 	UPROPERTY(VisibleAnywhere, Category = "Data")
-		AActor* FollowingTarget = nullptr;
+		/* ( 전역 ) Projectile 이 따라갈 Target 설정 */
+		AActor* SettingTarget = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class USphereComponent* SphereComp;
@@ -82,11 +64,9 @@ protected:
 	float MoveSpeed = 10.0f;
 	FVector Direction = FVector(0.0f);
 
-	/* ( 전역 ) Projectile 이 따라갈 Target 설정 */
-	AActor* SettingTarget = nullptr;
-
 private:
 	bool bOverlap = false;
+
 
 	#pragma endregion
 };

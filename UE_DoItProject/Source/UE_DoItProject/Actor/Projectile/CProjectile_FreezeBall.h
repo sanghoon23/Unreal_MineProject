@@ -12,6 +12,9 @@ class UE_DOITPROJECT_API ACProjectile_FreezeBall
 {
 	GENERATED_BODY()
 
+private:
+	const float FreezeingTime = 5.0f;
+
 	#pragma	region Reflection
 private:
 	// @DamageType
@@ -47,6 +50,11 @@ public:
 public:
 	virtual void Explosion() override;
 
+	/* Function */
+private:
+	void FreezeStartDel(AActor* Subject);
+	void FreezeEndDel(AActor* Subject);
+
 	/* Member */
 private:
 	float CollisionSphereRadius = 100.0f;
@@ -55,5 +63,5 @@ private:
 	bool bSpawned = false;
 
 	/* Destory µÉ ½Ã°£ */
-	float DeathTime = 5.0f;
+	float DeathTime = 10.0f;
 };

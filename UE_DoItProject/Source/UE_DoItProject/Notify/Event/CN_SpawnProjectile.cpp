@@ -61,6 +61,7 @@ void UCN_SpawnProjectile::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 		SpawnProjectile->SettingDirection(Direction);
 		if (Target != nullptr)
 		{
+			//CLog::Print(Target->GetName());
 			SpawnProjectile->SettingTargetActor(Target);
 		}
 	}

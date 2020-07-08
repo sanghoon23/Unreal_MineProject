@@ -5,6 +5,7 @@
 
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_Monster.h"
 #include "Interface/IC_BaseAttack.h"
 #include "Charactor/Player/CPlayer.h"
 #include "Actor/Cable/CPL_CableObject.h"
@@ -210,9 +211,13 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 			{
 				// 1.1 Set Hit Attribute
 				HitComp->SetHitDirection(FVector(0.0f));
-
-				// 1.2 OnHit
 				HitComp->SetHitMoveSpeed(0.0f);
+
+				//1.2 DT_Stun Delegate
+				DT_Stun->OnLinkStartUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunStartDel);
+				DT_Stun->OnLinkEndUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunEndDel);
+
+				// 1.3 OnHit
 				HitComp->OnHit(Player, DT_Stun, 5.0f);
 			}
 		}
@@ -264,5 +269,23 @@ void UCPL_ActionPullActorWithCable::PullingTargetLocation(AActor * PulledTarget)
 
 		//@Set Location
 		PulledTarget->SetActorLocation(TargetLocation);
+	}
+}
+
+void UCPL_ActionPullActorWithCable::StunStartDel(AActor * Subject)
+{
+	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+	if (SubjectI_Monster != nullptr)
+	{
+		SubjectI_Monster->SetAIRunningPossible(false);
+	}
+}
+
+void UCPL_ActionPullActorWithCable::StunEndDel(AActor * Subject)
+{
+	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+	if (SubjectI_Monster != nullptr)
+	{
+		SubjectI_Monster->SetAIRunningPossible(false);
 	}
 }

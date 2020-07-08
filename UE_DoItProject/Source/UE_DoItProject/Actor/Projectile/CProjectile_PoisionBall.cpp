@@ -86,6 +86,7 @@ void ACProjectile_PoisionBall::BeginPlay()
 	Super::BeginPlay();
 }
 
+//#Edit 0708 - @Warning - CNS_SpawnProjectile 로 생성되어져 나가는 것을 기억해라.
 void ACProjectile_PoisionBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -95,15 +96,15 @@ void ACProjectile_PoisionBall::Tick(float DeltaTime)
 	{
 		bSpawned = true;
 		FTimerHandle DeathTimerHandle;
-		GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_PoisionBall::Explosion, DeathTime);
+		//GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_PoisionBall::Death, DeathTime);
 	}
 
-	if (FollowingTarget != nullptr)
+	if (SettingTarget != nullptr)
 	{
-		UCFL_ActorAgainst::LookAtTarget(this, FollowingTarget);
+		UCFL_ActorAgainst::LookAtTarget(this, SettingTarget);
 
 		//@Target 이 움직일 수도 있어서 계산해주어야 함
-		FVector TargetLocation = FollowingTarget->GetActorLocation();
+		FVector TargetLocation = SettingTarget->GetActorLocation();
 		FVector Location = GetActorLocation();
 		Direction = TargetLocation - Location;
 		Direction.Normalize();
@@ -135,9 +136,9 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 	IfTrueRet(OtherActor == this);
 
 	//@Following Target Check
-	if (FollowingTarget != nullptr)
+	if (SettingTarget != nullptr)
 	{
-		IfFalseRet(OtherActor == FollowingTarget);
+		IfFalseRet(OtherActor == SettingTarget);
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,8 +176,6 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 
 	if (bHit == true)
 	{
-		CLog::Print(HitResult.GetActor()->GetName());
-
 		//캐릭터 타입이 같지 않다면,
 		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
 		if (Charactor != nullptr && OwnerCharactor != nullptr &&
@@ -214,6 +213,15 @@ void ACProjectile_PoisionBall::OnEndOverlap(UPrimitiveComponent * OverlappedComp
 
 void ACProjectile_PoisionBall::Explosion()
 {
+	//@NoCollision
+	SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	//@None Running Actor Tick
+	SetActorTickEnabled(false);
+
+	//@Visible
+	ParticleComp->SetActive(false);
+
 	//@터지는 파티클 실행
 	FTransform P_Transform;
 	P_Transform.SetLocation(GetActorLocation());

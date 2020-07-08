@@ -34,8 +34,8 @@ void UCPLAbility_SpeedUpper::StartUseTimerAbility()
 	Super::StartUseTimerAbility();
 	check(AppliedActor);
 
-	//@Onwer 가 다를 수 있음
-	OnDelStartTimerAbility.Broadcast(AppliedActor);
+	////@Onwer 가 다를 수 있음
+	//OnDelStartTimerAbility.Broadcast(AppliedActor);
 
 	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
 	if (I_Player != nullptr)
@@ -57,8 +57,8 @@ void UCPLAbility_SpeedUpper::EndUseTimerAbility()
 	Super::EndUseTimerAbility();
 	check(AppliedActor);
 
-	//@Onwer 가 다를 수 있음
-	OnEndTimerAbility.Broadcast(AppliedActor);
+	////@Onwer 가 다를 수 있음
+	//OnEndTimerAbility.Broadcast(AppliedActor);
 
 	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
 	if (I_Player != nullptr)

@@ -10,7 +10,7 @@ class UE_DOITPROJECT_API ACItemBox_MediumWood
 {
 	GENERATED_BODY()
 
-	const float DeathTimeAfterRunning = 3.0f;
+	const float DeathTimeAfterRunning = 5.0f;
 
 	#pragma	region Reflection
 private:

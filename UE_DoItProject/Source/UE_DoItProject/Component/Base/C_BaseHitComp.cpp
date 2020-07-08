@@ -23,18 +23,6 @@ void UC_BaseHitComp::BeginPlay()
 
 	I_Charactor = Cast<IIC_Charactor>(GetOwner());
 	check(I_Charactor);
-	I_Charactor->OnDeathDelegate.AddLambda([&]()
-	{
-		APawn* OwnerPawn = Cast<APawn>(GetOwner());
-		check(OwnerPawn);
-
-		////@죽었을 땐 ConditionData 를 비운다.
-		//for (int i = 0; i < ConditionDatas.Num(); ++i)
-		//{
-		//	ConditionDatas[i]->EndCondition(OwnerPawn);
-		//}
-		//ConditionDatas.Empty();
-	});
 }
 
 void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -50,6 +38,8 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	//{
 	//	IfTrueRet(OwnerCharactor->IsDeath() == true);
 	//}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//@Apply 시간 다 되면 제거
 	TArray<int> DeleteIndex;

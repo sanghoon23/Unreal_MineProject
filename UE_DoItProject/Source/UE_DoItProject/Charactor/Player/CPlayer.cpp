@@ -124,8 +124,8 @@ ACPlayer::ACPlayer()
 	#pragma region Player Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 10000.0f;
-	Info.CurrentHP = 10000.0f;
+	Info.MaxHP = 300.0f;
+	Info.CurrentHP = 200.0f;
 
 	Info.MaxMP = 100.0f;
 	Info.CurrentMP = 50.0f;
@@ -570,8 +570,6 @@ void ACPlayer::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
 		FViewConditionState Insert;
 		Insert.TextureUI = Ability->GetTextureUI();
 		Insert.ColorAndOpacity = Ability->ColorAndOpacity;
-		CLog::Print(FVector(Ability->ColorAndOpacity));
-
 		Insert.TintSlateColor = FSlateColor(Ability->TintColor);
 		Insert.ApplyTime = Ability->GetApplyTimer();
 

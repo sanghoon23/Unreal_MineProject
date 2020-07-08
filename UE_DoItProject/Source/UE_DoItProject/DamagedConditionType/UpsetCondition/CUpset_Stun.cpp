@@ -61,9 +61,9 @@ void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 		IIC_Monster* I_Monster = Cast<IIC_Monster>(Charactor);
 		if (ApplyTime > 0.0f && IsOtherMonPlaying == false)
 		{
-			//@AI OFF
-			if(I_Monster != nullptr)
-				I_Monster->SetAIRunningPossible(false);
+			////@AI OFF
+			//if(I_Monster != nullptr)
+			//	I_Monster->SetAIRunningPossible(false);
 
 			//@RUN Montage
 			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Charactor);
@@ -79,9 +79,9 @@ void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 		//@ApplyTime 이 지났다면,
 		else if (ApplyTime <= 0.0f)
 		{
-			//@AI ON
-			if (I_Monster != nullptr)
-				I_Monster->SetAIRunningPossible(true);
+			////@AI ON
+			//if (I_Monster != nullptr)
+			//	I_Monster->SetAIRunningPossible(true);
 
 			if (IsPlayingNonAction == true)
 			{

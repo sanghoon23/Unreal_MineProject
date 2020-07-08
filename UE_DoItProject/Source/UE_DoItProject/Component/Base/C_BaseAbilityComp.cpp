@@ -1,6 +1,7 @@
 #include "C_BaseAbilityComp.h"
 #include "Global.h"
 
+#include "Interface/IC_Charactor.h"
 #include "Ability/Base/CBaseAbility.h"
 
 UC_BaseAbilityComp::UC_BaseAbilityComp()
@@ -18,6 +19,15 @@ void UC_BaseAbilityComp::BeginPlay()
 void UC_BaseAbilityComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	////@죽었다면 Return
+	//IIC_Charactor* OwnerCharactor = Cast<IIC_Charactor>(GetOwner());
+	//if (OwnerCharactor != nullptr)
+	//{
+	//	IfTrueRet(OwnerCharactor->IsDeath() == true);
+	//}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	TArray<EAbilityType> RemoveTypes; //제거할 컨테이너
 	for (auto& MapValue : AddAbilityMap)

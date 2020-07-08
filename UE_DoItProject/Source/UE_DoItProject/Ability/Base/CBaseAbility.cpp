@@ -28,6 +28,9 @@ void UCBaseAbility::Copy(const UCBaseAbility * const In)
 void UCBaseAbility::StartUseTimerAbility()
 {
 	check(AppliedActor);
+
+	//@Onwer 가 다를 수 있음
+	OnDelStartTimerAbility.Broadcast(AppliedActor);
 }
 
 void UCBaseAbility::TickUseTimerAbility(float DeltaTime)
@@ -44,6 +47,9 @@ void UCBaseAbility::TickUseTimerAbility(float DeltaTime)
 void UCBaseAbility::EndUseTimerAbility()
 {
 	check(AppliedActor);
+
+	//@Onwer 가 다를 수 있음
+	OnEndTimerAbility.Broadcast(AppliedActor);
 }
 
 void UCBaseAbility::OverlapAbility(class UCBaseAbility* Ability)

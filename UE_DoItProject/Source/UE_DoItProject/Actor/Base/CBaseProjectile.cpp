@@ -6,11 +6,6 @@
 ACBaseProjectile::ACBaseProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	//@Setting
-	{
-		FollowingTarget = SettingTarget;
-	}
 }
 
 void ACBaseProjectile::BeginPlay()
@@ -26,13 +21,16 @@ void ACBaseProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//@¸¸¾à Å¸°ÙÀÌ Á×¾ú´Ù¸é, Æø¹ß
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(SettingTarget);
-	if (I_Charactor != nullptr)
+	//@¸¸¾à Å¸°ÙÀÌ Á×¾ú´Ù¸é, Death
+	if (SettingTarget != nullptr)
 	{
-		if (I_Charactor->IsDeath() == true)
+		IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(SettingTarget);
+		if (I_Charactor != nullptr)
 		{
-			Death();
+			if (I_Charactor->IsDeath() == true)
+			{
+				Death();
+			}
 		}
 	}
 
@@ -64,6 +62,13 @@ void ACBaseProjectile::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, A
 
 void ACBaseProjectile::Death()
 {
+	//FTimerDelegate Delegate;
+	//Delegate.BindLambda([&]()
+	//{
+	//});
+	//
+	//GetWorldTimerManager().SetTimer(DeathTimerHandle, Delegate, 5.0f, false);
+
 	Destroy();
 }
 

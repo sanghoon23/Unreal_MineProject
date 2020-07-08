@@ -41,6 +41,9 @@ public:
 private:
 	void PullingTargetLocation(AActor* PulledTarget);
 
+	void StunStartDel(AActor* Subject);
+	void StunEndDel(AActor* Subject);
+
 	/* Member */
 private:
 	class ACPlayer* Player;
