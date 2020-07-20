@@ -22,10 +22,15 @@ ACHM_PengMao::ACHM_PengMao()
 
 	// Create Component
 	{
-		AttackComponent = CreateDefaultSubobject<UCHM_MaoAttackComp>("AttackComp");
-		HitComp = CreateDefaultSubobject<UCHM_MaoHitComp>("HitComp");
-		EquipComp = CreateDefaultSubobject<UCHM_MaoEquipComp>("EquipComponent");
-		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
+		HitComp = CreateDefaultSubobject<UCHM_MaoHitComp>(TEXT("HitComp"));
+		EquipComp = CreateDefaultSubobject<UCHM_MaoEquipComp>(TEXT("EquipComponent"));
+		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>(TEXT("MeshParticleComp"));
+		AttackComp = CreateDefaultSubobject<UCHM_MaoAttackComp>(TEXT("AttackCom"));
+
+		//AddOwnedComponent(AttackComponent);
+		//AddOwnedComponent(HitComp);
+		//AddOwnedComponent(AttackComponent);
+		//AddOwnedComponent(AttackComponent);
 	}
 
 	#pragma region Monster Info Setting
@@ -213,8 +218,8 @@ void ACHM_PengMao::CallDestory()
 
 IIC_AttackComp * ACHM_PengMao::GetIAttackComp()
 {
-	IfTrueRetResult(AttackComponent == nullptr, nullptr); // @Return Null
-	return Cast<IIC_AttackComp>(AttackComponent);
+	IfTrueRetResult(AttackComp == nullptr, nullptr); // @Return Null
+	return Cast<IIC_AttackComp>(AttackComp);
 }
 
 IIC_EquipComp * ACHM_PengMao::GetIEquipComp()

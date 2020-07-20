@@ -218,7 +218,7 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 					I_HitComp->SetHitDirection(HitDirection);
 					//I_HitComp->SetHitMoveSpeed(0.3f);
 
-					if ((IsLastCombo() == true))
+					if ((IsLastCombo() == true)) //마지막 일격
 					{
 						//@Set Delegate - OnKeyInputBlock 시키기 위해
 						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
@@ -230,7 +230,7 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 						DT_Freeze->OnLinkEndUpsetCondition.RemoveAll(DT_Freeze);
 						DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
 
-						//@Freeze Timer
+						//@Set Timer - Freeze Timer
 						FTimerHandle FreezeTimerHandle;
 						FreezeTimerDelegate = FTimerDelegate::CreateUObject(this, &UCHM_MaoSecondAttack::TimerFreezeHittedActor, HitResult.GetActor());
 						HitResult.GetActor()->GetWorldTimerManager().SetTimer
@@ -241,33 +241,68 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 							false
 						);
 					}
-					else
+					else //첫번째 공격
 					{
+						//@Slower 느려지게 하기.
+						{
+							IIC_MeshParticle* I_MeshParticle = HitI_Charactor->GetIMeshParticle();
+							check(I_MeshParticle);
+
+							FTransform RootTrans = FTransform::Identity;
+							RootTrans.SetScale3D(FVector(2.0f));
+							UParticleSystemComponent* PTComp_SlowerRoot = I_MeshParticle->SpawnParticleAtMesh
+							(
+								SlowerParticle_Root,
+								EAttachPointType::ROOT,
+								EAttachPointRelative::NONE,
+								EAttachLocation::SnapToTarget,
+								RootTrans
+							);
+
+							FTransform BodyTrans = FTransform::Identity;
+							BodyTrans.SetScale3D(FVector(2.0f));
+							UParticleSystemComponent* PTComp_SlowerBody = I_MeshParticle->SpawnParticleAtMesh
+							(
+								SlowerParticle_Body,
+								EAttachPointType::ROOT,
+								EAttachPointRelative::NONE,
+								EAttachLocation::SnapToTarget,
+								BodyTrans
+							);
+
+							AbilitySpeedDowner->OnDelStartTimerAbility.AddLambda([PTComp_SlowerRoot, PTComp_SlowerBody](AActor*)
+							{
+								PTComp_SlowerRoot->SetActive(false);
+								PTComp_SlowerBody->SetActive(false);
+							});
+
+							//@Ability Insert - 부정적 효과 넣기
+							IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
+							if (HitI_AbilityComp != nullptr && (IsLastCombo() == false))
+							{
+								//CLog::Print(L"AbilityComp Not NULL!!");
+								FAbilityValue InputValue;
+								InputValue.bTimer = true;
+								InputValue.Timer = 7.0f;
+								InputValue.Value = AbilityDownSpeedValue;
+								AbilitySpeedDowner->SetAbilityValue(InputValue);
+
+								AbilitySpeedDowner->SetAppliedActor(HitResult.GetActor());
+								HitI_Charactor->GetIAbilityComp()->AddAbility(AbilitySpeedDowner);
+							}
+						}
+						
+						//@Normal Attack
 						I_HitComp->SetHitMoveSpeed(1.5f);
 						I_HitComp->OnHit(HM_PengMao, DT_Noraml, DT_Noraml->DamageImpulse);
-					}
+					}//else(첫번째 공격)
 				}
 				else
-					UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");
-
-				//@Ability Insert - 부정적 효과 넣기
-				IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
-				if (HitI_AbilityComp != nullptr && (IsLastCombo() == false))
-				{
-					//CLog::Print(L"AbilityComp Not NULL!!");
-					FAbilityValue InputValue;
-					InputValue.bTimer = true;
-					InputValue.Timer = 5.0f;
-					InputValue.Value = AbilityDownSpeedValue;
-					AbilitySpeedDowner->SetAbilityValue(InputValue);
-
-					AbilitySpeedDowner->SetAppliedActor(HitResult.GetActor());
-					HitI_Charactor->GetIAbilityComp()->AddAbility(AbilitySpeedDowner);
-				}
+					UE_LOG(LogTemp, Warning, L"CHM_MaoSecondAttack CallAttack - HitComp Null!!");
 
 			}//(Charactor)
 			else
-				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - Charactor Null!!");
+				UE_LOG(LogTemp, Warning, L"CHM_MaoSecondAttack CallAttack - Charactor Null!!");
 		}
 	}
 }

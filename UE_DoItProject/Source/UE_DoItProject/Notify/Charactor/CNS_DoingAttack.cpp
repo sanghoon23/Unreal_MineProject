@@ -2,6 +2,7 @@
 #include "Global.h"
 
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAttack.h"
 
 void UCNS_DoingAttack::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, float TotalDuration)
@@ -11,8 +12,18 @@ void UCNS_DoingAttack::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSeque
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
 	IfNullRet(Charactor);
 
+	IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
+	IfNullRet(I_AttackComp);
+
 	// Attack
-	Charactor->GetIAttackComp()->GetCurrentIBaseAttack()->AttackOtherPawn();
+	IIC_BaseAttack* BaseAttack = I_AttackComp->GetCurrentIBaseAttack();
+	if (BaseAttack != nullptr)
+	{
+		BaseAttack->AttackOtherPawn();
+	}
+
+	//@Init
+	AttackTimer = 0.0f;
 }
 
 void UCNS_DoingAttack::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, float FrameDeltaTime)
@@ -22,10 +33,27 @@ void UCNS_DoingAttack::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequen
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
 	IfNullRet(Charactor);
 
+	IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
+	IfNullRet(I_AttackComp);
+
+	if (bOnRunningTickOtherAttack == true)
+	{
+		AttackTimer += FrameDeltaTime;
+		if (OtherAttackTimerRange < AttackTimer)
+		{
+			IIC_BaseAttack* BaseAttack = I_AttackComp->GetCurrentIBaseAttack();
+			if (BaseAttack != nullptr)
+			{
+				BaseAttack->AttackOtherPawn();
+			}
+			AttackTimer = 0.0f;
+		}
+	}
+
 	// Attack Impulse
 	if (bImpulse == false)
 	{
-		Charactor->GetIAttackComp()->GetCurrentIBaseAttack()->ImpulseAttack(0.5f);
+		I_AttackComp->GetCurrentIBaseAttack()->ImpulseAttack(0.5f);
 		bImpulse = true;
 	}
 }

@@ -5,6 +5,8 @@
 #include "State/Base/C_BaseAttackState.h"
 #include "State/HM_PengMao/CHM_MaoFirstAttack.h"
 #include "State/HM_PengMao/CHM_MaoSecondAttack.h"
+#include "State/HM_PengMao/CHM_MaoThirdAttack.h"
+#include "State/HM_PengMao/CHM_MaoFourAttack.h"
 
 UCHM_MaoAttackComp::UCHM_MaoAttackComp()
 {
@@ -13,12 +15,18 @@ UCHM_MaoAttackComp::UCHM_MaoAttackComp()
 	#pragma region Create State
 	// @FirstCombo
 	{
-		UC_BaseAttackState* HMMao_FirstAttack = CreateDefaultSubobject<UCHM_MaoFirstAttack>("FirstAttack_WindMil");
-		BasicAttackStateArray.Emplace(HMMao_FirstAttack);
+		UC_BaseAttackState* HMMao_FirstAttack = CreateDefaultSubobject<UCHM_MaoFirstAttack>("FirstAttack_BaseAttac");
+		UC_BaseAttackState* HMMao_SecondAttack = CreateDefaultSubobject<UCHM_MaoSecondAttack>("SecondAttack_FlyDow");
+		UC_BaseAttackState* HMMao_ThirdAttack = CreateDefaultSubobject<UCHM_MaoThirdAttack>("ThirdAttack_Mi");
+		UC_BaseAttackState* HMMao_FourAttack = CreateDefaultSubobject<UCHM_MaoFourAttack>("FourAttack_RangeAttack");
 
-		UC_BaseAttackState* HMMao_SecondAttack = CreateDefaultSubobject<UCHM_MaoSecondAttack>("SecondAttack_FlyDown");
+
+		BasicAttackStateArray.Emplace(HMMao_FirstAttack);
 		BasicAttackStateArray.Emplace(HMMao_SecondAttack);
+		BasicAttackStateArray.Emplace(HMMao_ThirdAttack);
+		BasicAttackStateArray.Emplace(HMMao_FourAttack);
 	}
+
 	#pragma endregion
 }
 

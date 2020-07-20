@@ -84,10 +84,6 @@ void ACHM_Basic::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArra
 
 		OutArray->Emplace(Insert);
 	}
-
-	// TODO : 
-	//@AblilityComp
-	//TArray<UCBaseAbility*> Abilities;
 }
 
 void ACHM_Basic::OnDeath()

@@ -102,11 +102,6 @@ ACItem_Faster::ACItem_Faster()
 			SpeedUp_RHand = P_RHandSpeedUp.Object;
 		}
 	}
-
-	//@Create Ability
-	{
-		AbilitySpeedUpper = NewObject<UCPLAbility_SpeedUpper>();
-	}
 }
 
 void ACItem_Faster::BeginPlay()
@@ -116,8 +111,14 @@ void ACItem_Faster::BeginPlay()
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACItem_Faster::OnBegin);
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ACItem_Faster::OnEnd);
 
+	//@Create Ability
+	{
+		AbilitySpeedUpper = NewObject<UCPLAbility_SpeedUpper>();
+	}
+
 	//@Setting Ability
 	{
+		//TODO : 이렇게 하면 댕글링 포인터가 되는데 왜 될까..
 		////@Set Delegate - Start
 		//AbilitySpeedUpper->OnDelStartTimerAbility.AddLambda([&](AActor* AppliedActor)
 		//{
@@ -196,37 +197,42 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 		SetActorHiddenInGame(true);
 
 		//@파티클 실행
+		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
+		check(I_MeshParticle);
+
+		//@Faster Effect
+		I_MeshParticle->SpawnParticleAtMesh
+		(
+			FasterParticle,
+			EAttachPointType::ROOT,
+			EAttachPointRelative::NONE,
+			EAttachLocation::SnapToTarget
+		);
+
+		//@LHand ParticleComp
+		UParticleSystemComponent* const PTComp_LHand = I_MeshParticle->SpawnParticleAtMesh
+		(
+			SpeedUp_LHand,
+			EAttachPointType::LHAND,
+			EAttachPointRelative::RELATIVE,
+			EAttachLocation::SnapToTarget
+		);
+
+		//@RHand ParticleComp
+		UParticleSystemComponent* const PTComp_RHand = I_MeshParticle->SpawnParticleAtMesh
+		(
+			SpeedUp_RHand,
+			EAttachPointType::RHAND,
+			EAttachPointRelative::RELATIVE,
+			EAttachLocation::SnapToTarget
+		);
+
+		//@Add Lambda - Particle 꺼주는 기능
+		AbilitySpeedUpper->OnEndTimerAbility.AddLambda([PTComp_LHand, PTComp_RHand](AActor*)
 		{
-			IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
-			check(I_MeshParticle);
-
-			//@Faster Effect
-			I_MeshParticle->SpawnParticleAtMesh
-			(
-				FasterParticle,
-				EAttachPointType::ROOT,
-				EAttachPointRelative::NONE,
-				EAttachLocation::SnapToTarget
-			);
-
-			//@LHand ParticleComp
-			ParticleComp_LHand = I_MeshParticle->SpawnParticleAtMesh
-			(
-				SpeedUp_LHand,
-				EAttachPointType::LHAND,
-				EAttachPointRelative::RELATIVE,
-				EAttachLocation::SnapToTarget
-			);
-
-			//@RHand ParticleComp
-			ParticleComp_RHand = I_MeshParticle->SpawnParticleAtMesh
-			(
-				SpeedUp_RHand,
-				EAttachPointType::RHAND,
-				EAttachPointRelative::RELATIVE,
-				EAttachLocation::SnapToTarget
-			);
-		}
+			PTComp_LHand->SetActive(false);
+			PTComp_RHand->SetActive(false);
+		});
 
 		//@Ability 추가
 		IIC_AbilityComp* I_AbilityComp = I_Charactor->GetIAbilityComp();
@@ -241,14 +247,6 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 			AbilitySpeedUpper->SetAppliedActor(EventedActor);
 			I_AbilityComp->AddAbility(AbilitySpeedUpper);
 		}
-
-		////@파괴 - SetTimer 호출
-		//FTimerHandle DeathTimerHandle;
-		//GetWorldTimerManager().SetTimer
-		//(
-		//	DeathTimerHandle, this, &ACItem_Faster::Death, 
-		//	DeathTimeAfterRunning + 0.5f //@ + Offset
-		//);
 
 	}//(I_Player != nullptr)
 
@@ -277,14 +275,14 @@ void ACItem_Faster::DelegateAbilityEnd(AActor* AppliedActor)
 		I_Player->OnParticleInPlayer();
 	}
 
-	//@Particle OFF
-	if (ParticleComp_LHand != nullptr)
-		ParticleComp_LHand->SetActive(false);
-	else CLog::Print(L"LHand Particle NULL!!");
+	////@Particle OFF
+	//if (ParticleComp_LHand != nullptr)
+	//	ParticleComp_LHand->SetActive(false);
+	//else CLog::Print(L"LHand Particle NULL!!");
 
-	if (ParticleComp_RHand != nullptr)
-		ParticleComp_RHand->SetActive(false);
-	else CLog::Print(L"RHand Particle NULL!!");
+	//if (ParticleComp_RHand != nullptr)
+	//	ParticleComp_RHand->SetActive(false);
+	//else CLog::Print(L"RHand Particle NULL!!");
 
 	//@Death Call
 	Death();

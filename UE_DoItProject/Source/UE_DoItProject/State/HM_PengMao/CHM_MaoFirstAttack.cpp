@@ -54,11 +54,6 @@ UCHM_MaoFirstAttack::UCHM_MaoFirstAttack()
 			SlowerParticle_Body = SlowerPT_2.Object;
 	}
 
-	//@Create Ability
-	{
-		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
-	}
-
 }
 
 void UCHM_MaoFirstAttack::BeginPlay()
@@ -82,6 +77,11 @@ void UCHM_MaoFirstAttack::BeginPlay()
 	DT_Strong->SetDamageImpulse(20.0f);
 
 #pragma endregion
+
+	//@Create Ability
+	{
+		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+	}
 
 	//@Set Delegate - Ability
 	{

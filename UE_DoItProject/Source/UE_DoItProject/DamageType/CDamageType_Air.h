@@ -25,4 +25,12 @@ public:
 	//@param InitialDamageAmount - 초기에 들어갈 데미지 값
 	//@param Montage - 맞는 액터가 시행할 Montage (default = nullptr)
 	virtual void OnHittingProcess(AActor* Subject, AActor* DamagedActor, class UC_BaseHitComp* DamagedActorHitComp, float InitialDamageAmount);
+
+	/* Function */
+public:
+	void SetAirAttackHeight(float fValue) { HeightAfterAirAttack = fValue; }
+
+private:
+	float HeightAfterAirAttack = 300.0f; //@Default
+
 };

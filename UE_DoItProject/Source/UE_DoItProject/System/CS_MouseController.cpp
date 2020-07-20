@@ -50,6 +50,7 @@ void UCS_MouseController::BeginPlay()
 	//@Spawn DecalActor
 	FTransform Transform = FTransform::Identity;
 	DecalActor = GetWorld()->SpawnActor<ACDecalActor_WithMouse>(ACDecalActor_WithMouse::StaticClass(), Transform);
+	//@Warning - 회전 해주어야 Material 이 나옴
 	DecalActor->SetDecalCompRotation(FRotator(-90.0f, 0.0f, 0.0f));
 	DecalActor->SetDecalCompMat(DecalMatCanUsingRange);
 	DecalActor->SetDecalSize(DecalActorCircleSize);

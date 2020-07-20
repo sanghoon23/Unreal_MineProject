@@ -9,24 +9,19 @@ class UE_DOITPROJECT_API ACItem_Barrier
 	: public ACItem_Event
 {
 	GENERATED_BODY()
-	
-	//@Warning -
-	/* 
-	객체가 사라져 Delegate.AddUObject 부분이 실행될 수 없음을 방지하기 위해 - CItem_Faster.
-	캡처 - [&] AddLambda 사용
-	CItem_Faster 에서와 같이 DeathTimeAfterRunning 을 적용되는 시간과 같게 두지 않음
-	AbilityBarrier 중첩 시, 시간 누적.
-	*/
 
 private:
-	const float UsingAbilityTime = 5.0f;
-	const float DeathTimeAfterRunning = 2.0f;
-
 	const float RotationValue = 10.0f;
 	const float RotationSpeed = 2.0f;
 
 	#pragma region Reflection
 private:
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float UsingAbilityBarrierTime = 5.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float AddBarrierAmount = 30.0f;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UBoxComponent* BoxComp;
 
@@ -73,6 +68,5 @@ public:
 	void SetBarrierAmountValue(float fValue) { AddBarrierAmount = fValue; }
 
 private:
-	float AddBarrierAmount = 30.0f;
 
 };

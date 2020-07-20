@@ -11,13 +11,17 @@ class UE_DOITPROJECT_API ACItem_Faster
 	GENERATED_BODY()
 
 private:
-	const float UsingAbilitySpeedUpperTime = 5.0f;
-
 	const float RotationValue = 10.0f;
 	const float RotationSpeed = 2.0f;
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float UsingAbilitySpeedUpperTime = 5.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float AddSpeedValue = 300.0f;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UBoxComponent* BoxComp;
 
@@ -36,11 +40,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SpeedUp_RHand;
 
-	UPROPERTY(VisibleAnywhere, Category = "Particle")
-		class UParticleSystemComponent* ParticleComp_LHand;
+	//UPROPERTY(VisibleAnywhere, Category = "Particle")
+	//	class UParticleSystemComponent* ParticleComp_LHand;
 
-	UPROPERTY(VisibleAnywhere, Category = "Particle")
-		class UParticleSystemComponent* ParticleComp_RHand;
+	//UPROPERTY(VisibleAnywhere, Category = "Particle")
+	//	class UParticleSystemComponent* ParticleComp_RHand;
 
 private:
 	UFUNCTION()
@@ -74,7 +78,6 @@ public:
 	void SetSpeedValue(float fValue) { AddSpeedValue = fValue; }
 
 private:
-	float AddSpeedValue = 300.0f;
 
 	//class UCPLAbility_Speed* AbilitySpeed;
 };

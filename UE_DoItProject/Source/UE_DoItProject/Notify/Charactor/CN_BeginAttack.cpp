@@ -2,6 +2,7 @@
 #include "Global.h"
 
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAttack.h"
 
 void UCN_BeginAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
@@ -13,8 +14,18 @@ void UCN_BeginAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	IIC_BaseAttack* BaseAttackState = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
+	IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
+	IfNullRet(I_AttackComp);
+
+	IIC_BaseAttack* BaseAttackState = I_AttackComp->GetCurrentIBaseAttack();
 	IfNullRet(BaseAttackState);
 
-	BaseAttackState->BeginAttackDeleFunc.Broadcast();
+	if (BaseAttackState->BeginAttackDeleFunc.IsBound() == true)
+	{
+		BaseAttackState->BeginAttackDeleFunc.Broadcast();
+	}
+	else
+	{
+		CLog::Print(L"CN_BeginAttack Notify BeginAttackDeleFunc Not Bound!!");
+	}
 }

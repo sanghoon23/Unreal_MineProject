@@ -9,9 +9,10 @@
 UENUM()
 enum class HM_PengMaoAttackType
 {
-	FIRSTATTACK = 0,
-	SECONDATTACK = 1,
-	END = 2,
+	FIRSTATTACK = 0, //@¿¬¼Ó °ø°Ý
+	SECONDATTACK = 1, //@³»·ÁÂï°í ºù°á
+	THIRDATTACK = 2, //@WindMil
+	END = 3,
 };
 
 UCLASS()
@@ -24,6 +25,15 @@ class UE_DOITPROJECT_API UCHM_MaoAttackComp
 private:
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
 		TArray<class UC_BaseAttackState*> BasicAttackStateArray;
+
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//	UC_BaseAttackState* HMMao_FirstAttack;
+
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//	UC_BaseAttackState* HMMao_SecondAttack;
+
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//	UC_BaseAttackState* HMMao_ThirdAttack;
 
 	#pragma endregion
 	

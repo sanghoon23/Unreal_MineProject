@@ -104,7 +104,7 @@ void ACItem_Barrier::BeginPlay()
 
 	//@Setting Delegate
 	{
-		AbilityBarrier->OnEndTimerAbility.AddUObject(this, &ACItem_Barrier::DelegateAbilityEnd);
+		//AbilityBarrier->OnEndTimerAbility.AddUObject(this, &ACItem_Barrier::DelegateAbilityEnd);
 
 		//AbilityBarrier->OnEndTimerAbility.AddLambda([&](AActor*)
 		//{
@@ -160,13 +160,19 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 			check(I_MeshParticle);
 
 			//@Barrier Effect
-			ParticleComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
+			UParticleSystemComponent* const PTComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
 			(
 				ParticleBarrier,
 				EAttachPointType::BODY,
 				EAttachPointRelative::NONE,
 				EAttachLocation::SnapToTarget
 			);
+
+			//@Add Lambda - Particle 꺼주는 기능
+			AbilityBarrier->OnEndTimerAbility.AddLambda([PTComp_Barrier](AActor*)
+			{
+				PTComp_Barrier->SetActive(false);
+			});
 		}
 
 		//@Ability 추가
@@ -176,14 +182,18 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 			//@Create Ability
 			FAbilityValue InputValue;
 			InputValue.bTimer = true;
-			InputValue.Timer = UsingAbilityTime;
+			InputValue.Timer = UsingAbilityBarrierTime;
 			InputValue.Value = AddBarrierAmount;
 			AbilityBarrier->SetAbilityValue(InputValue);
 
 			AbilityBarrier->SetAppliedActor(EventedActor); //@Set Actor
 			I_AbilityComp->AddAbility(AbilityBarrier);
 		}
-	}
+
+		//@DeathCall
+		Death();
+
+	}//(Charactor != nullptr)
 }
 
 void ACItem_Barrier::DelegateAbilityEnd(AActor* AppliedActor)
@@ -197,4 +207,5 @@ void ACItem_Barrier::DelegateAbilityEnd(AActor* AppliedActor)
 
 	//@DeathCall
 	Death();
+
 }

@@ -13,8 +13,18 @@ void UCN_EndAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	IIC_BaseAttack* BaseAttackState = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
+	IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
+	IfNullRet(I_AttackComp);
+
+	IIC_BaseAttack* BaseAttackState = I_AttackComp->GetCurrentIBaseAttack();
 	IfNullRet(BaseAttackState);
 
-	BaseAttackState->EndAttackDeleFunc.Broadcast();
+	if (BaseAttackState->EndAttackDeleFunc.IsBound() == true)
+	{
+		BaseAttackState->EndAttackDeleFunc.Broadcast();
+	}
+	else
+	{
+		CLog::Print(L"CN_EndAttack Notify EndAttackDeleFunc Not Bound!!");
+	}
 }

@@ -24,7 +24,11 @@ void UCNS_AttackMove::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequenc
 	IfNullRet(Charactor);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	IIC_BaseAttack* I_BaseAttack = Charactor->GetIAttackComp()->GetCurrentIBaseAttack();
+
+	IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
+	IfNullRet(I_AttackComp);
+
+	IIC_BaseAttack* I_BaseAttack = I_AttackComp->GetCurrentIBaseAttack();
 	IfNullRet(I_BaseAttack);
 
 	ACharacter* MovedCharactor = Cast<ACharacter>(MeshComp->GetOwner());

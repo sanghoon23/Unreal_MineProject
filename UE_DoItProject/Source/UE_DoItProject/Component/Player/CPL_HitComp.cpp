@@ -34,9 +34,9 @@ UCPL_HitComp::UCPL_HitComp()
 			NormalHitMontage = normalHit.Object;
 	}
 
-	// 'AirHitFirst' Hit Montage
+	// 'Air First' Hit Montage
 	{
-		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_AirHitFirst.HM_Basic_AirHitFirst'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Hit/Player_Mon_AirFirstHit.Player_Mon_AirFirstHit'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> airHit(*Path);
 		if (airHit.Succeeded())
 			AirHitMontage = airHit.Object;
@@ -44,7 +44,7 @@ UCPL_HitComp::UCPL_HitComp()
 
 	// 'AirAttack' Hit Montage
 	{
-		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Basic/HM_Basic_AirAttackHit.HM_Basic_AirAttackHit'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/Player/Hit/Player_Mon_AirAttackHit.Player_Mon_AirAttackHit'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> airAttackHit(*Path);
 		if (airAttackHit.Succeeded())
 			AirAttackHitMontage = airAttackHit.Object;
