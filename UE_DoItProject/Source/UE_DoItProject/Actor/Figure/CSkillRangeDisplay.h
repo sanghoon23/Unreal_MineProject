@@ -4,7 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Actor/Figure/CPlaneActor.h"
 
-#include "CDecalActor_SkillRangeDisplay.generated.h"
+#include "CSkillRangeDisplay.generated.h"
 
 UENUM()
 enum class ESortType
@@ -16,15 +16,19 @@ enum class ESortType
 DECLARE_MULTICAST_DELEGATE_OneParam(FDelOverlapActorForSkill, AActor*)
 
 UCLASS()
-class UE_DOITPROJECT_API ACDecalActor_SkillRangeDisplay 
+class UE_DOITPROJECT_API ACSkillRangeDisplay 
 	: public AActor
 {
 	GENERATED_BODY()
 	
-	#pragma	region Reflection
-		/* Skill 기능을 받을 Delegate */
+#pragma	region Reflection
 public:
-	FDelOverlapActorForSkill OnDelOverlapSkillRange;
+	/* 스킬 범위 Overlap 될 시 실행 됨 */
+	FDelOverlapActorForSkill	OnDelOverlapSkillRange;
+
+	/* 'SkillTimer' 시간 후 실행됨 */
+	FTimerDelegate				OnDelEndSkillCall;
+
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
@@ -39,29 +43,32 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UBoxComponent* BoxComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UParticleSystemComponent* PTComp;
+
 	UPROPERTY(VisibleAnywhere, Category = "Material")
 		class UMaterialInterface* Mat_BackGround;
 
 	UPROPERTY(VisibleAnywhere, Category = "Material")
 		class UMaterialInterface* Mat_Forward;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 	UPROPERTY(EditAnywhere, Category = "Value")
-	/* 원이 채워져야하는 시간 설정 */
-	float FillTimer = 1.0f;
+		/* 원이 채워져야하는 시간 설정 */
+		float FillTimer = 1.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Value")
-	/* 스킬이 시전될 시간 설정 */
-	float SkillTimer = 1.0f;
+		/* 스킬이 시전될 시간 설정 */
+		float SkillTimer = 1.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Value")
-	bool bFilling = false;
+		bool bFilling = false;
 
 	UPROPERTY(EditAnywhere, Category = "Value")
-	float FillingSpeed = 1.0f;
+		float FillingSpeed = 1.0f;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 private:
 	UFUNCTION()
@@ -70,29 +77,34 @@ private:
 	UFUNCTION()
 		void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	#pragma endregion
-	
-public:	
-	ACDecalActor_SkillRangeDisplay();
+#pragma endregion
+
+public:
+	ACSkillRangeDisplay();
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	/* Function */
 public:
+	void SetVisibility(bool bValue);
+
 	//@Warning -
 	//@param Owner - 해당 스킬을 시전하는 액터
 	//@param fFillTimer - 원이 채워져야하는 시간
 	//@param fSkillTimer - (원이 채워지고난 후) 스킬이 시전될 시간
-	void FillStart(AActor* Owner, float fFillTimer, float fSkillTimer);
+	void FillStart(AActor* SettingOwner, float fFillTimer, float fSkillTimer);
 
 	void SetDecalCompMat(class UMaterialInterface* Material, ESortType Type);
 	void SetBackGroundDecalSize(float fSize);
 	void SetBackGroundDecalSize(FVector2D vSize);
 	void SetCollisionBoxExtent(FVector2D vSize);
+	void SetParticleSystem(class UParticleSystem* PT);
+	void SetParticleSystem(class UParticleSystem* PT, const FTransform& RelativeTransform);
+
 
 	/* Memeber */
 private:

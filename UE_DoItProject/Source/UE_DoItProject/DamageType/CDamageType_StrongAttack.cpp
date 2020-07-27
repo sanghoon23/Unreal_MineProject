@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 
+#include "Interface/IC_Charactor.h"
 #include "Component/Base/C_BaseHitComp.h"
 
 UCDamageType_StrongAttack::UCDamageType_StrongAttack()
@@ -49,7 +50,17 @@ void UCDamageType_StrongAttack::OnHittingProcess(AActor * Subject, AActor * Dama
 
 	//@Motage
 	{
-		IfTrueRet(DamagedActorHitComp->IsBlockDamagedMontage());
+		//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
+		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
+		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
+
+		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
+		if (Charactor != nullptr)
+		{
+			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
+			check(I_Charactor);
+			IfTrueRet(I_Charactor->IsDontMontagePlay());
+		}
 
 		const uint8 MontageNum = static_cast<uint8>(GetConditionType());
 		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);

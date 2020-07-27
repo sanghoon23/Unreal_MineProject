@@ -45,13 +45,13 @@ protected:
 		/* 다른 액터가 현재 객체를 때릴 수 있는지 - 데미지 불가, 몽타주 불가 */
 		bool bCanAttackFromOther = true;
 
-	UPROPERTY(EditAnywhere, Category = "Data")
-		/* HitComp 에 해당하는 몽타주들의 실행 여부 - 데미지 가능, 몽타주 불가, */
-		bool bBlockDamagedMontage = false;
-
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		/* 다른 액터가 현재 객체에게 데미지를 줄 수 있는지 데미지 불가, 몽타주 가능 */
 		bool bDamaged = true;
+
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		/* HitComp 에 해당하는 몽타주들의 실행 여부 - 데미지 가능, 몽타주 불가, */
+		TArray<bool> bUsingDamageTypeEffect;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* DamageType 별로 정의된 Damage Montage */
@@ -118,9 +118,8 @@ public:
 	/* IC_HitComp 참조 */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) override;
 
-	/* IC_HitComp 참조 */
-	virtual bool IsBlockDamagedMontage() const override { return bBlockDamagedMontage; };
-	virtual void SetBlockDamagedMontage(bool bValue) override { bBlockDamagedMontage = bValue; }
+	///* IC_HitComp 참조 */
+	virtual bool IsUsingDamageTypeEffect(uint8 Type) const override { return bUsingDamageTypeEffect[Type]; };
 
 	/* IC_HitComp 참조 */
 	virtual bool IsCanAttackedFromOther() const override { return bCanAttackFromOther; };

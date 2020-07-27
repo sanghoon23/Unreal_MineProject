@@ -64,9 +64,8 @@ public:
 
 	#pragma region Member
 public:
-	/* 맞는 몽타주 실행되지않음 */
-	virtual bool IsBlockDamagedMontage() const = 0;
-	virtual void SetBlockDamagedMontage(bool bValue) = 0;
+	/* HitComp 에 해당하는 몽타주들의 실행 여부 - 데미지 가능, 몽타주 불가, */
+	virtual bool IsUsingDamageTypeEffect(uint8 Type) const = 0;
 
 	/* 다른 Actor 가 때릴 수 있는지 */
 	virtual bool IsCanAttackedFromOther() const = 0;

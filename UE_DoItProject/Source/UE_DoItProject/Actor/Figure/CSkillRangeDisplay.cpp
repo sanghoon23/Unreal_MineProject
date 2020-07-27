@@ -1,13 +1,15 @@
-#include "CDecalActor_SkillRangeDisplay.h"
+#include "CSkillRangeDisplay.h"
 #include "Global.h"
-#include "Components/DecalComponent.h"
 
-ACDecalActor_SkillRangeDisplay::ACDecalActor_SkillRangeDisplay()
+ACSkillRangeDisplay::ACSkillRangeDisplay()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	SceneComp = CreateDefaultSubobject<USceneComponent>("Scene");
 	RootComponent = SceneComp;
+
+	PTComp = CreateDefaultSubobject<UParticleSystemComponent>("ParticleComp");
+	PTComp->SetupAttachment(RootComponent);
 
 	BackGroundStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("BackGroundStaticMesh");
 	BackGroundStaticMesh->SetupAttachment(SceneComp);
@@ -47,6 +49,8 @@ ACDecalActor_SkillRangeDisplay::ACDecalActor_SkillRangeDisplay()
 
 	//@Setting Value
 	{
+		PTComp->bAutoActivate = false;
+
 		BoxComponent->SetCollisionProfileName("OverlapOnlyPawn");
 		BoxComponent->SetGenerateOverlapEvents(true);
 		BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -55,8 +59,9 @@ ACDecalActor_SkillRangeDisplay::ACDecalActor_SkillRangeDisplay()
 		ForwardStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 		//@반투명 정렬
-		BackGroundStaticMesh->TranslucencySortPriority = 1;
-		ForwardStaticMesh->TranslucencySortPriority = 2;
+		BackGroundStaticMesh->TranslucencySortPriority = 0;
+		ForwardStaticMesh->TranslucencySortPriority = 1;
+		PTComp->TranslucencySortPriority = 2;
 
 		//@Default Setting
 		{
@@ -76,16 +81,30 @@ ACDecalActor_SkillRangeDisplay::ACDecalActor_SkillRangeDisplay()
 	}
 }
 
-void ACDecalActor_SkillRangeDisplay::BeginPlay()
+void ACSkillRangeDisplay::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//Set Delegate
+	{
+		OnDelEndSkillCall.BindLambda([&]()
+		{
+			////@Particle OFF
+			CLog::Print(L"Particle OFF!!");
+			PTComp->SetActive(false);
+
+			//@Init
+			ForwardStaticMesh->SetWorldScale3D(FVector(0.0f, 0.0f, 1.0f));
+			BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		});
+	}
+
 	//@BackgroudnStaticMesh 사용.
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ACDecalActor_SkillRangeDisplay::OnBeginOverlap);
-	BoxComponent->OnComponentEndOverlap.AddDynamic(this, &ACDecalActor_SkillRangeDisplay::OnEndOverlap);
+	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ACSkillRangeDisplay::OnBeginOverlap);
+	BoxComponent->OnComponentEndOverlap.AddDynamic(this, &ACSkillRangeDisplay::OnEndOverlap);
 }
 
-void ACDecalActor_SkillRangeDisplay::Tick(float DeltaTime)
+void ACSkillRangeDisplay::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -102,17 +121,19 @@ void ACDecalActor_SkillRangeDisplay::Tick(float DeltaTime)
 			BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 			//@Visible
-			BackGroundStaticMesh->SetVisibility(false);
-			ForwardStaticMesh->SetVisibility(false);
+			//BackGroundStaticMesh->SetVisibility(false);
+			//ForwardStaticMesh->SetVisibility(false);
+			SetVisibility(false);
+
+			CLog::Print(L"Particle ON!!");
+			PTComp->SetActive(true);
 
 			//@Set Timer
 			FTimerHandle DeathTimerHandle;
-			FTimerDelegate CallOnDelAfterFill;
-			CallOnDelAfterFill.BindLambda([&]() { Destroy(); }); //@Death Call
 			GetWorldTimerManager().SetTimer
 			(
 				DeathTimerHandle,
-				CallOnDelAfterFill,
+				OnDelEndSkillCall,
 				SkillTimer,
 				false
 			);
@@ -125,9 +146,16 @@ void ACDecalActor_SkillRangeDisplay::Tick(float DeltaTime)
 
 		ForwardStaticMesh->SetRelativeScale3D(ForwardScale);
 	}
+
 }
 
-void ACDecalActor_SkillRangeDisplay::SetDecalCompMat(UMaterialInterface * Material, ESortType Type)
+void ACSkillRangeDisplay::SetVisibility(bool bValue)
+{
+	BackGroundStaticMesh->SetVisibility(bValue);
+	ForwardStaticMesh->SetVisibility(bValue);
+}
+
+void ACSkillRangeDisplay::SetDecalCompMat(UMaterialInterface * Material, ESortType Type)
 {
 	check(Material);
 
@@ -136,30 +164,50 @@ void ACDecalActor_SkillRangeDisplay::SetDecalCompMat(UMaterialInterface * Materi
 		: ForwardStaticMesh->SetMaterial(0, Material);
 }
 
-void ACDecalActor_SkillRangeDisplay::SetBackGroundDecalSize(float fSize)
+void ACSkillRangeDisplay::SetBackGroundDecalSize(float fSize)
 {
 	BackGroundStaticMesh->SetWorldScale3D(FVector(fSize, fSize, 1.0f));
 }
 
-void ACDecalActor_SkillRangeDisplay::SetBackGroundDecalSize(FVector2D vSize)
+void ACSkillRangeDisplay::SetBackGroundDecalSize(FVector2D vSize)
 {
 	BackGroundStaticMesh->SetWorldScale3D(FVector(vSize.X, vSize.Y, 1.0f));
 }
 
-void ACDecalActor_SkillRangeDisplay::SetCollisionBoxExtent(FVector2D vSize)
+void ACSkillRangeDisplay::SetCollisionBoxExtent(FVector2D vSize)
 {
 	BoxComponent->SetBoxExtent(FVector(vSize.X, vSize.Y, DefaultBoxHeight));
 }
 
-void ACDecalActor_SkillRangeDisplay::FillStart(AActor* Owner, float fFillTimer, float fSkillTimer)
+void ACSkillRangeDisplay::SetParticleSystem(UParticleSystem * PT)
 {
-	check(Owner);
-	SetOwner(Owner);
+	check(PT);
+	PTComp->SetTemplate(PT);
+}
 
+void ACSkillRangeDisplay::SetParticleSystem(UParticleSystem * PT, const FTransform& RelativeTransform)
+{
+	check(PT);
+	PTComp->SetTemplate(PT);
+	PTComp->SetRelativeTransform(RelativeTransform);
+}
+
+void ACSkillRangeDisplay::FillStart(AActor* SettingOwner, float fFillTimer, float fSkillTimer)
+{
+	check(SettingOwner);
+	SetOwner(SettingOwner);
+
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	SetVisibility(true); //@BackGroundStaticMesh, FwdStaticMesh
+
+	///////////////////////////////////////////////////////////////////////////////////
 	bFilling = true;
 	FillTimer = fFillTimer;
 	SkillTimer = fSkillTimer;
 
+	//Init
+	ForwardStaticMesh->SetWorldScale3D(FVector(0.0f, 0.0f, 1.0f));
 	FVector BackGroundSacle = BackGroundStaticMesh->GetRelativeScale3D();
 	FVector ForwardScale = ForwardStaticMesh->GetRelativeScale3D();
 
@@ -167,7 +215,7 @@ void ACDecalActor_SkillRangeDisplay::FillStart(AActor* Owner, float fFillTimer, 
 	FillingSpeed = (BackGroundSacle.Y - ForwardScale.Y) / FillTimer;
 }
 
-void ACDecalActor_SkillRangeDisplay::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void ACSkillRangeDisplay::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
@@ -183,7 +231,7 @@ void ACDecalActor_SkillRangeDisplay::OnBeginOverlap(UPrimitiveComponent * Overla
 	}
 }
 
-void ACDecalActor_SkillRangeDisplay::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+void ACSkillRangeDisplay::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);

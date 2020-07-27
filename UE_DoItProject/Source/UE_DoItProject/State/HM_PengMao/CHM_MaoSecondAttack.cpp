@@ -53,11 +53,6 @@ UCHM_MaoSecondAttack::UCHM_MaoSecondAttack()
 		if (SlowerPT_2.Succeeded())
 			SlowerParticle_Body = SlowerPT_2.Object;
 	}
-
-	//@Create Ability
-	{
-		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
-	}
 }
 
 void UCHM_MaoSecondAttack::BeginPlay()
@@ -86,25 +81,10 @@ void UCHM_MaoSecondAttack::BeginPlay()
 
 #pragma endregion
 
-	////@Set Delegate
-	//{
-	//	DT_Freeze->OnLinkEndUpsetCondition.AddLambda([&](AActor* Owner)
-	//	{
-	//		IIC_Charactor* SubjectCharactorInterface = Cast<IIC_Charactor>(Owner);
-	//		if (SubjectCharactorInterface != nullptr)
-	//		{
-	//			SubjectCharactorInterface->CanMove();
-	//		}
-	//		else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBeatedFunc, I_Charactor NULL!!");
-
-	//		IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Owner);
-	//		if (SubjectPlayerInterface != nullptr)
-	//		{
-	//			SubjectPlayerInterface->OffBlockKeyInput();
-	//		}
-	//		else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBetedFunc, I_Player NULL!!");
-	//	});
-	//}
+	//@Create Ability
+	{
+		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+	}
 
 	//@Setting Value
 	{
@@ -222,13 +202,10 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 					{
 						//@Set Delegate - OnKeyInputBlock 시키기 위해
 						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
+						I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
 
 						I_HitComp->SetHitMoveSpeed(4.0f);
 						I_HitComp->OnHit(HM_PengMao, DT_Strong, DT_Strong->DamageImpulse);
-
-						//@Set Delegate - OffKeyInputBlock
-						DT_Freeze->OnLinkEndUpsetCondition.RemoveAll(DT_Freeze);
-						DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
 
 						//@Set Timer - Freeze Timer
 						FTimerHandle FreezeTimerHandle;
@@ -270,7 +247,7 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 								BodyTrans
 							);
 
-							AbilitySpeedDowner->OnDelStartTimerAbility.AddLambda([PTComp_SlowerRoot, PTComp_SlowerBody](AActor*)
+							AbilitySpeedDowner->OnEndTimerAbility.AddLambda([PTComp_SlowerRoot, PTComp_SlowerBody](AActor*)
 							{
 								PTComp_SlowerRoot->SetActive(false);
 								PTComp_SlowerBody->SetActive(false);

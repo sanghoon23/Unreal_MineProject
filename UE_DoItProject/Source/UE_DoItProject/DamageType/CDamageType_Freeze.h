@@ -19,6 +19,9 @@ public:
 	FDelEndCondition OnLinkEndUpsetCondition;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Value")
+		bool bFreezeEffect = true;
+
 	UPROPERTY(VisibleAnywhere, Category = "Texture")
 		class UTexture2D* FreezeConditionUITexture = nullptr;
 

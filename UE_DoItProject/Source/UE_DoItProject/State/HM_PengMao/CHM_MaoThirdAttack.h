@@ -33,9 +33,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_Air*	DT_AirFirstAttack;
 
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_StrongAttack*	DT_Strong;
-
 #pragma endregion
 
 public:
@@ -68,8 +65,7 @@ private:
 
 	float AttackRadius = 400.0f;
 
-	bool bCheckSectionRange = true;
-	float StartSectionPlayRate = 0.2f;
+	float StartSectionPlayRate = 0.5f;
 	float NextSectionPlayRate = 0.9f;
 
 #pragma endregion

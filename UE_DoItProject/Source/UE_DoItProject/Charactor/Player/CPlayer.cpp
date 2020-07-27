@@ -634,8 +634,10 @@ void ACPlayer::ActorPausedAnimMonResume()
 {
 	GetMesh()->GetAnimInstance()->Montage_Resume(CurrentMontage);
 
-	//@Off Block Key Input
-	OffBlockKeyInput();
+	//#Edit 0722 - PengMao 의 SecondAttack 공격을 맞고 얼음이 풀리고 바로 움직이면 Input 이 들어와서 누워있는 상태에서도 움직일 수 있게 됨.
+	// *따라서, OffBlockKeyInput 은 해당 공격에서 관리해주는 걸로.
+	////@Off Block Key Input
+	//OffBlockKeyInput();
 }
 
 void ACPlayer::ActorAnimMonPause()

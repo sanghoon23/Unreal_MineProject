@@ -33,6 +33,9 @@ private:
 		UCDamageType_Freeze*	DT_Freeze;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* P_AttackCloud;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SlowerParticle_Root;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
@@ -42,7 +45,7 @@ private:
 		class UCPLAbility_SpeedDown* AbilitySpeedDowner;
 
 	UPROPERTY(VisibleAnywhere, Category = "Skill")
-		TArray<class ACDecalActor_SkillRangeDisplay*> SkillRangeDisplayArray;
+		TArray<class ACSkillRangeDisplay*> SkillRangeDisplayArray;
 
 #pragma endregion
 
@@ -60,9 +63,10 @@ protected:
 public:
 	virtual void BeginAttack(AActor * DoingActor) override;
 	//virtual bool IsLastCombo() const override;
-	virtual void AttackOtherPawn() override;
+	//virtual void AttackOtherPawn() override;
 
 private:
+	//@Warning - AttackOtherPawn 을 대신할 SkillRangeDisplay 에 Bind 될 함수.
 	void DelSkillRangeAttackOtherPawn(AActor* Subject);
 
 	void DelStartFreezeConditionType(AActor* Subject);
@@ -73,11 +77,12 @@ private:
 	class ACHM_PengMao*	HM_PengMao;
 	class IIC_Charactor* I_Charactor;
 
+	float StartSectionPlayRate = 0.3f;
+	float NextSectionPlayRate = 0.9f;
+
 	float AttackRadius = 1000.0f;
 
 	float AbilityDownSpeedValue = -300.0f;
-
-	FTimerDelegate FreezeTimerDelegate;
 
 #pragma endregion
 

@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 
+#include "Interface/IC_Charactor.h"
 #include "Component/Base/C_BaseHitComp.h"
 #include "DamagedConditionType/UpsetCondition/CUpset_Stun.h"
 
@@ -66,7 +67,12 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	UpsetStun->ApplyTime = GetStunTime();
 	UpsetStun->SetDamageSubjectController(PawnController);
 	const uint8 StunMontageNum = static_cast<uint8>(FDamageType::STUN);
-	UpsetStun->SetMontage(DamagedActorHitComp->GetDamagedMontageOrNull(StunMontageNum));
+	UAnimMontage* StunMontage = DamagedActorHitComp->GetDamagedMontageOrNull(StunMontageNum);
+	if (StunMontage != nullptr)
+	{
+		UpsetStun->SetMontage(DamagedActorHitComp->GetDamagedMontageOrNull(StunMontageNum));
+	}
+
 	UParticleSystem* HitCompStunHeadParticle = DamagedActorHitComp->GetStunHeadParticleOrNull();
 	if (HitCompStunHeadParticle != nullptr)
 	{
@@ -82,6 +88,14 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 
 	//@Take Damage
 	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+
+	//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
+	const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
+	IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
+
+	CLog::Print(L"DamageType Stun IN!!");
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	UTexture2D* Texture = GetUITexture();
 	if (Texture != nullptr)
@@ -106,7 +120,17 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 
 	//@Motage
 	{
-		IfTrueRet(DamagedActorHitComp->IsBlockDamagedMontage());
+		//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
+		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
+		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
+
+		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
+		if (Charactor != nullptr)
+		{
+			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
+			check(I_Charactor);
+			IfTrueRet(I_Charactor->IsDontMontagePlay());
+		}
 
 		const uint8 MontageNum = static_cast<uint8>(GetConditionType());
 		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);

@@ -25,7 +25,7 @@ ACHM_PengMao::ACHM_PengMao()
 		HitComp = CreateDefaultSubobject<UCHM_MaoHitComp>(TEXT("HitComp"));
 		EquipComp = CreateDefaultSubobject<UCHM_MaoEquipComp>(TEXT("EquipComponent"));
 		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>(TEXT("MeshParticleComp"));
-		AttackComp = CreateDefaultSubobject<UCHM_MaoAttackComp>(TEXT("AttackCom"));
+		ATKComp = CreateDefaultSubobject<UCHM_MaoAttackComp>(TEXT("ATKComp"));
 
 		//AddOwnedComponent(AttackComponent);
 		//AddOwnedComponent(HitComp);
@@ -218,8 +218,8 @@ void ACHM_PengMao::CallDestory()
 
 IIC_AttackComp * ACHM_PengMao::GetIAttackComp()
 {
-	IfTrueRetResult(AttackComp == nullptr, nullptr); // @Return Null
-	return Cast<IIC_AttackComp>(AttackComp);
+	IfTrueRetResult(ATKComp == nullptr, nullptr); // @Return Null
+	return Cast<IIC_AttackComp>(ATKComp);
 }
 
 IIC_EquipComp * ACHM_PengMao::GetIEquipComp()

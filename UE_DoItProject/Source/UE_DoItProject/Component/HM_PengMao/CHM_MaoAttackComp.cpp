@@ -12,19 +12,21 @@ UCHM_MaoAttackComp::UCHM_MaoAttackComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	//BasicAttackStateArray.Init(nullptr, static_cast<int32>(HM_PengMaoAttackType::END));
+
 	#pragma region Create State
 	// @FirstCombo
 	{
-		UC_BaseAttackState* HMMao_FirstAttack = CreateDefaultSubobject<UCHM_MaoFirstAttack>("FirstAttack_BaseAttac");
-		UC_BaseAttackState* HMMao_SecondAttack = CreateDefaultSubobject<UCHM_MaoSecondAttack>("SecondAttack_FlyDow");
-		UC_BaseAttackState* HMMao_ThirdAttack = CreateDefaultSubobject<UCHM_MaoThirdAttack>("ThirdAttack_Mi");
-		UC_BaseAttackState* HMMao_FourAttack = CreateDefaultSubobject<UCHM_MaoFourAttack>("FourAttack_RangeAttack");
+		UCHM_MaoFirstAttack* HMMao_FirstAttack = CreateDefaultSubobject<UCHM_MaoFirstAttack>(TEXT("FirstAttack_BaseAttac"));
+		UCHM_MaoSecondAttack* HMMao_SecondAttack = CreateDefaultSubobject<UCHM_MaoSecondAttack>(TEXT("SecondAttack_FlyDow"));
+		UCHM_MaoThirdAttack* HMMao_ThirdAttack = CreateDefaultSubobject<UCHM_MaoThirdAttack>(TEXT("ThridATK_S"));
+		UCHM_MaoFourAttack* HMMao_Four = CreateDefaultSubobject<UCHM_MaoFourAttack>(TEXT("FourATK_A"));
 
 
 		BasicAttackStateArray.Emplace(HMMao_FirstAttack);
 		BasicAttackStateArray.Emplace(HMMao_SecondAttack);
 		BasicAttackStateArray.Emplace(HMMao_ThirdAttack);
-		BasicAttackStateArray.Emplace(HMMao_FourAttack);
+		BasicAttackStateArray.Emplace(HMMao_Four);
 	}
 
 	#pragma endregion

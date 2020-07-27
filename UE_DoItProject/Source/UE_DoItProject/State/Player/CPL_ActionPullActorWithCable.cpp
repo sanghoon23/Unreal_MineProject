@@ -217,16 +217,20 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 				DT_Stun->OnLinkStartUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunStartDel);
 				DT_Stun->OnLinkEndUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunEndDel);
 
-				// 1.3 OnHit
-				HitComp->OnHit(Player, DT_Stun, 5.0f);
+				const uint8 MontageTypeNum = static_cast<uint8>(DT_Stun->GetConditionType());
+				if (HitComp->IsUsingDamageTypeEffect(MontageTypeNum) == true)
+				{
+					// 1.3 OnHit
+					HitComp->OnHit(Player, DT_Stun, 5.0f);
+
+					//@당겨지는 중, TargetLocation Setting
+					PullingTargetLocation(Target);
+				}
 			}
 		}
 
 		bNextMontage = true;
 	}//@bNextMontage
-
-	//@당겨지는 중, TargetLocation Setting
-	PullingTargetLocation(Target);
 }
 
 void UCPL_ActionPullActorWithCable::EndActionState()

@@ -55,5 +55,19 @@ void UCNS_AttackMove::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequenc
 void UCNS_AttackMove::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation)
 {
 	Super::NotifyEnd(MeshComp, Animation);
+
+	//IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
+	//IfNullRet(Charactor);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
+	//IfNullRet(I_AttackComp);
+
+	//IIC_BaseAttack* I_BaseAttack = I_AttackComp->GetCurrentIBaseAttack();
+	//IfNullRet(I_BaseAttack);
+
+	//ACharacter* MovedCharactor = Cast<ACharacter>(MeshComp->GetOwner());
+	//IfNullRet(MovedCharactor);
 }
 

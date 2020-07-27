@@ -34,19 +34,6 @@ void UCDamageType_AirAttack::OnHittingProcess(AActor * Subject, AActor * Damaged
 	//@때린 대상 바라보기
 	UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
 
-	ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
-	if (Charactor != nullptr)
-	{
-		IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-		check(I_Charactor);
-
-		// @속력 줄이기 - 중력끄고 바로 해줘야함
-		Charactor->GetCharacterMovement()->Velocity = FVector(0.0f);
-
-		// @중력 끄기.
-		I_Charactor->OffGravity();
-	}
-
 	//@Take Damage
 	if (DamagedActorHitComp->IsDamagedFromOther() == true)
 	{
@@ -63,7 +50,23 @@ void UCDamageType_AirAttack::OnHittingProcess(AActor * Subject, AActor * Damaged
 
 	//@Motage
 	{
-		IfTrueRet(DamagedActorHitComp->IsBlockDamagedMontage());
+		//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
+		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
+		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
+
+		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
+		if (Charactor != nullptr)
+		{
+			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
+			check(I_Charactor);
+			IfTrueRet(I_Charactor->IsDontMontagePlay());
+
+			// @속력 줄이기 - 중력끄고 바로 해줘야함
+			Charactor->GetCharacterMovement()->Velocity = FVector(0.0f);
+
+			// @중력 끄기.
+			I_Charactor->OffGravity();
+		}
 
 		//@콤보가 가능한지,
 		if (DamagedActorHitComp->IsCanHittedCombo() == true)

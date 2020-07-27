@@ -37,24 +37,23 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	// BaseAttack
 	if (bUsingRange == false)
 	{
-		CLog::Print(L"SettAttackTypeRetIBaseAttack!!");
 		IIC_BaseAttack* BaseAttack = I_AttackComp->SetAttackTypeRetIBaseAttack(AttackTypeNum);
 		if (BaseAttack != nullptr)
 		{
+			CLog::Print(L"BaseAttack NOT NULL!!");
 			BaseAttack->BeginAttack(MonsterPawn);
 		}
 	}
 	else
 	{
 		//@·£´ý Attack Type - BeginAttack
-		//int32 Lower = AttackTypeRange.GetLowerBoundValue();
-		//int32 Higher = AttackTypeRange.GetUpperBoundValue();
 		int Input = UKismetMathLibrary::RandomIntegerInRange(MinAttackRange, MaxAttackRange);
 		CLog::Print(Input);
 		IIC_BaseAttack* BaseAttack = I_AttackComp->SetAttackTypeRetIBaseAttack(Input);
 		check(BaseAttack);
 		if (BaseAttack != nullptr)
 		{
+			CLog::Print(L"Using Range BaseAttack NOT NULL!!");
 			BaseAttack->BeginAttack(MonsterPawn);
 		}
 	}

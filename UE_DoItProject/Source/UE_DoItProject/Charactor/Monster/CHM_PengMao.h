@@ -28,7 +28,7 @@ private:
 		bool bAIAttackMode = false;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-		class UCHM_MaoAttackComp* AttackComp;
+		class UCHM_MaoAttackComp* ATKComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_MaoHitComp* HitComp;

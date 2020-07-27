@@ -83,12 +83,15 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	FreezeConditionData->SetFreezeUnderParticle(FreezeUnderParticle);
 
 	//@Damage Class
-	FDamageEvent DamageEvent;
-	DamageEvent.DamageTypeClass = GetClass();
-	FreezeConditionData->SetDamageEvent(DamageEvent);
+	if (DamagedActorHitComp->IsDamagedFromOther() == true)
+	{
+		FDamageEvent DamageEvent;
+		DamageEvent.DamageTypeClass = GetClass();
+		FreezeConditionData->SetDamageEvent(DamageEvent);
 
-	//@TakeDamage
-	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+		//@TakeDamage
+		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+	}
 
 	//@죽음 확인
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
@@ -100,6 +103,12 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 			return;
 		}
 	}
+
+	//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
+	const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
+	IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	UTexture2D* Texture = GetUITexture();
 	if (Texture != nullptr)

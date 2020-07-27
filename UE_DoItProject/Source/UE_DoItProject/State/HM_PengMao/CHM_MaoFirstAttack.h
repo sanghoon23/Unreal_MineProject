@@ -46,12 +46,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SlowerParticle_Body;
 
-	UPROPERTY(VisibleAnywhere, Category = "Particle")
-		class UParticleSystemComponent* SlowerParticleComp_Root;
-
-	UPROPERTY(VisibleAnywhere, Category = "Particle")
-		class UParticleSystemComponent* SlowerParticleComp_Body;
-
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 		class UCPLAbility_SpeedDown* AbilitySpeedDowner;
 
@@ -78,11 +72,6 @@ private:
 	//@Delegate - HitComp
 	void BeginBeatedFunction(AActor* Subject);
 	void EndBeatedFunction(AActor* Subject);
-
-
-	//@Delegate - Ability
-	void BeginAbilityFunction(AActor* Subject);
-	void EndAbilityFunction(AActor* Subject);
 
 #pragma region Member
 private:

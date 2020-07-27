@@ -49,7 +49,17 @@ void UCDamageType_Normal::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 
 	//@Motage
 	{
-		IfTrueRet(DamagedActorHitComp->IsBlockDamagedMontage());
+		//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
+		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
+		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
+
+		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
+		if (Charactor != nullptr)
+		{
+			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
+			check(I_Charactor);
+			IfTrueRet(I_Charactor->IsDontMontagePlay());
+		}
 
 		//@콤보가 가능한지,
 		if (DamagedActorHitComp->IsCanHittedCombo() == true)

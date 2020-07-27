@@ -7,9 +7,10 @@
 UENUM(BlueprintType)
 enum class EAIState_PengMao : uint8
 {
-	DISCOVERY = 0, //@적발견
-	TRYATTACK = 1, //@공격 시도
-	FINDATTACKPOINT = 2, //@
+	DISCOVERY = 0, //@적 발견
+	WAITATTACK = 1, //@공격 대기
+	TRYATTACK = 2, //@공격 시도
+	FINDATTACKPOINT = 3, //@
 };
 
 UCLASS()
@@ -24,10 +25,10 @@ private:
 		float PatrolRadius = 400.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float DetectRadius = 800.0f;
+		float DetectRadius = 1500.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
-		float AttackRange = 220.0f;
+		float AttackRange = 500.0f;
 
 	#pragma endregion
 

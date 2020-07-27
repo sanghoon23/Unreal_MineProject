@@ -8,7 +8,7 @@
 #include "Interface/IC_Player.h"
 #include "Interface/IC_AbilityComp.h"
 
-#include "Actor/Decal/CDecalActor_SkillRangeDisplay.h"
+#include "Actor/Figure/CSkillRangeDisplay.h"
 
 UCHM_MaoFourAttack::UCHM_MaoFourAttack()
 {
@@ -40,22 +40,23 @@ UCHM_MaoFourAttack::UCHM_MaoFourAttack()
 
 	//@LOAD Particle - SlowerDamage
 	{
-		//@Root
+		//@Attack
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/PengMao/P_HMMaoFourAttack.P_HMMaoFourAttack'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> AttackPT(*Path);
+		if (AttackPT.Succeeded())
+			P_AttackCloud = AttackPT.Object;
+
+		//@Slower - Root
 		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_Slower_FromFreeze_Root.PS_Slower_FromFreeze_Root'";
 		ConstructorHelpers::FObjectFinder<UParticleSystem> SlowerPT_1(*Path);
 		if (SlowerPT_1.Succeeded())
 			SlowerParticle_Root = SlowerPT_1.Object;
 
-		//@Body
+		//@Slower - Body
 		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_Slower_FromFreeze_Body.PS_Slower_FromFreeze_Body'";
 		ConstructorHelpers::FObjectFinder<UParticleSystem> SlowerPT_2(*Path);
 		if (SlowerPT_2.Succeeded())
 			SlowerParticle_Body = SlowerPT_2.Object;
-	}
-
-	//@Create Ability
-	{
-		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
 	}
 }
 
@@ -79,6 +80,11 @@ void UCHM_MaoFourAttack::BeginPlay()
 
 #pragma endregion
 
+	//@Create Ability
+	{
+		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+	}
+
 	//@Create SkillRangeDisplay
 	{
 		FTransform Transform = FTransform::Identity;
@@ -86,19 +92,26 @@ void UCHM_MaoFourAttack::BeginPlay()
 		Params.Owner = HM_PengMao;
 		for (int i = 0; i < 6; ++i)
 		{
-			ACDecalActor_SkillRangeDisplay* InsertActor = HM_PengMao->GetWorld()->SpawnActor<ACDecalActor_SkillRangeDisplay>
-				(ACDecalActor_SkillRangeDisplay::StaticClass(), Transform, Params);
+			ACSkillRangeDisplay* InsertActor = HM_PengMao->GetWorld()->SpawnActor<ACSkillRangeDisplay>
+				(ACSkillRangeDisplay::StaticClass(), Transform, Params);
 
 			check(InsertActor);
 			if (InsertActor != nullptr) //@위치 지정
 			{
+				InsertActor->AttachToComponent
+				(
+					HM_PengMao->GetMesh(),
+					FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
+					"root"
+				);
+
 				FVector OwnerLocation = HM_PengMao->GetActorLocation();
 				OwnerLocation.Z = 20.0f;
 				FVector OwnerForward = HM_PengMao->GetActorForwardVector();
 				FRotator Rotate = FRotator(0.0f, 60.0f * i, 0.0f);
 				FVector Dir = Rotate.RotateVector(OwnerForward);
 				Dir.Normalize();
-				FVector InsertLocation = OwnerLocation + (Dir * 600.0f);
+				FVector InsertLocation = OwnerLocation + (Dir * 700.0f);
 
 				//@Bind - Delegate
 				InsertActor->OnDelOverlapSkillRange.AddUObject
@@ -106,25 +119,40 @@ void UCHM_MaoFourAttack::BeginPlay()
 					this, &UCHM_MaoFourAttack::DelSkillRangeAttackOtherPawn
 				);
 
+				//@Timer Particle
+				FTransform ParticleTransform;
+				ParticleTransform.SetLocation(FVector(0.0f, 0.0f, 400.0f));
+				InsertActor->SetParticleSystem(P_AttackCloud, ParticleTransform);
+
 				//@Set
 				InsertActor->SetBackGroundDecalSize(6.0f);
 				InsertActor->SetCollisionBoxExtent(FVector2D(168.0f));
 				InsertActor->SetActorLocation(InsertLocation);
+				InsertActor->SetVisibility(false);
+
 				SkillRangeDisplayArray.Emplace(InsertActor);
 			}
 		}
-	}
-
-	//Test
-	for (ACDecalActor_SkillRangeDisplay* Actor : SkillRangeDisplayArray)
-	{
-		Actor->FillStart(HM_PengMao, 5.0f, 3.0f);
 	}
 }
 
 void UCHM_MaoFourAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	UAnimInstance* OwnerAnimInst = HM_PengMao->GetMesh()->GetAnimInstance();
+	if (OwnerAnimInst != nullptr && bAttacking == true) //@공격이 실행됐을 때,
+	{
+		float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
+		float StartSectionLength, EndSectionLength = 0.0f;
+		const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
+		AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
+
+		if (CurrentMonPos >= StartSectionLength) //@다음 섹션(NextAction)
+		{
+			OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
+		}
+	}
 }
 
 void UCHM_MaoFourAttack::IsRunTick(bool bRunning)
@@ -147,126 +175,29 @@ void UCHM_MaoFourAttack::BeginAttack(AActor * DoingActor)
 		HM_PengMao->ActorAnimMonPlay
 		(
 			AttackMontages[0], /* @FirstMontage == Combo1 */
-			0.9f, false
+			StartSectionPlayRate, false
 		);
-	}
-}
 
-void UCHM_MaoFourAttack::AttackOtherPawn()
-{
-	Super::AttackOtherPawn();
+		float StartSectionLength, EndSectionLength = 0.0f;
+		const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
+		AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
 
-	FVector ActorForward = HM_PengMao->GetActorForwardVector();
-	FVector Start = HM_PengMao->GetActorLocation();
-
-	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
-	FCollisionQueryParams CollisionQueryParm(NAME_None, false, HM_PengMao);
-
-	TArray<FOverlapResult> OverlapResults;
-	float DebugLifeTime = 1.0f;
-	bool bHit = GetWorld()->OverlapMultiByChannel
-	(
-		OverlapResults
-		, Start
-		, FQuat::Identity
-		, I_Charactor->GetCharactorUsingAttackChannel() // @MonsterAttack
-		, sphere
-		, CollisionQueryParm
-	);
-
-#if  ENABLE_DRAW_DEBUG
-
-	DrawDebugSphere(GetWorld(), Start, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
-
-#endif //  ENABLE_DRAW_DEBUG
-
-	if (bHit == true)
-	{
-		for (FOverlapResult& OverlapResult : OverlapResults)
+		//@Start Fill - SkillRange
+		for (ACSkillRangeDisplay* Actor : SkillRangeDisplayArray)
 		{
-			IIC_Charactor* HitI_Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
-			if (HitI_Charactor != nullptr)
-			{
-				// 1. Get Interface HitComp
-				IIC_HitComp* I_HitComp = HitI_Charactor->GetIHitComp();
-				if (I_HitComp != nullptr)
-				{
-					// 1.1 Set Hit Attribute
-					//@맞은 애의 뒤쪽으로 HitDir
-					FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - HM_PengMao->GetActorLocation();
-					HitDirection.Z = 0.0f;
-					HitDirection.Normalize();
-					I_HitComp->SetHitDirection(HitDirection);
-					//I_HitComp->SetHitMoveSpeed(0.3f);
+			Actor->SetVisibility(true);
 
-					//@Set Delegate - OnKeyInputBlock 시키기 위해
-					DT_Freeze->OnLinkStartUpsetCondition.RemoveAll(DT_Freeze);
-					DT_Freeze->OnLinkStartUpsetCondition.AddUObject(this, &UCHM_MaoFourAttack::DelStartFreezeConditionType);
-
-					DT_Freeze->OnLinkEndUpsetCondition.RemoveAll(DT_Freeze);
-					DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoFourAttack::DelEndFreezeConditionType);
-
-					I_HitComp->OnHit(HM_PengMao, DT_Freeze, DT_Freeze->DamageImpulse);
-				}
-				else
-					UE_LOG(LogTemp, Warning, L"CHM_MaoFourAttack CallAttack - HitComp Null!!");
-
-				//@느려지게 하기
-				{
-					IIC_MeshParticle* I_MeshParticle = HitI_Charactor->GetIMeshParticle();
-					check(I_MeshParticle);
-
-					FTransform RootTrans = FTransform::Identity;
-					RootTrans.SetScale3D(FVector(2.0f));
-					UParticleSystemComponent* PTComp_SlowerRoot = I_MeshParticle->SpawnParticleAtMesh
-					(
-						SlowerParticle_Root,
-						EAttachPointType::ROOT,
-						EAttachPointRelative::NONE,
-						EAttachLocation::SnapToTarget,
-						RootTrans
-					);
-
-					FTransform BodyTrans = FTransform::Identity;
-					BodyTrans.SetScale3D(FVector(2.0f));
-					UParticleSystemComponent* PTComp_SlowerBody = I_MeshParticle->SpawnParticleAtMesh
-					(
-						SlowerParticle_Body,
-						EAttachPointType::ROOT,
-						EAttachPointRelative::NONE,
-						EAttachLocation::SnapToTarget,
-						BodyTrans
-					);
-
-					AbilitySpeedDowner->OnDelStartTimerAbility.AddLambda([PTComp_SlowerRoot, PTComp_SlowerBody](AActor*)
-					{
-						PTComp_SlowerRoot->SetActive(false);
-						PTComp_SlowerBody->SetActive(false);
-					});
-
-					//@Ability Insert - 부정적 효과 넣기
-					IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
-					if (HitI_AbilityComp != nullptr && (IsLastCombo() == false))
-					{
-						//CLog::Print(L"AbilityComp Not NULL!!");
-						FAbilityValue InputValue;
-						InputValue.bTimer = true;
-						InputValue.Timer = 7.0f;
-						InputValue.Value = AbilityDownSpeedValue;
-						AbilitySpeedDowner->SetAbilityValue(InputValue);
-
-						AbilitySpeedDowner->SetAppliedActor(OverlapResult.GetActor());
-						HitI_Charactor->GetIAbilityComp()->AddAbility(AbilitySpeedDowner);
-					}
-				}//(느려지게 하기)
-
-			}//(Charactor)
-			else
-				UE_LOG(LogTemp, Warning, L"CHM_MaoFourAttack CallAttack - Charactor Null!!");
+			Actor->FillStart
+			(
+				HM_PengMao, 
+				StartSectionLength * (1 / StartSectionPlayRate), //@섹션의 시작 지점
+				(EndSectionLength - StartSectionLength) * (1 / NextSectionPlayRate) //@ 섹션의끝 - 섹션의시작 +Offset
+			);
 		}
 	}
 }
 
+//@Warning - AttackOtherPawn 을 대신할 SkillRangeDisplay 에 Bind 될 함수.
 void UCHM_MaoFourAttack::DelSkillRangeAttackOtherPawn(AActor * Subject)
 {
 	check(Subject);

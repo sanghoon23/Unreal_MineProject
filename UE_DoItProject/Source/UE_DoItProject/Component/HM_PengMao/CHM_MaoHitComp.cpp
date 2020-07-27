@@ -14,7 +14,42 @@ UCHM_MaoHitComp::UCHM_MaoHitComp()
 
 	FString Path = L"";
 
+#pragma region Hit Montages
+	// 'Normal' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_PengMao/Hit/HM_PengMao_Mon_NormalHit.HM_PengMao_Mon_NormalHit'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit(*Path);
+		if (normalHit.Succeeded())
+			NormalHitMontage = normalHit.Object;
+	}
+#pragma endregion
 
+	//@Set Montage
+	uint8 NormalNum = static_cast<uint8>(FDamageType::NORMAL);
+	bUsingDamageTypeEffect[NormalNum] = true;
+	DamagedMontages[NormalNum] = NormalHitMontage;
+
+#pragma region Poision Material
+	//@LOAD Poision Material
+	{
+		Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
+		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
+		if (PoisionMat.Succeeded())
+		{
+			Mat_Poision_0 = PoisionMat.Object;
+		}
+	}
+#pragma endregion
+
+	//@LOAD Burn Particle - ParticleComp
+	{
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_BurningActor.PS_BurningActor'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> BurnPT(*Path);
+		if (BurnPT.Succeeded())
+		{
+			BurnParticle = BurnPT.Object;
+		}
+	}
 
 }
 
@@ -32,6 +67,12 @@ void UCHM_MaoHitComp::BeginPlay()
 	{
 		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 	});
+
+	//@Set Poision Material
+	{
+		Map_ChangePoisionMaterial.Add(0, Mat_Poision_0);
+		Map_OriginPoisionMaterial.Add(0, HM_PengMao->GetMesh()->GetMaterial(0));
+	}
 }
 
 void UCHM_MaoHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -53,40 +94,9 @@ void UCHM_MaoHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, f
 		verify(Type->GetConditionType() == FDamageType::END);
 	}
 
-
 	//@Delegate 실행.
 	HM_PengMao->OnActionResetState.Broadcast(HM_PengMao);
 
-	///DamageType Process
-	if (IsDamagedFromOther() == true)
-	{
-		Type->OnHittingProcess(AttackingActor, HM_PengMao, this, DamageAmount);
-	}
-	//#Edit 0510 - 
-	//@Death Animation 은 AnimInstance 의 LocoMotion 을 이용
-
-	//@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
-	IfTrueRet(bBlockDamagedMontage);
-
-	//@콤보가 가능한지,
-	if (bCanHitCombo == true)
-	{
-		if (HitComboMon != nullptr)
-		{
-			HM_PengMao->ActorAnimMonPlay(HitComboMon, 0.6f, true);
-			SetCanHittedCombo(false); //@false
-			return; //@return
-		}
-	}
-
-	//@else
-	const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	if (MontageNum >= DamagedMontages.Num()) return;
-	UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
-	if (RunMontage != nullptr)
-	{
-		HM_PengMao->ActorAnimMonPlay(RunMontage, 0.6f, true);
-	}
-
+	Type->OnHittingProcess(AttackingActor, HM_PengMao, this, DamageAmount);
 }
 

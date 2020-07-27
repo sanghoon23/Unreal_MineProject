@@ -63,21 +63,14 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 		}
 
 		//@빙결 상황일 땐 다른 Montage 가 들어오지 못하도록 함.
-		IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
-		if (I_HitComp != nullptr)
-		{
-			I_HitComp->SetBlockDamagedMontage(true); //@TRUE
-		}
+		I_Charactor->SetDontMontagePlay(true);
+		//IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
+		//if (I_HitComp != nullptr)
+		//{
+		//	I_HitComp->SetBlockDamagedMontage(true); //@TRUE
+		//}
 
 	}//(I_Charactor != nullptr)
-
-	/////
-	//IIC_Monster* I_Monster = Cast<IIC_Monster>(Owner);
-	//if (I_Monster != nullptr)
-	//{
-	//	//@AI OFF
-	//	I_Monster->SetAIRunningPossible(false);
-	//}
 }
 
 void UCUpset_Freeze::UpdateCondition(APawn * Owner, float DeltaTime)
@@ -137,12 +130,14 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 		//@Montage Resume
 		I_Charactor->ActorPausedAnimMonResume();
 
+
 		//@빙결이 끝났을 땐 Block 해제
-		IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
-		if (I_HitComp != nullptr)
-		{
-			I_HitComp->SetBlockDamagedMontage(false); //@FALSE
-		}
+		I_Charactor->SetDontMontagePlay(true);
+		//IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
+		//if (I_HitComp != nullptr)
+		//{
+		//	I_HitComp->SetBlockDamagedMontage(false); //@FALSE
+		//}
 	}
 
 	//@Spawn Destructible Mesh
@@ -162,7 +157,7 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 		if (Destructible != nullptr)
 		{
 			//FVector HitLocation
-			Destructible->ApplyDamage(100.0f, DM_FreezenBroken->GetActorLocation(), Owner->GetActorForwardVector(), 1.0f);
+			Destructible->ApplyDamage(50.0f, DM_FreezenBroken->GetActorLocation(), Owner->GetActorForwardVector(), 1.0f);
 		}
 		else
 		{

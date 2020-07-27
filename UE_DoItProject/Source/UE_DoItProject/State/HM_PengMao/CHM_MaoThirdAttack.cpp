@@ -70,9 +70,6 @@ void UCHM_MaoThirdAttack::BeginPlay()
 	DT_AirFirstAttack->SetAirAttackHeight(400.0f);
 	DT_AirFirstAttack->SetDamageImpulse(10.0f);
 
-	DT_Strong = NewObject<UCDamageType_StrongAttack>();
-	DT_Strong->SetDamageImpulse(20.0f);
-
 #pragma endregion
 
 }
@@ -82,7 +79,7 @@ void UCHM_MaoThirdAttack::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	UAnimInstance* OwnerAnimInst = HM_PengMao->GetMesh()->GetAnimInstance();
-	if (OwnerAnimInst != nullptr && bCheckSectionRange == true)
+	if (OwnerAnimInst != nullptr && bAttacking == true)
 	{
 		float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
 		float StartSectionLength, EndSectionLength = 0.0f;
@@ -91,17 +88,31 @@ void UCHM_MaoThirdAttack::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 		if (CurrentMonPos >= StartSectionLength)
 		{
-			bCheckSectionRange = true;
 			OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
 		}
-		else
-		{
-			float CurrentPlayRate = OwnerAnimInst->Montage_GetPlayRate(AttackMontages[0]);
-			CurrentPlayRate -= 0.01f;
-			FMath::Clamp(CurrentPlayRate, 0.1f, 1.0f);
-			OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], CurrentPlayRate);
-		}
 	}
+
+	//UAnimInstance* OwnerAnimInst = HM_PengMao->GetMesh()->GetAnimInstance();
+	//if (OwnerAnimInst != nullptr && bCheckSectionRange == true)
+	//{
+	//	float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
+	//	float StartSectionLength, EndSectionLength = 0.0f;
+	//	const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
+	//	AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
+
+	//	if (CurrentMonPos >= StartSectionLength)
+	//	{
+	//		bCheckSectionRange = false;
+	//		OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
+	//	}
+	//	else
+	//	{
+	//		float CurrentPlayRate = OwnerAnimInst->Montage_GetPlayRate(AttackMontages[0]);
+	//		CurrentPlayRate -= 0.01f;
+	//		FMath::Clamp(CurrentPlayRate, 0.1f, 1.0f);
+	//		OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], CurrentPlayRate);
+	//	}
+	//}
 }
 
 void UCHM_MaoThirdAttack::IsRunTick(bool bRunning)
@@ -127,8 +138,9 @@ void UCHM_MaoThirdAttack::BeginAttack(AActor * DoingActor)
 			StartSectionPlayRate, false
 		);
 
-		//@Init
-		bCheckSectionRange = true;
+		// @공격 중 앞으로 이동.
+		AttackMoveDir = HM_PengMao->GetActorForwardVector();
+		AttackMoveSpeed = 2.0f;
 	}
 }
 
@@ -182,7 +194,7 @@ void UCHM_MaoThirdAttack::AttackOtherPawn()
 					HitDirection.Normalize();
 					I_HitComp->SetHitDirection(HitDirection);
 
-					I_HitComp->SetHitMoveSpeed(4.0f);
+					I_HitComp->SetHitMoveSpeed(3.0f);
 					I_HitComp->OnHit(HM_PengMao, DT_AirFirstAttack, DT_AirFirstAttack->DamageImpulse);
 				}
 				else

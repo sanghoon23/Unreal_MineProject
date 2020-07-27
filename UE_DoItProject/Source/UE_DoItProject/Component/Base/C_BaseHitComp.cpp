@@ -10,10 +10,14 @@ UC_BaseHitComp::UC_BaseHitComp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	//@Set MontageArrayNum
-	uint8 DamageTypeNum = static_cast<int>(FDamageType::END);
-	DamagedMontages.Init(nullptr, DamageTypeNum);
-	//DamagedMontages.SetNum(DamageTypeNum);
+	//@Init
+	{
+		uint8 DamageTypeNum = static_cast<int>(FDamageType::END);
+		bUsingDamageTypeEffect.Init(false, DamageTypeNum); //@DamageType 사용여부
+		DamagedMontages.Init(nullptr, DamageTypeNum); //@DamageType 에 따른 Montage Container
+
+		//DamagedMontages.SetNum(DamageTypeNum);
+	}
 }
 
 

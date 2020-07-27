@@ -83,56 +83,6 @@ void UCHM_MaoFirstAttack::BeginPlay()
 		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
 	}
 
-	//@Set Delegate - Ability
-	{
-		//@Start
-		AbilitySpeedDowner->OnDelStartTimerAbility.AddLambda([&](AActor* AppliedActor)
-		{
-			IIC_Charactor* ApplyI_Charactor = Cast<IIC_Charactor>(AppliedActor);
-			if (ApplyI_Charactor != nullptr)
-			{
-				//@파티클 실행
-				IIC_MeshParticle* I_MeshParticle = ApplyI_Charactor->GetIMeshParticle();
-				check(I_MeshParticle);
-
-				FTransform RootTrans = FTransform::Identity;
-				RootTrans.SetScale3D(FVector(2.0f));
-				SlowerParticleComp_Root = I_MeshParticle->SpawnParticleAtMesh
-				(
-					SlowerParticle_Root,
-					EAttachPointType::ROOT,
-					EAttachPointRelative::NONE,
-					EAttachLocation::SnapToTarget,
-					RootTrans
-				);
-
-				FTransform BodyTrans = FTransform::Identity;
-				BodyTrans.SetScale3D(FVector(2.0f));
-				SlowerParticleComp_Body = I_MeshParticle->SpawnParticleAtMesh
-				(
-					SlowerParticle_Body,
-					EAttachPointType::ROOT,
-					EAttachPointRelative::NONE,
-					EAttachLocation::SnapToTarget,
-					BodyTrans
-				);
-			}
-		});
-
-		//@End
-		AbilitySpeedDowner->OnEndTimerAbility.AddLambda([&](AActor* AppliedActor)
-		{
-			//@Particle OFF
-			if (SlowerParticleComp_Root != nullptr)
-				SlowerParticleComp_Root->SetActive(false);
-			else CLog::Print(L"LHand Particle NULL!!");
-
-			if (SlowerParticleComp_Body != nullptr)
-				SlowerParticleComp_Body->SetActive(false);
-			else CLog::Print(L"RHand Particle NULL!!");
-		});
-	}
-
 	//@Setting Value
 	{
 		OffSetAttackRangeForStart = 100.0f; //@Range - 100.0f
@@ -270,6 +220,42 @@ void UCHM_MaoFirstAttack::AttackOtherPawn()
 				else
 					UE_LOG(LogTemp, Warning, L"MaoFirstAttack CallAttack - HitComp Null!!");
 
+				//@Slower Delegate
+				{
+					//@파티클 실행
+					IIC_MeshParticle* I_MeshParticle = HitIneterfaceCharactor->GetIMeshParticle();
+					check(I_MeshParticle);
+
+					FTransform RootTrans = FTransform::Identity;
+					RootTrans.SetScale3D(FVector(2.0f));
+					UParticleSystemComponent* SlowerParticleComp_Root = I_MeshParticle->SpawnParticleAtMesh
+					(
+						SlowerParticle_Root,
+						EAttachPointType::ROOT,
+						EAttachPointRelative::NONE,
+						EAttachLocation::SnapToTarget,
+						RootTrans
+					);
+
+					FTransform BodyTrans = FTransform::Identity;
+					BodyTrans.SetScale3D(FVector(2.0f));
+					UParticleSystemComponent* SlowerParticleComp_Body = I_MeshParticle->SpawnParticleAtMesh
+					(
+						SlowerParticle_Body,
+						EAttachPointType::ROOT,
+						EAttachPointRelative::NONE,
+						EAttachLocation::SnapToTarget,
+						BodyTrans
+					);
+
+
+					AbilitySpeedDowner->OnEndTimerAbility.AddLambda([SlowerParticleComp_Root, SlowerParticleComp_Body](AActor*)
+					{
+						SlowerParticleComp_Root->SetActive(false);
+						SlowerParticleComp_Body->SetActive(false);
+					});
+				}
+
 				//@Ability Insert
 				IIC_AbilityComp* I_AbilityComp = HitIneterfaceCharactor->GetIAbilityComp();
 				if (I_AbilityComp != nullptr)
@@ -278,8 +264,8 @@ void UCHM_MaoFirstAttack::AttackOtherPawn()
 					FAbilityValue InputValue;
 					InputValue.bTimer = true;
 					(IsLastCombo() == true)
-						? InputValue.Timer = 6.0f
-						: InputValue.Timer = 2.5f;
+						? InputValue.Timer = 9.0f
+						: InputValue.Timer = 3.0f;
 
 					InputValue.Value = AbilityDownSpeedValue;
 					AbilitySpeedDowner->SetAbilityValue(InputValue);
@@ -327,43 +313,4 @@ void UCHM_MaoFirstAttack::EndBeatedFunction(AActor * Subject)
 		SubjectPlayerInterface->OffBlockKeyInput();
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBetedFunc, I_Player NULL!!");
-}
-
-void UCHM_MaoFirstAttack::BeginAbilityFunction(AActor * Subject)
-{
-	IIC_Charactor* SubjectCharactorInterface = Cast<IIC_Charactor>(Subject);
-	if (SubjectCharactorInterface != nullptr)
-	{
-		//@파티클 실행
-		IIC_MeshParticle* I_MeshParticle = SubjectCharactorInterface->GetIMeshParticle();
-		check(I_MeshParticle);
-
-		SlowerParticleComp_Root = I_MeshParticle->SpawnParticleAtMesh
-		(
-			SlowerParticle_Root,
-			EAttachPointType::ROOT,
-			EAttachPointRelative::NONE,
-			EAttachLocation::SnapToTarget
-		);
-
-		SlowerParticleComp_Body = I_MeshParticle->SpawnParticleAtMesh
-		(
-			SlowerParticle_Body,
-			EAttachPointType::ROOT,
-			EAttachPointRelative::NONE,
-			EAttachLocation::SnapToTarget
-		);
-	}
-}
-
-void UCHM_MaoFirstAttack::EndAbilityFunction(AActor * Subject)
-{
-	//@Particle OFF
-	if (SlowerParticleComp_Root != nullptr)
-		SlowerParticleComp_Root->SetActive(false);
-	else CLog::Print(L"LHand Particle NULL!!");
-
-	if (SlowerParticleComp_Body != nullptr)
-		SlowerParticleComp_Body->SetActive(false);
-	else CLog::Print(L"RHand Particle NULL!!");
 }

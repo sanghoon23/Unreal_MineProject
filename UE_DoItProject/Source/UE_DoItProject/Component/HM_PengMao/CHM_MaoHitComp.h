@@ -12,20 +12,11 @@ class UE_DOITPROJECT_API UCHM_MaoHitComp
 
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Material")
+		class UMaterialInterface* Mat_Poision_0;
+
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* NormalHitMontage;
-
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* AirHitMontage;
-
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* AirAttackHitMontage;
-
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* StrongAttackHitMontage;
-
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
-		class UAnimMontage* StunHitMontage;
 
 	#pragma endregion
 	

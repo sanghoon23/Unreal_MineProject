@@ -12,7 +12,8 @@ enum class HM_PengMaoAttackType
 	FIRSTATTACK = 0, //@연속 공격
 	SECONDATTACK = 1, //@내려찍고 빙결
 	THIRDATTACK = 2, //@WindMil
-	END = 3,
+	FOURATTACK = 3, //@타원형 범위 스킬 공격
+	END = 4,
 };
 
 UCLASS()
@@ -23,17 +24,23 @@ class UE_DOITPROJECT_API UCHM_MaoAttackComp
 
 	#pragma region Reflection
 private:
+	//UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
+	//	class USceneComponent* Scene;
+
 	UPROPERTY(VisibleAnywhere, Category = "BaseAttack")
 		TArray<class UC_BaseAttackState*> BasicAttackStateArray;
 
 	//UPROPERTY(VisibleAnywhere, Category = "Component")
-	//	UC_BaseAttackState* HMMao_FirstAttack;
+	//	class UCHM_MaoFirstAttack* HMMao_FirstAttack;
 
 	//UPROPERTY(VisibleAnywhere, Category = "Component")
-	//	UC_BaseAttackState* HMMao_SecondAttack;
+	//	class UCHM_MaoSecondAttack* HMMao_SecondAttack;
 
 	//UPROPERTY(VisibleAnywhere, Category = "Component")
-	//	UC_BaseAttackState* HMMao_ThirdAttack;
+	//	class UCHM_MaoThirdAttack* HMMao_ThirdAttack;
+
+	//UPROPERTY(VisibleAnywhere, Category = "Component")
+	//	class UCHM_MaoFourAttack* HMMao_Four;
 
 	#pragma endregion
 	
