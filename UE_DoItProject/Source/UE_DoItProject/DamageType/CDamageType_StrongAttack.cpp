@@ -64,5 +64,7 @@ void UCDamageType_StrongAttack::OnHittingProcess(AActor * Subject, AActor * Dama
 
 		const uint8 MontageNum = static_cast<uint8>(GetConditionType());
 		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);
+
+		CLog::Print(L"Strong DamageType Montage Play!!");
 	}
 }

@@ -88,11 +88,6 @@ ACItem_Barrier::ACItem_Barrier()
 			SM_HologramGlow->SetMaterial(0, Mat_Hologram.Object);
 		}
 	}
-
-	//@Create Ability
-	{
-		AbilityBarrier = NewObject<UCPLAbility_Barrier>();
-	}
 }
 
 void ACItem_Barrier::BeginPlay()
@@ -101,6 +96,11 @@ void ACItem_Barrier::BeginPlay()
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACItem_Barrier::OnBegin);
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ACItem_Barrier::OnEnd);
+
+	//@Create Ability
+	{
+		AbilityBarrier = NewObject<UCPLAbility_Barrier>();
+	}
 
 	//@Setting Delegate
 	{
@@ -160,7 +160,7 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 			check(I_MeshParticle);
 
 			//@Barrier Effect
-			UParticleSystemComponent* const PTComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
+			UParticleSystemComponent* PTComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
 			(
 				ParticleBarrier,
 				EAttachPointType::BODY,

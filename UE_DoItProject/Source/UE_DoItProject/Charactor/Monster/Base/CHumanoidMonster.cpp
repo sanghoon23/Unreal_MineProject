@@ -2,6 +2,7 @@
 #include "Global.h"
 
 #include "AIController.h"
+#include "UI/Widget/WG_FloatingCombo.h"
 
 ACHumanoidMonster::ACHumanoidMonster()
 {
@@ -17,6 +18,18 @@ ACHumanoidMonster::ACHumanoidMonster()
 	//}
 
 	//CharacterMovementComponentName = "CustomMovementComp";
+
+	FString strPath = L"";
+
+	//@LOAD
+	{
+		strPath = L"WidgetBlueprint'/Game/_Mine/_MyBlueprint/Widget/BpCWG_FloatingCombo.BpCWG_FloatingCombo_C'";
+		ConstructorHelpers::FClassFinder<UWG_FloatingCombo> LoadComboUIClass(*strPath);
+		if (LoadComboUIClass.Succeeded())
+		{
+			FloatingComboClass = LoadComboUIClass.Class;
+		}
+	}
 }
 
 void ACHumanoidMonster::BeginPlay()
@@ -40,10 +53,24 @@ float ACHumanoidMonster::TakeDamage(float DamageAmount, FDamageEvent const & Dam
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	UWorld* const World = GetWorld();
+
+	FVector InsertPos = GetActorLocation();
+
+	UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+	if (FloatingComboUI != nullptr)
+	{
+		APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@ÁÖÃ¼ÀÚ.
+		if (PC != nullptr)
+		{
+			FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
+			FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+			FloatingComboUI->AddToViewport();
+		}
+
+		//CLog::Print(L"Spawn FloatingComboUI !!");
+	}
+
 	return Damage;
 }
-
-//UPawnMovementComponent* ACHumanoidMonster::GetMovementComponent() const
-//{
-//	return CustomMovementComp;
-//}

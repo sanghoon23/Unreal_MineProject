@@ -90,8 +90,14 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 	bUsingDamageTypeEffect[StunNum] = true;
 	DamagedMontages[StunNum] = StunHitMontage;
 
-	//uint8 FreezeNum = static_cast<uint8>(FDamageType::FREEZE);
-	//DamagedMontages[FreezeNum] = NormalHitMontage;
+	uint8 PoisionNum = static_cast<uint8>(FDamageType::POISION);
+	bUsingDamageTypeEffect[PoisionNum] = true;
+
+	uint8 BurnNum = static_cast<uint8>(FDamageType::BURN);
+	bUsingDamageTypeEffect[BurnNum] = true;
+
+	uint8 FreezeNum = static_cast<uint8>(FDamageType::FREEZE);
+	bUsingDamageTypeEffect[FreezeNum] = true;
 
 #pragma endregion
 

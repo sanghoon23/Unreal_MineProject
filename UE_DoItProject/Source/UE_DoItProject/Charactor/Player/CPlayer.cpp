@@ -21,6 +21,7 @@
 #include "Component/Player/CPL_HitComp.h"
 
 #include "Actor/Cable/CPL_CableObject.h"
+#include "UI/Widget/WG_FloatingCombo.h"
 
 ACPlayer::ACPlayer()
 {
@@ -60,7 +61,7 @@ ACPlayer::ACPlayer()
 		RightParticle->SetWorldScale3D(FVector(3.0f));
 	}
 
-	#pragma region Setting Player Value
+#pragma region Setting Player Value
 	// Camera
 	{
 		SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
@@ -101,7 +102,17 @@ ACPlayer::ACPlayer()
 		CameraComp->SetRelativeRotation(FRotator(0.0f, -50.0f, 0.f));
 	}
 
-	#pragma endregion
+#pragma endregion
+
+	//@UI
+	{
+		strPath = L"WidgetBlueprint'/Game/_Mine/_MyBlueprint/Widget/BpCWG_FloatingCombo.BpCWG_FloatingCombo_C'";
+		ConstructorHelpers::FClassFinder<UWG_FloatingCombo> LoadFloatingComboUIClass(*strPath);
+		if (LoadFloatingComboUIClass.Succeeded())
+		{
+			FloatingComboClass = LoadFloatingComboUIClass.Class;
+		}
+	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -664,6 +675,30 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 
 	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
 	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+
+	UWorld* const World = GetWorld();
+
+	//@UI
+	{
+		FVector InsertPos = GetActorLocation();
+
+		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+		if (FloatingComboUI != nullptr)
+		{
+			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@ÁÖÃ¼ÀÚ.
+			if (PC != nullptr)
+			{
+				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::RED);
+				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+				FloatingComboUI->AddToViewport();
+			}
+
+			//CLog::Print(L"Spawn FloatingComboUI !!");
+		}
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	float InputDamageAmount = DamageAmount;
 	if (Info.BarrierAmount > 0.0f) //@Barrier

@@ -204,6 +204,8 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
 						I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
 
+						//DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
+
 						I_HitComp->SetHitMoveSpeed(4.0f);
 						I_HitComp->OnHit(HM_PengMao, DT_Strong, DT_Strong->DamageImpulse);
 

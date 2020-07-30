@@ -79,6 +79,9 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category = "Montages")
 		class UAnimMontage* CurrentMontage;
 
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+		TSubclassOf<class UWG_FloatingCombo> FloatingComboClass;
+
 	// Test Code
 	//UPROPERTY(Category = MapsAndSets, EditAnywhere)
 	//	TMap<int32, FString> FruitMap;

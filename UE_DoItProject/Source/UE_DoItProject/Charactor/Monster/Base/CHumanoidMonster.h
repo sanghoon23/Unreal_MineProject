@@ -15,12 +15,6 @@ class UE_DOITPROJECT_API ACHumanoidMonster
 
 	#pragma	region Reflection
 protected:
-	//UPROPERTY(VisibleAnywhere, Category = "Component")
-	//	class UCCharactorMovementComp* CustomMovementComp;
-
-	//UPROPERTY(EditAnywhere, Category = "AI")
-	//	TSubclassOf<class AAIController> MonAIControllerClass;
-
 	UPROPERTY(EditAnywhere, Category = "Movement")
 		float WalkSpeed = 300.0f;
 
@@ -29,6 +23,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Montage")
 		class UAnimMontage* CurrentMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+		TSubclassOf<class UWG_FloatingCombo> FloatingComboClass;
 
 	#pragma endregion
 
@@ -41,8 +38,6 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	//virtual UPawnMovementComponent* GetMovementComponent() const override;
 
 	/* Pure Virtual Function - (IC_Monster) */
 public:

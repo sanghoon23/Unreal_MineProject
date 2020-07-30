@@ -63,7 +63,7 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 		}
 
 		//@빙결 상황일 땐 다른 Montage 가 들어오지 못하도록 함.
-		I_Charactor->SetDontMontagePlay(true);
+		//I_Charactor->SetDontMontagePlay(true);
 		//IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
 		//if (I_HitComp != nullptr)
 		//{
@@ -132,7 +132,6 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 
 
 		//@빙결이 끝났을 땐 Block 해제
-		I_Charactor->SetDontMontagePlay(true);
 		//IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
 		//if (I_HitComp != nullptr)
 		//{

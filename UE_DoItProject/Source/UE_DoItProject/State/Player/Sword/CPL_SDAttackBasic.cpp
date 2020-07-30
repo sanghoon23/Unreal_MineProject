@@ -239,7 +239,7 @@ void UCPL_SDAttackBasic::AttackOtherPawn()
 
 #if  ENABLE_DRAW_DEBUG
 
-	DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
+	//DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
 
 #endif //  ENABLE_DRAW_DEBUG
 
@@ -260,7 +260,7 @@ void UCPL_SDAttackBasic::AttackOtherPawn()
 				HitComp->SetHitMoveSpeed(0.3f);
 
 				// 1.2 Hit Delegate - Normal(DamageType)
-				HitComp->OnHit(Player, DT_Noraml, 5.0f);
+				HitComp->OnHit(Player, DT_Noraml, 10.0f);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");

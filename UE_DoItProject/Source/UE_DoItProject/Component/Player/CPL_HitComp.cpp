@@ -73,19 +73,33 @@ UCPL_HitComp::UCPL_HitComp()
 	//...
 
 	uint8 NormalNum = static_cast<uint8>(FDamageType::NORMAL);
+	bUsingDamageTypeEffect[NormalNum] = true;
 	DamagedMontages[NormalNum] = NormalHitMontage;
 
 	uint8 AirNum = static_cast<uint8>(FDamageType::AIR);
+	bUsingDamageTypeEffect[AirNum] = true;
 	DamagedMontages[AirNum] = AirHitMontage;
 
 	uint8 AirAttackNum = static_cast<uint8>(FDamageType::AIRATTACK);
+	bUsingDamageTypeEffect[AirAttackNum] = true;
 	DamagedMontages[AirAttackNum] = AirAttackHitMontage;
 
 	uint8 StrongAttackNum = static_cast<uint8>(FDamageType::STRONGATTACK);
+	bUsingDamageTypeEffect[StrongAttackNum] = true;
 	DamagedMontages[StrongAttackNum] = StrongAttackHitMontage;
 
 	uint8 StunNum = static_cast<uint8>(FDamageType::STUN);
+	bUsingDamageTypeEffect[StunNum] = true;
 	DamagedMontages[StunNum] = StunHitMontage;
+
+	uint8 PoisionNum = static_cast<uint8>(FDamageType::POISION);
+	bUsingDamageTypeEffect[PoisionNum] = true;
+
+	uint8 BurnNum = static_cast<uint8>(FDamageType::BURN);
+	bUsingDamageTypeEffect[BurnNum] = true;
+
+	uint8 FreezeNum = static_cast<uint8>(FDamageType::FREEZE);
+	bUsingDamageTypeEffect[FreezeNum] = true;
 
 	#pragma endregion
 
