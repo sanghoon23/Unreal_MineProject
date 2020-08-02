@@ -23,7 +23,7 @@ public:
 		FVector2D GetInitialLocation() const { return Location; }
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
-		FSlateColor GetInitialColor() const;
+		FLinearColor GetInitialColor() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Data")
 		float GetDisplayDamageValue() const { return DisplayDamageValue; }

@@ -38,9 +38,8 @@ void UWG_FloatingCombo::SetInitial(APlayerController* PC, FVector WorldLocation,
 	}
 }
 
-FSlateColor UWG_FloatingCombo::GetInitialColor() const
+FLinearColor UWG_FloatingCombo::GetInitialColor() const
 {
 	FVector Test = FVector(Color.R, Color.G, Color.B);
-	CLog::Print(Test);
-	return FSlateColor(FLinearColor(Color));
+	return FLinearColor(Color);
 }

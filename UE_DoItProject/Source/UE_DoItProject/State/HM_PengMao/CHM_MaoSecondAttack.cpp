@@ -70,10 +70,10 @@ void UCHM_MaoSecondAttack::BeginPlay()
 #pragma region Create DamageType
 
 	DT_Noraml = NewObject<UCDamageType_Normal>();
-	DT_Noraml->SetDamageImpulse(10.0f);
+	DT_Noraml->SetDamageImpulse(30.0f);
 
 	DT_Strong = NewObject<UCDamageType_StrongAttack>();
-	DT_Strong->SetDamageImpulse(20.0f);
+	DT_Strong->SetDamageImpulse(50.0f);
 
 	DT_Freeze = NewObject<UCDamageType_Freeze>();
 	DT_Freeze->SetDamageImpulse(10.0f);

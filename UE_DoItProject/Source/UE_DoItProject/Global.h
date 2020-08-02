@@ -28,7 +28,6 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BTDecorator.h"
 
-
 #include "Animation/AnimInstance.h"
 
 #define IfNullRet(p){ if(p == NULL) return ; }

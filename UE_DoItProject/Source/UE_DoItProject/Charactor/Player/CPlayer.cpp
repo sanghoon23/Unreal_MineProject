@@ -693,8 +693,6 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 
 				FloatingComboUI->AddToViewport();
 			}
-
-			//CLog::Print(L"Spawn FloatingComboUI !!");
 		}
 	}
 
