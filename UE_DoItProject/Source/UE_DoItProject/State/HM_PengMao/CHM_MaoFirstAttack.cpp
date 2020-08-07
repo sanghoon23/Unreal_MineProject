@@ -78,11 +78,6 @@ void UCHM_MaoFirstAttack::BeginPlay()
 
 #pragma endregion
 
-	//@Create Ability
-	{
-		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
-	}
-
 	//@Setting Value
 	{
 		OffSetAttackRangeForStart = 100.0f; //@Range - 100.0f
@@ -248,6 +243,11 @@ void UCHM_MaoFirstAttack::AttackOtherPawn()
 						BodyTrans
 					);
 
+
+					//@Create Ability
+					{
+						AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+					}
 
 					AbilitySpeedDowner->OnEndTimerAbility.AddLambda([SlowerParticleComp_Root, SlowerParticleComp_Body](AActor*)
 					{

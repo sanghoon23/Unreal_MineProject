@@ -120,9 +120,10 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 
 	//@Motage
 	{
-		//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
-		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
-		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
+		//Test Code
+		////@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
+		//const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
+		//IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
 
 		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
 		if (Charactor != nullptr)

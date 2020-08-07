@@ -12,17 +12,17 @@ class UE_DOITPROJECT_API ACMoveMapArea
 	
 	#pragma	region Reflection
 private:
-	UPROPERTY(VisibleAnywhere, Category = "MapData")
-		FName LoadMapName = "";
-
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class USceneComponent* SceneComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UBoxComponent* BoxComp;
 
-	UPROPERTY(EditAnywhere, Category = "Component")
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UStaticMeshComponent* SM_WarpDisplay;
+
+	UPROPERTY(EditAnywhere, Category = "MapData")
+		FName LoadMapName = "";
 
 	UPROPERTY(EditAnywhere, Category = "Component")
 		TSubclassOf<class UUserWidget> LoadingBackgroundClass;

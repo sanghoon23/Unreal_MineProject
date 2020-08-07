@@ -77,6 +77,10 @@ void ACProjectile_FreezeBall::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//@Overlap
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ACProjectile_FreezeBall::OnBeginOverlap);
+	SphereComp->OnComponentEndOverlap.AddDynamic(this, &ACProjectile_FreezeBall::OnEndOverlap);
+
 #pragma region Create DamageType
 	//@Create DamageType
 	DT_Freeze = NewObject<UCDamageType_Freeze>();

@@ -82,8 +82,8 @@ private:
 	TArray<float> AttackRangeVec; //@공격 거리(Sphere 가 움직일 범위)
 	TArray<float> AttackRadiusVec; //@공격 둘레 - Sphere
 
-#pragma endregion
-
 	float AbilityDownSpeedValue = -300.0f;
+
+#pragma endregion
 
 };

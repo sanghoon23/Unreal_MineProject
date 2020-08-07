@@ -11,10 +11,6 @@ ACBaseProjectile::ACBaseProjectile()
 void ACBaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//@Overlap
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ACBaseProjectile::OnBeginOverlap);
-	SphereComp->OnComponentEndOverlap.AddDynamic(this, &ACBaseProjectile::OnEndOverlap);
 }
 
 void ACBaseProjectile::Tick(float DeltaTime)

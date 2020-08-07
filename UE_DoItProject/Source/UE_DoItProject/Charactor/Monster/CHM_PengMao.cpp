@@ -38,7 +38,7 @@ ACHM_PengMao::ACHM_PengMao()
 	//# 현재 체력 상태로 갱신해주어야 함.
 	Info.MaxHP = 100.0f;
 	Info.CurrentHP = 100.0f;
-	Info.Name = FName(L"HM_PengMao");
+	Info.Name = FName(L"PengMao");
 	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion

@@ -84,6 +84,10 @@ ACProjectile_PoisionBall::ACProjectile_PoisionBall()
 void ACProjectile_PoisionBall::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//@Overlap
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ACProjectile_PoisionBall::OnBeginOverlap);
+	SphereComp->OnComponentEndOverlap.AddDynamic(this, &ACProjectile_PoisionBall::OnEndOverlap);
 }
 
 //#Edit 0708 - @Warning - CNS_SpawnProjectile 로 생성되어져 나가는 것을 기억해라.

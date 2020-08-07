@@ -92,6 +92,7 @@ void UCHM_MaoThirdAttack::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		}
 	}
 
+	//@Before Code - 공격이 나오지 않고, 메모리에서 이 클래스가 삭제되는 현상
 	//UAnimInstance* OwnerAnimInst = HM_PengMao->GetMesh()->GetAnimInstance();
 	//if (OwnerAnimInst != nullptr && bCheckSectionRange == true)
 	//{

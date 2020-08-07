@@ -103,7 +103,7 @@ IIC_BaseAttack * UCHM_MaoAttackComp::GetCurrentIBaseAttack()
 	int CurrentType = static_cast<int>(AttackType);
 	if (CurrentType > BasicAttackStateArray.Num() - 1)
 	{
-		CLog::Print(L"MGAttackComp IBaseAttack Array Excess!!");
+		CLog::Print(L"CHM_MaoATKComp IBaseAttack Array Excess!!");
 		return nullptr; /*@Return*/
 	}
 

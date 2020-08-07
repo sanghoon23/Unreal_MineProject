@@ -33,7 +33,7 @@ ACHM_Basic::ACHM_Basic()
 	//# 현재 체력 상태로 갱신해주어야 함.
 	Info.MaxHP = 100.0f;
 	Info.CurrentHP = 100.0f;
-	Info.Name = FName(L"HM_Basic");
+	Info.Name = FName(L"Basic");
 	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion

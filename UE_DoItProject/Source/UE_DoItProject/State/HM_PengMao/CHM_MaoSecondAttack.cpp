@@ -14,8 +14,8 @@ UCHM_MaoSecondAttack::UCHM_MaoSecondAttack()
 
 	// Super Setting
 	{
-		CurrentComboNum = 0;
-		MaxComboNum = 1;
+		CurrentComboNum = static_cast<uint8>(EHM_MaoSecondComboType::NONE);
+		MaxComboNum = static_cast<uint8>(EHM_MaoSecondComboType::END);
 	}
 
 	AttackRangeVec.Init(0.0f, static_cast<uint8>(EHM_MaoSecondComboType::END));

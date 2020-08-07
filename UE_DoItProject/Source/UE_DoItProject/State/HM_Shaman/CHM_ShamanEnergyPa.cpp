@@ -37,7 +37,7 @@ UCHM_ShamanEnergyPa::UCHM_ShamanEnergyPa()
 	{
 		UAnimMontage* Shaman_FirstAttack = nullptr;
 
-		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Shaman/Attack/ShamanMon_EnergyPa.ShamanMon_EnergyPa'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Shaman/Attack/HM_Shaman_Mon_EnergyPa.HM_Shaman_Mon_EnergyPa'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> MFirstAttack(*Path);
 		if (MFirstAttack.Succeeded())
 			Shaman_FirstAttack = MFirstAttack.Object;

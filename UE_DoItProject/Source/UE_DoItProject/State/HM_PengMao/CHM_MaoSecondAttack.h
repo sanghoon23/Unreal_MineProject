@@ -74,6 +74,7 @@ public:
 
 	virtual void AttackOtherPawn() override;
 
+	/* Function */
 private:
 	void BeginBeatedFunction(AActor* Subject);
 	void EndBeatedFunction(AActor* Subject);
