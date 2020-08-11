@@ -10,8 +10,6 @@ class UE_DOITPROJECT_API UCPLAbility_SpeedDown
 {
 	GENERATED_BODY()
 	
-		//TODO : UI Ability - Player Info
-
 public:
 	UCPLAbility_SpeedDown();
 

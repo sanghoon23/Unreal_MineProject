@@ -59,15 +59,31 @@ void UCHM_AssaThirdAttack::BeginPlay()
 	check(I_Charactor);
 
 	//@Notify Reference
-	TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;
-	AttackMontages[0]->GetAnimNotifies(0, 15.0f, false, NotifyEvent_Mon_0);
-	for (auto& Ref : NotifyEvent_Mon_0) //@AttackMontage[0]
 	{
-		const FAnimNotifyEvent* Event = Ref.GetNotify();
-		UCN_SpawnProjectile* Notify = Cast<UCN_SpawnProjectile>(Event->Notify);
-		if (Notify != nullptr)
+		TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;
+		AttackMontages[0]->GetAnimNotifies(0, 15.0f, false, NotifyEvent_Mon_0);
+		for (auto& Ref : NotifyEvent_Mon_0) //@AttackMontage[0] - ThirdAttack01
 		{
-			Notifies_SpawnProjectile.Add(Notify);
+			const FAnimNotifyEvent* Event = Ref.GetNotify();
+			check(Event);
+			UCN_SpawnProjectile* Notify = Cast<UCN_SpawnProjectile>(Event->Notify);
+			if (Notify != nullptr)
+			{
+				Notifies_SpawnProjectile.Add(Notify);
+			}
+		}
+
+		TArray<FAnimNotifyEventReference> NotifyEvent_Mon_1;
+		AttackMontages[1]->GetAnimNotifies(0, 15.0f, false, NotifyEvent_Mon_1);
+		for (auto& Ref : NotifyEvent_Mon_1) //@AttackMontage[1] - ThirdAttack02
+		{
+			const FAnimNotifyEvent* Event = Ref.GetNotify();
+			check(Event);
+			UCN_SpawnProjectile* Notify = Cast<UCN_SpawnProjectile>(Event->Notify);
+			if (Notify != nullptr)
+			{
+				Notifies_SpawnProjectile.Add(Notify);
+			}
 		}
 	}
 }
@@ -94,19 +110,10 @@ void UCHM_AssaThirdAttack::BeginAttack(AActor * DoingActor)
 	IfTrueRet(IsLastCombo());
 
 	//@Notify Ref - Setting Target
-	AActor* TargetInAI = HM_Assassin->GetTargetInAI();
+	//AActor* TargetInAI = HM_Assassin->GetTargetInAI();
 	for (auto& Notify : Notifies_SpawnProjectile)
 	{
-		Notify->SpeedValue = 800.0f;
-		if (TargetInAI != nullptr)
-		{
-			Notify->SetProjectileDirection(TargetInAI->GetActorLocation() - HM_Assassin->GetActorLocation());
-			Notify->SetProjectileTarget(TargetInAI);
-		}
-		else
-		{
-			Notify->SetProjectileDirection(HM_Assassin->GetActorForwardVector());
-		}
+		Notify->SetProjectileDirection(HM_Assassin->GetActorForwardVector());
 	}
 
 	if (bAttacking == false)
@@ -116,6 +123,9 @@ void UCHM_AssaThirdAttack::BeginAttack(AActor * DoingActor)
 			AttackMontages[0], /* @FirstMontage == Combo1 */
 			0.9f, false
 		);
+
+		//@Combo
+		bComboCheck = true;
 	}
 }
 

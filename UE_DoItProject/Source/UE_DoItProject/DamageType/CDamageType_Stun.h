@@ -25,6 +25,9 @@ private:
 		/* Stun ConditionData 에서 사용할 머리 위 표시할 Particle */
 		class UParticleSystem* StunHeadParticle; //@Default
 
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float StunTime = 0.0f;
+
 	#pragma endregion
 
 public:
@@ -48,5 +51,4 @@ public:
 	float GetStunTime() const { return StunTime; }
 
 private:
-	float StunTime = 0.0f;
 };

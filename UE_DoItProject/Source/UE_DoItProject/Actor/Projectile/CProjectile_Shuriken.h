@@ -20,13 +20,19 @@ private:
 	//	class UCapsuleComponent* Capsule;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class USceneComponent* SceneComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UBoxComponent* BoxComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class USkeletalMeshComponent* SkeletalMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Normal;
+	//UPROPERTY(VisibleAnywhere, Category = "DamageType")
+	//	UCDamageType_Normal*	DT_Normal;
 
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Poision*	DT_Poision;
+	//UPROPERTY(VisibleAnywhere, Category = "DamageType")
+	//	UCDamageType_Poision*	DT_Poision;
 
 	UPROPERTY(VisibleAnywhere, Category = "System")
 		class UParticleSystem* P_ExplosionShuriken;

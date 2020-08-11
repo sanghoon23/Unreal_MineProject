@@ -23,6 +23,8 @@ public class UE_DoItProject : ModuleRules
             "RenderCore",
             "UnrealEd",
             "LevelEditor",
+            "LevelSequence",
+            "MovieScene",
             "EditorStyle",
 
             // AI

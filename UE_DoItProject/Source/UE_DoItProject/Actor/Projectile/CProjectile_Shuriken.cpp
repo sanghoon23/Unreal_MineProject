@@ -37,10 +37,27 @@ ACProjectile_Shuriken::ACProjectile_Shuriken()
 	//	Capsule->SetVisibility(true);
 	//}
 
+	SceneComp = CreateDefaultSubobject<USceneComponent>("SceneComp");
+	RootComponent = SceneComp;
+
+	// @Box Comp
+	{
+		BoxComp = CreateDefaultSubobject<UBoxComponent>("BoxComp");
+		BoxComp->SetupAttachment(SceneComp);
+
+		BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		BoxComp->SetGenerateOverlapEvents(true);
+		BoxComp->SetCollisionProfileName("Projectile");
+		BoxComp->SetVisibility(true);
+
+		BoxComp->SetBoxExtent(FVector(20.0f, 10.0f, 10.0f));
+		BoxComp->SetRelativeLocation(FVector(-15.0f, 0.0f, 0.0f));
+	}
+
 	// @StaticMesh Component
 	{
 		SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComp");
-		RootComponent = SkeletalMesh;
+		SkeletalMesh->SetupAttachment(SceneComp);
 		//SkeletalMesh->SetupAttachment(Capsule);
 
 		strPath = L"SkeletalMesh'/Game/_Mine/Mesh/Object/Projectile/Blade_Fencer/SK_Blade_Fencer.SK_Blade_Fencer'";
@@ -50,10 +67,12 @@ ACProjectile_Shuriken::ACProjectile_Shuriken()
 			SkeletalMesh->SetSkeletalMesh(SK.Object);
 		}
 
-		SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		SkeletalMesh->SetGenerateOverlapEvents(true);
-		SkeletalMesh->SetCollisionProfileName("Projectile");
+		SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		SkeletalMesh->SetGenerateOverlapEvents(false);
+		//SkeletalMesh->SetCollisionProfileName("Projectile");
 		SkeletalMesh->SetVisibility(true);
+
+		SkeletalMesh->SetRelativeRotation(FRotator(90.0f, 0.0f, 180.0f));
 
 		//Test Code
 		//SkeletalMesh->SetSimulatePhysics(false);
@@ -78,19 +97,9 @@ void ACProjectile_Shuriken::BeginPlay()
 	Super::BeginPlay();
 
 	//@Overlap
-	SkeletalMesh->OnComponentBeginOverlap.AddDynamic(this, &ACProjectile_Shuriken::OnBeginOverlap);
-	SkeletalMesh->OnComponentEndOverlap.AddDynamic(this, &ACProjectile_Shuriken::OnEndOverlap);
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACProjectile_Shuriken::OnBeginOverlap);
+	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ACProjectile_Shuriken::OnEndOverlap);
 
-#pragma region Create DamageType
-
-	DT_Normal= NewObject<UCDamageType_Normal>();
-	DT_Normal->SetDamageImpulse(20.0f);
-
-	DT_Poision = NewObject<UCDamageType_Poision>();
-	DT_Poision->SetSecondDamageValue(5.0f);
-	DT_Poision->SetPoisioningTime(5.0f);
-
-#pragma endregion
 }
 
 //#Edit 0708 - @Warning - CNS_SpawnProjectile 로 생성되어져 나가는 것을 기억해라.
@@ -141,7 +150,10 @@ void ACProjectile_Shuriken::OnBeginOverlap(UPrimitiveComponent * OverlappedCompo
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
 
+	IfTrueRet(OtherActor == GetOwner());
 	IfTrueRet(OtherActor == this);
+
+	CLog::Print(L"Shuriken BeginOverlap!!");
 
 	//@Following Target Check
 	if (SettingTarget != nullptr)
@@ -203,8 +215,17 @@ void ACProjectile_Shuriken::OnBeginOverlap(UPrimitiveComponent * OverlappedCompo
 				HitComp->SetHitDirection(FVector(0.0f));
 				HitComp->SetHitMoveSpeed(0.0f);
 
-				// 1.2 Hit Delegate - BeginPlay(DT_Freeze ADD Delegate)
+				// 1.2 Hit - DT_Normal
+				UCDamageType_Normal* DT_Normal = NewObject<UCDamageType_Normal>();
+				DT_Normal->SetDamageImpulse(20.0f);
 				HitComp->OnHit(this, DT_Normal, DT_Normal->DamageImpulse);
+
+				// 1.3 Hit - DT_Poision
+				UCDamageType_Poision* DT_Poision = NewObject<UCDamageType_Poision>();
+				DT_Poision->SetDamageImpulse(5.0f);
+				DT_Poision->SetSecondDamageValue(5.0f);
+				DT_Poision->SetPoisioningTime(5.0f);
+				HitComp->OnHit(this, DT_Poision, DT_Poision->DamageImpulse);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"Projectile FreezeBall OnBeginOverlap - HitComp Null!!");
@@ -223,6 +244,9 @@ void ACProjectile_Shuriken::OnEndOverlap(UPrimitiveComponent * OverlappedCompone
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
+
+	IfTrueRet(OtherActor == GetOwner());
+	IfTrueRet(OtherActor == this);
 }
 
 void ACProjectile_Shuriken::Explosion()
@@ -233,6 +257,11 @@ void ACProjectile_Shuriken::Explosion()
 	P_Transform.SetScale3D(FVector(2.0f));
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionShuriken, P_Transform, true);
 
+	//@NoCollision & Not Visibility
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BoxComp->SetVisibility(false);
+	SkeletalMesh->SetVisibility(false);
+
 	FTimerHandle DeathTimerHandle;
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_Shuriken::Explosion, DeathTime);
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACProjectile_Shuriken::Death, DeathTime);
 }

@@ -24,7 +24,7 @@ ACHM_Assassin::ACHM_Assassin()
 	{
 		HitComp = CreateDefaultSubobject<UCHM_AssassinHitComp>(TEXT("HitComp"));
 		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>(TEXT("MeshParticleComp"));
-		Assa_ATKComp = CreateDefaultSubobject<UCHM_AssassinAttackComp>(TEXT("Assa_ATKComp"));
+		Ass_ATKComp = CreateDefaultSubobject<UCHM_AssassinAttackComp>(TEXT("Ass_ATKComp"));
 
 		//AddOwnedComponent(AttackComponent);
 		//AddOwnedComponent(HitComp);
@@ -217,8 +217,8 @@ void ACHM_Assassin::CallDestory()
 
 IIC_AttackComp * ACHM_Assassin::GetIAttackComp()
 {
-	IfTrueRetResult(Assa_ATKComp == nullptr, nullptr); // @Return Null
-	return Cast<IIC_AttackComp>(Assa_ATKComp);
+	IfTrueRetResult(Ass_ATKComp == nullptr, nullptr); // @Return Null
+	return Cast<IIC_AttackComp>(Ass_ATKComp);
 }
 
 IIC_HitComp * ACHM_Assassin::GetIHitComp()

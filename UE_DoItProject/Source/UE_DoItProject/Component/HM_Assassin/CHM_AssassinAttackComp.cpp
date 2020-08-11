@@ -7,6 +7,7 @@
 #include "State/HM_Assassin/CHM_AssaSecondAttack.h"
 #include "State/HM_Assassin/CHM_AssaThirdAttack.h"
 #include "State/HM_Assassin/CHM_AssaFourAttack.h"
+#include "State/HM_Assassin/CHM_AssaFiveAttack.h"
 
 UCHM_AssassinAttackComp::UCHM_AssassinAttackComp()
 {
@@ -20,11 +21,13 @@ UCHM_AssassinAttackComp::UCHM_AssassinAttackComp()
 		UC_BaseAttackState* HMAssa_SecondAttack = CreateDefaultSubobject<UCHM_AssaSecondAttack>(TEXT("Assa_SecondAttack"));
 		UC_BaseAttackState* HMAssa_ThirdAttack = CreateDefaultSubobject<UCHM_AssaThirdAttack>(TEXT("Assa_ThirdATK"));
 		UC_BaseAttackState* HMAssa_FourAttack = CreateDefaultSubobject<UCHM_AssaFourAttack>(TEXT("Assa_FourATK"));
+		UC_BaseAttackState* HMAssa_FiveAttack = CreateDefaultSubobject<UCHM_AssaFiveAttack>(TEXT("_FiveATK"));
 
 		BasicAttackStateArray.Emplace(HMAssa_FirstAttack);
 		BasicAttackStateArray.Emplace(HMAssa_SecondAttack);
 		BasicAttackStateArray.Emplace(HMAssa_ThirdAttack);
 		BasicAttackStateArray.Emplace(HMAssa_FourAttack);
+		BasicAttackStateArray.Emplace(HMAssa_FiveAttack);
 	}
 
 #pragma endregion

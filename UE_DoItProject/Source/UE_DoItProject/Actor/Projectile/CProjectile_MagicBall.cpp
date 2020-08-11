@@ -133,6 +133,7 @@ void ACProjectile_MagicBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComp
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
 
+	IfTrueRet(OtherActor == GetOwner());
 	IfTrueRet(OtherActor == this);
 
 	//@Following Target Check
@@ -206,6 +207,9 @@ void ACProjectile_MagicBall::OnEndOverlap(UPrimitiveComponent * OverlappedCompon
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
+
+	IfTrueRet(OtherActor == GetOwner());
+	IfTrueRet(OtherActor == this);
 }
 
 void ACProjectile_MagicBall::Explosion()

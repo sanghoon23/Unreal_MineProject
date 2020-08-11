@@ -14,8 +14,8 @@ UCHM_AssaFourAttack::UCHM_AssaFourAttack()
 
 	// Super Setting
 	{
-		CurrentComboNum = 0;
-		MaxComboNum = 1;
+		CurrentComboNum = static_cast<uint8>(EHM_AssaFourComboType::NONE);
+		MaxComboNum = static_cast<uint8>(EHM_AssaFourComboType::COMBO_SIX);
 	}
 
 	FString Path = L"";
@@ -26,13 +26,23 @@ UCHM_AssaFourAttack::UCHM_AssaFourAttack()
 	{
 		UAnimMontage* Assa_FourAttack = nullptr;
 
-		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Attack/HM_Assassin_Mon_FourAttack.HM_Assassin_Mon_FourAttack'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Attack/HM_Assassin_Mon_FourAttack01.HM_Assassin_Mon_FourAttack01'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> Mon_FourAttack(*Path);
 		if (Mon_FourAttack.Succeeded())
 			Assa_FourAttack = Mon_FourAttack.Object;
 
 		AttackMontages.Emplace(Assa_FourAttack);
 	}
+
+	////@LOAD Particle
+	//{
+	//	Path = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Assassin/Assassin_FourAttackCasting.Assassin_FourAttackCasting'";
+	//	ConstructorHelpers::FObjectFinder<UParticleSystem> P_LoadCast(*Path);
+	//	if (P_LoadCast.Succeeded())
+	//	{
+	//		P_AttackCasting = P_LoadCast.Object;
+	//	}
+	//}
 
 #pragma endregion
 
@@ -54,6 +64,20 @@ void UCHM_AssaFourAttack::BeginPlay()
 void UCHM_AssaFourAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	UAnimInstance* OwnerAnimInst = HM_Assassin->GetMesh()->GetAnimInstance();
+	if (OwnerAnimInst != nullptr && bAttacking == true) //@공격이 실행됐을 때,
+	{
+		float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
+		float StartSectionLength, EndSectionLength = 0.0f;
+		const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
+		AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
+
+		if (CurrentMonPos >= StartSectionLength) //@다음 섹션(NextAction)
+		{
+			OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
+		}
+	}
 }
 
 void UCHM_AssaFourAttack::IsRunTick(bool bRunning)
@@ -66,7 +90,7 @@ void UCHM_AssaFourAttack::BeginAttack(AActor * DoingActor)
 	Super::BeginAttack(DoingActor);
 	check(DoingActor);
 
-	// @IF TRUE RETURN
+	//@IF TRUE RETURN
 	IfTrueRet(HM_Assassin->GetCharacterMovement()->IsFalling()); //@Jump Check
 	IfTrueRet(IsLastCombo());
 
@@ -75,9 +99,17 @@ void UCHM_AssaFourAttack::BeginAttack(AActor * DoingActor)
 		HM_Assassin->ActorAnimMonPlay
 		(
 			AttackMontages[0], /* @FirstMontage == Combo1 */
-			0.9f, false
+			0.2f, false
 		);
 	}
+}
+
+bool UCHM_AssaFourAttack::IsLastCombo() const
+{
+	if (CurrentComboNum == static_cast<UINT>(EHM_AssaFourComboType::COMBO_SIX))
+		return true;
+
+	return false;
 }
 
 /*
@@ -89,6 +121,90 @@ ex) 첫번째 공격 1, 두번째 공격 2...
 void UCHM_AssaFourAttack::AttackOtherPawn()
 {
 	Super::AttackOtherPawn();
+
+	//@현재 콤보 늘려줌
+	++CurrentComboNum;
+	const uint8 ComboNum = static_cast<uint8>(CurrentComboNum);
+
+	IfTrueRet(HM_Assassin == nullptr);
+
+	FVector ActorForward = HM_Assassin->GetActorForwardVector();
+	FVector Start = HM_Assassin->GetActorLocation();
+	FVector End = HM_Assassin->GetActorLocation() + ActorForward * AttackRange;
+
+	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
+	FCollisionQueryParams CollisionQueryParm(NAME_None, false, HM_Assassin);
+
+	TArray<FHitResult> HitResults;
+	float DebugLifeTime = 1.0f;
+	bool bHit = GetWorld()->SweepMultiByChannel
+	(
+		HitResults
+		, Start
+		, End
+		, FQuat::Identity
+		, I_Charactor->GetCharactorUsingAttackChannel() // @MonsterAttack
+		, sphere
+		, CollisionQueryParm
+	);
+
+#if  ENABLE_DRAW_DEBUG
+
+	//DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
+
+#endif //  ENABLE_DRAW_DEBUG
+
+	if (bHit == true)
+	{
+		for (FHitResult& HitResult : HitResults)
+		{
+			IIC_Charactor* HitIneterfaceCharactor = Cast<IIC_Charactor>(HitResult.GetActor());
+			if (HitIneterfaceCharactor != nullptr)
+			{
+				// 1. Get Interface HitComp
+				IIC_HitComp* I_HitComp = HitIneterfaceCharactor->GetIHitComp();
+				if (I_HitComp != nullptr)
+				{
+
+					I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_AssaFourAttack::BeginBeatedFunction);
+					I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_AssaFourAttack::EndBeatedFunction);
+
+					//@이동
+					//AttackMoveDir = HM_Assassin->GetActorForwardVector();
+					//AttackMoveSpeed = 1.0f;
+
+					// 1.1 Set Hit Attributellll
+					//@맞은 애의 뒤쪽으로 HitDir
+					FVector HitDirection = HitResult.GetActor()->GetActorLocation() - HM_Assassin->GetActorLocation();
+					HitDirection.Z = 0.0f;
+					HitDirection.Normalize();
+					I_HitComp->SetHitDirection(HitDirection);
+
+					if ((IsLastCombo() == true)) //마지막 일격
+					{
+						UCDamageType_StrongAttack* DT_Strong = NewObject<UCDamageType_StrongAttack>();
+						DT_Strong->SetDamageImpulse(20.0f);
+
+						I_HitComp->SetHitMoveSpeed(4.0f);
+						I_HitComp->OnHit(HM_Assassin, DT_Strong, DT_Strong->DamageImpulse);
+					}
+					else //첫번째 공격
+					{
+						UCDamageType_Air* DT_Air = NewObject<UCDamageType_Air>();
+						DT_Air->SetDamageImpulse(10.0f);
+
+						I_HitComp->SetHitMoveSpeed(0.1f);
+						I_HitComp->OnHit(HM_Assassin, DT_Air, DT_Air->DamageImpulse);
+					}
+				}
+				else
+					UE_LOG(LogTemp, Warning, L"AssaFourAttack CallAttack - HitComp Null!!");
+
+			}//(Charactor)
+			else
+				UE_LOG(LogTemp, Warning, L"AssaFourAttack CallAttack - Charactor Null!!");
+		}
+	}
 }
 
 void UCHM_AssaFourAttack::BeginBeatedFunction(AActor * Subject)
@@ -98,14 +214,14 @@ void UCHM_AssaFourAttack::BeginBeatedFunction(AActor * Subject)
 	{
 		SubjectCharactorInterface->CanNotMove();
 	}
-	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack BeginBetedFunc, I_Charactor NULL!!");
+	else UE_LOG(LogTemp, Warning, L"AssaFourAttack BeginBetedFunc, I_Charactor NULL!!");
 
 	IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Subject);
 	if (SubjectPlayerInterface != nullptr)
 	{
 		SubjectPlayerInterface->OnBlockKeyInput();
 	}
-	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack BeginBetedFunc, I_Player NULL!!")
+	else UE_LOG(LogTemp, Warning, L"AssaFourAttack BeginBetedFunc, I_Player NULL!!")
 }
 
 void UCHM_AssaFourAttack::EndBeatedFunction(AActor * Subject)
@@ -115,14 +231,12 @@ void UCHM_AssaFourAttack::EndBeatedFunction(AActor * Subject)
 	{
 		SubjectCharactorInterface->CanMove();
 	}
-	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBeatedFunc, I_Charactor NULL!!");
+	else UE_LOG(LogTemp, Warning, L"AssaFourAttack EndBeatedFunc, I_Charactor NULL!!");
 
 	IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Subject);
 	if (SubjectPlayerInterface != nullptr)
 	{
 		SubjectPlayerInterface->OffBlockKeyInput();
 	}
-	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBetedFunc, I_Player NULL!!");
+	else UE_LOG(LogTemp, Warning, L"AssaFourAttack EndBetedFunc, I_Player NULL!!");
 }
-
-

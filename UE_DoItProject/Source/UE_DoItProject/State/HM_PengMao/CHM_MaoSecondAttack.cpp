@@ -214,7 +214,7 @@ void UCHM_MaoSecondAttack::AttackOtherPawn()
 						FreezeTimerDelegate = FTimerDelegate::CreateUObject(this, &UCHM_MaoSecondAttack::TimerFreezeHittedActor, HitResult.GetActor());
 						HitResult.GetActor()->GetWorldTimerManager().SetTimer
 						(
-							FreezeTimerHandle, 
+							FreezeTimerHandle,
 							FreezeTimerDelegate,
 							1.0f,
 							false

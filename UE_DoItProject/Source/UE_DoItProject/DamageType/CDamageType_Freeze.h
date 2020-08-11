@@ -19,9 +19,6 @@ public:
 	FDelEndCondition OnLinkEndUpsetCondition;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Value")
-		bool bFreezeEffect = true;
-
 	UPROPERTY(VisibleAnywhere, Category = "Texture")
 		class UTexture2D* FreezeConditionUITexture = nullptr;
 
@@ -32,6 +29,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		/* Freeze ConditionData 에서 사용할 Freeze Under Particle */
 		class UParticleSystem* FreezeUnderParticle;
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+		bool bFreezeEffect = true;
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float FreezingTime = 0.0f;
 
 	#pragma endregion
 
@@ -57,6 +60,5 @@ public:
 	float GetFreezingTime() const { return FreezingTime; }
 
 private:
-	float FreezingTime = 0.0f;
 	
 };

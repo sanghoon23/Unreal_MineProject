@@ -45,14 +45,6 @@ UCHM_ShamanFirstAttack::UCHM_ShamanFirstAttack()
 
 #pragma endregion
 
-#pragma region DamageType
-
-	//DT_Stun = NewObject<UCDamageType_Stun>();
-	//DT_Stun->SetDamageImpulse(10.0f);
-	//DT_Stun->SetStunTime(2.0f);
-
-#pragma endregion
-
 }
 
 void UCHM_ShamanFirstAttack::BeginPlay()

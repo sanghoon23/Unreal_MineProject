@@ -12,6 +12,9 @@ class UE_DOITPROJECT_API UCPL_HitComp
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Material")
+		class UMaterialInterface* Mat_Poision_0;
+
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* NormalHitMontage;
 

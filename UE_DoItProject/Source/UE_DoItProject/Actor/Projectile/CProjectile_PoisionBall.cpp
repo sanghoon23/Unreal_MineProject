@@ -137,6 +137,7 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
 
+	IfTrueRet(OtherActor == GetOwner());
 	IfTrueRet(OtherActor == this);
 
 	//@Following Target Check
@@ -213,6 +214,9 @@ void ACProjectile_PoisionBall::OnEndOverlap(UPrimitiveComponent * OverlappedComp
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
+
+	IfTrueRet(OtherActor == GetOwner());
+	IfTrueRet(OtherActor == this);
 }
 
 void ACProjectile_PoisionBall::Explosion()

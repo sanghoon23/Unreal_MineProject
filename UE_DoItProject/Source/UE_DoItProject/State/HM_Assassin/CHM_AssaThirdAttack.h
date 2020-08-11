@@ -51,6 +51,7 @@ private:
 	class ACHM_Assassin* HM_Assassin;
 	class IIC_Charactor* I_Charactor;
 
+	/* Notify 의 Projectile 의 방향 설정을 위해 */
 	TArray<class UCN_SpawnProjectile*> Notifies_SpawnProjectile;
 
 #pragma endregion

@@ -25,6 +25,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		float SecondDamageValue = 0.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float PoisioningTime = 0.0f;
+
 	#pragma endregion
 
 public:
@@ -52,5 +55,4 @@ public:
 	float GetSecondDamageValue() const { return SecondDamageValue; }
 
 private:
-	float PoisioningTime = 0.0f;
 };

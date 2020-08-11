@@ -12,6 +12,8 @@ class UE_DOITPROJECT_API UCDamageType_Air
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float HeightAfterAirAttack = 300.0f; //@Default
 
 	#pragma endregion
 
@@ -31,6 +33,5 @@ public:
 	void SetAirAttackHeight(float fValue) { HeightAfterAirAttack = fValue; }
 
 private:
-	float HeightAfterAirAttack = 300.0f; //@Default
 
 };

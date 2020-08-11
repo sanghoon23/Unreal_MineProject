@@ -113,16 +113,15 @@ UCPL_HitComp::UCPL_HitComp()
 		}
 	}
 
-	// TODO : Poision Material 만들기
-	////@LOAD Poision Material
-	//{
-	//	Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
-	//	ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
-	//	if (PoisionMat.Succeeded())
-	//	{
-	//		PoisionMaterial = PoisionMat.Object;
-	//	}
-	//}
+	//@LOAD Poision Material
+	{
+		Path = L"Material'/Game/_Mine/Mesh/Player/Characters/Heroes/Yin/Materials/Parent/M_Yin_Skin_Poision.M_Yin_Skin_Poision'";
+		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
+		if (PoisionMat.Succeeded())
+		{
+			Mat_Poision_0 = PoisionMat.Object;
+		}
+	}
 
 	//@LOAD Burn Particle - ParticleComp
 	{
@@ -161,6 +160,12 @@ void UCPL_HitComp::BeginPlay()
 		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 		bCanHitCombo = false;
 	});
+
+	//@Set Poision Material
+	{
+		Map_ChangePoisionMaterial.Add(3, Mat_Poision_0);
+		Map_OriginPoisionMaterial.Add(3, Player->GetMesh()->GetMaterial(0));
+	}
 }
 
 void UCPL_HitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

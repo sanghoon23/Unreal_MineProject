@@ -37,6 +37,12 @@ public:
 	FVector ScaleOffset;
 
 	UPROPERTY(EditAnywhere, Category = "Value")
+	FRotator ActorWorldRotate = FRotator(0.0f);
+
+	UPROPERTY(EditAnywhere, Category = "Value")
+	FRotator ForwardDirRotateOffset = FRotator(0.0f);
+
+	UPROPERTY(EditAnywhere, Category = "Value")
 	FName AttachName;
 
 	UFUNCTION()

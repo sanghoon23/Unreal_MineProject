@@ -13,9 +13,6 @@ class UE_DOITPROJECT_API UCDamageType_Normal
 
 	#pragma region Reflection
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Montage")
-		class UAnimMontage* DamagedMontage;
-
 
 	#pragma endregion
 

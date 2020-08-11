@@ -50,16 +50,6 @@ void UCHM_AssaSecondAttack::BeginPlay()
 	//@IC_Charactor
 	I_Charactor = Cast<IIC_Charactor>(HM_Assassin);
 	check(I_Charactor);
-
-#pragma region Create DamageType
-
-	DT_Air = NewObject<UCDamageType_Air>();
-	DT_Air->SetDamageImpulse(10.0f);
-
-	DT_Strong = NewObject<UCDamageType_StrongAttack>();
-	DT_Strong->SetDamageImpulse(10.0f);
-
-#pragma endregion
 }
 
 void UCHM_AssaSecondAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -110,6 +100,8 @@ ex) 첫번째 공격 1, 두번째 공격 2...
 void UCHM_AssaSecondAttack::AttackOtherPawn()
 {
 	Super::AttackOtherPawn();
+
+	IfTrueRet(HM_Assassin == nullptr);
 
 	//@타겟 바라보기
 	AActor* AITarget = HM_Assassin->GetTargetInAI();
@@ -177,12 +169,17 @@ void UCHM_AssaSecondAttack::AttackOtherPawn()
 
 					if ((IsLastCombo() == true)) //마지막 일격
 					{
+						DT_Strong = NewObject<UCDamageType_StrongAttack>();
+						DT_Strong->SetDamageImpulse(10.0f);
+
 						I_HitComp->SetHitMoveSpeed(4.0f);
 						I_HitComp->OnHit(HM_Assassin, DT_Strong, DT_Strong->DamageImpulse);
 					}
 					else //첫번째 공격
 					{
-						//@DT_Air
+						DT_Air = NewObject<UCDamageType_Air>();
+						DT_Air->SetDamageImpulse(10.0f);
+
 						I_HitComp->SetHitMoveSpeed(1.0f);
 						I_HitComp->OnHit(HM_Assassin, DT_Air, DT_Air->DamageImpulse);
 					}

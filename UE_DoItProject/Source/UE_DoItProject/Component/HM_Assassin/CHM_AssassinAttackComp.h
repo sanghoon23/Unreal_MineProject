@@ -11,7 +11,8 @@ enum class HM_AssassinAttackType
 	SECONDATTACK = 1,
 	THIRDATTACK = 2,
 	FOURATTACK = 3,
-	END = 4,
+	FIVEATTACK = 4,
+	END = 5,
 };
 
 UCLASS()

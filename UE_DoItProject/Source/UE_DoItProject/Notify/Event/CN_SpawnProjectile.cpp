@@ -58,8 +58,15 @@ void UCN_SpawnProjectile::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 	{
 		//@Set Value
 		SpawnProjectile->SettingSpeed(SpeedValue);
-		SpawnProjectile->SettingDirection(Direction);
-		if (Target != nullptr)
+		//#Edit0808 - Direction 방향 수정.
+		/* Default 는 Charactor 의 Forward 방향,  에서 + ForwardDirRotateOffset */
+		FRotator InsertRotate = SpawnProjectile->GetActorRotation() + ActorWorldRotate;
+		SpawnProjectile->SetActorRotation(InsertRotate);
+		SpawnProjectile->SettingDirection(ForwardDirRotateOffset.RotateVector(Direction));
+
+		//ForwardDirRotateOffset.RotateVector(Direction);
+
+		if (Target != nullptr) //@타겟이 지정되어있다면,
 		{
 			//CLog::Print(Target->GetName());
 			SpawnProjectile->SettingTargetActor(Target);

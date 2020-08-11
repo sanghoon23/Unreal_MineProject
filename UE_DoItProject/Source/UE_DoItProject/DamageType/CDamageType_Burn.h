@@ -30,6 +30,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		float SecondDamageValue = 0.0f;
 
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		float BurnTime = 0.0f;
 
 	#pragma endregion
 
@@ -57,5 +59,4 @@ public:
 	float GetSecondDamageValue() const { return SecondDamageValue; }
 
 private:
-	float BurnTime = 0.0f;
 };

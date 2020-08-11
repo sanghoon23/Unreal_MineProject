@@ -25,9 +25,13 @@ EBTNodeResult::Type UBTTask_FindPatrol::ExecuteTask(UBehaviorTreeComponent & Own
 	APawn* pawn = controller->GetPawn();
 	IfNullRetResult(pawn, EBTNodeResult::Failed);
 
+	//CLog::Print(L"AI FindPatrol In!!");
+
 	// Navigation
 	UNavigationSystemV1* Nav = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 	IfNullRetResult(Nav, EBTNodeResult::Failed);
+
+	//CLog::Print(L"AI FindPatrol RetResult In!!");
 
 	// Blackboard - Home & PatrolRadius
 	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector("Home");
@@ -40,8 +44,13 @@ EBTNodeResult::Type UBTTask_FindPatrol::ExecuteTask(UBehaviorTreeComponent & Own
 	if (Nav->GetRandomPointInNavigableRadius(Origin, PatrolRadius, NextLocation))
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector("Destination", NextLocation);
+
+		//CLog::Print(L"Destination Insert Succeed!!");
+
 		return EBTNodeResult::Succeeded;
 	}
+
+	CLog::Print(L"Destination Insert Failed!!");
 
 	return EBTNodeResult::Failed;
 }

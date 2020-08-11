@@ -4,13 +4,22 @@
 #include "State/Base/C_BaseAttackState.h"
 #include "Interface/IC_Component.h"
 
+#include "DamageType/CDamageType_Air.h"
+#include "DamageType/CDamageType_StrongAttack.h"
+
 #include "CHM_AssaFourAttack.generated.h"
 
 UENUM()
 enum class EHM_AssaFourComboType : uint8
 {
 	NONE = 0,
-	END = 1,
+	COMBO_ONE = 1,
+	COMBO_TWO = 2,
+	COMBO_THREE = 3,
+	COMBO_FOUR = 4,
+	COMBO_FIVE = 5,
+	COMBO_SIX = 6,
+	END = 7,
 };
 
 UCLASS()
@@ -19,6 +28,9 @@ class UE_DOITPROJECT_API UCHM_AssaFourAttack
 {
 	GENERATED_BODY()
 	
+private:
+	const float NextSectionPlayRate = 0.9f;
+
 #pragma region Reflection
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
@@ -39,6 +51,7 @@ protected:
 	/* Virtual - IC_BaseAttack */
 public:
 	virtual void BeginAttack(AActor * DoingActor) override;
+	virtual bool IsLastCombo() const override;
 
 	//virtual bool IsLastCombo() const override;
 	virtual void AttackOtherPawn() override;

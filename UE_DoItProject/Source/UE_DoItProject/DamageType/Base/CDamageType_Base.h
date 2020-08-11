@@ -37,6 +37,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "DamageType")
 		FDamageType DamageType;
 
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float HitMoveSpeed = 0.0f;
+
 	#pragma endregion
 
 public:
@@ -58,7 +61,12 @@ public:
 	/* Virutla Member */
 public:
 	virtual void SetDamageImpulse(float DamageAmount);
+
+	virtual void SetHitMoveSpeed(float fSpeed);
+	const float GetHitMoveSpeed() const { return HitMoveSpeed; }
+
 	virtual void SetDestructibleImpulse(float DestructibleDamageAmount);
+
 	virtual void SetDestructibleDamageSpreadScale(float SpreadScale);
 
 public:

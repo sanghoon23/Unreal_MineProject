@@ -29,6 +29,11 @@ void UCDamageType_Base::SetDamageImpulse(float DamageAmount)
 	DamageImpulse = DamageAmount;
 }
 
+void UCDamageType_Base::SetHitMoveSpeed(float fSpeed)
+{
+	HitMoveSpeed = fSpeed;
+}
+
 void UCDamageType_Base::SetDestructibleImpulse(float DestructibleDamageAmount)
 {
 	DestructibleImpulse = DestructibleDamageAmount;

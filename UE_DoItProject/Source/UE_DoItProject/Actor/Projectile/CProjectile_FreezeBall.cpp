@@ -180,6 +180,7 @@ void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCom
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
 
+	IfTrueRet(OtherActor == GetOwner());
 	IfTrueRet(OtherActor == this);
 
 	//@Following Target Check
@@ -265,6 +266,9 @@ void ACProjectile_FreezeBall::OnEndOverlap(UPrimitiveComponent * OverlappedCompo
 	IfNullRet(OverlappedComponent);
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
+
+	IfTrueRet(OtherActor == GetOwner());
+	IfTrueRet(OtherActor == this);
 }
 
 void ACProjectile_FreezeBall::Explosion()

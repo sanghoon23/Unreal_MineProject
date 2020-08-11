@@ -103,6 +103,8 @@ void UCHM_AssaFirstAttack::AttackOtherPawn()
 	++CurrentComboNum;
 	const uint8 ComboNum = static_cast<uint8>(CurrentComboNum);
 
+	IfTrueRet(HM_Assassin == nullptr);
+
 	FVector ActorForward = HM_Assassin->GetActorForwardVector();
 	FVector Start = HM_Assassin->GetActorLocation();
 	FVector End = HM_Assassin->GetActorLocation() + ActorForward * AttackRange;
