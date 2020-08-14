@@ -178,9 +178,9 @@ bool UCPL_MGAttackBasic::IsLastCombo() const
 	return false;
 }
 
-void UCPL_MGAttackBasic::AttackOtherPawn()
+void UCPL_MGAttackBasic::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 
 	FVector ActorForward = Player->GetActorForwardVector();
 	FVector Start = Player->GetActorLocation();

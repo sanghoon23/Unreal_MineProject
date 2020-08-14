@@ -234,9 +234,9 @@ void UCPL_MGAttackPoisioning::BeginAttack(AActor * DoingActor)
 
 }
 
-void UCPL_MGAttackPoisioning::AttackOtherPawn()
+void UCPL_MGAttackPoisioning::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 }
 
 void UCPL_MGAttackPoisioning::ImpulseAttack(float intensity)

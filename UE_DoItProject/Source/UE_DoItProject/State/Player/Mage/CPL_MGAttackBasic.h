@@ -53,7 +53,7 @@ public:
 
 	/* Virtual */
 public:
-	void AttackOtherPawn() override;
+	void AttackOtherPawn(UCDamageType_Base* DamageType) override;
 
 	#pragma region Member
 private:

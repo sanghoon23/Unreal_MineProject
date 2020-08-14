@@ -132,9 +132,9 @@ void UCPL_MageBaseAttack::OnComboSet(AActor * DoingActor)
 	IfNullRet(DoingActor);
 }
 
-void UCPL_MageBaseAttack::AttackOtherPawn()
+void UCPL_MageBaseAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 }
 
 void UCPL_MageBaseAttack::ImpulseAttack(float intensity)

@@ -45,4 +45,13 @@ public:
 	//ex) TargetInfo, PlayerInfo
 	virtual void GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray) = 0;
 
+	//@데미지 표기 를 한번 중단
+	//- 일시적으로 한번만 중단 Ex) HumanoidMonster,Player TakeDamage 에서 다시 true 로 변환됨.
+	void SetOnceNoneUsingFloatingCombo() { bUsingFloatingComboUI = false; }
+
+	/* Member */
+protected:
+	//@FloatingCombo 자동 On 스위치
+	bool bUsingFloatingComboUI = true;
+
 };

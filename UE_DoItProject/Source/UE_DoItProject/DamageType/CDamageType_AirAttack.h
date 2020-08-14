@@ -4,7 +4,7 @@
 #include "DamageType/Base/CDamageType_Base.h"
 #include "CDamageType_AirAttack.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType)
 class UE_DOITPROJECT_API UCDamageType_AirAttack 
 	: public UCDamageType_Base
 {
@@ -25,4 +25,6 @@ public:
 	//@param InitialDamageAmount - 초기에 들어갈 데미지 값
 	//@param Montage - 맞는 액터가 시행할 Montage (default = nullptr)
 	virtual void OnHittingProcess(AActor* Subject, AActor* DamagedActor, class UC_BaseHitComp* DamagedActorHitComp, float InitialDamageAmount);
+
+	virtual void SettingData(const FDamageData& Data) override;
 };

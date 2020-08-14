@@ -25,9 +25,6 @@ class UE_DOITPROJECT_API UCPL_SDAttackBasic
 	
 	#pragma region Reflection
 private:
-	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Noraml;
 
 	#pragma endregion
 
@@ -48,7 +45,7 @@ public:
 	bool IsLastCombo() const override;
 
 
-	void AttackOtherPawn() override;
+	void AttackOtherPawn(UCDamageType_Base* DamageType) override;
 	void ImpulseAttack(float intensity) override;
 	void CheckProcedural() override;
 

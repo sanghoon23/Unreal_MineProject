@@ -54,5 +54,8 @@ void UC_BaseAttackState::EndAttack()
 	CurrentComboNum = 0;
 
 	bAttackPossible = false;
+
+	AttackMoveDir = FVector(0.0f);
+	AttackMoveSpeed = 0.0f;
 }
 

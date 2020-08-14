@@ -48,7 +48,7 @@ public:
 	virtual void BeginAttack(AActor * DoingActor) override;
 	//virtual bool IsLastCombo() const override;
 
-	virtual void AttackOtherPawn() override;
+	virtual void AttackOtherPawn(UCDamageType_Base* DamageType) override;
 
 #pragma region Member
 private:

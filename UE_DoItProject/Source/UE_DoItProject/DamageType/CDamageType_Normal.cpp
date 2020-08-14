@@ -73,3 +73,8 @@ void UCDamageType_Normal::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 		}
 	}
 }
+
+void UCDamageType_Normal::SettingData(const FDamageData & Data)
+{
+	DamageImpulse = Data.DamageImpulse;
+}

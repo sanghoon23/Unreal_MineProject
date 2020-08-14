@@ -35,13 +35,6 @@ UCPL_SDAttackWindmilSlash::UCPL_SDAttackWindmilSlash()
 		SwordAttackMontages.Emplace(Sword_WindmilSlashAttack_1);
 	}
 	#pragma endregion
-
-	#pragma region Create DamageType
-
-	DT_Air = NewObject<UCDamageType_Air>();
-
-	#pragma endregion
-
 }
 
 void UCPL_SDAttackWindmilSlash::BeginPlay()
@@ -114,9 +107,10 @@ void UCPL_SDAttackWindmilSlash::EndAttack()
 	Player->OffBlockKeyInput();
 }
 
-void UCPL_SDAttackWindmilSlash::AttackOtherPawn()
+void UCPL_SDAttackWindmilSlash::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	FVector ActorForward = Player->GetActorForwardVector();
 	FVector Position = Player->GetActorLocation();
@@ -159,10 +153,10 @@ void UCPL_SDAttackWindmilSlash::AttackOtherPawn()
 					HitDirection.Normalize();
 					HitDirection.Z = 0.0f;
 					HitComp->SetHitDirection(HitDirection);
-					HitComp->SetHitMoveSpeed(0.15f);
+					HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 
 					// 1.2 Hit Delegate - Air(DamageType)
-					HitComp->OnHit(Player, DT_Air, 5.0f);
+					HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"SDAttackWindmilSlash CallAttack - HitComp Null!!");

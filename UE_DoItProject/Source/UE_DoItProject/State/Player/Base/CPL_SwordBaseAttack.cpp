@@ -138,9 +138,9 @@ void UCPL_SwordBaseAttack::OnComboSet(AActor * DoingActor)
 }
 
 /* TargetSystem 에서 Target 이 있는지 없는지 체크. */
-void UCPL_SwordBaseAttack::AttackOtherPawn()
+void UCPL_SwordBaseAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 }
 
 void UCPL_SwordBaseAttack::ImpulseAttack(float intensity)

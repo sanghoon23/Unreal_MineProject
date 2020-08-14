@@ -193,8 +193,11 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//@끌어 당겨질 때,
 	IfFalseRet(CableObject->GetPulling());
+
 	if (bNextMontage == false)
 	{
+		CLog::Print(L"TickActionState!!");
+
 		//@JumpToSection
 		Player->GetMesh()->GetAnimInstance()->Montage_JumpToSection
 		(
@@ -222,15 +225,15 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 				{
 					// 1.3 OnHit
 					HitComp->OnHit(Player, DT_Stun, 5.0f);
-
-					//@당겨지는 중, TargetLocation Setting
-					PullingTargetLocation(Target);
 				}
 			}
 		}
 
 		bNextMontage = true;
 	}//@bNextMontage
+
+	 //@당겨지는 중, TargetLocation Setting
+	PullingTargetLocation(Target);
 }
 
 void UCPL_ActionPullActorWithCable::EndActionState()
@@ -264,6 +267,7 @@ void UCPL_ActionPullActorWithCable::PullingTargetLocation(AActor * PulledTarget)
 	//@Player Location + PullRange
 	FVector PlayerLocation = Player->GetActorLocation();
 	PulledDirection = PlayerLocation - TargetLocation;
+	PulledDirection.Z = 0.0f;
 	PulledDirection.Normalize();
 	float Distance = Player->GetDistanceTo(PulledTarget);
 	if (Distance > PullRange)

@@ -230,9 +230,9 @@ void UCPL_MGAttackFreezing::BeginAttack(AActor * DoingActor)
 	}
 }
 
-void UCPL_MGAttackFreezing::AttackOtherPawn()
+void UCPL_MGAttackFreezing::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 }
 
 void UCPL_MGAttackFreezing::ImpulseAttack(float intensity)

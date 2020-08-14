@@ -34,7 +34,7 @@ public:
 	void BeginAttack(AActor * DoingActor) override;
 	//void EndAttack() override;
 
-	void AttackOtherPawn() override;
+	void AttackOtherPawn(UCDamageType_Base* DamageType) override;
 	void ImpulseAttack(float intensity) override;
 	void CheckProcedural() override;
 

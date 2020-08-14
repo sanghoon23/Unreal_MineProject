@@ -16,10 +16,6 @@ class UE_DOITPROJECT_API UCPL_SDAttackWindmilSlash
 
 	#pragma region Reflection
 private:
-	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Air*	DT_Air;
-
 	#pragma endregion
 
 public:	
@@ -38,7 +34,7 @@ public:
 	//void OnComboSet(AActor * DoingActor) override;
 	//bool IsLastCombo() const override;
 
-	void AttackOtherPawn() override;
+	void AttackOtherPawn(UCDamageType_Base* DamageType) override;
 	void ImpulseAttack(float intensity) override;
 	void CheckProcedural() override;
 

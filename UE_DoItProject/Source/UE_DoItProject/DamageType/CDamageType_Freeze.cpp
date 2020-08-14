@@ -129,3 +129,9 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp FREEZE AddConditionData Derived NULL!!");
 	}
 }
+
+void UCDamageType_Freeze::SettingData(const FDamageData & Data)
+{
+	DamageImpulse = Data.DamageImpulse;
+	SetFreezingTime(Data.FreezingTime);
+}

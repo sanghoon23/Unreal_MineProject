@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "AI/Controller/CAIC_HM_PengMao.h"
+#include "UI/Widget/WG_FloatingCombo.h"
 
 ACHM_Assassin::ACHM_Assassin()
 {
@@ -24,7 +25,7 @@ ACHM_Assassin::ACHM_Assassin()
 	{
 		HitComp = CreateDefaultSubobject<UCHM_AssassinHitComp>(TEXT("HitComp"));
 		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>(TEXT("MeshParticleComp"));
-		Ass_ATKComp = CreateDefaultSubobject<UCHM_AssassinAttackComp>(TEXT("Ass_ATKComp"));
+		Assassin_ATKComp = CreateDefaultSubobject<UCHM_AssassinAttackComp>(TEXT("Assassin_ATKComp"));
 
 		//AddOwnedComponent(AttackComponent);
 		//AddOwnedComponent(HitComp);
@@ -192,6 +193,30 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
 	IfTrueRetResult(bDeath == true, Info.CurrentHP);
 
+	//@UI
+	{
+		UWorld* const World = GetWorld();
+
+		FVector InsertPos = GetActorLocation();
+
+		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+		if (FloatingComboUI != nullptr)
+		{
+			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@ÁÖÃ¼ÀÚ.
+			if (PC != nullptr && bUsingFloatingComboUI)
+			{
+				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
+				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+				FloatingComboUI->AddToViewport();
+			}
+			else
+			{
+				bUsingFloatingComboUI = true;
+			}
+		}
+	}
+
 	Info.CurrentHP -= DamageAmount;
 
 	if (Info.CurrentHP <= 0.0f)
@@ -217,8 +242,8 @@ void ACHM_Assassin::CallDestory()
 
 IIC_AttackComp * ACHM_Assassin::GetIAttackComp()
 {
-	IfTrueRetResult(Ass_ATKComp == nullptr, nullptr); // @Return Null
-	return Cast<IIC_AttackComp>(Ass_ATKComp);
+	IfTrueRetResult(Assassin_ATKComp == nullptr, nullptr); // @Return Null
+	return Cast<IIC_AttackComp>(Assassin_ATKComp);
 }
 
 IIC_HitComp * ACHM_Assassin::GetIHitComp()

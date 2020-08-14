@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "DamageType/Base/CDamageType_Base.h"
+
 #include "IC_BaseAttack.generated.h"
 
 UINTERFACE(MinimalAPI)
@@ -56,7 +58,7 @@ public:
 public:
 	// Attack 실행 시 다른 Pawn 의 HitComp-OnHit 을 콜하는 함수
 	// @DoingActor - 공격하는 Actor(주체), 해당 Pawn 넣어주면 됨.
-	virtual void AttackOtherPawn() {}
+	virtual void AttackOtherPawn(UCDamageType_Base* DamageType) {}
 
 	// Attack 실행 시 충격파 주는 함수, @Notify 에서 쓰임
 	// @DoingActor - 공격하는 Actor(주체), 해당 Pawn 넣어주면 됨.

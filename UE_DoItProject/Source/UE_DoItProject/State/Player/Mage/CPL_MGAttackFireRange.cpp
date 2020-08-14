@@ -263,9 +263,9 @@ void UCPL_MGAttackFireRange::EndAttack()
 	Player->OffBlockAction();
 }
 
-void UCPL_MGAttackFireRange::AttackOtherPawn()
+void UCPL_MGAttackFireRange::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 }
 
 void UCPL_MGAttackFireRange::ImpulseAttack(float intensity)

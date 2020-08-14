@@ -145,9 +145,9 @@ void UCHM_MaoThirdAttack::BeginAttack(AActor * DoingActor)
 	}
 }
 
-void UCHM_MaoThirdAttack::AttackOtherPawn()
+void UCHM_MaoThirdAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 
 	FVector ActorForward = HM_PengMao->GetActorForwardVector();
 	FVector Start = HM_PengMao->GetActorLocation();

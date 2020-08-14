@@ -122,3 +122,10 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 		UE_LOG(LogTemp, Warning, L"CDamageType_Poision AddConditionData Derived NULL!!");
 	}
 }
+
+void UCDamageType_Poision::SettingData(const FDamageData & Data)
+{
+	DamageImpulse = Data.DamageImpulse;
+	SetPoisioningTime(Data.PoisionTime);
+	SetSecondDamageValue(Data.PoisionSecondDamageValue);
+}

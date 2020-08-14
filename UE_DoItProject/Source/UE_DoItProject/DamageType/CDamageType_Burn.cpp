@@ -110,3 +110,10 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp BURN AddConditionData Derived NULL!!");
 	}
 }
+
+void UCDamageType_Burn::SettingData(const FDamageData & Data)
+{
+	DamageImpulse = Data.DamageImpulse;
+	SetBurnTime(Data.BurnTime);
+	SetSecondDamageValue(Data.BurnSecondDamageValue);
+}

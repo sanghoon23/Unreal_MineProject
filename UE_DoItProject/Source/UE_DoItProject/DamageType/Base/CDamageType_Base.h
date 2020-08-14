@@ -21,7 +21,22 @@ enum class FDamageType
 	END				= 9,
 };
 
-UCLASS()
+USTRUCT()
+struct FDamageData
+{
+	GENERATED_USTRUCT_BODY()
+
+	float DamageImpulse = 0.0f;
+	float AirHeight = 0.0f;
+	float StunTime = 0.0f;
+	float BurnTime = 0.0f;
+	float BurnSecondDamageValue = 0.0f;
+	float PoisionTime = 0.0f;
+	float PoisionSecondDamageValue = 0.0f;
+	float FreezingTime = 0.0f;
+};
+
+UCLASS(BlueprintType)
 class UE_DOITPROJECT_API UCDamageType_Base
 	: public UDamageType
 {
@@ -56,6 +71,10 @@ public:
 	//@param InitialDamageAmount - 초기에 들어갈 데미지 값
 	//@param Montage - 맞는 액터가 시행할 Montage (default = nullptr)
 	virtual void OnHittingProcess(AActor* Subject, AActor* DamagedActor, class UC_BaseHitComp* DamagedActorHitComp, float InitialDamageAmount);
+
+	/* CNS_DoingAttack (Notify 에서 Data Insert 를 위해) */
+	//@param Data -
+	virtual void SettingData(const FDamageData& Data) {};
 
 	#pragma region Member
 	/* Virutla Member */

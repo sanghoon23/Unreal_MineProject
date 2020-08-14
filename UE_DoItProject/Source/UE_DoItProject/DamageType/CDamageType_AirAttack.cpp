@@ -80,3 +80,8 @@ void UCDamageType_AirAttack::OnHittingProcess(AActor * Subject, AActor * Damaged
 		}
 	}
 }
+
+void UCDamageType_AirAttack::SettingData(const FDamageData & Data)
+{
+	DamageImpulse = Data.DamageImpulse;
+}

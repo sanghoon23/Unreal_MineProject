@@ -82,15 +82,6 @@ UCPL_SDAttackUpper::UCPL_SDAttackUpper()
 	}
 
 	#pragma endregion
-
-	#pragma region DamageType
-
-	DT_Air			= NewObject<UCDamageType_Air>();
-	DT_AirAttack	= NewObject<UCDamageType_AirAttack>();
-	DT_StrongAttack = NewObject<UCDamageType_StrongAttack>();
-
-	#pragma endregion
-
 }
 
 void UCPL_SDAttackUpper::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -291,9 +282,10 @@ bool UCPL_SDAttackUpper::IsLastCombo() const
 
 /* 다른 Pawn 을 공격 처리 함수 */
 // @DoingActor - Attack 을 할 객체 즉, 여기선 Player (Owner)
-void UCPL_SDAttackUpper::AttackOtherPawn()
+void UCPL_SDAttackUpper::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	FVector ActorForward = Player->GetActorForwardVector();
 	FVector Start = Player->GetActorLocation();
@@ -339,21 +331,8 @@ void UCPL_SDAttackUpper::AttackOtherPawn()
 					HitComp->SetHitDirection(HitDirection);
 
 					// 1.2 Hit Delegate - Air(DamageType)
-					if (CurrentComboNum == 0)
-					{
-						HitComp->SetHitMoveSpeed(0.3f);
-						HitComp->OnHit(Player, DT_Air, 5.0f);
-					}
-					else if (CurrentComboNum > 0 && CurrentComboNum < static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
-					{
-						HitComp->SetHitMoveSpeed(0.3f);
-						HitComp->OnHit(Player, DT_AirAttack, 5.0f);
-					}
-					else if (CurrentComboNum == static_cast<uint8>(USD_UpperAttack::COMBO_SIX))
-					{
-						HitComp->SetHitMoveSpeed(500.0f);
-						HitComp->OnHit(Player, DT_StrongAttack, 5.0f);
-					}
+					HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+					HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
 
 				}//(HitComp != nullptr)
 				else

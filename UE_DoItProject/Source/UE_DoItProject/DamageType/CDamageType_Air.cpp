@@ -106,3 +106,9 @@ void UCDamageType_Air::OnHittingProcess(AActor * Subject, AActor * DamagedActor,
 		}
 	}
 }
+
+void UCDamageType_Air::SettingData(const FDamageData & Data)
+{
+	DamageImpulse = Data.DamageImpulse;
+	SetAirAttackHeight(Data.AirHeight);
+}

@@ -46,9 +46,6 @@ UCHM_AssaFiveAttack::UCHM_AssaFiveAttack()
 			LevelSequenForAttack = Sequence.Object;
 	}
 
-	// TODO : 공격 시 시네마 실행 후 델리게이트 
-	// AI 꺼주고, Player Input 막고, -> SetTimer 설정, 시네마의 길이 만큼. 
-
 #pragma endregion
 
 }
@@ -109,8 +106,6 @@ void UCHM_AssaFiveAttack::BeginAttack(AActor * DoingActor)
 	IfTrueRet(HM_Assassin->GetCharacterMovement()->IsFalling()); //@Jump Check
 	IfTrueRet(IsLastCombo());
 
-	CLog::Print(L"AssaFiveAttack BeginAttack IN!!");
-
 	if (bAttacking == false)
 	{
 		//LevelSequencePlayer->Play();
@@ -123,7 +118,9 @@ void UCHM_AssaFiveAttack::BeginAttack(AActor * DoingActor)
 			0.2f, false
 		);
 
-		CLog::Print(L"AssaFiveAttack BeginAttack IN!!");
+		//@이동
+		AttackMoveDir = HM_Assassin->GetActorForwardVector();
+		AttackMoveSpeed = 1.0f;
 	}
 }
 
@@ -135,9 +132,9 @@ bool UCHM_AssaFiveAttack::IsLastCombo() const
 	return false;
 }
 
-void UCHM_AssaFiveAttack::AttackOtherPawn()
+void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 
 	IfTrueRet(HM_Assassin == nullptr);
 
@@ -180,10 +177,6 @@ void UCHM_AssaFiveAttack::AttackOtherPawn()
 		check(I_HitComp);
 
 		I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_AssaFiveAttack::BeginBeatedFunction);
-
-		//@이동
-		AttackMoveDir = HM_Assassin->GetActorForwardVector();
-		AttackMoveSpeed = 1.0f;
 
 		//@맞는 방향
 		FVector HitDirection = HitResult.GetActor()->GetActorLocation() - HM_Assassin->GetActorLocation();

@@ -48,7 +48,7 @@ public:
 	void OnComboSet(AActor * DoingActor) override;
 	bool IsLastCombo() const override;
 
-	void AttackOtherPawn() override;
+	void AttackOtherPawn(UCDamageType_Base* DamageType) override;
 
 	#pragma region Member
 private:

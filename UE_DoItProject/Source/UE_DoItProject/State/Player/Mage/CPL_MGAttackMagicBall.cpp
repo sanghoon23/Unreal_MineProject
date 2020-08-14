@@ -227,9 +227,9 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 	}
 }
 
-void UCPL_MGAttackMagicBall::AttackOtherPawn()
+void UCPL_MGAttackMagicBall::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 }
 
 void UCPL_MGAttackMagicBall::ImpulseAttack(float intensity)

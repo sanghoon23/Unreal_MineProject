@@ -38,14 +38,6 @@ UCPL_SDAttackBackRange::UCPL_SDAttackBackRange()
 		SwordAttackMontages.Emplace(Sword_BackRangeAttack_1);
 	}
 	#pragma endregion
-
-	#pragma region Create DamageType
-
-	DT_Air = NewObject<UCDamageType_Air>();
-	DT_Strong = NewObject<UCDamageType_StrongAttack>();
-
-	#pragma endregion
-
 }
 
 void UCPL_SDAttackBackRange::BeginPlay()
@@ -135,9 +127,10 @@ void UCPL_SDAttackBackRange::EndAttack()
 	Player->OffBlockKeyInput();
 }
 
-void UCPL_SDAttackBackRange::AttackOtherPawn()
+void UCPL_SDAttackBackRange::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	FVector ActorForward = Player->GetActorForwardVector();
 	FVector Position = Player->GetActorLocation();
@@ -180,10 +173,10 @@ void UCPL_SDAttackBackRange::AttackOtherPawn()
 					HitDirection.Normalize();
 					HitDirection.Z = 0.0f;
 					HitComp->SetHitDirection(HitDirection);
-					HitComp->SetHitMoveSpeed(0.3f);
+					HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 
 					// 1.2 Hit Delegate - Air(DamageType)
-					HitComp->OnHit(Player, DT_Air, 5.0f);
+					HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"SDAttackBackRange CallAttack - HitComp Null!!");

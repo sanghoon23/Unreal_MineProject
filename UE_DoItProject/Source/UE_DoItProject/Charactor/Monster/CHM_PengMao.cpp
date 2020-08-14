@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "AI/Controller/CAIC_HM_PengMao.h"
+#include "UI/Widget/WG_FloatingCombo.h"
 
 ACHM_PengMao::ACHM_PengMao()
 {
@@ -192,6 +193,30 @@ float ACHM_PengMao::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 
 	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
 	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+
+	//@UI
+	{
+		UWorld* const World = GetWorld();
+
+		FVector InsertPos = GetActorLocation();
+
+		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+		if (FloatingComboUI != nullptr)
+		{
+			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@ÁÖÃ¼ÀÚ.
+			if (PC != nullptr && bUsingFloatingComboUI)
+			{
+				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
+				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+				FloatingComboUI->AddToViewport();
+			}
+			else
+			{
+				bUsingFloatingComboUI = true;
+			}
+		}
+	}
 
 	Info.CurrentHP -= DamageAmount;
 

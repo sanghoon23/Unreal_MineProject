@@ -118,9 +118,9 @@ bool UCHM_AssaFourAttack::IsLastCombo() const
 Enum - NONE 을 포함시켜서 콤보 인덱스를 맞추어놨다.
 ex) 첫번째 공격 1, 두번째 공격 2...
 */
-void UCHM_AssaFourAttack::AttackOtherPawn()
+void UCHM_AssaFourAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 
 	//@현재 콤보 늘려줌
 	++CurrentComboNum;
@@ -168,10 +168,6 @@ void UCHM_AssaFourAttack::AttackOtherPawn()
 
 					I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_AssaFourAttack::BeginBeatedFunction);
 					I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_AssaFourAttack::EndBeatedFunction);
-
-					//@이동
-					//AttackMoveDir = HM_Assassin->GetActorForwardVector();
-					//AttackMoveSpeed = 1.0f;
 
 					// 1.1 Set Hit Attributellll
 					//@맞은 애의 뒤쪽으로 HitDir

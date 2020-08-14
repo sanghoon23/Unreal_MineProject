@@ -36,7 +36,7 @@ public:
 	virtual void EndAttack() override;
 	virtual void OnComboSet(AActor * DoingActor) override;
 
-	virtual void AttackOtherPawn() override;
+	virtual void AttackOtherPawn(UCDamageType_Base* DamageType) override;
 	virtual void ImpulseAttack(float intensity) override;
 	virtual void CheckProcedural() override;
 

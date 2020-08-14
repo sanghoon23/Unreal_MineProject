@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "AI/Controller/CAIC_HM_Basic.h"
+#include "UI/Widget/WG_FloatingCombo.h"
 
 ACHM_Shaman::ACHM_Shaman()
 {
@@ -31,8 +32,8 @@ ACHM_Shaman::ACHM_Shaman()
 	#pragma region Monster Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 100.0f;
-	Info.CurrentHP = 100.0f;
+	Info.MaxHP = 200.0f;
+	Info.CurrentHP = 200.0f;
 	Info.Name = FName(L"Shaman");
 	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
@@ -181,6 +182,30 @@ float ACHM_Shaman::TakeDamage(float DamageAmount, FDamageEvent const & DamageEve
 
 	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
 	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+
+	//@UI
+	{
+		UWorld* const World = GetWorld();
+
+		FVector InsertPos = GetActorLocation();
+
+		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+		if (FloatingComboUI != nullptr)
+		{
+			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
+			if (PC != nullptr && bUsingFloatingComboUI)
+			{
+				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
+				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+				FloatingComboUI->AddToViewport();
+			}
+			else
+			{
+				bUsingFloatingComboUI = true;
+			}
+		}
+	}
 
 	Info.CurrentHP -= DamageAmount;
 

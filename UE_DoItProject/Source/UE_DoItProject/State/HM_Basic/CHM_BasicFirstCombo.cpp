@@ -135,9 +135,9 @@ bool UCHM_BasicFirstCombo::IsLastCombo() const
 	return false;
 }
 
-void UCHM_BasicFirstCombo::AttackOtherPawn()
+void UCHM_BasicFirstCombo::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 
 	FVector ActorForward = HM_Basic->GetActorForwardVector();
 	FVector Start = HM_Basic->GetActorLocation();

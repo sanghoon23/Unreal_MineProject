@@ -80,6 +80,10 @@ void UCHM_AssaSecondAttack::BeginAttack(AActor * DoingActor)
 			AttackMontages[0], /* @FirstMontage == Combo1 */
 			0.9f, false
 		);
+
+		//@이동
+		AttackMoveDir = HM_Assassin->GetActorForwardVector();
+		AttackMoveSpeed = 10.0f;
 	}
 }
 
@@ -97,9 +101,9 @@ bool UCHM_AssaSecondAttack::IsLastCombo() const
 Enum - NONE 을 포함시켜서 콤보 인덱스를 맞추어놨다.
 ex) 첫번째 공격 1, 두번째 공격 2...
 */
-void UCHM_AssaSecondAttack::AttackOtherPawn()
+void UCHM_AssaSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
 
 	IfTrueRet(HM_Assassin == nullptr);
 
@@ -155,10 +159,6 @@ void UCHM_AssaSecondAttack::AttackOtherPawn()
 
 					I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_AssaSecondAttack::BeginBeatedFunction);
 					I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_AssaSecondAttack::EndBeatedFunction);
-
-					//@이동
-					AttackMoveDir = HM_Assassin->GetActorForwardVector();
-					AttackMoveSpeed = 10.0f;
 
 					// 1.1 Set Hit Attribute
 					//@맞은 애의 뒤쪽으로 HitDir

@@ -138,3 +138,9 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	}
 
 }
+
+void UCDamageType_Stun::SettingData(const FDamageData & Data)
+{
+	DamageImpulse = Data.DamageImpulse;
+	SetStunTime(Data.StunTime);
+}

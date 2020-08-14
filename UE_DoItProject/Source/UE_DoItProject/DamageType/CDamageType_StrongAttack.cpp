@@ -66,3 +66,8 @@ void UCDamageType_StrongAttack::OnHittingProcess(AActor * Subject, AActor * Dama
 		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);
 	}
 }
+
+void UCDamageType_StrongAttack::SettingData(const FDamageData & Data)
+{
+	DamageImpulse = Data.DamageImpulse;
+}

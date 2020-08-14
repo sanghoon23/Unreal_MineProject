@@ -28,13 +28,6 @@ class UE_DOITPROJECT_API UCPL_SDAttackFinish
 
 #pragma region Reflection
 private:
-	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Noraml;
-
-	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_StrongAttack*	DT_StrongAttack;
 
 #pragma endregion
 
@@ -58,7 +51,7 @@ public:
 
 	/* Virtual */
 public:
-	void AttackOtherPawn() override;
+	void AttackOtherPawn(UCDamageType_Base* DamageType) override;
 	void ImpulseAttack(float intensity) override {}
 	void CheckProcedural() override {}
 	

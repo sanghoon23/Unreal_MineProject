@@ -683,7 +683,7 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 		FVector InsertPos = GetActorLocation();
 
 		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
-		if (FloatingComboUI != nullptr)
+		if (FloatingComboUI != nullptr && bUsingFloatingComboUI)
 		{
 			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@ÁÖÃ¼ÀÚ.
 			if (PC != nullptr)
@@ -692,6 +692,10 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
 
 				FloatingComboUI->AddToViewport();
+			}
+			else
+			{
+				bUsingFloatingComboUI = true;
 			}
 		}
 	}

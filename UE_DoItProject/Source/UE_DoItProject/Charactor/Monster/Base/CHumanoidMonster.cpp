@@ -2,7 +2,6 @@
 #include "Global.h"
 
 #include "AIController.h"
-#include "UI/Widget/WG_FloatingCombo.h"
 
 ACHumanoidMonster::ACHumanoidMonster()
 {
@@ -52,25 +51,6 @@ void ACHumanoidMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 float ACHumanoidMonster::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	UWorld* const World = GetWorld();
-
-	FVector InsertPos = GetActorLocation();
-
-	UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
-	if (FloatingComboUI != nullptr)
-	{
-		APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@ÁÖÃ¼ÀÚ.
-		if (PC != nullptr)
-		{
-			FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
-			FloatingComboUI->SetDisplayDamageValue(DamageAmount);
-
-			FloatingComboUI->AddToViewport();
-		}
-
-		//CLog::Print(L"Spawn FloatingComboUI !!");
-	}
 
 	return Damage;
 }

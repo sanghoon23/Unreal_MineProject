@@ -41,6 +41,8 @@ public:
 	//@param Montage - 맞는 액터가 시행할 Montage (default = nullptr)
 	virtual void OnHittingProcess(AActor* Subject, AActor* DamagedActor, class UC_BaseHitComp* DamagedActorHitComp, float InitialDamageAmount);
 
+	virtual void SettingData(const FDamageData& Data) override;
+
 	/* Function */
 public:
 	class UTexture2D* GetUITexture() { return StunConditionUITexture; }

@@ -54,12 +54,6 @@ UCPL_SDAttackBasic::UCPL_SDAttackBasic()
 		SwordAttackMontages.Emplace(Sword_BasicAttack_3);
 	}
 	#pragma endregion
-
-	#pragma region Create DamageType
-
-	DT_Noraml = NewObject<UCDamageType_Normal>();
-
-	#pragma endregion
 }
 
 void UCPL_SDAttackBasic::BeginPlay()
@@ -213,9 +207,10 @@ bool UCPL_SDAttackBasic::IsLastCombo() const
 }
 
 /* 다른 Pawn 을 공격 처리 함수 */
-void UCPL_SDAttackBasic::AttackOtherPawn()
+void UCPL_SDAttackBasic::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	FVector ActorForward = Player->GetActorForwardVector();
 	FVector Start = Player->GetActorLocation();
@@ -257,10 +252,10 @@ void UCPL_SDAttackBasic::AttackOtherPawn()
 				HitDirection.Z = 0.0f;
 				HitDirection.Normalize();
 				HitComp->SetHitDirection(HitDirection);
-				HitComp->SetHitMoveSpeed(0.3f);
+				HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 
 				// 1.2 Hit Delegate - Normal(DamageType)
-				HitComp->OnHit(Player, DT_Noraml, 10.0f);
+				HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");

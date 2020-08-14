@@ -12,6 +12,7 @@
 #include "Component/Player/CPL_BlendCameraComp.h"
 
 #include "UI/HUD_Main.h"
+#include "UI/Widget/WG_FloatingCombo.h"
 
 UCPL_SDAttackFinish::UCPL_SDAttackFinish()
 {
@@ -38,16 +39,6 @@ UCPL_SDAttackFinish::UCPL_SDAttackFinish()
 
 		SwordAttackMontages.Emplace(Sword_FinalAttack_1);
 	}
-
-	#pragma endregion
-
-	#pragma region DamageType
-
-	DT_Noraml		= NewObject<UCDamageType_Normal>();
-	DT_Noraml->SetDamageImpulse(10.0f);
-
-	DT_StrongAttack = NewObject<UCDamageType_StrongAttack>();
-	DT_StrongAttack->SetDamageImpulse(20.0f);
 
 	#pragma endregion
 }
@@ -149,11 +140,11 @@ void UCPL_SDAttackFinish::BeginAttack(AActor * DoingActor)
 		MainHUD->VisibleUITextNotify(Input, 3.0f);
 		return;
 	}
-	else
-	{
-		//@마무리 일격을 위한 데미지 세팅
-		DT_StrongAttack->SetDamageImpulse(TargetInfoWidget->GetInfoMonsterCurrentHP() + 0.1f);
-	}
+	//else
+	//{
+	//	//@마무리 일격을 위한 데미지 세팅
+	//	//DT_StrongAttack->SetDamageImpulse(TargetInfoWidget->GetInfoMonsterCurrentHP() + 0.1f);
+	//}
 
 	// @Target 이 공중 있다면 공격 명령 중단.
 	ACharacter* TargetCharactor = Cast<ACharacter>(Target);
@@ -232,9 +223,10 @@ bool UCPL_SDAttackFinish::IsLastCombo() const
 
 /* 다른 Pawn 을 공격 처리 함수 */
 // @DoingActor - Attack 을 할 객체 즉, 여기선 Player (Owner)
-void UCPL_SDAttackFinish::AttackOtherPawn()
+void UCPL_SDAttackFinish::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
-	Super::AttackOtherPawn();
+	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	FVector ActorForward = Player->GetActorForwardVector();
 	FVector Start = Player->GetActorLocation();
@@ -278,23 +270,47 @@ void UCPL_SDAttackFinish::AttackOtherPawn()
 						++CurrentComboNum; //@콤보 늘려주기
 					}
 					
+					// 1.1 Set Hit Attribute
+					FVector HitDirection = Player->GetActorForwardVector();
+					HitDirection.Z = 0.0f;
+					HitDirection.Normalize();
+					HitComp->SetHitDirection(HitDirection);
+					HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+
+					//1.2 Damage Setting
 					if (IsLastCombo() == true)
 					{
-						//@마지막 일격 - StrongAttack
-						FVector HitDirection = Player->GetActorForwardVector();
-						HitDirection.Z = 0.0f;
-						HitComp->SetHitDirection(HitDirection);
-						HitComp->SetHitMoveSpeed(0.3f);
-						HitComp->OnHit(Player, DT_StrongAttack, DT_StrongAttack->DamageImpulse);
+						//@마무리 일격을 위한 데미지 세팅
+						DamageType->SetDamageImpulse(TargetInfoWidget->GetInfoMonsterCurrentHP() + 0.1f);
 					}
-					else
+
+					//1.3 UI 표기 X
+					IIC_WidgetInfo* I_Widget = Cast<IIC_WidgetInfo>(HitResult.GetActor());
+					if (I_Widget != nullptr)
 					{
-						FVector HitDirection = Player->GetActorForwardVector();
-						HitDirection.Z = 0.0f;
-						HitComp->SetHitDirection(HitDirection);
-						HitComp->SetHitMoveSpeed(0.0f);
-						HitComp->OnHit(Player, DT_Noraml, 0.0f);
+						I_Widget->SetOnceNoneUsingFloatingCombo();
 					}
+
+					// 1.4 OnHit Call
+					HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
+
+					//if (IsLastCombo() == true)
+					//{
+					//	//@마지막 일격 - StrongAttack
+					//	FVector HitDirection = Player->GetActorForwardVector();
+					//	HitDirection.Z = 0.0f;
+					//	HitComp->SetHitDirection(HitDirection);
+					//	HitComp->SetHitMoveSpeed(0.3f);
+					//	HitComp->OnHit(Player, DT_StrongAttack, DT_StrongAttack->DamageImpulse);
+					//}
+					//else
+					//{
+					//	FVector HitDirection = Player->GetActorForwardVector();
+					//	HitDirection.Z = 0.0f;
+					//	HitComp->SetHitDirection(HitDirection);
+					//	HitComp->SetHitMoveSpeed(0.0f);
+					//	HitComp->OnHit(Player, DT_Noraml, 0.0f);
+					//}
 
 				}//(HitComp != nullptr)
 				else
