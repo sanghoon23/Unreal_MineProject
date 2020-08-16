@@ -83,6 +83,7 @@ void UCHM_AssaSixAttack::BeginAttack(AActor * DoingActor)
 void UCHM_AssaSixAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
 	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	IfTrueRet(HM_Assassin == nullptr);
 
@@ -138,11 +139,8 @@ void UCHM_AssaSixAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					HitDirection.Normalize();
 					I_HitComp->SetHitDirection(HitDirection);
 
-					UCDamageType_StrongAttack* DT_Strong = NewObject<UCDamageType_StrongAttack>();
-					DT_Strong->SetDamageImpulse(20.0f);
-
-					I_HitComp->SetHitMoveSpeed(4.0f);
-					I_HitComp->OnHit(HM_Assassin, DT_Strong, DT_Strong->DamageImpulse);
+					I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+					I_HitComp->OnHit(HM_Assassin, DamageType, DamageType->DamageImpulse);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"AssaSixAttack CallAttack - HitComp Null!!");

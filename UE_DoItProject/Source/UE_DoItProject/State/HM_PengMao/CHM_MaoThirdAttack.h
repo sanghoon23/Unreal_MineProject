@@ -30,9 +30,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> AttackMontages;
 
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Air*	DT_AirFirstAttack;
-
 #pragma endregion
 
 public:

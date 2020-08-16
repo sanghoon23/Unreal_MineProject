@@ -121,6 +121,7 @@ ex) 첫번째 공격 1, 두번째 공격 2...
 void UCHM_AssaFourAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
 	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	//@현재 콤보 늘려줌
 	++CurrentComboNum;
@@ -176,22 +177,8 @@ void UCHM_AssaFourAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					HitDirection.Normalize();
 					I_HitComp->SetHitDirection(HitDirection);
 
-					if ((IsLastCombo() == true)) //마지막 일격
-					{
-						UCDamageType_StrongAttack* DT_Strong = NewObject<UCDamageType_StrongAttack>();
-						DT_Strong->SetDamageImpulse(20.0f);
-
-						I_HitComp->SetHitMoveSpeed(4.0f);
-						I_HitComp->OnHit(HM_Assassin, DT_Strong, DT_Strong->DamageImpulse);
-					}
-					else //첫번째 공격
-					{
-						UCDamageType_Air* DT_Air = NewObject<UCDamageType_Air>();
-						DT_Air->SetDamageImpulse(10.0f);
-
-						I_HitComp->SetHitMoveSpeed(0.1f);
-						I_HitComp->OnHit(HM_Assassin, DT_Air, DT_Air->DamageImpulse);
-					}
+					I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+					I_HitComp->OnHit(HM_Assassin, DamageType, DamageType->DamageImpulse);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"AssaFourAttack CallAttack - HitComp Null!!");

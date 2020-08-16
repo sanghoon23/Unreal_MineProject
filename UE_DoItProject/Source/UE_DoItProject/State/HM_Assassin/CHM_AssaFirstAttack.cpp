@@ -49,13 +49,6 @@ void UCHM_AssaFirstAttack::BeginPlay()
 	//@IC_Charactor
 	I_Charactor = Cast<IIC_Charactor>(HM_Assassin);
 	check(I_Charactor);
-
-#pragma region Create DamageType
-
-	DT_Noraml = NewObject<UCDamageType_Normal>();
-	DT_Noraml->SetDamageImpulse(10.0f);
-
-#pragma endregion
 }
 
 void UCHM_AssaFirstAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -98,6 +91,7 @@ ex) 첫번째 공격 1, 두번째 공격 2...
 void UCHM_AssaFirstAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
 	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	//@현재 콤보 늘려줌
 	++CurrentComboNum;
@@ -150,8 +144,8 @@ void UCHM_AssaFirstAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					I_HitComp->SetHitDirection(HitDirection);
 
 					//@DT_Normal
-					I_HitComp->SetHitMoveSpeed(1.5f);
-					I_HitComp->OnHit(HM_Assassin, DT_Noraml, DT_Noraml->DamageImpulse);
+					I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+					I_HitComp->OnHit(HM_Assassin, DamageType, DamageType->DamageImpulse);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"MaoFirstAttack CallAttack - HitComp Null!!");

@@ -64,14 +64,6 @@ void UCHM_MaoThirdAttack::BeginPlay()
 	I_Charactor = Cast<IIC_Charactor>(HM_PengMao);
 	check(I_Charactor);
 
-#pragma region Create DamageType
-
-	DT_AirFirstAttack = NewObject< UCDamageType_Air>();
-	DT_AirFirstAttack->SetAirAttackHeight(400.0f);
-	DT_AirFirstAttack->SetDamageImpulse(10.0f);
-
-#pragma endregion
-
 }
 
 void UCHM_MaoThirdAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -148,6 +140,7 @@ void UCHM_MaoThirdAttack::BeginAttack(AActor * DoingActor)
 void UCHM_MaoThirdAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
 	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	FVector ActorForward = HM_PengMao->GetActorForwardVector();
 	FVector Start = HM_PengMao->GetActorLocation();
@@ -195,8 +188,8 @@ void UCHM_MaoThirdAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					HitDirection.Normalize();
 					I_HitComp->SetHitDirection(HitDirection);
 
-					I_HitComp->SetHitMoveSpeed(3.0f);
-					I_HitComp->OnHit(HM_PengMao, DT_AirFirstAttack, DT_AirFirstAttack->DamageImpulse);
+					I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+					I_HitComp->OnHit(HM_PengMao, DamageType, DamageType->DamageImpulse);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");

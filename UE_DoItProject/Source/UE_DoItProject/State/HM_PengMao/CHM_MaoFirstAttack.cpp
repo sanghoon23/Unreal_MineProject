@@ -68,16 +68,6 @@ void UCHM_MaoFirstAttack::BeginPlay()
 	I_Charactor = Cast<IIC_Charactor>(HM_PengMao);
 	check(I_Charactor);
 
-#pragma region Create DamageType
-
-	DT_Noraml = NewObject<UCDamageType_Normal>();
-	DT_Noraml->SetDamageImpulse(10.0f);
-
-	DT_Strong = NewObject<UCDamageType_StrongAttack>();
-	DT_Strong->SetDamageImpulse(20.0f);
-
-#pragma endregion
-
 	//@Setting Value
 	{
 		OffSetAttackRangeForStart = 100.0f; //@Range - 100.0f
@@ -143,6 +133,7 @@ ex) 첫번째 공격 1, 두번째 공격 2...
 void UCHM_MaoFirstAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
 	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	//@현재 콤보 늘려줌
 	++CurrentComboNum;
@@ -192,24 +183,15 @@ void UCHM_MaoFirstAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					HitDirection.Normalize();
 					I_HitComp->SetHitDirection(HitDirection);
 
-					//@DT_Slower
-					//I_HitComp->OnHit(HM_PengMao, DT_Slower, 0.0f);
+					//@DT_Strong
+					I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+					I_HitComp->OnHit(HM_PengMao, DamageType, DamageType->DamageImpulse);
 
 					if ((IsLastCombo() == true))
 					{
 						//@Set Delegate - KeyInputBlock 시키기 위해
 						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoFirstAttack::BeginBeatedFunction);
 						I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_MaoFirstAttack::EndBeatedFunction);
-
-						//@DT_Strong
-						I_HitComp->SetHitMoveSpeed(3.0f);
-						I_HitComp->OnHit(HM_PengMao, DT_Strong, DT_Strong->DamageImpulse);
-					}
-					else
-					{
-						//@DT_Normal
-						I_HitComp->SetHitMoveSpeed(1.5f);
-						I_HitComp->OnHit(HM_PengMao, DT_Noraml, DT_Noraml->DamageImpulse);
 					}
 				}
 				else

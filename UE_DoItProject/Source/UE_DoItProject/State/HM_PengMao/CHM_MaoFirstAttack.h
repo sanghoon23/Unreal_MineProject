@@ -33,13 +33,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> AttackMontages;
 
-	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Noraml;
-
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_StrongAttack*	DT_Strong;
-
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SlowerParticle_Root;
 

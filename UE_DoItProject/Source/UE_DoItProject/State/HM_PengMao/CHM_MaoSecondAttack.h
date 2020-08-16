@@ -34,12 +34,6 @@ private:
 
 	// @DamageType
 	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Noraml;
-
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_StrongAttack*	DT_Strong;
-
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
 		UCDamageType_Freeze*	DT_Freeze;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")

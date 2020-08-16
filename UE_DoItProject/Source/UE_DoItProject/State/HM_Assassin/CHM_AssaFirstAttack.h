@@ -27,10 +27,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> AttackMontages;
 
-	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Noraml;
-
 #pragma endregion
 
 public:

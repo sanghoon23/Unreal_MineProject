@@ -135,6 +135,7 @@ bool UCHM_AssaFiveAttack::IsLastCombo() const
 void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
 	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	IfTrueRet(HM_Assassin == nullptr);
 
@@ -184,6 +185,9 @@ void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 		HitDirection.Normalize();
 		I_HitComp->SetHitDirection(HitDirection);
 
+		I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+		I_HitComp->OnHit(HM_Assassin, DamageType, DamageType->DamageImpulse);
+
 		if (ComboNum == static_cast<uint8>(EHM_AssaFiveComboType::COMBO_ONE))
 		{
 			//@캐릭터 앞에 놓기 & 바라보기
@@ -192,12 +196,6 @@ void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 			HitResult.GetActor()->SetActorLocation(OwnerLocation + (OwnerFwdVec * AttackRange));
 			UCFL_ActorAgainst::LookAtTarget(HM_Assassin, HitResult.GetActor());
 
-			//@DamageType
-			UCDamageType_Normal* DT_Normal = NewObject<UCDamageType_Normal>();
-			DT_Normal->SetDamageImpulse(10.0f);
-			I_HitComp->SetHitMoveSpeed(0.2f);
-			I_HitComp->OnHit(HM_Assassin, DT_Normal, DT_Normal->DamageImpulse);
-
 			//@Sequencer Play
 			LevelSequencePlayer->Play();
 		}
@@ -205,12 +203,7 @@ void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 		{
 			if ((IsLastCombo() == true)) //마지막 일격
 			{
-				//@DamageType
-				UCDamageType_StrongAttack* DT_Strong = NewObject<UCDamageType_StrongAttack>();
-				DT_Strong->SetDamageImpulse(20.0f);
-				I_HitComp->SetHitMoveSpeed(3.0f);
-				I_HitComp->OnHit(HM_Assassin, DT_Strong, DT_Strong->DamageImpulse);
-
+				//@Player Block InputKey
 				{
 					FTimerDelegate EndBeatedTimerDelegate;
 					EndBeatedTimerDelegate = FTimerDelegate::CreateUObject(this, &UCHM_AssaFiveAttack::EndBeatedFunction, HitResult.GetActor());
@@ -225,6 +218,7 @@ void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					);
 				}
 
+				//@For Sequence MonsterAI Setting
 				{
 					FTimerDelegate EndAttackMotionDelegate;
 					EndAttackMotionDelegate = FTimerDelegate::CreateUObject(this, &UCHM_AssaFiveAttack::EndSequencerMotion, GetOwner());
@@ -237,44 +231,31 @@ void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 						SequenceDelayToFinish,
 						false
 					);
-
-					//FTimerHandle OpenLevelTimerHandle;
-					//FTimerDelegate TimerDelegate;
-					//FName LambdaInsertLoadMapName = LoadMapName;
-					//TimerDelegate.BindLambda([LoadBackground, World, LambdaInsertLoadMapName]()
-					//{
-					//	//@Remove
-					//	LoadBackground->RemoveFromViewport();
-
-					//	//@Open Level(MapName)
-					//	UGameplayStatics::OpenLevel(World, LambdaInsertLoadMapName);
-					//});
-					//GetWorldTimerManager().SetTimer(OpenLevelTimerHandle, TimerDelegate, 3.0f, false);
 				}
 			}
-			else if (CurrentComboNum == static_cast<uint8>(EHM_AssaFiveComboType::COMBO_FIVE))
-			{
-				//@DamageType
-				UCDamageType_Air* DT_Air= NewObject<UCDamageType_Air>();
-				DT_Air->SetDamageImpulse(10.0f);
-				I_HitComp->SetHitMoveSpeed(0.1f);
-				I_HitComp->OnHit(HM_Assassin, DT_Air, DT_Air->DamageImpulse);
-			}
-			else
-			{
-				//@DamageType
-				UCDamageType_Normal* DT_Normal = NewObject<UCDamageType_Normal>();
-				DT_Normal->SetDamageImpulse(10.0f);
-				I_HitComp->SetHitMoveSpeed(0.1f);
-				I_HitComp->OnHit(HM_Assassin, DT_Normal, DT_Normal->DamageImpulse);
-			}
 		}
-	}
+	}//if(Hit==true)
 	else
 	{
 		HM_Assassin->SetAIRunningPossible(true);
 		EndAttack();
-	}
+	}//(Hit==false)
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//@Test Code
+	//FTimerHandle OpenLevelTimerHandle;
+	//FTimerDelegate TimerDelegate;
+	//FName LambdaInsertLoadMapName = LoadMapName;
+	//TimerDelegate.BindLambda([LoadBackground, World, LambdaInsertLoadMapName]()
+	//{
+	//	//@Remove
+	//	LoadBackground->RemoveFromViewport();
+
+	//	//@Open Level(MapName)
+	//	UGameplayStatics::OpenLevel(World, LambdaInsertLoadMapName);
+	//});
+	//GetWorldTimerManager().SetTimer(OpenLevelTimerHandle, TimerDelegate, 3.0f, false);
 }
 
 void UCHM_AssaFiveAttack::EndSequencerMotion(AActor * Subject)

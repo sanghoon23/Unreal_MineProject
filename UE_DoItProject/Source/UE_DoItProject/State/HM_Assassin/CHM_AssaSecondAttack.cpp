@@ -167,22 +167,8 @@ void UCHM_AssaSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					HitDirection.Normalize();
 					I_HitComp->SetHitDirection(HitDirection);
 
-					if ((IsLastCombo() == true)) //마지막 일격
-					{
-						DT_Strong = NewObject<UCDamageType_StrongAttack>();
-						DT_Strong->SetDamageImpulse(10.0f);
-
-						I_HitComp->SetHitMoveSpeed(4.0f);
-						I_HitComp->OnHit(HM_Assassin, DT_Strong, DT_Strong->DamageImpulse);
-					}
-					else //첫번째 공격
-					{
-						DT_Air = NewObject<UCDamageType_Air>();
-						DT_Air->SetDamageImpulse(10.0f);
-
-						I_HitComp->SetHitMoveSpeed(1.0f);
-						I_HitComp->OnHit(HM_Assassin, DT_Air, DT_Air->DamageImpulse);
-					}
+					I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+					I_HitComp->OnHit(HM_Assassin, DamageType, DamageType->DamageImpulse);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"MaoFirstAttack CallAttack - HitComp Null!!");

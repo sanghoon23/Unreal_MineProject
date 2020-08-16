@@ -81,6 +81,9 @@ void UCNS_DoingAttack::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequen
 				UCDamageType_Base* InputDamageType = NewObject<UCDamageType_Base>(this, DamageTypeClass);
 				check(InputDamageType);
 
+				//@Hit Move
+				InputDamageType->SetHitMoveSpeed(HitMoveSpeed);
+
 				FDamageData Data;
 				Data.DamageImpulse = DamageImpulse;
 				Data.AirHeight = DamageAirHeight;

@@ -53,12 +53,6 @@ void UCHM_BasicFirstCombo::BeginPlay()
 	// @Set HM_Basic
 	HM_Basic = Cast<ACHM_Basic>(GetOwner());
 	check(HM_Basic);
-
-#pragma region Create DamageType
-
-	NormalDamageType = NewObject<UCDamageType_Normal>();
-
-#pragma endregion
 }
 
 void UCHM_BasicFirstCombo::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -138,6 +132,7 @@ bool UCHM_BasicFirstCombo::IsLastCombo() const
 void UCHM_BasicFirstCombo::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
 	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	FVector ActorForward = HM_Basic->GetActorForwardVector();
 	FVector Start = HM_Basic->GetActorLocation();
@@ -179,10 +174,10 @@ void UCHM_BasicFirstCombo::AttackOtherPawn(UCDamageType_Base* DamageType)
 				HitDirection.Z = 0.0f;
 				HitDirection.Normalize();
 				HitComp->SetHitDirection(HitDirection);
-				HitComp->SetHitMoveSpeed(0.3f);
+				HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 
 				// 1.2 Hit Delegate - Normal(DamageType)
-				HitComp->OnHit(HM_Basic, NormalDamageType, 5.0f);
+				HitComp->OnHit(HM_Basic, DamageType, DamageType->DamageImpulse);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"SDAttackBasic CallAttack - HitComp Null!!");

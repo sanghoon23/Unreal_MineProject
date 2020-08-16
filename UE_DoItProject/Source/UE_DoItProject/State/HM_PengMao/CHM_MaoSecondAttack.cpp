@@ -69,12 +69,6 @@ void UCHM_MaoSecondAttack::BeginPlay()
 
 #pragma region Create DamageType
 
-	DT_Noraml = NewObject<UCDamageType_Normal>();
-	DT_Noraml->SetDamageImpulse(30.0f);
-
-	DT_Strong = NewObject<UCDamageType_StrongAttack>();
-	DT_Strong->SetDamageImpulse(50.0f);
-
 	DT_Freeze = NewObject<UCDamageType_Freeze>();
 	DT_Freeze->SetDamageImpulse(10.0f);
 	DT_Freeze->SetFreezingTime(2.0f);
@@ -148,6 +142,7 @@ ex) 첫번째 공격 1, 두번째 공격 2...
 void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 {
 	Super::AttackOtherPawn(DamageType);
+	check(DamageType);
 
 	//@현재 콤보 늘려줌
 	++CurrentComboNum;
@@ -196,7 +191,9 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					HitDirection.Z = 0.0f;
 					HitDirection.Normalize();
 					I_HitComp->SetHitDirection(HitDirection);
-					//I_HitComp->SetHitMoveSpeed(0.3f);
+
+					I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+					I_HitComp->OnHit(HM_PengMao, DamageType, DamageType->DamageImpulse);
 
 					if ((IsLastCombo() == true)) //마지막 일격
 					{
@@ -204,12 +201,8 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
 						I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
 
-						//DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
-
-						I_HitComp->SetHitMoveSpeed(4.0f);
-						I_HitComp->OnHit(HM_PengMao, DT_Strong, DT_Strong->DamageImpulse);
-
 						//@Set Timer - Freeze Timer
+						//DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
 						FTimerHandle FreezeTimerHandle;
 						FreezeTimerDelegate = FTimerDelegate::CreateUObject(this, &UCHM_MaoSecondAttack::TimerFreezeHittedActor, HitResult.GetActor());
 						HitResult.GetActor()->GetWorldTimerManager().SetTimer
@@ -270,10 +263,6 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 								HitI_Charactor->GetIAbilityComp()->AddAbility(AbilitySpeedDowner);
 							}
 						}
-						
-						//@Normal Attack
-						I_HitComp->SetHitMoveSpeed(1.5f);
-						I_HitComp->OnHit(HM_PengMao, DT_Noraml, DT_Noraml->DamageImpulse);
 					}//else(첫번째 공격)
 				}
 				else

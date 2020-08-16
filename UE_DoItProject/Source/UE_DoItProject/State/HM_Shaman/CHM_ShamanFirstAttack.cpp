@@ -65,7 +65,7 @@ void UCHM_ShamanFirstAttack::BeginPlay()
 
 	DT_Stun = NewObject<UCDamageType_Stun>();
 	DT_Stun->SetDamageImpulse(10.0f);
-	DT_Stun->SetStunTime(0.8f);
+	DT_Stun->SetStunTime(1.5f);
 	LightingActor->SetDamageType(DT_Stun);
 
 	#pragma endregion
