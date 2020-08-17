@@ -18,6 +18,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* NormalHitMontage;
 
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		class UAnimMontage* AirHitMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		class UAnimMontage* AirAttackHitMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = "Montages")
+		class UAnimMontage* StrongAttackHitMontage;
+
 #pragma endregion
 
 public:

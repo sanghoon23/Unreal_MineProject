@@ -14,32 +14,85 @@ UCHM_AssassinHitComp::UCHM_AssassinHitComp()
 
 	FString Path = L"";
 
-//#pragma region Hit Montages
-//	// 'Normal' Hit Montage
-//	{
-//		Path = L"AnimMontage'/Game/_Mine/Montages/HM_PengMao/Hit/HM_PengMao_Mon_NormalHit.HM_PengMao_Mon_NormalHit'";
-//		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit(*Path);
-//		if (normalHit.Succeeded())
-//			NormalHitMontage = normalHit.Object;
-//	}
-//#pragma endregion
-//
-//	//@Set Montage
-//	uint8 NormalNum = static_cast<uint8>(FDamageType::NORMAL);
-//	bUsingDamageTypeEffect[NormalNum] = true;
-//	DamagedMontages[NormalNum] = NormalHitMontage;
-//
-//#pragma region Poision Material
-//	//@LOAD Poision Material
-//	{
-//		Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
-//		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
-//		if (PoisionMat.Succeeded())
-//		{
-//			Mat_Poision_0 = PoisionMat.Object;
-//		}
-//	}
-//#pragma endregion
+#pragma region Hit Montages
+
+	//@Super
+	{
+		// 'CanHitCom' Montage
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Hit/HM_Assa_Mon_HitCombo.HM_Assa_Mon_HitCombo'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> comboHit(*Path);
+		if (comboHit.Succeeded())
+			HitComboMon = comboHit.Object;
+	}
+
+	// 'Normal' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Hit/HM_Assa_Mon_NormalHit_Left.HM_Assa_Mon_NormalHit_Left'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit(*Path);
+		if (normalHit.Succeeded())
+			NormalHitMontage = normalHit.Object;
+	}
+
+	// 'AirHitFirst' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Hit/HM_Assa_Mon_AirHitFirst.HM_Assa_Mon_AirHitFirst'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> airHit(*Path);
+		if (airHit.Succeeded())
+			AirHitMontage = airHit.Object;
+	}
+
+	// 'AirAttack' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Hit/HM_Assa_Mon_AirAttackHit.HM_Assa_Mon_AirAttackHit'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> airAttackHit(*Path);
+		if (airAttackHit.Succeeded())
+			AirAttackHitMontage = airAttackHit.Object;
+	}
+
+	// 'StrongAttack' Hit Montage
+	{
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Hit/HM_Assa_Mon_StrongAttack.HM_Assa_Mon_StrongAttack'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> strongAttackHit(*Path);
+		if (strongAttackHit.Succeeded())
+			StrongAttackHitMontage = strongAttackHit.Object;
+	}
+
+#pragma endregion
+
+	//@Set Montage
+	uint8 NormalNum = static_cast<uint8>(FDamageType::NORMAL);
+	bUsingDamageTypeEffect[NormalNum] = true;
+	DamagedMontages[NormalNum] = NormalHitMontage;
+
+	uint8 AirNum = static_cast<uint8>(FDamageType::AIR);
+	bUsingDamageTypeEffect[AirNum] = true;
+	DamagedMontages[AirNum] = AirHitMontage;
+
+	uint8 AirAttackNum = static_cast<uint8>(FDamageType::AIRATTACK);
+	bUsingDamageTypeEffect[AirAttackNum] = true;
+	DamagedMontages[AirAttackNum] = AirAttackHitMontage;
+
+	uint8 StrongAttackNum = static_cast<uint8>(FDamageType::STRONGATTACK);
+	bUsingDamageTypeEffect[StrongAttackNum] = true;
+	DamagedMontages[StrongAttackNum] = StrongAttackHitMontage;
+
+	uint8 PoisionNum = static_cast<uint8>(FDamageType::POISION);
+	bUsingDamageTypeEffect[PoisionNum] = true;
+
+	uint8 BurnNum = static_cast<uint8>(FDamageType::BURN);
+	bUsingDamageTypeEffect[BurnNum] = true;
+
+#pragma region Poision Material
+	//@LOAD Poision Material
+	{
+		Path = L"Material'/Game/_Mine/Mesh/HM_Assassin/ParagonCountess/Characters/Heroes/Countess/Materials/M_Countess_Skin_Poision.M_Countess_Skin_Poision'";
+		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
+		if (PoisionMat.Succeeded())
+		{
+			Mat_Poision_0 = PoisionMat.Object;
+		}
+	}
+#pragma endregion
 
 	//@LOAD Burn Particle - ParticleComp
 	{

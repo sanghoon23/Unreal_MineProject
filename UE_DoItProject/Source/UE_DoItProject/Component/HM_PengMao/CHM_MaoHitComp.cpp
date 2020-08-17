@@ -29,6 +29,12 @@ UCHM_MaoHitComp::UCHM_MaoHitComp()
 	bUsingDamageTypeEffect[NormalNum] = true;
 	DamagedMontages[NormalNum] = NormalHitMontage;
 
+	uint8 PoisionNum = static_cast<uint8>(FDamageType::POISION);
+	bUsingDamageTypeEffect[PoisionNum] = true;
+
+	uint8 BurnNum = static_cast<uint8>(FDamageType::BURN);
+	bUsingDamageTypeEffect[BurnNum] = true;
+
 #pragma region Poision Material
 	//@LOAD Poision Material
 	{
