@@ -23,6 +23,8 @@ public:
 	float MaxHP = 0.0f;
 	float CurrentHP = 0.0f;
 	float Distance = 0.0f;
+	float ATK_Coefficient = 1.0f; //@공격 지수
+	float DEF_Coefficient = 1.0f; //@방어 지수
 	FName Name = "";
 
 	//# 상태 추가..

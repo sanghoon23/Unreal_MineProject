@@ -10,6 +10,11 @@ ACHM_PengMao::ACHM_PengMao()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Super
+	{
+		DeathCallFunctionTimer = 5.0f;
+	}
+
 	// Default Setting
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 400.0f;
@@ -230,7 +235,7 @@ float ACHM_PengMao::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 void ACHM_PengMao::OnDelegateCharactorDestroy()
 {
 	FTimerHandle DeathTimerHandle;
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACHM_PengMao::CallDestory, 2.0f);
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACHM_PengMao::CallDestory, DeathCallFunctionTimer);
 }
 
 void ACHM_PengMao::CallDestory()

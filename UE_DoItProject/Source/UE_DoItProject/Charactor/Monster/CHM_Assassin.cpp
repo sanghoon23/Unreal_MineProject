@@ -3,12 +3,19 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Component/Base/C_BaseAbilityComp.h"
+
 #include "AI/Controller/CAIC_HM_PengMao.h"
 #include "UI/Widget/WG_FloatingCombo.h"
 
 ACHM_Assassin::ACHM_Assassin()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Super
+	{
+		DeathCallFunctionTimer = 5.0f;
+	}
 
 	// Default Setting
 	{
@@ -26,6 +33,8 @@ ACHM_Assassin::ACHM_Assassin()
 		HitComp = CreateDefaultSubobject<UCHM_AssassinHitComp>(TEXT("HitComp"));
 		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>(TEXT("MeshParticleComp"));
 		Assassin_ATKComp = CreateDefaultSubobject<UCHM_AssassinAttackComp>(TEXT("Assassin_ATKComp"));
+		Assassin_ActionComp = CreateDefaultSubobject<UCHM_AssassinActionComp>(TEXT("Assassin_ActionComp"));
+		Assassin_AbilityComp = CreateDefaultSubobject<UC_BaseAbilityComp>(TEXT("Assassin_AbilityComp"));
 
 		//AddOwnedComponent(AttackComponent);
 		//AddOwnedComponent(HitComp);
@@ -33,11 +42,28 @@ ACHM_Assassin::ACHM_Assassin()
 		//AddOwnedComponent(AttackComponent);
 	}
 
+	FString strPath = L"";
+
+	strPath = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Assassin/SM_Countess_ForDeath.SM_Countess_ForDeath'";
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> SK(*strPath);
+	if (SK.Succeeded())
+	{
+		Assa_DeathMesh = SK.Object;
+		//SkeletalMesh->SetSkeletalMesh(SK.Object);
+	}
+
+	strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Assassin/P_Assa_ForDeathSmoke.P_Assa_ForDeathSmoke'";
+	ConstructorHelpers::FObjectFinder<UParticleSystem> P_DeathSmoke(*strPath);
+	if (P_DeathSmoke.Succeeded())
+	{
+		P_Assa_DeathSmoke = P_DeathSmoke.Object;
+	}
+
 #pragma region Monster Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
 	Info.MaxHP = 300.0f;
-	Info.CurrentHP = 300.0f;
+	Info.CurrentHP = 10.0f;
 	Info.Name = FName(L"Assassin");
 	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
@@ -55,11 +81,57 @@ void ACHM_Assassin::BeginPlay()
 		CanMove();
 		OnGravity();
 	});
+
+	// TODO :
+	OnDeathDelegate.AddLambda([&]()
+	{
+		GetMesh()->SetSkeletalMesh(Assa_DeathMesh);
+
+		//@죽을 때 연기(Smoke) 나옴.
+		FTransform P_Transform;
+		P_Transform.SetLocation(GetActorLocation());
+		P_Transform.SetScale3D(FVector(4.0f));
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_Assa_DeathSmoke, P_Transform, true);
+	});
+
 }
 
 void ACHM_Assassin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//@분노 영역
+	if (Info.CurrentHP <= Info.MaxHP * 0.5f && AngerState == EAssa_AngerState::NONE)//HP반 이하
+	{
+		IIC_ActionComp* I_ActionComp = GetIActionComp();
+		check(I_ActionComp);
+
+		IIC_BaseAction* AngerAction = I_ActionComp->GetIBaseAction(static_cast<uint8>(EAssa_ActionType::ANGER));
+		check(AngerAction);
+
+		bool bMonPlaying = GetMesh()->GetAnimInstance()->Montage_IsPlaying(GetCurrentMontage());
+		IfTrueRet(bMonPlaying);
+
+		/* 지금 계속 호출된다..? */
+		//CLog::Print(L"OnAction CALL!!");
+
+		AngerAction->OnAction();
+		AngerState = EAssa_AngerState::DOING;
+	}
+
+	//Test Code
+	////@Death (재가 되어 사라져라..) - OnDeathDelegate 에서 Mesh Change
+	//{
+	//	if (bDeath == true)
+	//	{
+	//		TArray<UMaterialInterface*> Temp;
+	//		GetMesh()->GetUsedMaterials(Temp);
+	//		for (UMaterialInterface* MInst : Temp)
+	//		{
+	//			//MInst.setvector
+	//		}
+	//	}
+	//}
 }
 
 void ACHM_Assassin::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
@@ -74,6 +146,20 @@ void ACHM_Assassin::GetViewConditionStateForUI(TArray<FViewConditionState>* OutA
 		Insert.ColorAndOpacity = ConditionType->ColorAndOpacity;
 		Insert.TintSlateColor = FSlateColor(ConditionType->TintColor);
 		Insert.ApplyTime = ConditionType->ApplyTime;
+
+		OutArray->Emplace(Insert);
+	}
+
+	//@AbilityComp
+	TArray<UCBaseAbility*> Abilities;
+	Assassin_AbilityComp->GetAbilities(Abilities);
+	for (UCBaseAbility* Ability : Abilities)
+	{
+		FViewConditionState Insert;
+		Insert.TextureUI = Ability->GetTextureUI();
+		Insert.ColorAndOpacity = Ability->ColorAndOpacity;
+		Insert.TintSlateColor = FSlateColor(Ability->TintColor);
+		Insert.ApplyTime = Ability->GetApplyTimer();
 
 		OutArray->Emplace(Insert);
 	}
@@ -181,6 +267,18 @@ void ACHM_Assassin::OffCollision()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void ACHM_Assassin::AddATK(float fValue)
+{
+	Super::AddATK(fValue);
+	Info.ATK_Coefficient += fValue;
+}
+
+void ACHM_Assassin::AddDEF(float fValue)
+{
+	Super::AddDEF(fValue);
+	Info.DEF_Coefficient += fValue;
+}
+
 void ACHM_Assassin::SetAIAttackMode(bool bValue)
 {
 	bAIAttackMode = bValue;
@@ -192,6 +290,8 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 
 	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
 	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+
+	//TODO : '방어계수' 는 여기서 계산 해주면됨. Ex) DamageAmount/DEF_Coefficient
 
 	//@UI
 	{
@@ -223,13 +323,14 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 	{
 		OnDeath();
 	}
+
 	return Info.CurrentHP;
 }
 
 void ACHM_Assassin::OnDelegateCharactorDestroy()
 {
 	FTimerHandle DeathTimerHandle;
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACHM_Assassin::CallDestory, 2.0f);
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACHM_Assassin::CallDestory, DeathCallFunctionTimer);
 }
 
 void ACHM_Assassin::CallDestory()
@@ -240,10 +341,23 @@ void ACHM_Assassin::CallDestory()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Get, Set
 
+/* I_Charactor 에 CurrentBaseAction Setting */
+void ACHM_Assassin::SetCurrentBaseAction(IIC_BaseAction * IBaseAction)
+{
+	check(IBaseAction);
+	CurrentIBaseAction = IBaseAction;
+}
+
 IIC_AttackComp * ACHM_Assassin::GetIAttackComp()
 {
 	IfTrueRetResult(Assassin_ATKComp == nullptr, nullptr); // @Return Null
 	return Cast<IIC_AttackComp>(Assassin_ATKComp);
+}
+
+IIC_ActionComp * ACHM_Assassin::GetIActionComp()
+{
+	IfTrueRetResult(Assassin_ActionComp == nullptr, nullptr); // @Return Null
+	return Cast<IIC_ActionComp>(Assassin_ActionComp);;
 }
 
 IIC_HitComp * ACHM_Assassin::GetIHitComp()
@@ -256,6 +370,11 @@ IIC_MeshParticle * ACHM_Assassin::GetIMeshParticle()
 {
 	IfTrueRetResult(MeshParticleComponent == nullptr, nullptr); // @Return Null
 	return Cast<IIC_MeshParticle>(MeshParticleComponent);
+}
+
+IIC_AbilityComp * ACHM_Assassin::GetIAbilityComp()
+{
+	return Cast<IIC_AbilityComp>(Assassin_AbilityComp);
 }
 
 AActor * ACHM_Assassin::GetTargetInAI()

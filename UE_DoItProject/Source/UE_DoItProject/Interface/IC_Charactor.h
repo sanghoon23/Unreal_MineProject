@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "Interface/IC_StateManager.h"
+#include "Interface/IC_ActionComp.h"
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAction.h"
 #include "Interface/IC_HitComp.h"
@@ -95,12 +96,14 @@ public:
 	virtual FVector GetEvadeDirection() { return FVector(1.f, 0.0f, 0.0f); } // 회피방향
 
 public:
-	virtual IIC_StateManager* GetIStateManager() { return nullptr; }
+	virtual IIC_ActionComp* GetIActionComp() { return nullptr; }
 	virtual IIC_AttackComp* GetIAttackComp() { return nullptr; }
 	virtual IIC_HitComp* GetIHitComp() { return nullptr; }
 	virtual IIC_EquipComp* GetIEquipComp() { return nullptr; }
 	virtual IIC_AbilityComp* GetIAbilityComp() { return nullptr; }
 	virtual IIC_MeshParticle* GetIMeshParticle() { return nullptr; }
+
+	virtual void SetCurrentBaseAction(IIC_BaseAction* IBaseAction) {}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Function */
@@ -120,6 +123,6 @@ protected:
 	//@Montage 실행시킴 여부
 	bool bDontMontagePlay = false;
 
-	//@현재 실행되는 액션 - 'E'
+	//@현재 실행되는 액션 - ex) Player 'E'
 	IIC_BaseAction* CurrentIBaseAction;
 };

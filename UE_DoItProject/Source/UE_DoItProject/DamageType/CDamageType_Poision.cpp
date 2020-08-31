@@ -29,7 +29,7 @@ UCDamageType_Poision::UCDamageType_Poision()
 
 	FString strPath = L"";
 
-	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_PoisionTypeFill.Tex_PoisionTypeFill'";
+	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_PoisionsFilling.Tex_PoisionsFilling'";
 	ConstructorHelpers::FObjectFinder<UTexture2D> PoisionTexture(*strPath);
 	if (PoisionTexture.Succeeded())
 	{

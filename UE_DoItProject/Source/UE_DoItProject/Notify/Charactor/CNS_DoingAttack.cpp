@@ -2,6 +2,8 @@
 #include "Global.h"
 
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_Player.h"
+#include "Interface/IC_Monster.h"
 #include "Interface/IC_AttackComp.h"
 #include "Interface/IC_BaseAttack.h"
 
@@ -9,13 +11,11 @@ void UCNS_DoingAttack::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSeque
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
-	IfNullRet(Charactor);
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
+	IfNullRet(I_Charactor);
 
-	IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
+	IIC_AttackComp* I_AttackComp = I_Charactor->GetIAttackComp();
 	IfNullRet(I_AttackComp);
-
-	FString Path = L"";
 
 	// Attack
 	IIC_BaseAttack* BaseAttack = I_AttackComp->GetCurrentIBaseAttack();
@@ -28,8 +28,22 @@ void UCNS_DoingAttack::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSeque
 		InputDamageType->SetHitMoveSpeed(HitMoveSpeed);
 
 		//@Setting Data
+		float ATK_Coe = 0.0f;
+		if (I_Charactor->GetCharactorType() == ECharactorType::PLAYER)
+		{
+			IIC_Player* I_Player = Cast<IIC_Player>(MeshComp->GetOwner());
+			check(I_Player);
+			ATK_Coe = I_Player->GetPlayerInfo().ATK_Coefficient;
+		}
+		else if (I_Charactor->GetCharactorType() == ECharactorType::MONSTER)
+		{
+			IIC_Monster* I_Monster = Cast< IIC_Monster>(MeshComp->GetOwner());
+			check(I_Monster);
+			ATK_Coe = I_Monster->GetMonsterInfo().ATK_Coefficient;
+		}
+
 		FDamageData Data;
-		Data.DamageImpulse = DamageImpulse;
+		Data.DamageImpulse = DamageImpulse * ATK_Coe; //@°è¼ö °öÇÏ±â.
 		Data.AirHeight = DamageAirHeight;
 		Data.StunTime = DamageStunTime;
 		Data.BurnTime = DamageBurnTime;
@@ -43,6 +57,7 @@ void UCNS_DoingAttack::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSeque
 		BaseAttack->AttackOtherPawn(InputDamageType);
 
 		////@1.
+		//FString Path = L"";
 		//UCDamageType_Base* InputDamageType = NewObject<UCDamageType_Base>(this, DamageTypeClass);
 		//check(InputDamageType);
 		//BaseAttack->AttackOtherPawn(InputDamageType);
@@ -64,10 +79,10 @@ void UCNS_DoingAttack::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequen
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
 
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
-	IfNullRet(Charactor);
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
+	IfNullRet(I_Charactor);
 
-	IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
+	IIC_AttackComp* I_AttackComp = I_Charactor->GetIAttackComp();
 	IfNullRet(I_AttackComp);
 
 	if (bOnRunningTickOtherAttack == true)
@@ -114,8 +129,8 @@ void UCNS_DoingAttack::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequenc
 {
 	Super::NotifyEnd(MeshComp, Animation);
 
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
-	IfNullRet(Charactor);
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
+	IfNullRet(I_Charactor);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

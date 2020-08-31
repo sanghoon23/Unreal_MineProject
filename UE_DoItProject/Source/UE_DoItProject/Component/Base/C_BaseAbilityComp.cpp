@@ -36,10 +36,15 @@ void UC_BaseAbilityComp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 		//@Tick
 		MapValue.Value->TickUseTimerAbility(DeltaTime);
-		MapValue.Value->TimerRunning(DeltaTime);
+
+		bool bTimeOut = false;
+		if (MapValue.Value->GetUsingTimer() == true)
+		{
+			MapValue.Value->TimerRunning(DeltaTime);
+			bTimeOut = (MapValue.Value)->IsTimeOut();
+		}
 
 		//@Time Check
-		bool bTimeOut = (MapValue.Value)->IsTimeOut();
 		if (bTimeOut == true)
 		{
 			//@End
@@ -64,7 +69,8 @@ void UC_BaseAbilityComp::AddAbility(UCBaseAbility* Ability)
 	Ability->SetAppliedActor(GetOwner());
 
 	bool bUsingTimer = Ability->GetUsingTimer();
-	if (bUsingTimer == true)
+	EAbilitySort Sort = Ability->GetAbilitySort();
+	if (Sort == EAbilitySort::SAVEARRAY)
 	{
 		EAbilityType Type = Ability->GetAbilityType();
 		UCBaseAbility** Origin = AddAbilityMap.Find(Type);
@@ -80,7 +86,7 @@ void UC_BaseAbilityComp::AddAbility(UCBaseAbility* Ability)
 			AddAbilityMap.Add(Type, Ability);
 		}
 	}
-	else
+	if (Sort == EAbilitySort::IMMEDITATEAPPLY)
 	{
 		Ability->ApplyAbility();
 	}

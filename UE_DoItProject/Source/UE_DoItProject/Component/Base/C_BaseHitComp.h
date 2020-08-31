@@ -118,7 +118,7 @@ public:
 	/* IC_HitComp 참조 */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) override;
 
-	///* IC_HitComp 참조 */
+	//* IC_HitComp 참조 */
 	virtual bool IsUsingDamageTypeEffect(uint8 Type) const override { return bUsingDamageTypeEffect[Type]; };
 
 	/* IC_HitComp 참조 */

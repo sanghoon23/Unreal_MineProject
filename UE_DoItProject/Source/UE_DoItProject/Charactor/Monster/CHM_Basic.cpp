@@ -10,6 +10,11 @@ ACHM_Basic::ACHM_Basic()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Super
+	{
+		DeathCallFunctionTimer = 5.0f;
+	}
+
 	// Default Setting
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 400.0f;
@@ -237,7 +242,7 @@ float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 void ACHM_Basic::OnDelegateCharactorDestroy()
 {
 	FTimerHandle DeathTimerHandle;
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACHM_Basic::CallDestory, 2.0f);
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACHM_Basic::CallDestory, DeathCallFunctionTimer);
 }
 
 void ACHM_Basic::CallDestory()

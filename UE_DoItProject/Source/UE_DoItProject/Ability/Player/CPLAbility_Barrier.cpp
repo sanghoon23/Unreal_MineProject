@@ -95,6 +95,7 @@ void UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
 	if (AbilityType != Ability->GetAbilityType())
 	{
 		UE_LOG(LogTemp, Warning, L"UCPLAbility_Barrier OverlapAbility Function Same NOT TYPE!!");
+		return;
 	}
 
 	//@ '+' Barrier

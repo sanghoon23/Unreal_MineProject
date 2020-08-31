@@ -295,6 +295,7 @@ void UCHM_MaoFourAttack::DelSkillRangeAttackOtherPawn(AActor * Subject)
 					{
 						//CLog::Print(L"AbilityComp Not NULL!!");
 						FAbilityValue InputValue;
+						InputValue.Sort = EAbilitySort::SAVEARRAY;
 						InputValue.bTimer = true;
 						InputValue.Timer = 7.0f;
 						InputValue.Value = AbilityDownSpeedValue;

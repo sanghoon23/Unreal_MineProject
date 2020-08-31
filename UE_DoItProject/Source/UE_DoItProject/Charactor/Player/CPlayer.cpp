@@ -593,7 +593,6 @@ void ACPlayer::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
 
 void ACPlayer::OnDeath()
 {
-	//TODO : 죽음 구현 - 현재 체력이 0 이하 일때,
 	bDeath = true;
 
 	OnDeathDelegate.Broadcast();
@@ -790,6 +789,11 @@ void ACPlayer::AddDEF(float fValue)
 IIC_StateManager * ACPlayer::GetIStateManager()
 {
 	return Cast<IIC_StateManager>(StateManager);
+}
+
+IIC_ActionComp * ACPlayer::GetIActionComp()
+{
+	return StateManager->GetIActionComp();
 }
 
 /* 현재 CurrentStateType 에 해당하는 Inteface AttackComp 를 가져옴 */

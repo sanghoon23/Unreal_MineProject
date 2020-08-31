@@ -3,6 +3,7 @@
 
 #include "GameFramework/Character.h"
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_Player.h"
 #include "Interface/IC_StateManager.h"
 #include "Item/Base/CItem_Hand.h"
 #include "Item/CPL_Sword.h"
@@ -42,15 +43,20 @@ void UCPL_EquipComp::BeginPlay()
 	}
 	#pragma endregion
 
-	// Set Delegate "On Hit" - IIC_Charactor
+	// Set Delegate "On Hit" - 
+
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
 	check(IC_Charactor);
+
+	IIC_Player* IC_Player = Cast<IIC_Player>(GetOwner());
+	check(IC_Player);
+
 	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
 	{
 		bEquiping = false;
 	});
 
-	IIC_StateManager* IC_State = IC_Charactor->GetIStateManager();
+	IIC_StateManager* IC_State = IC_Player->GetIStateManager();
 	check(IC_State);
 	IC_State->OnSwordState.AddLambda([&]()
 	{

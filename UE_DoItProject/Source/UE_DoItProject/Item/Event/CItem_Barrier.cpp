@@ -181,6 +181,7 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 		{
 			//@Create Ability
 			FAbilityValue InputValue;
+			InputValue.Sort = EAbilitySort::SAVEARRAY;
 			InputValue.bTimer = true;
 			InputValue.Timer = UsingAbilityBarrierTime;
 			InputValue.Value = AddBarrierAmount;

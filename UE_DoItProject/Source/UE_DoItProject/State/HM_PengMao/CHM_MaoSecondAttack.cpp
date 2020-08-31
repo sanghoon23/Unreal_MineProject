@@ -254,6 +254,7 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 							{
 								//CLog::Print(L"AbilityComp Not NULL!!");
 								FAbilityValue InputValue;
+								InputValue.Sort = EAbilitySort::SAVEARRAY;
 								InputValue.bTimer = true;
 								InputValue.Timer = 7.0f;
 								InputValue.Value = AbilityDownSpeedValue;

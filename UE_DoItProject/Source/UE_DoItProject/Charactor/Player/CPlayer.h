@@ -129,6 +129,8 @@ public:
 
 /* Pure Virtual Function - (IIC_Player) */
 public:
+	virtual IIC_StateManager* GetIStateManager() override;
+
 	// Block Input
 	virtual void OnBlockKeyInput() override;
 	virtual void OffBlockKeyInput() override;
@@ -160,11 +162,15 @@ public:
 
 public:
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const override { return CurrentMontage; }
-	virtual IIC_StateManager* GetIStateManager() override;
+	virtual IIC_ActionComp* GetIActionComp() override;
 	virtual IIC_AttackComp* GetIAttackComp() override;
 	virtual IIC_HitComp* GetIHitComp() override;
 	virtual IIC_EquipComp* GetIEquipComp() override;
 	virtual IIC_MeshParticle* GetIMeshParticle() override;
+	virtual IIC_AbilityComp* GetIAbilityComp();
+
+	// @Interface Value
+	virtual void SetCurrentBaseAction(IIC_BaseAction* IBaseAction) override;
 
 public:
 /* Class Virtual */
@@ -176,8 +182,6 @@ public:
 		class AController * EventInstigator,
 		AActor * DamageCauser
 	) override;
-
-	virtual IIC_AbilityComp* GetIAbilityComp();
 
 	/* Function */
 public:
@@ -225,9 +229,6 @@ private:
 	#pragma	region Member
 public:
 	int GetCurrentAttackStateType();
-
-	// @Interface Value
-	void SetCurrentBaseAction(IIC_BaseAction* IBaseAction);
 
 	// @TargetSystem
 	APawn* GetFindAttackTarget();

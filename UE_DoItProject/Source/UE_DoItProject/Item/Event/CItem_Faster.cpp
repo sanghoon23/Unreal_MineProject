@@ -239,6 +239,7 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 		if (I_AbilityComp != nullptr)
 		{
 			FAbilityValue InputValue;
+			InputValue.Sort = EAbilitySort::SAVEARRAY;
 			InputValue.bTimer = true;
 			InputValue.Timer = UsingAbilitySpeedUpperTime;
 			InputValue.Value = AddSpeedValue;

@@ -141,6 +141,7 @@ void ACItem_RecoveryMP::ApplyEvent(AActor * EventedActor)
 			//@ADD Ability
 			UCPLAbility_MP* Ability_MP = NewObject<UCPLAbility_MP>();
 			FAbilityValue Input;
+			Input.Sort = EAbilitySort::IMMEDITATEAPPLY;
 			Input.Value = RecoveryMPValue;
 			Ability_MP->SetAbilityValue(Input);
 			Ability_MP->SetAppliedActor(EventedActor);

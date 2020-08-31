@@ -199,17 +199,17 @@ void UCPL_SDAttackFinish::EndAttack()
 	//@OFF BlockInput
 	Player->OffBlockKeyInput();
 
-	//@ON AI - Target
-	if (Target != nullptr)
-	{
-		IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
-		if (I_Monster != nullptr)
-		{
-			I_Monster->SetAIRunningPossible(true);
-		}
+	////@ON AI - Target
+	//if (Target != nullptr)
+	//{
+	//	IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
+	//	if (I_Monster != nullptr)
+	//	{
+	//		I_Monster->SetAIRunningPossible(true);
+	//	}
 
-		Target = nullptr;
-	}
+	//	Target = nullptr;
+	//}
 }
 
 // @Combo 의 마지막 구간을 정확히 알기 위해서.

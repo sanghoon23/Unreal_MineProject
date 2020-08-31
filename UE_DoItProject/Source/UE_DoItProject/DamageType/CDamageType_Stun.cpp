@@ -29,7 +29,7 @@ UCDamageType_Stun::UCDamageType_Stun()
 
 	FString strPath = L"";
 
-	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_StunTypeFill.Tex_StunTypeFill'";
+	strPath = L"Texture2D'/Game/_Mine/_MyBlueprint/Texture/UI/ConditionTexture_Filling/Tex_StunTypeFilling.Tex_StunTypeFilling'";
 	ConstructorHelpers::FObjectFinder<UTexture2D> StunTexture(*strPath);
 	if (StunTexture.Succeeded())
 	{

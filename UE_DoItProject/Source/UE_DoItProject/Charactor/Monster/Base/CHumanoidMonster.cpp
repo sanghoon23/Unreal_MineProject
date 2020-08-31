@@ -54,3 +54,19 @@ float ACHumanoidMonster::TakeDamage(float DamageAmount, FDamageEvent const & Dam
 
 	return Damage;
 }
+
+void ACHumanoidMonster::AddCurrentHP(float fValue)
+{
+}
+
+void ACHumanoidMonster::AddCurrentMP(float fValue)
+{
+}
+
+void ACHumanoidMonster::AddATK(float fValue)
+{
+}
+
+void ACHumanoidMonster::AddDEF(float fValue)
+{
+}

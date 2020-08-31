@@ -194,6 +194,16 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 	//@끌어 당겨질 때,
 	IfFalseRet(CableObject->GetPulling());
 
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Target);
+	IfNullRet(I_Charactor);
+
+	IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
+	IfNullRet(I_HitComp);
+
+	const uint8 MontageTypeNum = static_cast<uint8>(DT_Stun->GetConditionType());
+	IfFalseRet(I_HitComp->IsUsingDamageTypeEffect(MontageTypeNum));
+
+	//@Once
 	if (bNextMontage == false)
 	{
 		CLog::Print(L"TickActionState!!");
@@ -204,35 +214,22 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 			FName("Pulling"), PullReadyMontage
 		);
 
-		//@I_Charactor
-		IIC_Charactor* Charactor = Cast<IIC_Charactor>(Target);
-		if (Charactor != nullptr)
-		{
-			//@I_HitCompo
-			IIC_HitComp* HitComp = Charactor->GetIHitComp();
-			if (HitComp != nullptr)
-			{
-				// 1.1 Set Hit Attribute
-				HitComp->SetHitDirection(FVector(0.0f));
-				HitComp->SetHitMoveSpeed(0.0f);
+		// 1.1 Set Hit Attribute
+		I_HitComp->SetHitDirection(FVector(0.0f));
+		I_HitComp->SetHitMoveSpeed(0.0f);
 
-				//1.2 DT_Stun Delegate
-				DT_Stun->OnLinkStartUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunStartDel);
-				DT_Stun->OnLinkEndUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunEndDel);
+		//1.2 DT_Stun Delegate
+		DT_Stun->OnLinkStartUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunStartDel);
+		DT_Stun->OnLinkEndUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunEndDel);
 
-				const uint8 MontageTypeNum = static_cast<uint8>(DT_Stun->GetConditionType());
-				if (HitComp->IsUsingDamageTypeEffect(MontageTypeNum) == true)
-				{
-					// 1.3 OnHit
-					HitComp->OnHit(Player, DT_Stun, 5.0f);
-				}
-			}
-		}
+		// 1.3 OnHit
+		I_HitComp->OnHit(Player, DT_Stun, 5.0f);
 
 		bNextMontage = true;
 	}//@bNextMontage
 
-	 //@당겨지는 중, TargetLocation Setting
+
+	 //@Tick - 당겨지는 중, TargetLocation Setting
 	PullingTargetLocation(Target);
 }
 

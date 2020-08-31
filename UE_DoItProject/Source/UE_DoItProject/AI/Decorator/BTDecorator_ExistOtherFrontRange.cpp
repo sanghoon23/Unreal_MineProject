@@ -4,7 +4,6 @@
 #include "GameFramework/Character.h"
 #include "AIController.h"
 
-#include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "Interface/IC_Monster.h"
 
 UBTDecorator_ExistOtherFrontRange::UBTDecorator_ExistOtherFrontRange()
@@ -30,8 +29,9 @@ bool UBTDecorator_ExistOtherFrontRange::CalculateRawConditionValue(UBehaviorTree
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//@Target 바라보기
-	UCFL_ActorAgainst::LookAtTarget(ControlPawn, Target);
+	//TODO : 여기 고침 AI 바라보는거
+	////@Target 바라보기
+	//UCFL_ActorAgainst::LookAtTarget(ControlPawn, Target);
 
 	// 위치
 	FVector Center = ControlPawn->GetActorLocation();

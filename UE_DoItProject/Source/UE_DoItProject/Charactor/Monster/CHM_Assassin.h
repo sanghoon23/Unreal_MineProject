@@ -7,10 +7,18 @@
 #include "Interface/IC_WidgetInfo.h"
 
 #include "Component/HM_Assassin/CHM_AssassinAttackComp.h"
+#include "Component/HM_Assassin/CHM_AssassinActionComp.h"
 #include "Component/HM_Assassin/CHM_AssassinHitComp.h"
 #include "Component/CMeshParticleComp.h"
 
 #include "CHM_Assassin.generated.h"
+
+UENUM()
+enum class EAssa_AngerState
+{
+	NONE = 0,
+	DOING = 1,
+};
 
 UCLASS()
 class UE_DOITPROJECT_API ACHM_Assassin 
@@ -30,10 +38,22 @@ private:
 		class UCHM_AssassinAttackComp* Assassin_ATKComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UCHM_AssassinActionComp* Assassin_ActionComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UC_BaseAbilityComp* Assassin_AbilityComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_AssassinHitComp* HitComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCMeshParticleComp* MeshParticleComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Mesh")
+		class USkeletalMesh* Assa_DeathMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+		class UParticleSystem* P_Assa_DeathSmoke;
 
 #pragma endregion
 
@@ -79,10 +99,17 @@ public:
 	/* Virtual In Interface - (IC_Charactor) */
 public:
 	virtual const class UAnimMontage* GetCurrentApplyedMontage() const override { return CurrentMontage; } // @현재 적용된, 혹은 적용된 후의 애니메이션
+
 	virtual IIC_AttackComp* GetIAttackComp() override;
+
+	virtual IIC_ActionComp* GetIActionComp() override;
 	virtual IIC_EquipComp* GetIEquipComp() override { return nullptr; }; //@NOT EQUIP
 	virtual IIC_HitComp* GetIHitComp() override;
 	virtual IIC_MeshParticle* GetIMeshParticle() override;
+	virtual IIC_AbilityComp* GetIAbilityComp();
+
+	// @Interface Value
+	virtual void SetCurrentBaseAction(IIC_BaseAction* IBaseAction) override;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//@Virtual Pure Function - (IC_Monster)
@@ -113,17 +140,28 @@ public:
 	virtual void OnCollision() override;
 	virtual void OffCollision() override;
 
+	/* Info */
+	virtual void AddATK(float fValue) override;
+	virtual void AddDEF(float fValue) override;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 private:
 	void OnDelegateCharactorDestroy();
 	void CallDestory();
 
 #pragma region Member
+public:
+	EAssa_AngerState GetAngerState() const { return AngerState; }
+
 private:
 	// Type
 	ECharactorType CharactorType = ECharactorType::MONSTER;
 
 	/* IC_Monster Member */
 	FMonsterInfo Info;
+
+	EAssa_AngerState AngerState = EAssa_AngerState::NONE;
 
 #pragma endregion
 };

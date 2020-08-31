@@ -19,17 +19,17 @@ public:
 		TArray<FViewConditionState> InfoConditionDataArray;
 
 public:
-	float MaxHP			= 0.0f;
-	float CurrentHP		= 0.0f;
+	float MaxHP				= 0.0f;
+	float CurrentHP			= 0.0f;
 
-	float MaxMP			= 0.0f;
-	float CurrentMP		= 0.0f;
+	float MaxMP				= 0.0f;
+	float CurrentMP			= 0.0f;
 
-	float BarrierAmount	= 0.0f;
+	float BarrierAmount		= 0.0f;
 
-	float AddSpeed		= 0.0f;
-	float ATK			= 0.0f;
-	float DEF			= 0.0f;
+	float AddSpeed			= 0.0f;
+	float ATK_Coefficient	= 1.0f; //@공격 지수
+	float DEF_Coefficient	= 1.0f; //@방어 지수
 
 	FName Name			= "";
 
@@ -64,6 +64,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Virtual Function */
 public:
+	virtual IIC_StateManager* GetIStateManager() { return nullptr; }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

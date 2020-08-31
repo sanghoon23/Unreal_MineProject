@@ -15,6 +15,10 @@ class UE_DOITPROJECT_API ACHumanoidMonster
 
 	#pragma	region Reflection
 protected:
+	/* HP == 0 이 되었을 때, DeathCall 함수 에서 캐릭터가 지워질 시간 */
+	UPROPERTY(EditAnywhere, Category = "Movement")
+		float DeathCallFunctionTimer = 3.0f; 
+
 	UPROPERTY(EditAnywhere, Category = "Movement")
 		float WalkSpeed = 300.0f;
 
@@ -52,17 +56,21 @@ public:
 		class AController * EventInstigator,
 		AActor * DamageCauser
 	) override;
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/* Virtual Monster Info */
+	virtual void AddCurrentHP(float fValue);
+	virtual void AddCurrentMP(float fValue);
+	virtual void AddATK(float fValue);
+	virtual void AddDEF(float fValue);
 
 	#pragma	region Member
 public:
-	float GetHeath() const { return Health; }
-
 	bool GetDeath() const { return bDeath; }
 	void SetDeath(bool bValue) { bDeath = bValue; }
 
 protected:
-	float Health = 30.0f;
 	bool bDeath = false;
 
 	bool bCanMove = true;

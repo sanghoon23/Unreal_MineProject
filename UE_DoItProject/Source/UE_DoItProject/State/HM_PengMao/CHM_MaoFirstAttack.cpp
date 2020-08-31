@@ -244,6 +244,7 @@ void UCHM_MaoFirstAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 				{
 					//CLog::Print(L"AbilityComp Not NULL!!");
 					FAbilityValue InputValue;
+					InputValue.Sort = EAbilitySort::SAVEARRAY;
 					InputValue.bTimer = true;
 					(IsLastCombo() == true)
 						? InputValue.Timer = 9.0f

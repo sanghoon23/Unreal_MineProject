@@ -221,17 +221,9 @@ void UCPL_MGAttackBasic::AttackOtherPawn(UCDamageType_Base* DamageType)
 				FVector HitDirection = Player->GetActorForwardVector();
 				HitDirection.Z = 0.0f;
 				HitComp->SetHitDirection(HitDirection);
-				HitComp->SetHitMoveSpeed(0.3f);
+				HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 
-				// 1.2 Hit Delegate - Normal(DamageType)
-				if (CurrentComboNum < static_cast<uint8>(UMG_BasicAttack::COMBO_THREE))
-				{
-					HitComp->OnHit(Player, DT_Normal, 10.0f);
-				}
-				else if (CurrentComboNum == static_cast<uint8>(UMG_BasicAttack::COMBO_THREE))
-				{
-					HitComp->OnHit(Player, DT_StrongAttack, 15.0f);
-				}
+				HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
 
 			}//(HitComp != nullptr)
 			else

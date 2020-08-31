@@ -142,6 +142,7 @@ void ACItem_RecoveryHP::ApplyEvent(AActor * EventedActor)
 			//@ADD Ability
 			UCPLAbility_HP* Ability_HP = NewObject<UCPLAbility_HP>();
 			FAbilityValue Input;
+			Input.Sort = EAbilitySort::IMMEDITATEAPPLY;
 			Input.Value = RecoveryHPValue;
 			Ability_HP->SetAbilityValue(Input);
 			Ability_HP->SetAppliedActor(EventedActor);

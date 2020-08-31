@@ -84,6 +84,7 @@ void UCPLAbility_SpeedDown::OverlapAbility(UCBaseAbility * Ability)
 	if (AbilityType != Ability->GetAbilityType())
 	{
 		UE_LOG(LogTemp, Warning, L"UCPLAbility_SpeedDowner OverlapAbility Function Same NOT TYPE!!");
+		return;
 	}
 
 	EndUseTimerAbility();

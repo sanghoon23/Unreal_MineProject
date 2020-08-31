@@ -21,6 +21,7 @@ void UCBaseAbility::Copy(const UCBaseAbility * const In)
 	SetAbilityValue(In->GetAbilityValue());
 	SetAppliedActor(In->AppliedActor);
 
+	bUsingColorAndOpacity = In->bUsingColorAndOpacity;
 	OpacityLinearTimer = In->OpacityLinearTimer;
 	OpacityLinearSpeed = In->OpacityLinearSpeed;
 }
@@ -35,10 +36,7 @@ void UCBaseAbility::StartUseTimerAbility()
 
 void UCBaseAbility::TickUseTimerAbility(float DeltaTime)
 {
-	//@Apply Time
-	AbilityValue.Timer -= DeltaTime;
-
-	if (AbilityValue.Timer < OpacityLinearTimer)
+	if (AbilityValue.Timer < OpacityLinearTimer && bUsingColorAndOpacity == true)
 	{
 		UpdateUIColorAndOpacity();
 	}
@@ -93,8 +91,9 @@ const bool UCBaseAbility::IsTimeOut() const
 		return false;
 }
 
-void UCBaseAbility::SetAbilityValue(float Val, bool bUsingTimer, float TimerVal)
+void UCBaseAbility::SetAbilityValue(EAbilitySort Sort, float Val, bool bUsingTimer, float TimerVal)
 {
+	AbilityValue.Sort = Sort;
 	AbilityValue.bTimer = bUsingTimer;
 	AbilityValue.Timer = TimerVal;
 	AbilityValue.Value = Val;
@@ -102,6 +101,7 @@ void UCBaseAbility::SetAbilityValue(float Val, bool bUsingTimer, float TimerVal)
 
 void UCBaseAbility::SetAbilityValue(const FAbilityValue & Input)
 {
+	AbilityValue.Sort = Input.Sort;
 	AbilityValue.bTimer = Input.bTimer;
 	AbilityValue.Timer = Input.Timer;
 	AbilityValue.Value = Input.Value;
