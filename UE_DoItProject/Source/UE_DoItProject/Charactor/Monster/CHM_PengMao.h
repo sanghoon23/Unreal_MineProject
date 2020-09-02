@@ -39,6 +39,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCMeshParticleComp* MeshParticleComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Particle")
+		class UParticleSystem* P_PengMao_DeathSmoke;
+
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		TArray<class UMaterialInstanceDynamic*> MatInstDynamicArray;
+
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		float MatDynamicValueSpeed = 20.0f;
+
 	#pragma endregion
 
 public:
@@ -128,6 +137,8 @@ private:
 	/* IC_Monster Member */
 	FMonsterInfo Info;
 
-	#pragma endregion
+	bool bInsertForDeathMesh = false;
+	float InsertTimer = 0.0f;
 
+	#pragma endregion
 };

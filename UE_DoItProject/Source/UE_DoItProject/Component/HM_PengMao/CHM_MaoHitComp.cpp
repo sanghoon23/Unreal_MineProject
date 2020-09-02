@@ -14,6 +14,25 @@ UCHM_MaoHitComp::UCHM_MaoHitComp()
 
 	FString Path = L"";
 
+	//@LOAD Chractor SkeletalMesh - (Default)
+	{
+		//@Origin
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_PengMAo/FengMao_GDC.FengMao_GDC'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> OriginSK(*Path);
+		if (OriginSK.Succeeded())
+		{
+			OriginCharactorMesh = OriginSK.Object;
+		}
+
+		//@ForDeath
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_PengMAo/FengMao_GDC_ForDeath.FengMao_GDC_ForDeath'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> ForDeathSK(*Path);
+		if (ForDeathSK.Succeeded())
+		{
+			ForDeathCharactorMesh = ForDeathSK.Object;
+		}
+	}
+
 #pragma region Hit Montages
 	// 'Normal' Hit Montage
 	{
@@ -29,23 +48,11 @@ UCHM_MaoHitComp::UCHM_MaoHitComp()
 	bUsingDamageTypeEffect[NormalNum] = true;
 	DamagedMontages[NormalNum] = NormalHitMontage;
 
-	uint8 PoisionNum = static_cast<uint8>(FDamageType::POISION);
-	bUsingDamageTypeEffect[PoisionNum] = true;
+	//uint8 PoisionNum = static_cast<uint8>(FDamageType::POISION);
+	//bUsingDamageTypeEffect[PoisionNum] = true;
 
 	uint8 BurnNum = static_cast<uint8>(FDamageType::BURN);
 	bUsingDamageTypeEffect[BurnNum] = true;
-
-#pragma region Poision Material
-	//@LOAD Poision Material
-	{
-		Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
-		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
-		if (PoisionMat.Succeeded())
-		{
-			Mat_Poision_0 = PoisionMat.Object;
-		}
-	}
-#pragma endregion
 
 	//@LOAD Burn Particle - ParticleComp
 	{
@@ -74,10 +81,13 @@ void UCHM_MaoHitComp::BeginPlay()
 		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 	});
 
-	//@Set Poision Material
+	//@Set Charactor Mesh
 	{
-		Map_ChangePoisionMaterial.Add(0, Mat_Poision_0);
-		Map_OriginPoisionMaterial.Add(0, HM_PengMao->GetMesh()->GetMaterial(0));
+		const uint8 OriginNum = static_cast<uint8>(ECharactorMeshSort::ORIGIN);
+		CharactorMeshArray[OriginNum] = OriginCharactorMesh;
+
+		const uint8 ForDeathNum = static_cast<uint8>(ECharactorMeshSort::FORDEATH);
+		CharactorMeshArray[ForDeathNum] = ForDeathCharactorMesh;
 	}
 }
 

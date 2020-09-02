@@ -52,7 +52,7 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	IfFalseRet(DamagedActorHitComp->IsDamagedFromOther());
 
 	//@때린 대상 바라보기
-	UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
+	//UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
 
 	APawn* const DamagedPawn = Cast<APawn>(DamagedActor);
 	check(DamagedPawn);

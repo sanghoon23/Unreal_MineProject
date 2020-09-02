@@ -14,6 +14,33 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 
 	FString Path = L"";
 
+	//@LOAD Chractor SkeletalMesh - (Default)
+	{
+		//@Origin
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Basic/SK_CharM_Standard.SK_CharM_Standard'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> OriginSK(*Path);
+		if (OriginSK.Succeeded())
+		{
+			OriginCharactorMesh = OriginSK.Object;
+		}
+
+		//@Poision
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Basic/SK_CharM_Standard_ForPoision.SK_CharM_Standard_ForPoision'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> PoisionSK(*Path);
+		if (PoisionSK.Succeeded())
+		{
+			PoisionCharactorMesh = PoisionSK.Object;
+		}
+
+		//@ForDeath
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Basic/SK_CharM_Standard_ForDeath.SK_CharM_Standard_ForDeath'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> ForDeathSK(*Path);
+		if (ForDeathSK.Succeeded())
+		{
+			ForDeathCharactorMesh = ForDeathSK.Object;
+		}
+	}
+
 #pragma region Hit Montages
 	//@Super
 	{
@@ -101,18 +128,6 @@ UCHM_BasicHitComp::UCHM_BasicHitComp()
 
 #pragma endregion
 
-#pragma region Poision Material
-	//@LOAD Poision Material
-	{
-		Path = L"Material'/Game/_Mine/Mesh/HM_Basic/CharM_Standard/M_Char_Standard_Poision.M_Char_Standard_Poision'";
-		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
-		if (PoisionMat.Succeeded())
-		{
-			Mat_Poision_0 = PoisionMat.Object;
-		}
-	}
-#pragma endregion
-
 	//@LOAD Stun Head Particle
 	{
 		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_StunActor.PS_StunActor'";
@@ -159,10 +174,17 @@ void UCHM_BasicHitComp::BeginPlay()
 		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 	});
 
-	//@Set Poision Material
+	//TODO : 캐릭터마다 코드 넣어주고, Array 를 Init 으로 싸이즈 잡아놓자.
+	//@Set Charactor Mesh
 	{
-		Map_ChangePoisionMaterial.Add(0, Mat_Poision_0);
-		Map_OriginPoisionMaterial.Add(0, HM_Basic->GetMesh()->GetMaterial(0));
+		const uint8 OriginNum = static_cast<uint8>(ECharactorMeshSort::ORIGIN);
+		CharactorMeshArray[OriginNum] = OriginCharactorMesh;
+
+		const uint8 PoisionNum = static_cast<uint8>(ECharactorMeshSort::POISION);
+		CharactorMeshArray[PoisionNum] = PoisionCharactorMesh;
+
+		const uint8 ForDeathNum = static_cast<uint8>(ECharactorMeshSort::FORDEATH);
+		CharactorMeshArray[ForDeathNum] = ForDeathCharactorMesh;
 	}
 }
 

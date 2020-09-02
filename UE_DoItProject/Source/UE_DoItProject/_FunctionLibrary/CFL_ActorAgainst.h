@@ -24,7 +24,7 @@ public:
 
 public:
 	UFUNCTION(Category = "ActorAgainst")
-	static void LookAtTarget(AActor* Subject, AActor* Target);
+	static void LookAtTarget(AActor* Subject, const AActor* Target);
 
 	UFUNCTION(Category = "ActorAgainst")
 	static void LookAtPoint(AActor* Subject, FVector& Point);
@@ -32,7 +32,7 @@ public:
 	UFUNCTION(Category = "ActorAgainst")
 	/* Subject 를 Target 앞에 Distance 만큼 으로 맞춤 - 높이도 포함 */
 	//@param HeightInclude - 높이도 포함할 것인가
-	static void ActorLocateFrontTarget(AActor* Target, AActor* Subject, float Distance, bool HeightInclude);
+	static void ActorLocateFrontTarget(const AActor* Target, AActor* Subject, float Distance, bool HeightInclude);
 
 	UFUNCTION(Category = "ActorAgainst")
 	/* Controller 기준으로 회전 */
@@ -52,6 +52,6 @@ public:
 	/* Target 이 공중에 있는지 아닌지 판별 */
 	//@param Target - ACharacter
 	//@Warning - IsFalling() 포함해서 Gravity <= 0.0f 일 때도 true
-	static bool IsTargetInAir(ACharacter* Target);
+	static bool IsTargetInAir(const ACharacter* Target);
 
 };

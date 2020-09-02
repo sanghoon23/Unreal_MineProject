@@ -2,6 +2,8 @@
 #include "Global.h"
 
 #include "GameFramework/Character.h"
+#include "Interface/IC_Charactor.h"
+#include "Interface/IC_HitComp.h"
 
 UCUpset_Poision::UCUpset_Poision()
 {
@@ -29,18 +31,27 @@ void UCUpset_Poision::EndCondition(APawn * Owner)
 	Super::EndCondition(Owner);
 	check(Owner);
 
-	ACharacter* Charactor = Cast<ACharacter>(Owner);
-	if (Charactor != nullptr)
-	{
-		if (Map_OriginMaterial.Num() <= 0) return;
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
+	check(I_Charactor);
 
-		for (auto& Material : Map_OriginMaterial)
-		{
-			Charactor->GetMesh()->SetMaterial(Material.Key, Material.Value);
-		}
+	IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
+	check(I_HitComp);
 
-		Map_OriginMaterial.Empty();
-	}
+	I_HitComp->SettingCustomCharactorMesh(ECharactorMeshSort::ORIGIN);
+
+	//Before
+	//ACharacter* Charactor = Cast<ACharacter>(Owner);
+	//if (Charactor != nullptr)
+	//{
+	//	//if (Map_OriginMaterial.Num() <= 0) return;
+
+	//	//for (auto& Material : Map_OriginMaterial)
+	//	//{
+	//	//	Charactor->GetMesh()->SetMaterial(Material.Key, Material.Value);
+	//	//}
+
+	//	//Map_OriginMaterial.Empty();
+	//}
 }
 
 void UCUpset_Poision::ConditionOverlap(UCBaseConditionType* OverlappedCondition)

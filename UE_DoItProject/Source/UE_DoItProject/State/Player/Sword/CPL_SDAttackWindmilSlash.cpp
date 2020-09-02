@@ -143,15 +143,21 @@ void UCPL_SDAttackWindmilSlash::AttackOtherPawn(UCDamageType_Base* DamageType)
 			IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
 			if (Charactor != nullptr)
 			{
+				//CLog::Print(OverlapResult.GetActor()->GetName());
+
 				// 1. Get Interface HitComp
 				IIC_HitComp* HitComp = Charactor->GetIHitComp();
 				if (HitComp != nullptr)
 				{
 					// 1.1 Set Hit Attribute
 					FVector PlayerLocation = Player->GetActorLocation();
-					FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - PlayerLocation;
+					PlayerLocation.Z = 0.0f;
+
+					FVector OverlapActorLocation = OverlapResult.GetActor()->GetActorLocation();
+					OverlapActorLocation.Z = 0.0f;
+
+					FVector HitDirection = OverlapActorLocation - PlayerLocation;
 					HitDirection.Normalize();
-					HitDirection.Z = 0.0f;
 					HitComp->SetHitDirection(HitDirection);
 					HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 

@@ -65,11 +65,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* HitComboMon;
 
-	UPROPERTY(VisibleAnywhere, Category = "Material")
-		TMap<int32, class UMaterialInterface*> Map_OriginPoisionMaterial;
-
-	UPROPERTY(VisibleAnywhere, Category = "Material")
-		TMap<int32, class UMaterialInterface*> Map_ChangePoisionMaterial;
+	UPROPERTY(EditAnywhere, Category = "Mesh")
+		TArray<class USkeletalMesh*> CharactorMeshArray;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		/* Stun ConditionData 에서 사용할 머리 위 표시할 Particle */
@@ -106,10 +103,20 @@ public:
 public:
 	virtual void OnHit(AActor* AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount) override;
 
+	/* TArray<class USkeletalMesh*> 에 등록된 Skeletal Mesh 로 전환 */
+	virtual void SettingCustomCharactorMesh(ECharactorMeshSort MeshSort, bool bNoneRestartAnimation = false) override;
+
+	/* Hit 당했을 때, 때린 객체 - (이전에 때린 객체가 될 수 있음) */
+	virtual const AActor* GetAttacker() const override { return Attacker; }
+
 public:
 	virtual const bool IsBeated() const override { return bBeated; }
 	virtual void SetBeated(bool bValue) override { bBeated = bValue; }
 
+	/* IC_HitComp 참조 */
+	virtual bool IsEmptyConditionArray() const override;
+
+	/* IC_HitComp 참조 */
 	virtual UCBaseConditionType* GetConditionData(int Index) override;
 
 	/* IC_HitComp 참조 */
@@ -133,6 +140,14 @@ public:
 	virtual bool IsCanHittedCombo() const override { return bCanHitCombo; };
 	virtual void SetCanHittedCombo(bool bValue) { bCanHitCombo = bValue; }
 
+	/* Hit 당했을 때, 움직일 '방향' */
+	virtual FVector GetHitDirection() const override { return HitDirection; }
+	virtual void SetHitDirection(FVector Direction) override { HitDirection = Direction; }
+
+	/* Hit 당했을 때, 움직일 '속도' */
+	virtual float GetHitMoveSpeed() const override { return HitMoveSpeed; }
+	virtual void SetHitMoveSpeed(float fValue) override { HitMoveSpeed = fValue; }
+
 	/* Function */
 public:
 	void RunMontageFromAttackType(EComboOrNot CanCombo, uint8 TypeNum = 0, float MonSpeed = 0.6f, bool bAlways = true);
@@ -141,8 +156,6 @@ public:
 
 	#pragma	region Member
 public:
-	void GetOriginPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out);
-	void GetPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out);
 	class UParticleSystem* GetBurnParticleOrNull() const;
 	class UParticleSystem* GetFreezeParticleOrNull() const;
 	class UParticleSystem* GetStunHeadParticleOrNull() const;
@@ -154,6 +167,12 @@ protected:
 
 private:
 	class IIC_Charactor* I_Charactor = nullptr;
+
+	FVector HitDirection = FVector(0.0f);
+	float HitMoveSpeed = 1.0f; //@Charactor Movement 를 사용. (Default=1.0f)
+
+	/* 때린 객체 */
+	AActor* Attacker = nullptr;
 
 	#pragma endregion
 };

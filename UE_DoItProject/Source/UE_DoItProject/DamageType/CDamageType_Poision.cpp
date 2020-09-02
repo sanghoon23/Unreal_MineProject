@@ -92,29 +92,36 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	TMap<int32, class UMaterialInterface*> ChangeMaterialMap;
-	DamagedActorHitComp->GetPoisionMaterialMaps(ChangeMaterialMap);
-	if (ChangeMaterialMap.Num() <= 0)
-	{
-		UE_LOG(LogTemp, Warning, L"CDamageType_Poision Map NULL!! And Not ADD Condition");
-	}
-	else
-	{
-		ACharacter* DamagedCharactor = Cast<ACharacter>(DamagedPawn);
-		check(DamagedCharactor);
-		USkeletalMeshComponent* const SkeletalMesh = DamagedCharactor->GetMesh();
-		check(SkeletalMesh);
-		for (auto& Material : ChangeMaterialMap)
-		{
-			int Num = Material.Key;
-			UMaterialInterface* GetOrigin = SkeletalMesh->GetMaterial(Num);
+	//ACharacter* DamagedCharactor = Cast<ACharacter>(DamagedPawn);
+	//check(DamagedCharactor);
 
-			DamagedCharactor->GetMesh()->SetMaterial(Num, Material.Value); //@Poision Material 변경
-		}
-		TMap<int32, class UMaterialInterface*> OriginMaterialMap;
-		DamagedActorHitComp->GetOriginPoisionMaterialMaps(OriginMaterialMap);
-		PoisionConditionData->SetOriginMaterial(OriginMaterialMap); //@Origin 적용
-	}//else
+	//uint8 PoisionMeshSortNum = static_cast<uint8>(ECharactorMeshSort::POISION);
+	DamagedActorHitComp->SettingCustomCharactorMesh(ECharactorMeshSort::POISION);
+
+
+	//TMap<int32, class UMaterialInterface*> ChangeMaterialMap;
+	//DamagedActorHitComp->GetPoisionMaterialMaps(ChangeMaterialMap);
+	//if (ChangeMaterialMap.Num() <= 0)
+	//{
+	//	UE_LOG(LogTemp, Warning, L"CDamageType_Poision Map NULL!! And Not ADD Condition");
+	//}
+	//else
+	//{
+	//	ACharacter* DamagedCharactor = Cast<ACharacter>(DamagedPawn);
+	//	check(DamagedCharactor);
+	//	USkeletalMeshComponent* const SkeletalMesh = DamagedCharactor->GetMesh();
+	//	check(SkeletalMesh);
+	//	for (auto& Material : ChangeMaterialMap)
+	//	{
+	//		int Num = Material.Key;
+	//		UMaterialInterface* GetOrigin = SkeletalMesh->GetMaterial(Num);
+
+	//		DamagedCharactor->GetMesh()->SetMaterial(Num, Material.Value); //@Poision Material 변경
+	//	}
+	//	TMap<int32, class UMaterialInterface*> OriginMaterialMap;
+	//	DamagedActorHitComp->GetOriginPoisionMaterialMaps(OriginMaterialMap);
+	//	PoisionConditionData->SetOriginMaterial(OriginMaterialMap); //@Origin 적용
+	//}//else
 
 	bool bAddResult = DamagedActorHitComp->AddConditionData(PoisionConditionData);
 	if (bAddResult == false)

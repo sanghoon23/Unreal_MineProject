@@ -14,6 +14,33 @@ UCHM_ShamanHitComp::UCHM_ShamanHitComp()
 
 	FString Path = L"";
 
+	//@LOAD Chractor SkeletalMesh - (Default)
+	{
+		//@Origin
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Shaman/Morigesh.Morigesh'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> OriginSK(*Path);
+		if (OriginSK.Succeeded())
+		{
+			OriginCharactorMesh = OriginSK.Object;
+		}
+
+		//@Poision
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Shaman/Morigesh_ForPoision.Morigesh_ForPoision'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> PoisionSK(*Path);
+		if (PoisionSK.Succeeded())
+		{
+			PoisionCharactorMesh = PoisionSK.Object;
+		}
+
+		//@ForDeath
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Shaman/Morigesh_ForDeath.Morigesh_ForDeath'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> ForDeathSK(*Path);
+		if (ForDeathSK.Succeeded())
+		{
+			ForDeathCharactorMesh = ForDeathSK.Object;
+		}
+	}
+
 #pragma region Hit Montages
 	//@Super
 	{
@@ -101,18 +128,6 @@ UCHM_ShamanHitComp::UCHM_ShamanHitComp()
 
 #pragma endregion
 
-#pragma region Poision Material
-	//@LOAD Poision Material
-	{
-		Path = L"Material'/Game/_Mine/Mesh/HM_Shaman/ParagonMorigesh/Characters/Heroes/Morigesh/Materials/M_Morigesh_HeadArmsLeg_Poision.M_Morigesh_HeadArmsLeg_Poision'";
-		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
-		if (PoisionMat.Succeeded())
-		{
-			Mat_Poision_0 = PoisionMat.Object;
-		}
-	}
-#pragma endregion
-
 	//@LOAD Stun Head Particle
 	{
 		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_StunActor.PS_StunActor'";
@@ -160,10 +175,16 @@ void UCHM_ShamanHitComp::BeginPlay()
 		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 	});
 
-	//@Set Poision Material
+	//@Set Charactor Mesh
 	{
-		Map_ChangePoisionMaterial.Add(0, Mat_Poision_0);
-		Map_OriginPoisionMaterial.Add(0, HM_Shaman->GetMesh()->GetMaterial(0));
+		const uint8 OriginNum = static_cast<uint8>(ECharactorMeshSort::ORIGIN);
+		CharactorMeshArray[OriginNum] = OriginCharactorMesh;
+
+		const uint8 PoisionNum = static_cast<uint8>(ECharactorMeshSort::POISION);
+		CharactorMeshArray[PoisionNum] = PoisionCharactorMesh;
+
+		const uint8 ForDeathNum = static_cast<uint8>(ECharactorMeshSort::FORDEATH);
+		CharactorMeshArray[ForDeathNum] = ForDeathCharactorMesh;
 	}
 }
 
@@ -186,45 +207,8 @@ void UCHM_ShamanHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type
 		verify(Type->GetConditionType() == FDamageType::END);
 	}
 
-
 	//@Delegate 실행.
 	HM_Shaman->OnActionResetState.Broadcast(HM_Shaman);
 
 	Type->OnHittingProcess(AttackingActor, HM_Shaman, this, DamageAmount);
-
-	/////DamageType Process
-	//if (IsDamagedFromOther() == true)
-	//{
-	//}
-
-	//#Edit 0510 - 
-	//@Death Animation 은 AnimInstance 의 LocoMotion 을 이용
-
-	////@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
-	//IfTrueRet(bBlockDamagedMontage);
-
-	////@콤보가 가능한지,
-	//if (bCanHitCombo == true)
-	//{
-	//	if (HitComboMon != nullptr)
-	//	{
-	//		HM_Shaman->ActorAnimMonPlay(HitComboMon, 0.6f, true);
-	//		SetCanHittedCombo(false); //@false
-	//		return; //@return
-	//	}
-	//}
-
-	////@else
-	//const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	//if (MontageNum >= DamagedMontages.Num())
-	//{
-	//	UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
-	//	return;
-	//}
-	//UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
-	//if (RunMontage != nullptr)
-	//{
-	//	HM_Shaman->ActorAnimMonPlay(RunMontage, 0.6f, true);
-	//}
-
 }

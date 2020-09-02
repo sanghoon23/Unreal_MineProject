@@ -169,9 +169,13 @@ void UCPL_SDAttackBackRange::AttackOtherPawn(UCDamageType_Base* DamageType)
 				{
 					// 1.1 Set Hit Attribute
 					FVector PlayerLocation = Player->GetActorLocation();
-					FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - PlayerLocation;
+					PlayerLocation.Z = 0.0f;
+
+					FVector OverlapActorLocation = OverlapResult.GetActor()->GetActorLocation();
+					OverlapActorLocation.Z = 0.0f;
+
+					FVector HitDirection = OverlapActorLocation - PlayerLocation;
 					HitDirection.Normalize();
-					HitDirection.Z = 0.0f;
 					HitComp->SetHitDirection(HitDirection);
 					HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 

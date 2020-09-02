@@ -39,6 +39,20 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCMeshParticleComp* MeshParticleComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Particle")
+		class UParticleSystem* P_Basic_DeathSmoke;
+
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		TArray<class UMaterialInstanceDynamic*> MatInstDynamicArray;
+
+	//TODO : 변수 뺄 꺼 정리..
+	//문제는 포이즌 에서 죽었을 땐, 재가 되어라, 가 안됨
+	//M_Char 가 계속 나옴.
+	//그냥 내일 PoisionSkeletal 을 만들어서 Poision 을 해보자..
+	// 지금 Poision 어딘가 잘못됐다.
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		float MatDynamicValueSpeed = 20.0f;
+
 	#pragma endregion
 
 public:
@@ -92,7 +106,7 @@ public:
 public:
 	virtual AActor* GetTargetInAI() override;
 
-	virtual const FMonsterInfo& GetMonsterInfo() const override { return Info; };
+	virtual const FMonsterInfo& GetMonsterInfo() const override { return MonsterInfo; };
 
 	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }
 	bool GetAIRunningPossible() const { return bAIRunningPossible; }
@@ -125,7 +139,10 @@ private:
 	ECharactorType CharactorType = ECharactorType::MONSTER;
 
 	/* IC_Monster Member */
-	FMonsterInfo Info;
+	FMonsterInfo MonsterInfo;
+
+	bool bInsertForDeathMesh = false;
+	float InsertTimer = 0.0f;
 
 	#pragma endregion
 };

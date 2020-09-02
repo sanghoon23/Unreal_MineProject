@@ -12,22 +12,28 @@ class UE_DOITPROJECT_API UCHM_ShamanHitComp
 	
 	#pragma region Reflection
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Material")
-		class UMaterialInterface* Mat_Poision_0;
+	UPROPERTY(EditAnywhere, Category = "CharactorMesh")
+		class USkeletalMesh* OriginCharactorMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
+	UPROPERTY(EditAnywhere, Category = "CharactorMesh")
+		class USkeletalMesh* PoisionCharactorMesh;
+
+	UPROPERTY(EditAnywhere, Category = "CharactorMesh")
+		class USkeletalMesh* ForDeathCharactorMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Montages")
 		class UAnimMontage* NormalHitMontage;
 
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
+	UPROPERTY(EditAnywhere, Category = "Montages")
 		class UAnimMontage* AirHitMontage;
 
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
+	UPROPERTY(EditAnywhere, Category = "Montages")
 		class UAnimMontage* AirAttackHitMontage;
 
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
+	UPROPERTY(EditAnywhere, Category = "Montages")
 		class UAnimMontage* StrongAttackHitMontage;
 
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
+	UPROPERTY(EditAnywhere, Category = "Montages")
 		class UAnimMontage* StunHitMontage;
 
 	#pragma endregion

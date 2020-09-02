@@ -34,7 +34,6 @@ void UCHMAbility_ATKUpper::StartUseTimerAbility()
 	Super::StartUseTimerAbility();
 	check(AppliedActor);
 
-	//TODO : 능력치 증가 변수 설정해주어야 함. -- 여기 할 차례./
 	IIC_Monster* I_Monster = Cast<IIC_Monster>(AppliedActor);
 	if (I_Monster != nullptr)
 	{

@@ -17,7 +17,7 @@ class UE_DOITPROJECT_API ACHumanoidMonster
 protected:
 	/* HP == 0 이 되었을 때, DeathCall 함수 에서 캐릭터가 지워질 시간 */
 	UPROPERTY(EditAnywhere, Category = "Movement")
-		float DeathCallFunctionTimer = 3.0f; 
+		float DeathCallFunctionTimer = 8.0f; 
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 		float WalkSpeed = 300.0f;

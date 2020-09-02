@@ -49,11 +49,14 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCMeshParticleComp* MeshParticleComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-		class USkeletalMesh* Assa_DeathMesh;
-
 	UPROPERTY(EditAnywhere, Category = "Particle")
 		class UParticleSystem* P_Assa_DeathSmoke;
+
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		TArray<class UMaterialInstanceDynamic*> MatInstDynamicArray;
+
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+		float MatDynamicValueSpeed = 20.0f;
 
 #pragma endregion
 
@@ -116,7 +119,7 @@ public:
 public:
 	virtual AActor* GetTargetInAI() override;
 
-	virtual const FMonsterInfo& GetMonsterInfo() const override { return Info; };
+	virtual const FMonsterInfo& GetMonsterInfo() const override { return MonsterInfo; };
 
 	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }
 	bool GetAIRunningPossible() const { return bAIRunningPossible; }
@@ -159,9 +162,12 @@ private:
 	ECharactorType CharactorType = ECharactorType::MONSTER;
 
 	/* IC_Monster Member */
-	FMonsterInfo Info;
+	FMonsterInfo MonsterInfo;
 
 	EAssa_AngerState AngerState = EAssa_AngerState::NONE;
+
+	bool bInsertForDeathMesh = false;
+	float InsertTimer = 0.0f;
 
 #pragma endregion
 };

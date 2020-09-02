@@ -2,6 +2,10 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/KismetMaterialLibrary.h"
+
+#include "Interface/IC_HitComp.h"
 
 #include "AI/Controller/CAIC_HM_Shaman.h"
 #include "UI/Widget/WG_FloatingCombo.h"
@@ -12,7 +16,7 @@ ACHM_Basic::ACHM_Basic()
 
 	// Super
 	{
-		DeathCallFunctionTimer = 5.0f;
+		DeathCallFunctionTimer = 10.0f;
 	}
 
 	// Default Setting
@@ -34,13 +38,24 @@ ACHM_Basic::ACHM_Basic()
 		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
 	}
 
+	//@LOAD Death Particle
+	{
+		FString strPath = L"";
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Basic/P_Basic_ForDeathSmoke.P_Basic_ForDeathSmoke'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_DeathSmoke(*strPath);
+		if (P_DeathSmoke.Succeeded())
+		{
+			P_Basic_DeathSmoke = P_DeathSmoke.Object;
+		}
+	}
+
 	#pragma region Monster Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 200.0f;
-	Info.CurrentHP = 200.0f;
-	Info.Name = FName(L"Basic");
-	//Info.InfoConditionDataArray.Init(nullptr, 5);
+	MonsterInfo.MaxHP = 200.0f;
+	MonsterInfo.CurrentHP = 200.0f;
+	MonsterInfo.Name = FName(L"Basic");
+	//MonsterInfo.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
 }
@@ -55,24 +70,71 @@ void ACHM_Basic::BeginPlay()
 		CanMove();
 		OnGravity();
 	});
-
-	//#Edit 0528 - 순서가 맞지 않아, OnDeath 함수에서 호출
-	//// Set Delegate
-	//{
-	//	OnDeathDelegate.AddLambda([&]()
-	//	{
-	//		//OffCollision();
-	//		//AutoPossessAI = EAutoPossessAI::Disabled;
-	//		//AIControllerClass = nullptr;
-	//	});
-
-	//	OnCharactorDestroy.AddUObject(this, &ACHM_Basic::OnDelegateCharactorDestroy);
-	//}
 }
 
 void ACHM_Basic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//@Death (재가 되어 사라져라..) - OnDeathDelegate 에서 Mesh Change
+	{
+		if (bDeath == true)
+		{
+			InsertTimer += DeltaTime;
+			if (bInsertForDeathMesh == false && InsertTimer > 3.0f)
+			{
+				bInsertForDeathMesh = true;
+
+				GetIHitComp()->SettingCustomCharactorMesh(ECharactorMeshSort::FORDEATH);
+
+				//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
+				int32 MatCount = GetMesh()->GetNumMaterials();
+				for (int i = 0; i < MatCount; ++i)
+				{
+					UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
+					if (MInst != nullptr)
+					{
+						CLog::Print(MInst->GetName());
+						UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
+						if (TargetMat != nullptr)
+						{
+							//CLog::Print(TargetMat->GetName());
+
+							GetMesh()->SetMaterial(i, TargetMat); //@Set
+							MatInstDynamicArray.Add(TargetMat);
+						}
+					}
+				}
+			}//(bInsertForDeathMesh)
+
+			for (UMaterialInstanceDynamic* Inst : MatInstDynamicArray)
+			{
+				FMaterialParameterInfo MatInfo;
+				MatInfo.Name = "Appearance";
+				float OutValue = 0.0f;
+				Inst->GetScalarParameterValue(MatInfo, OutValue);
+
+				if (FMath::IsNearlyEqual(OutValue, 0.6f, 0.01f))
+				{
+					//@죽을 때 연기(Smoke) 나옴.
+					FTransform P_Transform;
+					P_Transform.SetLocation(GetActorLocation());
+					P_Transform.SetScale3D(FVector(4.0f));
+					if (P_Basic_DeathSmoke != nullptr)
+					{
+						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_Basic_DeathSmoke, P_Transform, true);
+						P_Basic_DeathSmoke = nullptr;
+					}
+				}
+
+				(OutValue > 0.0f)
+					? OutValue -= 0.01f * DeltaTime * MatDynamicValueSpeed
+					: OutValue -= 0.0f;
+				Inst->SetScalarParameterValue(FName("Appearance"), OutValue);
+			}//(MatinstDynamicArray)
+
+		}//(bDeath == true)
+	}
 }
 
 void ACHM_Basic::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
@@ -96,14 +158,12 @@ void ACHM_Basic::OnDeath()
 {
 	bDeath = true;
 
-	//@1. 먼저 바인딩된 Delegate 브로드 캐스트 후,
+	//@먼저 바인딩된 Delegate 브로드 캐스트 후,
 	OnDeathDelegate.Broadcast(); //@Delegate
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//@2. 현 Charactor 에 관해 최종적으로 호출함.
+	//@현 Charactor 에 관해 최종적으로 호출함.
 	//그렇지 않으면 Delegate 는 순서를 따지지 않아서 죽었는데도, AI 가 돌고 있음
-
-	SetActorTickEnabled(false);
 
 	//@띄워졌을 때 사망할 때의 예외,
 	OnGravity();
@@ -167,12 +227,6 @@ void ACHM_Basic::ActorStopAnimMon(class UAnimMontage* Montage)
 void ACHM_Basic::ActorPausedAnimMonResume()
 {
 	GetMesh()->GetAnimInstance()->Montage_Resume(CurrentMontage);
-
-	//Test Code
-	//bool bRunningMontage = GetMesh()->GetAnimInstance()->Montage_IsPlaying(CurrentMontage);
-	//if (bRunningMontage == true)
-	//{
-	//}
 }
 
 void ACHM_Basic::ActorAnimMonPause()
@@ -203,8 +257,8 @@ float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
-	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+	IfFalseRetResult(CanBeDamaged(), MonsterInfo.CurrentHP);
+	IfTrueRetResult(bDeath == true, MonsterInfo.CurrentHP);
 
 	//@UI
 	{
@@ -230,13 +284,13 @@ float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 		}
 	}
 
-	Info.CurrentHP -= DamageAmount;
+	MonsterInfo.CurrentHP -= DamageAmount;
 
-	if (Info.CurrentHP <= 0.0f)
+	if (MonsterInfo.CurrentHP <= 0.0f)
 	{
 		OnDeath();
 	}
-	return Info.CurrentHP;
+	return MonsterInfo.CurrentHP;
 }
 
 void ACHM_Basic::OnDelegateCharactorDestroy()

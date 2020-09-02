@@ -32,7 +32,7 @@ void UCDamageType_AirAttack::OnHittingProcess(AActor * Subject, AActor * Damaged
 	Super::OnHittingProcess(Subject, DamagedActor, DamagedActorHitComp, InitialDamageAmount);
 
 	//@때린 대상 바라보기
-	UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
+	//UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
 
 	//@Take Damage
 	if (DamagedActorHitComp->IsDamagedFromOther() == true)

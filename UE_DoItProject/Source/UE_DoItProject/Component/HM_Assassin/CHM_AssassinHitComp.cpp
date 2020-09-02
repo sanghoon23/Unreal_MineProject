@@ -14,6 +14,33 @@ UCHM_AssassinHitComp::UCHM_AssassinHitComp()
 
 	FString Path = L"";
 
+	//@LOAD Chractor SkeletalMesh - (Default)
+	{
+		//@Origin
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Assassin/SM_Countess.SM_Countess'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> OriginSK(*Path);
+		if (OriginSK.Succeeded())
+		{
+			OriginCharactorMesh = OriginSK.Object;
+		}
+
+		//@Poision
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Assassin/SM_Countess_ForPoision.SM_Countess_ForPoision'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> PoisionSK(*Path);
+		if (PoisionSK.Succeeded())
+		{
+			PoisionCharactorMesh = PoisionSK.Object;
+		}
+
+		//@ForDeath
+		Path = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Assassin/SM_Countess_ForDeath.SM_Countess_ForDeath'";
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> ForDeathSK(*Path);
+		if (ForDeathSK.Succeeded())
+		{
+			ForDeathCharactorMesh = ForDeathSK.Object;
+		}
+	}
+
 #pragma region Hit Montages
 
 	//@Super
@@ -28,9 +55,14 @@ UCHM_AssassinHitComp::UCHM_AssassinHitComp()
 	// 'Normal' Hit Montage
 	{
 		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Hit/HM_Assa_Mon_NormalHit_Left.HM_Assa_Mon_NormalHit_Left'";
-		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit(*Path);
-		if (normalHit.Succeeded())
-			NormalHitMontage = normalHit.Object;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit_left(*Path);
+		if (normalHit_left.Succeeded())
+			NormalHitMontage_Left = normalHit_left.Object;
+
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Hit/HM_Assa_Mon_NormalHit_Right.HM_Assa_Mon_NormalHit_Right'";
+		ConstructorHelpers::FObjectFinder<UAnimMontage> normalHit_right(*Path);
+		if (normalHit_right.Succeeded())
+			NormalHitMontage_Right = normalHit_right.Object;
 	}
 
 	// 'AirHitFirst' Hit Montage
@@ -62,7 +94,7 @@ UCHM_AssassinHitComp::UCHM_AssassinHitComp()
 	//@Set Montage
 	uint8 NormalNum = static_cast<uint8>(FDamageType::NORMAL);
 	bUsingDamageTypeEffect[NormalNum] = true;
-	DamagedMontages[NormalNum] = NormalHitMontage;
+	DamagedMontages[NormalNum] = NormalHitMontage_Left;
 
 	uint8 AirNum = static_cast<uint8>(FDamageType::AIR);
 	bUsingDamageTypeEffect[AirNum] = true;
@@ -81,18 +113,6 @@ UCHM_AssassinHitComp::UCHM_AssassinHitComp()
 
 	uint8 BurnNum = static_cast<uint8>(FDamageType::BURN);
 	bUsingDamageTypeEffect[BurnNum] = true;
-
-#pragma region Poision Material
-	//@LOAD Poision Material
-	{
-		Path = L"Material'/Game/_Mine/Mesh/HM_Assassin/ParagonCountess/Characters/Heroes/Countess/Materials/M_Countess_Skin_Poision.M_Countess_Skin_Poision'";
-		ConstructorHelpers::FObjectFinder<UMaterialInterface> PoisionMat(*Path);
-		if (PoisionMat.Succeeded())
-		{
-			Mat_Poision_0 = PoisionMat.Object;
-		}
-	}
-#pragma endregion
 
 	//@LOAD Burn Particle - ParticleComp
 	{
@@ -121,10 +141,16 @@ void UCHM_AssassinHitComp::BeginPlay()
 		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 	});
 
-	//@Set Poision Material
+	//@Set Charactor Mesh
 	{
-		Map_ChangePoisionMaterial.Add(0, Mat_Poision_0);
-		Map_OriginPoisionMaterial.Add(0, HM_Assassin->GetMesh()->GetMaterial(0));
+		const uint8 OriginNum = static_cast<uint8>(ECharactorMeshSort::ORIGIN);
+		CharactorMeshArray[OriginNum] = OriginCharactorMesh;
+
+		const uint8 PoisionNum = static_cast<uint8>(ECharactorMeshSort::POISION);
+		CharactorMeshArray[PoisionNum] = PoisionCharactorMesh;
+
+		const uint8 ForDeathNum = static_cast<uint8>(ECharactorMeshSort::FORDEATH);
+		CharactorMeshArray[ForDeathNum] = ForDeathCharactorMesh;
 	}
 }
 
@@ -145,6 +171,33 @@ void UCHM_AssassinHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Ty
 	{
 		UE_LOG(LogTemp, Warning, L"HM_AssassinHitComp OnHit - ConditionTtpe END!!");
 		verify(Type->GetConditionType() == FDamageType::END);
+	}
+
+	//DamagedMontages[NormalNum] = NormalHitMontage_Left;
+
+	//왼쪽 -, 오른쪽 +
+	//@Left Right NormalHitMontage 여기서 처리?? -->> 계산...
+	{
+		FVector OwnerLocation = GetOwner()->GetActorLocation();
+		FVector AttackerLocation = AttackingActor->GetActorLocation();
+
+		FVector Dir = AttackerLocation - OwnerLocation;
+		Dir.Z = 0.0f;
+		Dir.Normalize();
+
+		FVector CrossVec = GetOwner()->GetActorForwardVector() ^ Dir;
+		//float RidAngle = GetOwner()->GetActorRightVector() | Dir;
+		//float DegAngle = FMath::RadiansToDegrees(acosf(RidAngle));
+
+		uint8 NormalNum = static_cast<uint8>(FDamageType::NORMAL);
+		if (CrossVec.Z < 0.0f) //@왼
+		{
+			DamagedMontages[NormalNum] = NormalHitMontage_Left;
+		}
+		else //@오른
+		{
+			DamagedMontages[NormalNum] = NormalHitMontage_Right;
+		}
 	}
 
 	//@Delegate 실행.

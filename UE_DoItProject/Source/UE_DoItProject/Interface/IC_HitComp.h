@@ -12,6 +12,15 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @HitComponent Interface
 
+UENUM()
+enum class ECharactorMeshSort : uint8
+{
+	ORIGIN = 0,
+	POISION = 1,
+	FORDEATH = 2,
+	END = 3,
+};
+
 UINTERFACE(MinimalAPI)
 class UIC_HitComp : public UInterface
 {
@@ -44,11 +53,20 @@ public:
 	// @DamageAmount - 데미지량
 	virtual void OnHit(AActor* AttackingActor, UCDamageType_Base* const DamageType, float DamageAmount) = 0;
 
+	/* TArray<class USkeletalMesh*> 에 등록된 Skeletal Mesh 로 전환 */
+	virtual void SettingCustomCharactorMesh(ECharactorMeshSort MeshSort, bool bNoneRestartAnimation = false) = 0;
+
+	/* Hit 당했을 때, 때린 객체 - (이전에 때린 객체가 될 수 있음) */
+	virtual const AActor* GetAttacker() const = 0;
+
 	/* 대상이 맞고 있는지 */
 	virtual const bool IsBeated() const = 0;
 
 	/* 대상이 맞고 있는지 설정 - CN_BeginBeat */
 	virtual void SetBeated(bool bValue) = 0;
+
+	/* ConditionArray 가 비어있는지 여부 */
+	virtual bool IsEmptyConditionArray() const = 0;
 
 	/* HitComponent 안의 상태이상, 행동불가 데이터 */
 	// @ArrayNumber - 배열 컨테이너의 Index
@@ -81,16 +99,12 @@ public:
 
 public:
 	/* Hit 당했을 때, 움직일 '방향' */
-	FVector GetHitDirection() { return HitDirection; }
-	void SetHitDirection(FVector Direction) { HitDirection = Direction; }
+	virtual FVector GetHitDirection() const = 0;
+	virtual void SetHitDirection(FVector Direction) = 0;
 
 	/* Hit 당했을 때, 움직일 '속도' */
-	float GetHitMoveSpeed() const { return HitMoveSpeed; }
-	void SetHitMoveSpeed(float fValue) { HitMoveSpeed = fValue; }
-
-protected:
-	FVector HitDirection = FVector(0.0f);
-	float HitMoveSpeed = 1.0f; //@Charactor Movement 를 사용. (Default=1.0f)
+	virtual float GetHitMoveSpeed() const = 0;
+	virtual void SetHitMoveSpeed(float fValue) = 0;
 
 	#pragma endregion
 };

@@ -12,10 +12,13 @@ class UE_DOITPROJECT_API UCHM_MaoHitComp
 
 	#pragma region Reflection
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Material")
-		class UMaterialInterface* Mat_Poision_0;
+	UPROPERTY(EditAnywhere, Category = "CharactorMesh")
+		class USkeletalMesh* OriginCharactorMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Montages")
+	UPROPERTY(EditAnywhere, Category = "CharactorMesh")
+		class USkeletalMesh* ForDeathCharactorMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Montages")
 		class UAnimMontage* NormalHitMontage;
 
 	#pragma endregion

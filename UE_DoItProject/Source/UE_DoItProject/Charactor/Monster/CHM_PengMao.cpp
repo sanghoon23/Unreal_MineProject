@@ -2,6 +2,8 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/KismetMaterialLibrary.h"
 
 #include "AI/Controller/CAIC_HM_PengMao.h"
 #include "UI/Widget/WG_FloatingCombo.h"
@@ -12,7 +14,7 @@ ACHM_PengMao::ACHM_PengMao()
 
 	// Super
 	{
-		DeathCallFunctionTimer = 5.0f;
+		DeathCallFunctionTimer = 10.0f;
 	}
 
 	// Default Setting
@@ -32,11 +34,18 @@ ACHM_PengMao::ACHM_PengMao()
 		EquipComp = CreateDefaultSubobject<UCHM_MaoEquipComp>(TEXT("EquipComponent"));
 		MeshParticleComponent = CreateDefaultSubobject<UCMeshParticleComp>(TEXT("MeshParticleComp"));
 		ATKComp = CreateDefaultSubobject<UCHM_MaoAttackComp>(TEXT("ATKComp"));
+	}
 
-		//AddOwnedComponent(AttackComponent);
-		//AddOwnedComponent(HitComp);
-		//AddOwnedComponent(AttackComponent);
-		//AddOwnedComponent(AttackComponent);
+	//@LOAD Death Particle
+	{
+		FString strPath = L"";
+
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Assassin/P_Assa_ForDeathSmoke.P_Assa_ForDeathSmoke'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_DeathSmoke(*strPath);
+		if (P_DeathSmoke.Succeeded())
+		{
+			P_PengMao_DeathSmoke = P_DeathSmoke.Object;
+		}
 	}
 
 	#pragma region Monster Info Setting
@@ -66,6 +75,63 @@ void ACHM_PengMao::BeginPlay()
 void ACHM_PengMao::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//@Death (재가 되어 사라져라..) - OnDeathDelegate 에서 Mesh Change
+	{
+		if (bDeath == true)
+		{
+			InsertTimer += DeltaTime;
+			if (bInsertForDeathMesh == false && InsertTimer > 3.0f)
+			{
+				bInsertForDeathMesh = true;
+
+				GetIHitComp()->SettingCustomCharactorMesh(ECharactorMeshSort::FORDEATH);
+
+				//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
+				int32 MatCount = GetMesh()->GetNumMaterials();
+				for (int i = 0; i < MatCount; ++i)
+				{
+					UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
+					if (MInst != nullptr)
+					{
+						UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
+						if (TargetMat != nullptr)
+						{
+							GetMesh()->SetMaterial(i, TargetMat); //@Set
+							MatInstDynamicArray.Add(TargetMat);
+						}
+					}
+				}
+			}//(bInsertForDeathMesh)
+
+			for (UMaterialInstanceDynamic* Inst : MatInstDynamicArray)
+			{
+				FMaterialParameterInfo MatInfo;
+				MatInfo.Name = "Appearance";
+				float OutValue = 0.0f;
+				Inst->GetScalarParameterValue(MatInfo, OutValue);
+
+				if (FMath::IsNearlyEqual(OutValue, 0.6f, 0.01f))
+				{
+					//@죽을 때 연기(Smoke) 나옴.
+					FTransform P_Transform;
+					P_Transform.SetLocation(GetActorLocation());
+					P_Transform.SetScale3D(FVector(4.0f));
+					if (P_PengMao_DeathSmoke != nullptr)
+					{
+						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_PengMao_DeathSmoke, P_Transform, true);
+						P_PengMao_DeathSmoke = nullptr;
+					}
+				}
+
+				(OutValue > 0.0f)
+					? OutValue -= 0.01f * DeltaTime * MatDynamicValueSpeed
+					: OutValue -= 0.0f;
+				Inst->SetScalarParameterValue(FName("Appearance"), OutValue);
+			}//(MatinstDynamicArray)
+
+		}//(bDeath == true)
+	}
 }
 
 void ACHM_PengMao::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
@@ -93,10 +159,9 @@ void ACHM_PengMao::OnDeath()
 	OnDeathDelegate.Broadcast(); //@Delegate
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	//@2. 현 Charactor 에 관해 최종적으로 호출함.
 	//그렇지 않으면 Delegate 는 순서를 따지지 않아서 죽었는데도, AI 가 돌고 있음
-
-	SetActorTickEnabled(false);
 
 	//@띄워졌을 때 사망할 때의 예외,
 	OnGravity();

@@ -8,7 +8,7 @@ UCFL_ActorAgainst::UCFL_ActorAgainst()
 {
 }
 
-void UCFL_ActorAgainst::LookAtTarget(AActor * Subject, AActor* Target)
+void UCFL_ActorAgainst::LookAtTarget(AActor * Subject, const AActor* Target)
 {
 	check(Target);
 	check(Subject);
@@ -30,6 +30,8 @@ void UCFL_ActorAgainst::LookAtTarget(AActor * Subject, AActor* Target)
 
 	//@Look At Target
 	FVector DestVec = Target->GetActorLocation() - Subject->GetActorLocation();
+	DestVec.Z = 0.0f;
+	DestVec.Normalize();
 	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
 	Subject->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
 }
@@ -39,11 +41,13 @@ void UCFL_ActorAgainst::LookAtPoint(AActor * Subject, FVector& Point)
 	check(Subject);
 
 	FVector DestVec = Point - Subject->GetActorLocation();
+	DestVec.Z = 0.0f;
+	DestVec.Normalize();
 	FRotator Rotator = FRotationMatrix::MakeFromX(DestVec).Rotator();
 	Subject->SetActorRotation(FRotator(0.0f, Rotator.Yaw, 0.0f));
 }
 
-void UCFL_ActorAgainst::ActorLocateFrontTarget(AActor * Target, AActor* Subject, float Distance, bool HeightInclude)
+void UCFL_ActorAgainst::ActorLocateFrontTarget(const AActor * Target, AActor* Subject, float Distance, bool HeightInclude)
 {
 	check(Target);
 	check(Subject);
@@ -78,7 +82,7 @@ void UCFL_ActorAgainst::SetAngleWithControlRot(ACharacter* Subject, float Angle)
 	Subject->SetActorRotation(Y);
 }
 
-bool UCFL_ActorAgainst::IsTargetInAir(ACharacter * Target)
+bool UCFL_ActorAgainst::IsTargetInAir(const ACharacter * Target)
 {
 	check(Target);
 	if (Target->GetCharacterMovement()->IsFalling()

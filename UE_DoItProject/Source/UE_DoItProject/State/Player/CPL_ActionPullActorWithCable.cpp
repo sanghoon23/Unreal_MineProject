@@ -260,9 +260,12 @@ void UCPL_ActionPullActorWithCable::PullingTargetLocation(AActor * PulledTarget)
 
 	//@Target Location
 	FVector TargetLocation = PulledTarget->GetActorLocation();
+	TargetLocation.Z = 0.0f;
 
 	//@Player Location + PullRange
 	FVector PlayerLocation = Player->GetActorLocation();
+	PlayerLocation.Z = 0.0f;
+
 	PulledDirection = PlayerLocation - TargetLocation;
 	PulledDirection.Z = 0.0f;
 	PulledDirection.Normalize();

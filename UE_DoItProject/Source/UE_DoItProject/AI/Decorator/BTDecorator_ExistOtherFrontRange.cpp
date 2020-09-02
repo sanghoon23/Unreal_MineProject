@@ -29,10 +29,6 @@ bool UBTDecorator_ExistOtherFrontRange::CalculateRawConditionValue(UBehaviorTree
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//TODO : 여기 고침 AI 바라보는거
-	////@Target 바라보기
-	//UCFL_ActorAgainst::LookAtTarget(ControlPawn, Target);
-
 	// 위치
 	FVector Center = ControlPawn->GetActorLocation();
 

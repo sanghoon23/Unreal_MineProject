@@ -17,6 +17,8 @@ UC_BaseHitComp::UC_BaseHitComp()
 		DamagedMontages.Init(nullptr, DamageTypeNum); //@DamageType 에 따른 Montage Container
 
 		//DamagedMontages.SetNum(DamageTypeNum);
+
+		CharactorMeshArray.Init(nullptr, static_cast<int>(ECharactorMeshSort::END));
 	}
 }
 
@@ -36,12 +38,20 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	check(OwnerPawn);
 
-	////@죽었다면 Return
-	//IIC_Charactor* OwnerCharactor = Cast<IIC_Charactor>(OwnerPawn);
-	//if (OwnerCharactor != nullptr)
-	//{
-	//	IfTrueRet(OwnerCharactor->IsDeath() == true);
-	//}
+	//@죽었다면 Return
+	IIC_Charactor* OwnerCharactor = Cast<IIC_Charactor>(OwnerPawn);
+	if (OwnerCharactor != nullptr)
+	{
+		if (OwnerCharactor->IsDeath() == true)
+		{
+			for (int i = 0; i < ConditionDatas.Num(); ++i)
+			{
+				ConditionDatas[i]->EndCondition(OwnerPawn);
+			}
+			ConditionDatas.Empty();
+			return;
+		}
+	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +76,7 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void UC_BaseHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * const DamageType, float DamageAmount)
 {
+	Attacker = AttackingActor;
 }
 
 void UC_BaseHitComp::RunMontageFromAttackType(EComboOrNot CanCombo, uint8 TypeNum, float MonSpeed, bool bAlways)
@@ -126,21 +137,40 @@ bool UC_BaseHitComp::AddConditionData(UCBaseConditionType* ConditionData)
 //@Get, Set
 
 
-void UC_BaseHitComp::GetOriginPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out)
+void UC_BaseHitComp::SettingCustomCharactorMesh(ECharactorMeshSort MeshSort, bool bNoneRestartAnimation)
 {
-	//@Origin
-	for (auto& Material : Map_OriginPoisionMaterial)
-	{
-		Out.Add(Material.Key, Material.Value);
-	}
-}
+	ACharacter* Charactor = Cast<ACharacter>(GetOwner());
+	check(Charactor);
 
-void UC_BaseHitComp::GetPoisionMaterialMaps(TMap<int32, class UMaterialInterface*>& Out)
-{
-	//@Change
-	for (auto& Material : Map_ChangePoisionMaterial)
+	const uint8 SortNum = static_cast<uint8>(MeshSort);
+	if (SortNum >= CharactorMeshArray.Num() || SortNum < 0)
 	{
-		Out.Add(Material.Key, Material.Value);
+		UE_LOG(LogTemp, Warning, L"SettingCustomCharactorMesh Func SortNum Exccess!!");
+		CLog::Print(L"CustomMesh SortNum Exccess!!");
+		return;
+	}
+	if (CharactorMeshArray[SortNum] == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, L"SettingCustomCharactorMesh Func SortNum NULLPTR!!");
+		CLog::Print(L"CustomMesh NULLPTR!!");
+		return;
+	}
+
+	CLog::Print(L"Call CustomMesh IN!!");
+
+	if (bNoneRestartAnimation == false)
+	{
+		Charactor->GetMesh()->SetSkeletalMeshWithoutResettingAnimation
+		(
+			CharactorMeshArray[SortNum]
+		);
+	}
+	else
+	{
+		Charactor->GetMesh()->SetSkeletalMesh
+		(
+			CharactorMeshArray[SortNum]
+		);
 	}
 }
 
@@ -186,6 +216,12 @@ UAnimMontage * UC_BaseHitComp::GetDamagedMontageOrNull(const uint8 ArrayNum)
 	}
 
 	return DamagedMontages[ArrayNum];
+}
+
+bool UC_BaseHitComp::IsEmptyConditionArray() const
+{
+	if (ConditionDatas.Num() == 0) return true;
+	else return false;
 }
 
 UCBaseConditionType * UC_BaseHitComp::GetConditionData(int Index)

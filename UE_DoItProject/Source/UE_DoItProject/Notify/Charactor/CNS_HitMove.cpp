@@ -28,6 +28,12 @@ void UCNS_HitMove::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequenceBa
 	ACharacter* MovedCharactor = Cast<ACharacter>(MeshComp->GetOwner());
 	IfNullRet(MovedCharactor);
 
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
+	IfNullRet(I_Charactor);
+
+	Direction = I_Charactor->GetIHitComp()->GetHitDirection();
+	Speed = I_Charactor->GetIHitComp()->GetHitMoveSpeed();
+
 	// @OrientRotation(false) - 가속 되는 방향으로 회전을 꺼야됨
 	MovedCharactor->GetCharacterMovement()->bOrientRotationToMovement = false;
 

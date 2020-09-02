@@ -2,6 +2,8 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/KismetMaterialLibrary.h"
 
 #include "Component/Base/C_BaseAbilityComp.h"
 
@@ -14,7 +16,7 @@ ACHM_Assassin::ACHM_Assassin()
 
 	// Super
 	{
-		DeathCallFunctionTimer = 5.0f;
+		DeathCallFunctionTimer = 10.0f;
 	}
 
 	// Default Setting
@@ -35,37 +37,27 @@ ACHM_Assassin::ACHM_Assassin()
 		Assassin_ATKComp = CreateDefaultSubobject<UCHM_AssassinAttackComp>(TEXT("Assassin_ATKComp"));
 		Assassin_ActionComp = CreateDefaultSubobject<UCHM_AssassinActionComp>(TEXT("Assassin_ActionComp"));
 		Assassin_AbilityComp = CreateDefaultSubobject<UC_BaseAbilityComp>(TEXT("Assassin_AbilityComp"));
-
-		//AddOwnedComponent(AttackComponent);
-		//AddOwnedComponent(HitComp);
-		//AddOwnedComponent(AttackComponent);
-		//AddOwnedComponent(AttackComponent);
 	}
 
-	FString strPath = L"";
-
-	strPath = L"SkeletalMesh'/Game/_Mine/Mesh/HM_Assassin/SM_Countess_ForDeath.SM_Countess_ForDeath'";
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> SK(*strPath);
-	if (SK.Succeeded())
+	//@LOAD Death Particle
 	{
-		Assa_DeathMesh = SK.Object;
-		//SkeletalMesh->SetSkeletalMesh(SK.Object);
-	}
+		FString strPath = L"";
 
-	strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Assassin/P_Assa_ForDeathSmoke.P_Assa_ForDeathSmoke'";
-	ConstructorHelpers::FObjectFinder<UParticleSystem> P_DeathSmoke(*strPath);
-	if (P_DeathSmoke.Succeeded())
-	{
-		P_Assa_DeathSmoke = P_DeathSmoke.Object;
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Assassin/P_Assa_ForDeathSmoke.P_Assa_ForDeathSmoke'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_DeathSmoke(*strPath);
+		if (P_DeathSmoke.Succeeded())
+		{
+			P_Assa_DeathSmoke = P_DeathSmoke.Object;
+		}
 	}
 
 #pragma region Monster Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 300.0f;
-	Info.CurrentHP = 10.0f;
-	Info.Name = FName(L"Assassin");
-	//Info.InfoConditionDataArray.Init(nullptr, 5);
+	MonsterInfo.MaxHP = 300.0f;
+	MonsterInfo.CurrentHP = 200.0f;
+	MonsterInfo.Name = FName(L"Assassin");
+	//MonsterInfo.InfoConditionDataArray.Init(nullptr, 5);
 
 #pragma endregion
 
@@ -81,19 +73,6 @@ void ACHM_Assassin::BeginPlay()
 		CanMove();
 		OnGravity();
 	});
-
-	// TODO :
-	OnDeathDelegate.AddLambda([&]()
-	{
-		GetMesh()->SetSkeletalMesh(Assa_DeathMesh);
-
-		//@죽을 때 연기(Smoke) 나옴.
-		FTransform P_Transform;
-		P_Transform.SetLocation(GetActorLocation());
-		P_Transform.SetScale3D(FVector(4.0f));
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_Assa_DeathSmoke, P_Transform, true);
-	});
-
 }
 
 void ACHM_Assassin::Tick(float DeltaTime)
@@ -101,7 +80,9 @@ void ACHM_Assassin::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//@분노 영역
-	if (Info.CurrentHP <= Info.MaxHP * 0.5f && AngerState == EAssa_AngerState::NONE)//HP반 이하
+	if (MonsterInfo.CurrentHP <= MonsterInfo.MaxHP * 0.5f 
+		&& AngerState == EAssa_AngerState::NONE
+		&& bDeath == false) //HP반 이하
 	{
 		IIC_ActionComp* I_ActionComp = GetIActionComp();
 		check(I_ActionComp);
@@ -109,8 +90,8 @@ void ACHM_Assassin::Tick(float DeltaTime)
 		IIC_BaseAction* AngerAction = I_ActionComp->GetIBaseAction(static_cast<uint8>(EAssa_ActionType::ANGER));
 		check(AngerAction);
 
-		bool bMonPlaying = GetMesh()->GetAnimInstance()->Montage_IsPlaying(GetCurrentMontage());
-		IfTrueRet(bMonPlaying);
+		//bool bMonPlaying = GetMesh()->GetAnimInstance()->Montage_IsPlaying(GetCurrentMontage());
+		//IfTrueRet(bMonPlaying);
 
 		/* 지금 계속 호출된다..? */
 		//CLog::Print(L"OnAction CALL!!");
@@ -119,19 +100,62 @@ void ACHM_Assassin::Tick(float DeltaTime)
 		AngerState = EAssa_AngerState::DOING;
 	}
 
-	//Test Code
-	////@Death (재가 되어 사라져라..) - OnDeathDelegate 에서 Mesh Change
-	//{
-	//	if (bDeath == true)
-	//	{
-	//		TArray<UMaterialInterface*> Temp;
-	//		GetMesh()->GetUsedMaterials(Temp);
-	//		for (UMaterialInterface* MInst : Temp)
-	//		{
-	//			//MInst.setvector
-	//		}
-	//	}
-	//}
+	//@Death (재가 되어 사라져라..) - OnDeathDelegate 에서 Mesh Change
+	{
+		if (bDeath == true)
+		{
+			InsertTimer += DeltaTime;
+			if (bInsertForDeathMesh == false && InsertTimer > 3.0f)
+			{
+				bInsertForDeathMesh = true;
+
+				GetIHitComp()->SettingCustomCharactorMesh(ECharactorMeshSort::FORDEATH);
+
+				//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
+				int32 MatCount = GetMesh()->GetNumMaterials();
+				for (int i = 0; i < MatCount; ++i)
+				{
+					UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
+					if (MInst != nullptr)
+					{
+						UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
+						if (TargetMat != nullptr)
+						{
+							GetMesh()->SetMaterial(i, TargetMat); //@Set
+							MatInstDynamicArray.Add(TargetMat);
+						}
+					}
+				}
+			}//(bInsertForDeathMesh)
+
+			for (UMaterialInstanceDynamic* Inst : MatInstDynamicArray)
+			{
+				FMaterialParameterInfo MatInfo;
+				MatInfo.Name = "Appearance";
+				float OutValue = 0.0f;
+				Inst->GetScalarParameterValue(MatInfo, OutValue);
+
+				if (FMath::IsNearlyEqual(OutValue, 0.6f, 0.01f))
+				{
+					//@죽을 때 연기(Smoke) 나옴.
+					FTransform P_Transform;
+					P_Transform.SetLocation(GetActorLocation());
+					P_Transform.SetScale3D(FVector(4.0f));
+					if (P_Assa_DeathSmoke != nullptr)
+					{
+						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_Assa_DeathSmoke, P_Transform, true);
+						P_Assa_DeathSmoke = nullptr;
+					}
+				}
+
+				(OutValue > 0.0f)
+					? OutValue -= 0.01f * DeltaTime * MatDynamicValueSpeed
+					: OutValue -= 0.0f;
+				Inst->SetScalarParameterValue(FName("Appearance"), OutValue);
+			}//(MatinstDynamicArray)
+
+		}//(bDeath == true)
+	}
 }
 
 void ACHM_Assassin::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
@@ -169,14 +193,13 @@ void ACHM_Assassin::OnDeath()
 {
 	bDeath = true;
 
-	//@1. 먼저 바인딩된 Delegate 브로드 캐스트 후,
+	//@먼저 바인딩된 Delegate 브로드 캐스트 후,
 	OnDeathDelegate.Broadcast(); //@Delegate
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//@2. 현 Charactor 에 관해 최종적으로 호출함.
-	//그렇지 않으면 Delegate 는 순서를 따지지 않아서 죽었는데도, AI 가 돌고 있음
 
-	SetActorTickEnabled(false);
+	//@현 Charactor 에 관해 최종적으로 호출함.
+	//그렇지 않으면 Delegate 는 순서를 따지지 않아서 죽었는데도, AI 가 돌고 있음
 
 	//@띄워졌을 때 사망할 때의 예외,
 	OnGravity();
@@ -270,13 +293,13 @@ void ACHM_Assassin::OffCollision()
 void ACHM_Assassin::AddATK(float fValue)
 {
 	Super::AddATK(fValue);
-	Info.ATK_Coefficient += fValue;
+	MonsterInfo.ATK_Coefficient += fValue;
 }
 
 void ACHM_Assassin::AddDEF(float fValue)
 {
 	Super::AddDEF(fValue);
-	Info.DEF_Coefficient += fValue;
+	MonsterInfo.DEF_Coefficient += fValue;
 }
 
 void ACHM_Assassin::SetAIAttackMode(bool bValue)
@@ -288,8 +311,8 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
-	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+	IfFalseRetResult(CanBeDamaged(), MonsterInfo.CurrentHP);
+	IfTrueRetResult(bDeath == true, MonsterInfo.CurrentHP);
 
 	//TODO : '방어계수' 는 여기서 계산 해주면됨. Ex) DamageAmount/DEF_Coefficient
 
@@ -317,14 +340,14 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 		}
 	}
 
-	Info.CurrentHP -= DamageAmount;
+	MonsterInfo.CurrentHP -= DamageAmount;
 
-	if (Info.CurrentHP <= 0.0f)
+	if (MonsterInfo.CurrentHP <= 0.0f)
 	{
 		OnDeath();
 	}
 
-	return Info.CurrentHP;
+	return MonsterInfo.CurrentHP;
 }
 
 void ACHM_Assassin::OnDelegateCharactorDestroy()
