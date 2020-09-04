@@ -243,7 +243,7 @@ void ACParticle_FireRain::OnAttackingOverlap()
 						HitDirection.Z = 0.0f;
 						HitDirection.Normalize();
 						HitComp->SetHitDirection(HitDirection);
-						HitComp->SetHitMoveSpeed(0.1f);
+						HitComp->SetHitMoveSpeed(1.0f);
 
 						// 1.2 Hit Delegate - Air(DamageType)
 						HitComp->OnHit

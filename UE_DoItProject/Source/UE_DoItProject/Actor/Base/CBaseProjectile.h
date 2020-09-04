@@ -35,6 +35,10 @@ protected:
 	UFUNCTION()
 		virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	/* Virtual Hitted Component */
+	UFUNCTION()
+		virtual void OnCompHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
 private:
 
 	#pragma endregion

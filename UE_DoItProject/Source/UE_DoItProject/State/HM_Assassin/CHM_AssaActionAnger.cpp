@@ -20,10 +20,17 @@ UCHM_AssaActionAnger::UCHM_AssaActionAnger()
 	FString Path = L"";
 
 	// Set Particle
-	Path = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Assassin/P_AssaTest_Ability_Angrey.P_AssaTest_Ability_Angrey'";
-	ConstructorHelpers::FObjectFinder<UParticleSystem> P_Load(*Path);
-	if (P_Load.Succeeded())
-		P_Action = P_Load.Object;
+	{
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Assassin/P_Assa_Ability_Angry.P_Assa_Ability_Angry'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_Load(*Path);
+		if (P_Load.Succeeded())
+			P_Action = P_Load.Object;
+
+		Path = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Assassin/P_Assa_Ability_Angry_OutsideEffect.P_Assa_Ability_Angry_OutsideEffect'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_LoadSideEft(*Path);
+		if (P_LoadSideEft.Succeeded())
+			P_Action_SideEffect = P_LoadSideEft.Object;
+	}
 
 #pragma region Set Montage
 	// Set Montage
@@ -96,12 +103,40 @@ void UCHM_AssaActionAnger::BeginActionState()
 	check(I_Monster);
 	I_Monster->SetAIRunningPossible(false);
 
-
 	//@¹«Àû ON
 	IIC_HitComp* I_HitComp = HM_Assassin->GetIHitComp();
 	check(I_HitComp);
 	I_HitComp->SetCanAttackedFromOther(false);
 	I_HitComp->SetDamagedFromOther(false);
+
+	//@Particle »ðÀÔ
+	IIC_MeshParticle* I_MeshParticle = HM_Assassin->GetIMeshParticle();
+	if (I_MeshParticle != nullptr)
+	{
+		UParticleSystemComponent* AttachPTComp = I_MeshParticle->SpawnParticleAtMesh
+		(
+			P_Action,
+			EAttachPointType::ROOT,
+			EAttachPointRelative::RELATIVE,
+			EAttachLocation::SnapToTarget
+		);
+
+		if (AttachPTComp == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, L"CUpset_Burn BurnParticleComp NULL!!");
+		}
+		else
+		{
+			FTransform Transform;
+			Transform.SetRotation(FQuat(FRotator(0.0f, 90.0f, 0.0f)));
+			AttachPTComp->SetRelativeTransform(Transform);
+
+			HM_Assassin->OnDeathDelegate.AddLambda([AttachPTComp]()
+			{
+				AttachPTComp->SetActive(false);
+			});
+		}
+	}
 }
 
 void UCHM_AssaActionAnger::TickActionState()
@@ -152,25 +187,28 @@ void UCHM_AssaActionAnger::EndActionState()
 	IIC_MeshParticle* I_MeshParticle = HM_Assassin->GetIMeshParticle();
 	if (I_MeshParticle != nullptr)
 	{
-		UParticleSystemComponent* AttachPTComp = I_MeshParticle->SpawnParticleAtMesh
+		UParticleSystemComponent* AttachPTComp_SideEft = I_MeshParticle->SpawnParticleAtMesh
 		(
-			P_Action,
-			EAttachPointType::BODY,
+			P_Action_SideEffect,
+			EAttachPointType::ROOT,
 			EAttachPointRelative::RELATIVE,
 			EAttachLocation::SnapToTarget
 		);
 
-		if (AttachPTComp == nullptr)
+		if (AttachPTComp_SideEft == nullptr)
 		{
 			UE_LOG(LogTemp, Warning, L"CUpset_Burn BurnParticleComp NULL!!");
 		}
 		else
 		{
-			HM_Assassin->OnDeathDelegate.AddLambda([AttachPTComp]()
+			FTransform Transform;
+			Transform.SetScale3D(FVector(2.0f));
+			AttachPTComp_SideEft->SetRelativeTransform(Transform);
+
+			HM_Assassin->OnDeathDelegate.AddLambda([AttachPTComp_SideEft]()
 			{
-				AttachPTComp->SetActive(false);
+				AttachPTComp_SideEft->SetActive(false);
 			});
 		}
 	}
-
 }

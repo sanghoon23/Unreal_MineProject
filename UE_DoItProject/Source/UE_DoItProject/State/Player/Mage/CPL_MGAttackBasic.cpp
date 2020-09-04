@@ -9,6 +9,8 @@
 #include "Interface/IC_HitComp.h"
 #include "Charactor/Player/CPlayer.h"
 
+#include "UI/HUD_Main.h"
+
 UCPL_MGAttackBasic::UCPL_MGAttackBasic()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -65,8 +67,10 @@ void UCPL_MGAttackBasic::BeginPlay()
 
 	#pragma region Super
 
+	AttackDecision->UnAble();
+
 	//@Auto AttackDecision System
-	AttackDecision->OnAble(Player, AttackRange);
+	//AttackDecision->OnAble(Player, AttackRange);
 
 	#pragma endregion
 }
@@ -189,11 +193,11 @@ void UCPL_MGAttackBasic::AttackOtherPawn(UCDamageType_Base* DamageType)
 	FCollisionShape sphere = FCollisionShape::MakeSphere(AttackRadius);
 	FCollisionQueryParams CollisionQueryParm(NAME_None, false, Player);
 
-	FHitResult HitResult;
+	TArray<FHitResult> HitResults;
 	float DebugLifeTime = 1.0f;
-	bool bHit = GetWorld()->SweepSingleByChannel //@Single - ´ÜÀÏ.
+	bool bHit = GetWorld()->SweepMultiByChannel
 	(
-		HitResult
+		HitResults
 		, Start
 		, End
 		, FQuat::Identity
@@ -210,26 +214,62 @@ void UCPL_MGAttackBasic::AttackOtherPawn(UCDamageType_Base* DamageType)
 
 	if (bHit == true)
 	{
-		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
-		if (Charactor != nullptr)
+		AActor* const Target = Player->GetFindAttackTarget();
+		for (auto& HitResult : HitResults)
 		{
-			// 1. Get Interface HitComp
-			IIC_HitComp* HitComp = Charactor->GetIHitComp();
-			if (HitComp != nullptr)
+			if (Target != nullptr)
 			{
-				// 1.1 Set Hit Attribute
-				FVector HitDirection = Player->GetActorForwardVector();
-				HitDirection.Z = 0.0f;
-				HitComp->SetHitDirection(HitDirection);
-				HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+				if (Target == HitResult.GetActor())
+				{
+					IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
+					if (Charactor != nullptr)
+					{
+						// 1. Get Interface HitComp
+						IIC_HitComp* HitComp = Charactor->GetIHitComp();
+						if (HitComp != nullptr)
+						{
+							// 1.1 Set Hit Attribute
+							FVector HitDirection = HitResult.GetActor()->GetActorLocation() - Player->GetActorLocation();
+							HitDirection.Z = 0.0f;
+							HitDirection.Normalize();
+							HitComp->SetHitDirection(HitDirection);
+							HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 
-				HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
+							HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
 
-			}//(HitComp != nullptr)
-			else
-				UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - HitComp Null!!");
-		}//(Charactor != nullptr)
-		else
-			UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - Charactor Null!!");
+						}//(HitComp != nullptr)
+						else
+							UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - HitComp Null!!");
+					}//(Charactor != nullptr)
+					else
+						UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - Charactor Null!!");
+				}
+				else continue;
+			}
+			else //(Target==nullptr)
+			{
+				IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
+				if (Charactor != nullptr)
+				{
+					// 1. Get Interface HitComp
+					IIC_HitComp* HitComp = Charactor->GetIHitComp();
+					if (HitComp != nullptr)
+					{
+						// 1.1 Set Hit Attribute
+						FVector HitDirection = Player->GetActorForwardVector();
+						HitDirection.Z = 0.0f;
+						HitComp->SetHitDirection(HitDirection);
+						HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
+
+						HitComp->OnHit(Player, DamageType, DamageType->DamageImpulse);
+
+					}//(HitComp != nullptr)
+					else
+						UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - HitComp Null!!");
+				}//(Charactor != nullptr)
+				else
+					UE_LOG(LogTemp, Warning, L"MGAttackBasic CallAttack - Charactor Null!!");
+			}
+		}
 	}//(bHit == true)
 }

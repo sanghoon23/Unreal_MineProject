@@ -21,6 +21,9 @@ private:
 		class UParticleSystem* P_Action;
 
 	UPROPERTY(EditAnywhere, Category = "Particle")
+		class UParticleSystem* P_Action_SideEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
 		class UParticleSystemComponent* PT_Background;
 
 #pragma endregion

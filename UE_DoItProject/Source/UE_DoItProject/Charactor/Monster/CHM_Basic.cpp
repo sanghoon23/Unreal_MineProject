@@ -7,6 +7,7 @@
 
 #include "Interface/IC_HitComp.h"
 
+#include "DamagedConditionType/Base/CBaseConditionType.h"
 #include "AI/Controller/CAIC_HM_Shaman.h"
 #include "UI/Widget/WG_FloatingCombo.h"
 
@@ -41,11 +42,19 @@ ACHM_Basic::ACHM_Basic()
 	//@LOAD Death Particle
 	{
 		FString strPath = L"";
-		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Basic/P_Basic_ForDeathSmoke.P_Basic_ForDeathSmoke'";
-		ConstructorHelpers::FObjectFinder<UParticleSystem> P_DeathSmoke(*strPath);
-		if (P_DeathSmoke.Succeeded())
+
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Basic/P_Basic_ForDeathSmoke_Burn.P_Basic_ForDeathSmoke_Burn'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_BurnDeath(*strPath);
+		if (P_BurnDeath.Succeeded())
 		{
-			P_Basic_DeathSmoke = P_DeathSmoke.Object;
+			P_BurnDeathSmoke = P_BurnDeath.Object;
+		}
+
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Basic/P_Basic_ForDeathSmoke_Poision.P_Basic_ForDeathSmoke_Poision'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_PoisionDeath(*strPath);
+		if (P_PoisionDeath.Succeeded())
+		{
+			P_PoisionDeathSmoke = P_PoisionDeath.Object;
 		}
 	}
 
@@ -80,32 +89,32 @@ void ACHM_Basic::Tick(float DeltaTime)
 	{
 		if (bDeath == true)
 		{
-			InsertTimer += DeltaTime;
-			if (bInsertForDeathMesh == false && InsertTimer > 3.0f)
-			{
-				bInsertForDeathMesh = true;
+			//InsertTimer += DeltaTime;
+			//if (bInsertForDeathMesh == false && InsertTimer > 3.0f)
+			//{
+			//	bInsertForDeathMesh = true;
 
-				GetIHitComp()->SettingCustomCharactorMesh(ECharactorMeshSort::FORDEATH);
+			//	GetIHitComp()->SettingCustomCharactorMesh(ECharactorMeshSort::FORDEATH);
 
-				//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
-				int32 MatCount = GetMesh()->GetNumMaterials();
-				for (int i = 0; i < MatCount; ++i)
-				{
-					UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
-					if (MInst != nullptr)
-					{
-						CLog::Print(MInst->GetName());
-						UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
-						if (TargetMat != nullptr)
-						{
-							//CLog::Print(TargetMat->GetName());
+			//	//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
+			//	int32 MatCount = GetMesh()->GetNumMaterials();
+			//	for (int i = 0; i < MatCount; ++i)
+			//	{
+			//		UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
+			//		if (MInst != nullptr)
+			//		{
+			//			CLog::Print(MInst->GetName());
+			//			UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
+			//			if (TargetMat != nullptr)
+			//			{
+			//				//CLog::Print(TargetMat->GetName());
 
-							GetMesh()->SetMaterial(i, TargetMat); //@Set
-							MatInstDynamicArray.Add(TargetMat);
-						}
-					}
-				}
-			}//(bInsertForDeathMesh)
+			//				GetMesh()->SetMaterial(i, TargetMat); //@Set
+			//				MatInstDynamicArray.Add(TargetMat);
+			//			}
+			//		}
+			//	}
+			//}//(bInsertForDeathMesh)
 
 			for (UMaterialInstanceDynamic* Inst : MatInstDynamicArray)
 			{
@@ -113,19 +122,6 @@ void ACHM_Basic::Tick(float DeltaTime)
 				MatInfo.Name = "Appearance";
 				float OutValue = 0.0f;
 				Inst->GetScalarParameterValue(MatInfo, OutValue);
-
-				if (FMath::IsNearlyEqual(OutValue, 0.6f, 0.01f))
-				{
-					//@죽을 때 연기(Smoke) 나옴.
-					FTransform P_Transform;
-					P_Transform.SetLocation(GetActorLocation());
-					P_Transform.SetScale3D(FVector(4.0f));
-					if (P_Basic_DeathSmoke != nullptr)
-					{
-						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_Basic_DeathSmoke, P_Transform, true);
-						P_Basic_DeathSmoke = nullptr;
-					}
-				}
 
 				(OutValue > 0.0f)
 					? OutValue -= 0.01f * DeltaTime * MatDynamicValueSpeed
@@ -288,6 +284,7 @@ float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 
 	if (MonsterInfo.CurrentHP <= 0.0f)
 	{
+		CheckDamageTypeForDeath();
 		OnDeath();
 	}
 	return MonsterInfo.CurrentHP;
@@ -302,6 +299,93 @@ void ACHM_Basic::OnDelegateCharactorDestroy()
 void ACHM_Basic::CallDestory()
 {
 	Destroy();
+}
+
+void ACHM_Basic::CheckDamageTypeForDeath()
+{
+	//@Burn 이나 Poision 이 적용되어 있다면,
+	//이 때, 둘 다 적용되어있다면?? -> 나중에 적용되어있는 쪽으로..
+	//둘 다 없을 땐 실행 안함
+	int BurnTypeIndex, PoisionTypeIndex = -1;
+	bool bApplyMatInstDynamic = false;
+	FLinearColor InsertColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	FLinearColor BurnColor = FLinearColor(0.88f, 0.072f, 0.0f, 0.0f);
+	FLinearColor PoisionColor = FLinearColor(0.0f, 1.0f, 0.0f, 0.0f);
+
+	bool bExistBurn = GetIHitComp()->GetApplyUpsetStateInContainer(EHitUpset::BURN, BurnTypeIndex);
+	if (bExistBurn == true)
+	{
+		bApplyMatInstDynamic = true;
+		InsertColor = FLinearColor(0.88f, 0.072f, 0.0f, 0.0f);
+	}
+
+	bool bExistPoision = GetIHitComp()->GetApplyUpsetStateInContainer(EHitUpset::POISION, PoisionTypeIndex);
+	if (bExistPoision == true)
+	{
+		bApplyMatInstDynamic = true;
+		if (PoisionTypeIndex > BurnTypeIndex)
+		{
+			InsertColor = FLinearColor(0.0f, 1.0f, 0.0f, 0.0f);
+		}
+	}
+	//@Doing
+	if (bApplyMatInstDynamic == true)
+	{
+		InsertMatInstDynamic(ECharactorMeshSort::FORDEATH, InsertColor);
+
+		UParticleSystem* DoingParticle = nullptr;
+		(InsertColor == BurnColor)
+			? DoingParticle = P_BurnDeathSmoke
+			: DoingParticle = P_PoisionDeathSmoke;
+
+		UWorld* const World = GetWorld();
+		FVector P_Location = GetActorLocation();
+
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([DoingParticle, World, P_Location]()
+		{
+			//@죽을 때 연기(Smoke) 나옴.
+			FTransform P_Transform;
+			P_Transform.SetLocation(P_Location);
+			P_Transform.SetScale3D(FVector(4.0f));
+			if (DoingParticle != nullptr)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(World, DoingParticle, P_Transform, true);
+			}
+		});
+
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 3.0f, false);
+	}
+}
+
+/*
+@Burn 으로 죽었을 시, Color - (0.78f, 0.072f, 0.0f, 0.0f)
+@Poision 으로 죽었을 시, Color - ...
+*/
+void ACHM_Basic::InsertMatInstDynamic(const ECharactorMeshSort Sort, FLinearColor Color)
+{
+	GetIHitComp()->SettingCustomCharactorMesh(Sort);
+
+	//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
+	int32 MatCount = GetMesh()->GetNumMaterials();
+	for (int i = 0; i < MatCount; ++i)
+	{
+		UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
+		if (MInst != nullptr)
+		{
+			UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
+			if (TargetMat != nullptr)
+			{
+				//@Set Color
+				TargetMat->SetVectorParameterValue(FName("Color"), Color);
+
+				//@Set Material
+				GetMesh()->SetMaterial(i, TargetMat); //@Set
+				MatInstDynamicArray.Add(TargetMat);
+			}
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

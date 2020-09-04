@@ -82,6 +82,8 @@ void UCS_TargetingSystem::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		{
 			//@MarkActor Set Location
 			FVector TargetLocation = CurrentFindAttackTarget->GetActorLocation();
+			TargetLocation.Z
+				= TargetLocation.Z - CurrentFindAttackTarget->GetDefaultHalfHeight() + 70.0f;
 			TargetMarkActor->SetActorLocation(TargetLocation);
 
 			//@MarkActor Visible ON

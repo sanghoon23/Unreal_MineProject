@@ -84,10 +84,6 @@ ACProjectile_PoisionBall::ACProjectile_PoisionBall()
 void ACProjectile_PoisionBall::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//@Overlap
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ACProjectile_PoisionBall::OnBeginOverlap);
-	SphereComp->OnComponentEndOverlap.AddDynamic(this, &ACProjectile_PoisionBall::OnEndOverlap);
 }
 
 //#Edit 0708 - @Warning - CNS_SpawnProjectile 로 생성되어져 나가는 것을 기억해라.
@@ -127,29 +123,34 @@ void ACProjectile_PoisionBall::Tick(float DeltaTime)
 		//@Set Location
 		SetActorLocation(Location);
 	}
+
+	/* CProjectile_MagicBall 참조, */
+	CheckSettingTarget();
 }
 
-void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void ACProjectile_PoisionBall::Explosion()
 {
-	Super::OnBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	//@NoCollision
+	SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	IfNullRet(OverlappedComponent);
-	IfNullRet(OtherActor);
-	IfNullRet(OtherComp);
+	//@None Running Actor Tick
+	SetActorTickEnabled(false);
 
-	IfTrueRet(OtherActor == GetOwner());
-	IfTrueRet(OtherActor == this);
+	//@Visible
+	ParticleComp->SetActive(false);
 
-	//@Following Target Check
-	if (SettingTarget != nullptr)
-	{
-		IfFalseRet(OtherActor == SettingTarget);
-	}
+	//@터지는 파티클 실행
+	FTransform P_Transform;
+	P_Transform.SetLocation(GetActorLocation());
+	P_Transform.SetScale3D(FVector(2.0f));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionPoisionBall, P_Transform, true);
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//@Projectile 파괴.
+	Death();
+}
 
-	FHitResult HitResult;
-
+void ACProjectile_PoisionBall::CheckSettingTarget()
+{
 	FVector ActorForward = GetActorForwardVector();
 	FVector Start = GetActorLocation();
 	FVector End = GetActorLocation() + 10.0f;
@@ -164,23 +165,21 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 		: Channel = ECollisionChannel::ECC_Visibility; //@Default
 
 	//@충돌 시행
+	FHitResult HitResult;
 	bool bHit = GetWorld()->SweepSingleByChannel
 	(
 		HitResult, Start, End,
 		FQuat::Identity,
 		Channel, //@CharactorUsingChannel
-		Sphere,
+		Sphere, //100.0f
 		Param
 	);
 
-	#if  ENABLE_DRAW_DEBUG
-
-	DrawDebugSphere(GetWorld(), End, Sphere.GetSphereRadius(), 40, FColor::Green, false, 0.1f);
-
-	#endif //  ENABLE_DRAW_DEBUG
-
 	if (bHit == true)
 	{
+		//@SettingTarget 과 다르다면,
+		if (HitResult.GetActor() != SettingTarget) return;
+
 		//캐릭터 타입이 같지 않다면,
 		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
 		if (Charactor != nullptr && OwnerCharactor != nullptr &&
@@ -205,37 +204,4 @@ void ACProjectile_PoisionBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCo
 
 		}//(Interface Charactor)
 	}//(bHit)
-}
-
-void ACProjectile_PoisionBall::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
-{
-	Super::OnEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
-
-	IfNullRet(OverlappedComponent);
-	IfNullRet(OtherActor);
-	IfNullRet(OtherComp);
-
-	IfTrueRet(OtherActor == GetOwner());
-	IfTrueRet(OtherActor == this);
-}
-
-void ACProjectile_PoisionBall::Explosion()
-{
-	//@NoCollision
-	SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	//@None Running Actor Tick
-	SetActorTickEnabled(false);
-
-	//@Visible
-	ParticleComp->SetActive(false);
-
-	//@터지는 파티클 실행
-	FTransform P_Transform;
-	P_Transform.SetLocation(GetActorLocation());
-	P_Transform.SetScale3D(FVector(2.0f));
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionPoisionBall, P_Transform, true);
-
-	//@Projectile 파괴.
-	Death();
 }

@@ -51,7 +51,7 @@ UCPL_MGAttackFireRange::UCPL_MGAttackFireRange()
 	DT_Burn = NewObject<UCDamageType_Burn>();
 	DT_Burn->SetDamageImpulse(0.0f);
 	DT_Burn->SetSecondDamageValue(3.0f);
-	DT_Burn->SetBurnTime(5.0f);
+	DT_Burn->SetBurnTime(10.0f);
 
 	#pragma endregion
 }

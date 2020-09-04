@@ -263,3 +263,17 @@ void UC_BaseHitComp::GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* Ou
 
 	(*OutDataArray)[Index] = ConditionDatas[Index];
 }
+
+bool UC_BaseHitComp::GetApplyUpsetStateInContainer(EHitUpset Sort, int & IndexCount)
+{
+	for (int i = 0; i < ConditionDatas.Num(); ++i)
+	{
+		if (ConditionDatas[i]->GetState() == Sort)
+		{
+			IndexCount = i;
+			return true;
+		}
+	}
+
+	return false;
+}

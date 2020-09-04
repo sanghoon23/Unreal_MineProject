@@ -45,7 +45,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		TArray<class UMaterialInstanceDynamic*> MatInstDynamicArray;
 
-	UPROPERTY(VisibleAnywhere, Category = "Data")
+	UPROPERTY(EditAnywhere, Category = "Data")
 		float MatDynamicValueSpeed = 20.0f;
 
 	#pragma endregion

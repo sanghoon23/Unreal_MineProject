@@ -73,12 +73,18 @@ public:
 	virtual UCBaseConditionType* GetConditionData(int Index) = 0;
 	
 	/* OutDataArray->Empty(갱신) 후 ConditionDatas 모든 데이터를 OutDataArray->'Push' */
-	//@param - OutDataArray (OUT)
+	//@param OutDataArray (OUT)
 	//@parma Count - 가져올 갯수 (Default -1, 모두 가져옴)
 	virtual void GetConditionDatasOutArray(TArray<UCBaseConditionType*>* OutDataArray, int Count = -1) = 0;
 
 	/* ConditionDatas 의 [Index] 값을 가져옴  */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) = 0;
+
+	/* Upset State 를 담고 있는 Condition Container 에 해당 Sort 가 존재하는지 여부 */
+	//@param Sort - UpsetType
+	//@param IndexCount - 존재하는 Index (순서 파악을 위해)
+	//Ex)Burn, Poision 으로 죽었을 때, 먼저 들어온 Type 으로 DeathFunc 진행
+	virtual bool GetApplyUpsetStateInContainer(EHitUpset Sort, int& IndexCount) = 0;
 
 	#pragma region Member
 public:

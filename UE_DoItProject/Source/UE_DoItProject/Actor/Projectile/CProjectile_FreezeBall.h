@@ -29,14 +29,6 @@ private:
 
 	#pragma endregion
 	
-protected:
-	/* Virtual Overlap */
-	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) override;
-
-	/* Virtual Overlap */
-	virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
-
-
 public:
 	ACProjectile_FreezeBall();
 
@@ -55,9 +47,12 @@ private:
 	void FreezeStartDel(AActor* Subject);
 	void FreezeEndDel(AActor* Subject);
 
+	void CheckSettingTarget();
+
+
 	/* Member */
 private:
-	float CollisionSphereRadius = 100.0f;
+	float CollisionSphereRadius = 50.0f;
 
 	/* 생성 여부 */
 	bool bSpawned = false;

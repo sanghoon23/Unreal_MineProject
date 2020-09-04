@@ -54,6 +54,13 @@ void ACBaseProjectile::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, A
 	bOverlap = false;
 }
 
+void ACBaseProjectile::OnCompHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
+{
+	IfNullRet(HitComponent);
+	IfNullRet(OtherActor);
+	IfNullRet(OtherComponent);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ACBaseProjectile::Death()

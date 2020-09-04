@@ -176,6 +176,9 @@ void UCPL_ActionPullActorWithCable::BeginActionState()
 
 	//@타겟 세팅
 	CableObject->SetPullStartTarget(Target);
+
+	//@Collision OFF
+	Target->SetActorEnableCollision(false);
 }
 
 void UCPL_ActionPullActorWithCable::TickActionState()
@@ -237,6 +240,9 @@ void UCPL_ActionPullActorWithCable::EndActionState()
 {
 	Super::EndActionState();
 
+	//@Collision ON
+	Target->SetActorEnableCollision(true);
+
 	//@ Target Init
 	Target = nullptr;
 
@@ -258,13 +264,14 @@ void UCPL_ActionPullActorWithCable::PullingTargetLocation(AActor * PulledTarget)
 {
 	check(PulledTarget);
 
+	/* Collision OFF 때문에 Z 값은 건드리지 않음. */
 	//@Target Location
 	FVector TargetLocation = PulledTarget->GetActorLocation();
-	TargetLocation.Z = 0.0f;
+	//TargetLocation.Z = 0.0f;
 
 	//@Player Location + PullRange
 	FVector PlayerLocation = Player->GetActorLocation();
-	PlayerLocation.Z = 0.0f;
+	//PlayerLocation.Z = 0.0f;
 
 	PulledDirection = PlayerLocation - TargetLocation;
 	PulledDirection.Z = 0.0f;

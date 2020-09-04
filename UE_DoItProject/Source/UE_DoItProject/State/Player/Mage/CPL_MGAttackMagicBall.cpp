@@ -188,13 +188,33 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 	// @타겟 바라보게 하기
 	UCFL_ActorAgainst::LookAtTarget(Player, Target);
 
-	//@Notify Ref - Setting Target
-	for (auto& Notify : Notifies_SpawnProjectile)
+	//@Notify Reference
+	TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;
+	MageAttackMontages[0]->GetAnimNotifies(0, 10.0f, false, NotifyEvent_Mon_0);
+	for (auto& Ref : NotifyEvent_Mon_0) //@AttackMontage[0]
 	{
-		Notify->SpeedValue = 800.0f;
-		Notify->SetProjectileDirection(Target->GetActorLocation() - Player->GetActorLocation());
-		Notify->SetProjectileTarget(Target);
+		const FAnimNotifyEvent* Event = Ref.GetNotify();
+		UCN_SpawnProjectile* Notify = Cast<UCN_SpawnProjectile>(Event->Notify);
+		if (Notify != nullptr)
+		{
+			Notify->SpeedValue = 800.0f;
+			FVector Dir = Target->GetActorLocation() - Player->GetActorLocation();
+			Dir.Normalize();
+			Notify->SetProjectileDirection(Dir);
+			Notify->SetProjectileTarget(Target);
+		}
 	}
+
+	////Before
+	////@Notify Ref - Setting Target
+	//for (auto& Notify : Notifies_SpawnProjectile)
+	//{
+	//	Notify->SpeedValue = 800.0f;
+	//	FVector Dir = Target->GetActorLocation() - Player->GetActorLocation();
+	//	Dir.Normalize();
+	//	Notify->SetProjectileDirection(Dir);
+	//	Notify->SetProjectileTarget(Target);
+	//}
 
 	// @공격 실행
 	if (bAttacking == false)
@@ -214,16 +234,16 @@ void UCPL_MGAttackMagicBall::BeginAttack(AActor * DoingActor)
 		}
 
 		//@Montage Pause 수행 - NextAction 이전까지.
-		float StartTime = 0.0f;
-		float EndTime = 0.0f;
-		MageAttackMontages[0]->GetSectionStartAndEndTime(0, StartTime, EndTime);
-		EndTime *= MontagePauseOffset;
+		//float StartTime = 0.0f;
+		//float EndTime = 0.0f;
+		//MageAttackMontages[0]->GetSectionStartAndEndTime(0, StartTime, EndTime);
+		//EndTime *= MontagePauseOffset;
 
-		MontagePauseDel.BindUFunction(this, FName("TimerMontagePause"));
-		GetWorld()->GetTimerManager().SetTimer
-		(
-			MontagePauseTimer, MontagePauseDel, 1.0f, false, EndTime
-		);
+		//MontagePauseDel.BindUFunction(this, FName("TimerMontagePause"));
+		//GetWorld()->GetTimerManager().SetTimer
+		//(
+		//	MontagePauseTimer, MontagePauseDel, 1.0f, false, EndTime
+		//);
 	}
 }
 

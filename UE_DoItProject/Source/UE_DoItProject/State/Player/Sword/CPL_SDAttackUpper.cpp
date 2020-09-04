@@ -326,8 +326,9 @@ void UCPL_SDAttackUpper::AttackOtherPawn(UCDamageType_Base* DamageType)
 				if (HitComp != nullptr)
 				{
 					// 1.1 Set Hit Attribute
-					FVector HitDirection = Player->GetActorForwardVector();
+					FVector HitDirection = HitResult.GetActor()->GetActorLocation() - Player->GetActorLocation();
 					HitDirection.Z = 0.0f;
+					HitDirection.Normalize();
 					HitComp->SetHitDirection(HitDirection);
 
 					// 1.2 Hit Delegate - Air(DamageType)

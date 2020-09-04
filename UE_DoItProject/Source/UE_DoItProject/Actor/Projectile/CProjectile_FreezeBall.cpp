@@ -77,10 +77,6 @@ void ACProjectile_FreezeBall::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//@Overlap
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ACProjectile_FreezeBall::OnBeginOverlap);
-	SphereComp->OnComponentEndOverlap.AddDynamic(this, &ACProjectile_FreezeBall::OnEndOverlap);
-
 #pragma region Create DamageType
 	//@Create DamageType
 	DT_Freeze = NewObject<UCDamageType_Freeze>();
@@ -170,29 +166,42 @@ void ACProjectile_FreezeBall::Tick(float DeltaTime)
 		SetActorLocation(Location);
 	}
 
+	/* CProjectile_MagicBall 참조, */
+	CheckSettingTarget();
 }
 
-void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void ACProjectile_FreezeBall::Explosion()
 {
-	Super::OnBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	//@터지는 파티클 실행
+	FTransform P_Transform;
+	P_Transform.SetLocation(GetActorLocation());
+	P_Transform.SetScale3D(FVector(2.0f));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionFreezeBall, P_Transform, true);
+}
 
-	IfNullRet(OverlappedComponent);
-	IfNullRet(OtherActor);
-	IfNullRet(OtherComp);
-
-	IfTrueRet(OtherActor == GetOwner());
-	IfTrueRet(OtherActor == this);
-
-	//@Following Target Check
-	if (SettingTarget != nullptr)
+void ACProjectile_FreezeBall::FreezeStartDel(AActor * Subject)
+{
+	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+	if (SubjectI_Monster != nullptr)
 	{
-		IfFalseRet(OtherActor == SettingTarget);
+		SubjectI_Monster->SetAIRunningPossible(false);
+	}
+}
+
+void ACProjectile_FreezeBall::FreezeEndDel(AActor * Subject)
+{
+	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+	if (SubjectI_Monster != nullptr)
+	{
+		SubjectI_Monster->SetAIRunningPossible(true);
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//@Projectile 파괴.
+	Death();
+}
 
-	FHitResult HitResult;
-
+void ACProjectile_FreezeBall::CheckSettingTarget()
+{
 	FVector ActorForward = GetActorForwardVector();
 	FVector Start = GetActorLocation();
 	FVector End = GetActorLocation() + 10.0f;
@@ -207,23 +216,22 @@ void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCom
 		: Channel = ECollisionChannel::ECC_Visibility; //@Default
 
 	//@충돌 시행
+	//TArray<FHitResult> HitResults;
+	FHitResult HitResult;
 	bool bHit = GetWorld()->SweepSingleByChannel
 	(
 		HitResult, Start, End,
 		FQuat::Identity,
 		Channel, //@CharactorUsingChannel
-		Sphere,
+		Sphere, //100.0f
 		Param
 	);
 
-#if  ENABLE_DRAW_DEBUG
-
-	DrawDebugSphere(GetWorld(), End, Sphere.GetSphereRadius(), 40, FColor::Green, false, 0.1f);
-
-#endif //  ENABLE_DRAW_DEBUG
-
 	if (bHit == true)
 	{
+		//@SettingTarget 과 다르다면,
+		if (HitResult.GetActor() != SettingTarget) return;
+
 		//캐릭터 타입이 같지 않다면,
 		IIC_Charactor* Charactor = Cast<IIC_Charactor>(HitResult.GetActor());
 		if (Charactor != nullptr && OwnerCharactor != nullptr &&
@@ -259,62 +267,3 @@ void ACProjectile_FreezeBall::OnBeginOverlap(UPrimitiveComponent * OverlappedCom
 	}//(bHit)
 }
 
-void ACProjectile_FreezeBall::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
-{
-	Super::OnEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
-
-	IfNullRet(OverlappedComponent);
-	IfNullRet(OtherActor);
-	IfNullRet(OtherComp);
-
-	IfTrueRet(OtherActor == GetOwner());
-	IfTrueRet(OtherActor == this);
-}
-
-void ACProjectile_FreezeBall::Explosion()
-{
-	//@터지는 파티클 실행
-	FTransform P_Transform;
-	P_Transform.SetLocation(GetActorLocation());
-	P_Transform.SetScale3D(FVector(2.0f));
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_ExplosionFreezeBall, P_Transform, true);
-}
-
-void ACProjectile_FreezeBall::FreezeStartDel(AActor * Subject)
-{
-	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
-	if (SubjectI_Monster != nullptr)
-	{
-		SubjectI_Monster->SetAIRunningPossible(false);
-	}
-}
-
-void ACProjectile_FreezeBall::FreezeEndDel(AActor * Subject)
-{
-	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
-	if (SubjectI_Monster != nullptr)
-	{
-		SubjectI_Monster->SetAIRunningPossible(true);
-	}
-
-	//@Projectile 파괴.
-	Death();
-}
-
-//void FreezeStartDel(AActor * Subject)
-//{
-//	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
-//	if (SubjectI_Monster != nullptr)
-//	{
-//		SubjectI_Monster->SetAIRunningPossible(false);
-//	}
-//}
-//
-//void FreezeEndDel(AActor * Subject)
-//{
-//	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
-//	if (SubjectI_Monster != nullptr)
-//	{
-//		SubjectI_Monster->SetAIRunningPossible(true);
-//	}
-//}

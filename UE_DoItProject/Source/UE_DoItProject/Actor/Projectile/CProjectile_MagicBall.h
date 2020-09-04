@@ -35,6 +35,8 @@ protected:
 	/* Virtual Overlap */
 		virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
+	/* Virtual Hitted Component */
+		virtual void OnCompHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
 public:	
 	ACProjectile_MagicBall();
@@ -49,9 +51,13 @@ public:
 public:
 	virtual void Explosion() override;
 
+	/* Function */
+public:
+	void CheckSettingTarget();
+
 	/* Member */
 private:
-	float CollisionSphereRadius = 100.0f;
+	float CollisionSphereRadius = 50.0f;
 
 	/* 생성 여부 */
 	bool bSpawned = false;

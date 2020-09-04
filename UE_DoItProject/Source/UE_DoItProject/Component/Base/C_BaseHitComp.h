@@ -110,9 +110,6 @@ public:
 	virtual const AActor* GetAttacker() const override { return Attacker; }
 
 public:
-	virtual const bool IsBeated() const override { return bBeated; }
-	virtual void SetBeated(bool bValue) override { bBeated = bValue; }
-
 	/* IC_HitComp 참조 */
 	virtual bool IsEmptyConditionArray() const override;
 
@@ -124,6 +121,15 @@ public:
 
 	/* IC_HitComp 참조 */
 	virtual void GetConditionDatasFromIndex(TArray<UCBaseConditionType*>* OutDataArray, int Index) override;
+
+	/* IC_HitComp 참조 */
+	virtual bool GetApplyUpsetStateInContainer(EHitUpset Sort, int& IndexCount) override;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//@Member
+
+	virtual const bool IsBeated() const override { return bBeated; }
+	virtual void SetBeated(bool bValue) override { bBeated = bValue; }
 
 	//* IC_HitComp 참조 */
 	virtual bool IsUsingDamageTypeEffect(uint8 Type) const override { return bUsingDamageTypeEffect[Type]; };

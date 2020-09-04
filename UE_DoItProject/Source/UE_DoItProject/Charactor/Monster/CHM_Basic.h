@@ -40,17 +40,15 @@ private:
 		class UCMeshParticleComp* MeshParticleComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Particle")
-		class UParticleSystem* P_Basic_DeathSmoke;
+		class UParticleSystem* P_BurnDeathSmoke;
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+		class UParticleSystem* P_PoisionDeathSmoke;
 
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		TArray<class UMaterialInstanceDynamic*> MatInstDynamicArray;
 
-	//TODO : 변수 뺄 꺼 정리..
-	//문제는 포이즌 에서 죽었을 땐, 재가 되어라, 가 안됨
-	//M_Char 가 계속 나옴.
-	//그냥 내일 PoisionSkeletal 을 만들어서 Poision 을 해보자..
-	// 지금 Poision 어딘가 잘못됐다.
-	UPROPERTY(VisibleAnywhere, Category = "Data")
+	UPROPERTY(EditAnywhere, Category = "Data")
 		float MatDynamicValueSpeed = 20.0f;
 
 	#pragma endregion
@@ -129,9 +127,16 @@ public:
 	virtual void OnCollision() override;
 	virtual void OffCollision() override;
 
+	/* Function */
 private:
 	void OnDelegateCharactorDestroy();
 	void CallDestory();
+
+	/* 재가 되는 Death 에 적합한 DamageType 인지 판별 */
+	void CheckDamageTypeForDeath();
+
+	/* 재가 되는 Death 를 만들기 위해 동적 Material 생성 후, Container Add */
+	void InsertMatInstDynamic(const enum class ECharactorMeshSort Sort, FLinearColor Color);
 
 	#pragma region Member
 private:
