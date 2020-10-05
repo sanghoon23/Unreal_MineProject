@@ -53,7 +53,7 @@ IIC_BaseAttack * UCHM_AssassinAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type
 {
 	IfTrueRetResult
 	(
-		Type >= static_cast<uint8>(HM_AssassinAttackType::END),
+		Type >= static_cast<uint8>(EHM_AssassinAttackType::END),
 		nullptr
 	);
 
@@ -61,15 +61,15 @@ IIC_BaseAttack * UCHM_AssassinAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type
 	uint8 BeforeTypeNum = static_cast<uint8>(AttackType);
 
 	// @µé¾î¿Â Type
-	HM_AssassinAttackType SetType = static_cast<HM_AssassinAttackType>(Type);
+	EHM_AssassinAttackType SetType = static_cast<EHM_AssassinAttackType>(Type);
 	if (AttackType == SetType)
 	{
-		// @Tick true
-		IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[Type]);
-		if (IC_Comp != nullptr)
-		{
-			IC_Comp->IsRunTick(true);
-		}
+		//// @Tick true
+		//IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[Type]);
+		//if (IC_Comp != nullptr)
+		//{
+		//	IC_Comp->IsRunTick(true);
+		//}
 
 		return Cast<IIC_BaseAttack>(BasicAttackStateArray[Type]); //@return
 	}
@@ -112,6 +112,27 @@ IIC_BaseAttack * UCHM_AssassinAttackComp::GetCurrentIBaseAttack()
 	}
 
 	return Cast<IIC_BaseAttack>(BasicAttackStateArray[CurrentType]);
+}
+
+void UCHM_AssassinAttackComp::GetBaseAttackList(TArray<class UC_BaseAttackState*>& Out)
+{
+	for (auto& BaseAttack : BasicAttackStateArray)
+	{
+		//IIC_BaseAttack* Insert = Cast<IIC_BaseAttack>(BaseAttack)
+		Out.Add(BaseAttack);
+	}
+}
+
+UC_BaseAttackState * UCHM_AssassinAttackComp::GetBaseAttack(uint8 Type)
+{
+	int TypeNum = static_cast<int>(Type);
+	if (TypeNum > BasicAttackStateArray.Num() - 1)
+	{
+		CLog::Print(L"CHM_AssassinATKComp GetBaseAttack Array Excess!!");
+		return nullptr; /*@Return*/
+	}
+
+	return BasicAttackStateArray[TypeNum];
 }
 
 

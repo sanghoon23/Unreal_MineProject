@@ -38,11 +38,15 @@ public:
 
 	/* Function */
 public:
-	void SetInitial(APlayerController* PC, FVector WorldLocation, EFloatingComboColor UIColor);
+	void SetOwner(APawn* InPawn) { Owner = InPawn; }
+	void SetInitial(APlayerController* PC, FVector WorldLocation, EFloatingComboColor UIColor, bool bRandomPos = false);
 	void SetDisplayDamageValue(float fValue) { DisplayDamageValue = fValue; }
 
 	/* Member */
 private:
+	APlayerController* PlayerController = nullptr;
+	APawn* Owner = nullptr;
+
 	FVector2D Location = FVector2D(0.0f);
 	FLinearColor Color = FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 

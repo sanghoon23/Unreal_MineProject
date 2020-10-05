@@ -77,7 +77,7 @@ void UCHM_AssaFirstAttack::BeginAttack(AActor * DoingActor)
 		HM_Assassin->ActorAnimMonPlay
 		(
 			AttackMontages[0], /* @FirstMontage == Combo1 */
-			0.9f, false
+			0.9f, true
 		);
 	}
 }

@@ -218,14 +218,14 @@ void ACProjectile_Shuriken::OnBeginOverlap(UPrimitiveComponent * OverlappedCompo
 				// 1.2 Hit - DT_Normal
 				UCDamageType_Normal* DT_Normal = NewObject<UCDamageType_Normal>();
 				DT_Normal->SetDamageImpulse(20.0f);
-				HitComp->OnHit(this, DT_Normal, DT_Normal->DamageImpulse);
+				HitComp->OnHit(GetOwner(), DT_Normal, DT_Normal->DamageImpulse);
 
 				// 1.3 Hit - DT_Poision
 				UCDamageType_Poision* DT_Poision = NewObject<UCDamageType_Poision>();
 				DT_Poision->SetDamageImpulse(5.0f);
 				DT_Poision->SetSecondDamageValue(5.0f);
 				DT_Poision->SetPoisioningTime(5.0f);
-				HitComp->OnHit(this, DT_Poision, DT_Poision->DamageImpulse);
+				HitComp->OnHit(GetOwner(), DT_Poision, DT_Poision->DamageImpulse);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"Projectile FreezeBall OnBeginOverlap - HitComp Null!!");

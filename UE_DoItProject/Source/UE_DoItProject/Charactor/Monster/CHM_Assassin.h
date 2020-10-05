@@ -14,7 +14,7 @@
 #include "CHM_Assassin.generated.h"
 
 UENUM()
-enum class EAssa_AngerState
+enum class EAssa_AngerState : uint8
 {
 	NONE = 0,
 	DOING = 1,

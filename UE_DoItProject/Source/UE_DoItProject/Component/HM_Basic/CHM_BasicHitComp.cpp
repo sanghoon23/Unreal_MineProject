@@ -174,7 +174,6 @@ void UCHM_BasicHitComp::BeginPlay()
 		bDamaged = true; //@다른 몽타주가 실행되기 때문에
 	});
 
-	//TODO : 캐릭터마다 코드 넣어주고, Array 를 Init 으로 싸이즈 잡아놓자.
 	//@Set Charactor Mesh
 	{
 		const uint8 OriginNum = static_cast<uint8>(ECharactorMeshSort::ORIGIN);

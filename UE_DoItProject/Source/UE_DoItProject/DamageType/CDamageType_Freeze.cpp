@@ -68,12 +68,13 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	APawn* const DamagedPawn = Cast<APawn>(DamagedActor);
 	check(DamagedPawn);
 
-	AController* const PawnController = DamagedPawn->GetController();
+	AController* PawnController = Cast<APawn>(Subject)->GetController();
 	check(PawnController);
 
 	//@Create ConditionData
 	UCUpset_Freeze* FreezeConditionData = NewObject<UCUpset_Freeze>();
 	check(FreezeConditionData);
+	FreezeConditionData->SetCauser(Subject); //@주체자 설정
 	FreezeConditionData->ApplyTime = GetFreezingTime();
 	FreezeConditionData->SetDamageSubjectController(PawnController);
 
@@ -90,7 +91,7 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 		FreezeConditionData->SetDamageEvent(DamageEvent);
 
 		//@TakeDamage
-		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 	}
 
 	//@죽음 확인

@@ -7,7 +7,7 @@
 #include "CHM_MaoAttackComp.generated.h"
 
 UENUM()
-enum class HM_PengMaoAttackType
+enum class EHM_PengMaoAttackType : uint8
 {
 	FIRSTATTACK = 0, //@¿¬¼Ó °ø°Ý
 	SECONDATTACK = 1, //@³»·ÁÂï°í ºù°á
@@ -59,9 +59,11 @@ public:
 	IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
 	IIC_BaseAttack* GetCurrentIBaseAttack() override;
 
+	virtual void GetBaseAttackList(TArray<class UC_BaseAttackState*>& Out) override {};
+
 	#pragma	region Member
 private:
-	HM_PengMaoAttackType AttackType = HM_PengMaoAttackType::FIRSTATTACK;
+	EHM_PengMaoAttackType AttackType = EHM_PengMaoAttackType::FIRSTATTACK;
 
 	#pragma endregion
 

@@ -5,6 +5,9 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
+#include "Interface/IC_Player.h"
+#include "Interface/IC_HitComp.h"
+
 #include "AI/Controller/CAIC_HM_Basic.h"
 #include "UI/Widget/WG_FloatingCombo.h"
 
@@ -39,11 +42,18 @@ ACHM_Shaman::ACHM_Shaman()
 	//@LOAD Death Particle
 	{
 		FString strPath = L"";
-		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Shaman/P_Shaman_ForDeathSmoke.P_Shaman_ForDeathSmoke'";
-		ConstructorHelpers::FObjectFinder<UParticleSystem> P_DeathSmoke(*strPath);
-		if (P_DeathSmoke.Succeeded())
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Shaman/P_Shaman_ForDeathSmoke_Burn.P_Shaman_ForDeathSmoke_Burn'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_BurnDeath(*strPath);
+		if (P_BurnDeath.Succeeded())
 		{
-			P_Shaman_DeathSmoke = P_DeathSmoke.Object;
+			P_Shaman_BurnDeathSmoke = P_BurnDeath.Object;
+		}
+
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Monster/Shaman/P_Shaman_ForDeathSmoke_Poision.P_Shaman_ForDeathSmoke_Poision'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_PoisionDeath(*strPath);
+		if (P_PoisionDeath.Succeeded())
+		{
+			P_Shaman_PoisionDeathSmoke = P_PoisionDeath.Object;
 		}
 	}
 
@@ -79,49 +89,12 @@ void ACHM_Shaman::Tick(float DeltaTime)
 	{
 		if (bDeath == true)
 		{
-			InsertTimer += DeltaTime;
-			if (bInsertForDeathMesh == false && InsertTimer > 3.0f)
-			{
-				bInsertForDeathMesh = true;
-
-				GetIHitComp()->SettingCustomCharactorMesh(ECharactorMeshSort::FORDEATH);
-
-				//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
-				int32 MatCount = GetMesh()->GetNumMaterials();
-				for (int i = 0; i < MatCount; ++i)
-				{
-					UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
-					if (MInst != nullptr)
-					{
-						UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
-						if (TargetMat != nullptr)
-						{
-							GetMesh()->SetMaterial(i, TargetMat); //@Set
-							MatInstDynamicArray.Add(TargetMat);
-						}
-					}
-				}
-			}//(bInsertForDeathMesh)
-
 			for (UMaterialInstanceDynamic* Inst : MatInstDynamicArray)
 			{
 				FMaterialParameterInfo MatInfo;
 				MatInfo.Name = "Appearance";
 				float OutValue = 0.0f;
 				Inst->GetScalarParameterValue(MatInfo, OutValue);
-
-				if (FMath::IsNearlyEqual(OutValue, 0.6f, 0.01f))
-				{
-					//@죽을 때 연기(Smoke) 나옴.
-					FTransform P_Transform;
-					P_Transform.SetLocation(GetActorLocation());
-					P_Transform.SetScale3D(FVector(4.0f));
-					if (P_Shaman_DeathSmoke != nullptr)
-					{
-						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), P_Shaman_DeathSmoke, P_Transform, true);
-						P_Shaman_DeathSmoke = nullptr;
-					}
-				}
 
 				(OutValue > 0.0f)
 					? OutValue -= 0.01f * DeltaTime * MatDynamicValueSpeed
@@ -258,24 +231,34 @@ float ACHM_Shaman::TakeDamage(float DamageAmount, FDamageEvent const & DamageEve
 
 	//@UI
 	{
-		UWorld* const World = GetWorld();
-
-		FVector InsertPos = GetActorLocation();
-
-		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
-		if (FloatingComboUI != nullptr)
+		IIC_Player* IC_Player = Cast<IIC_Player>(DamageCauser);
+		if (IC_Player != nullptr)
 		{
-			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
-			if (PC != nullptr && bUsingFloatingComboUI)
+			APawn* PlayerTarget = IC_Player->GetFindAttackTarget();
+			if (this == PlayerTarget && PlayerTarget != nullptr)
 			{
-				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
-				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+				UWorld* const World = GetWorld();
 
-				FloatingComboUI->AddToViewport();
-			}
-			else
-			{
-				bUsingFloatingComboUI = true;
+				FVector InsertPos = GetActorLocation();
+				InsertPos.Z += GetDefaultHalfHeight() + 100.0f;
+
+				UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+				if (FloatingComboUI != nullptr)
+				{
+					APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
+					if (PC != nullptr && bUsingFloatingComboUI)
+					{
+						FloatingComboUI->SetOwner(this);
+						FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
+						FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+						FloatingComboUI->AddToViewport();
+					}
+					else
+					{
+						bUsingFloatingComboUI = true;
+					}
+				}
 			}
 		}
 	}
@@ -284,6 +267,7 @@ float ACHM_Shaman::TakeDamage(float DamageAmount, FDamageEvent const & DamageEve
 
 	if (Info.CurrentHP <= 0.0f)
 	{
+		CheckDamageTypeForDeath();
 		OnDeath();
 	}
 	return Info.CurrentHP;
@@ -298,6 +282,99 @@ void ACHM_Shaman::OnDelegateCharactorDestroy()
 void ACHM_Shaman::CallDestory()
 {
 	Destroy();
+}
+
+void ACHM_Shaman::CheckDamageTypeForDeath()
+{
+	//@Burn 이나 Poision 이 적용되어 있다면,
+	//이 때, 둘 다 적용되어있다면?? -> 나중에 적용되어있는 쪽으로..
+	//둘 다 없을 땐 실행 안함
+	int BurnTypeIndex = -1, PoisionTypeIndex = -1;
+	bool bApplyMatInstDynamic = false;
+	FLinearColor InsertColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	FLinearColor BurnColor = FLinearColor(0.88f, 0.072f, 0.0f, 0.0f);
+	FLinearColor PoisionColor = FLinearColor(0.0f, 1.0f, 0.0f, 0.0f);
+
+	bool bExistBurn = GetIHitComp()->GetApplyUpsetStateInContainer(EHitUpset::BURN, BurnTypeIndex);
+	if (bExistBurn == true)
+	{
+		bApplyMatInstDynamic = true;
+		InsertColor = BurnColor;
+	}
+
+	bool bExistPoision = GetIHitComp()->GetApplyUpsetStateInContainer(EHitUpset::POISION, PoisionTypeIndex);
+	if (bExistPoision == true)
+	{
+		bApplyMatInstDynamic = true;
+		if (PoisionTypeIndex > BurnTypeIndex)
+		{
+			InsertColor = PoisionColor;
+		}
+	}
+	//@Doing
+	if (bApplyMatInstDynamic == true)
+	{
+		InsertMatInstDynamic(ECharactorMeshSort::FORDEATH, InsertColor);
+
+		UParticleSystem* DoingParticle = nullptr;
+		(InsertColor == BurnColor)
+			? DoingParticle = P_Shaman_BurnDeathSmoke
+			: DoingParticle = P_Shaman_PoisionDeathSmoke;
+
+		UWorld* const World = GetWorld();
+		FVector P_Location = GetActorLocation();
+
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([DoingParticle, World, P_Location]()
+		{
+			//@죽을 때 연기(Smoke) 나옴.
+			FTransform P_Transform;
+			P_Transform.SetLocation(P_Location);
+			P_Transform.SetScale3D(FVector(4.0f));
+			if (DoingParticle != nullptr)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(World, DoingParticle, P_Transform, true);
+			}
+		});
+
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 3.0f, false);
+	}
+}
+
+/*
+@Burn 으로 죽었을 시, Color - (0.78f, 0.072f, 0.0f, 0.0f)
+@Poision 으로 죽었을 시, Color - ...
+*/
+void ACHM_Shaman::InsertMatInstDynamic(const ECharactorMeshSort Sort, FLinearColor Color)
+{
+	GetIHitComp()->SettingCustomCharactorMesh(Sort);
+
+	//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
+	int32 MatCount = GetMesh()->GetNumMaterials();
+	for (int i = 0; i < MatCount; ++i)
+	{
+		UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
+		if (MInst != nullptr)
+		{
+			UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
+			if (TargetMat != nullptr)
+			{
+				//@Set Color
+				TargetMat->SetVectorParameterValue(FName("Color"), Color);
+
+				FMaterialParameterInfo MatInfo;
+				MatInfo.Name = "Color";
+				FLinearColor OutColor;
+				TargetMat->GetVectorParameterValue(MatInfo, OutColor);
+				CLog::Print(FVector(OutColor));
+
+				//@Set Material
+				GetMesh()->SetMaterial(i, TargetMat); //@Set
+				MatInstDynamicArray.Add(TargetMat);
+			}
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

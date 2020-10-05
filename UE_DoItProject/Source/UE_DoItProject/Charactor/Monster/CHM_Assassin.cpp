@@ -5,9 +5,10 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
+#include "Interface/IC_Player.h"
 #include "Component/Base/C_BaseAbilityComp.h"
 
-#include "AI/Controller/CAIC_HM_PengMao.h"
+#include "AI/Controller/CAIC_HM_Assassin.h"
 #include "UI/Widget/WG_FloatingCombo.h"
 
 ACHM_Assassin::ACHM_Assassin()
@@ -95,6 +96,17 @@ void ACHM_Assassin::Tick(float DeltaTime)
 
 		/* 지금 계속 호출된다..? */
 		//CLog::Print(L"OnAction CALL!!");
+
+		ACAIC_HM_Assassin* HM_AssaController = Cast<ACAIC_HM_Assassin>(GetController());
+		if (HM_AssaController != nullptr)
+		{
+			CLog::Print(L"AssaController NOT NULL!!");
+
+			//TODO : 분노되면 스킬 추가.
+			//들어오는거 확인했음, 불러와서 추가하면됨.
+			HM_AssaController->AddTypeRandomAttack(EHM_AssassinAttackType::THIRDATTACK);
+			HM_AssaController->AddTypeRandomAttack(EHM_AssassinAttackType::FIVEATTACK);
+		}
 
 		AngerAction->OnAction();
 		AngerState = EAssa_AngerState::DOING;
@@ -318,24 +330,34 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 
 	//@UI
 	{
-		UWorld* const World = GetWorld();
-
-		FVector InsertPos = GetActorLocation();
-
-		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
-		if (FloatingComboUI != nullptr)
+		IIC_Player* IC_Player = Cast<IIC_Player>(DamageCauser);
+		if (IC_Player != nullptr)
 		{
-			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
-			if (PC != nullptr && bUsingFloatingComboUI)
+			APawn* PlayerTarget = IC_Player->GetFindAttackTarget();
+			if (this == PlayerTarget && PlayerTarget != nullptr)
 			{
-				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
-				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+				UWorld* const World = GetWorld();
 
-				FloatingComboUI->AddToViewport();
-			}
-			else
-			{
-				bUsingFloatingComboUI = true;
+				FVector InsertPos = GetActorLocation();
+				InsertPos.Z += GetDefaultHalfHeight() + 100.0f;
+
+				UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+				if (FloatingComboUI != nullptr)
+				{
+					APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
+					if (PC != nullptr && bUsingFloatingComboUI)
+					{
+						FloatingComboUI->SetOwner(this);
+						FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
+						FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+						FloatingComboUI->AddToViewport();
+					}
+					else
+					{
+						bUsingFloatingComboUI = true;
+					}
+				}
 			}
 		}
 	}

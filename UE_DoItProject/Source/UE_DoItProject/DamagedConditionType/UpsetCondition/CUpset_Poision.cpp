@@ -5,6 +5,8 @@
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_HitComp.h"
 
+#include "Interface/IC_WidgetInfo.h"
+
 UCUpset_Poision::UCUpset_Poision()
 {
 	//Super
@@ -21,8 +23,15 @@ void UCUpset_Poision::UpdateCondition(APawn * Owner, float DeltaTime)
 	{
 		SecondTimer = 0.0f;
 
+		//@UI Ç¥±â X
+		IIC_WidgetInfo* I_Widget = Cast<IIC_WidgetInfo>(Owner);
+		if (I_Widget != nullptr)
+		{
+			I_Widget->SetOnceNoneUsingFloatingCombo();
+		}
+
 		//@Take Damage
-		Owner->TakeDamage(SecondDamage, DamageEvent, GetDamageSubjectController(), Owner);
+		Owner->TakeDamage(SecondDamage, DamageEvent, GetDamageSubjectController(), Causer);
 	}
 }
 

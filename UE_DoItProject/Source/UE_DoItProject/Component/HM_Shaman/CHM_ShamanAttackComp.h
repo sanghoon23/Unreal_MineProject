@@ -7,7 +7,7 @@
 #include "CHM_ShamanAttackComp.generated.h"
 
 UENUM()
-enum class HM_ShamanAttackType
+enum class EHM_ShamanAttackType : uint8
 {
 	FIRSTATTACK = 0,
 	SECONDATTACK = 1,
@@ -40,9 +40,11 @@ public:
 	IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
 	IIC_BaseAttack* GetCurrentIBaseAttack() override;
 
+	virtual void GetBaseAttackList(TArray<class UC_BaseAttackState*>& Out) override {};
+
 	#pragma	region Member
 private:
-	HM_ShamanAttackType AttackType = HM_ShamanAttackType::FIRSTATTACK;
+	EHM_ShamanAttackType AttackType = EHM_ShamanAttackType::FIRSTATTACK;
 
 	#pragma endregion
 

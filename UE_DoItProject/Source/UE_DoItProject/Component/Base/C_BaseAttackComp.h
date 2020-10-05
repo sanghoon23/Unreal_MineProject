@@ -29,6 +29,9 @@ public:
 	virtual IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override { return nullptr; }
 	virtual IIC_BaseAttack* GetCurrentIBaseAttack() override { return nullptr; }
 
+	virtual void GetBaseAttackList(TArray<class UC_BaseAttackState*>& Out) override {};
+
+	virtual UC_BaseAttackState* GetBaseAttack(uint8 Type) override { return nullptr; };
 
 	#pragma	region Member
 protected:

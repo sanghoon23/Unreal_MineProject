@@ -231,7 +231,7 @@ public:
 	int GetCurrentAttackStateType();
 
 	// @TargetSystem
-	APawn* GetFindAttackTarget();
+	virtual APawn* GetFindAttackTarget() override;
 
 	// @Target System
 	class UCS_TargetingSystem* GetTargetingSystem() { return TargetSystem; }

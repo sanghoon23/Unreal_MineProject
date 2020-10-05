@@ -5,6 +5,8 @@
 #include "Interface/IC_HitComp.h"
 #include "Interface/IC_MeshParticle.h"
 
+#include "Interface/IC_WidgetInfo.h"
+
 UCUpset_Burn::UCUpset_Burn()
 {
 	//Super
@@ -47,8 +49,15 @@ void UCUpset_Burn::UpdateCondition(APawn * Owner, float DeltaTime)
 	{
 		SecondTimer = 0.0f;
 
+		//@UI Ç¥±â X
+		IIC_WidgetInfo* I_Widget = Cast<IIC_WidgetInfo>(Owner);
+		if (I_Widget != nullptr)
+		{
+			I_Widget->SetOnceNoneUsingFloatingCombo();
+		}
+
 		//@Take Damage
-		Owner->TakeDamage(SecondDamage, DamageEvent, GetDamageSubjectController(), Owner);
+		Owner->TakeDamage(SecondDamage, DamageEvent, GetDamageSubjectController(), Causer);
 	}
 }
 

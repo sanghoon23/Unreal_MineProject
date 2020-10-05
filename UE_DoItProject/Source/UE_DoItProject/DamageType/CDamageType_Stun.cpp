@@ -57,15 +57,18 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	APawn* const DamagedPawn = Cast<APawn>(DamagedActor);
 	check(DamagedPawn);
 
-	AController* const PawnController = DamagedPawn->GetController();
+	AController* PawnController = Cast<APawn>(Subject)->GetController();
 	check(PawnController);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//@Set UpsetStun Setting
 	UCUpset_Stun* UpsetStun = NewObject<UCUpset_Stun>();
+	check(UpsetStun);
+	UpsetStun->SetCauser(Subject); //@주체자 설정
 	UpsetStun->ApplyTime = GetStunTime();
 	UpsetStun->SetDamageSubjectController(PawnController);
+
 	const uint8 StunMontageNum = static_cast<uint8>(FDamageType::STUN);
 	UAnimMontage* StunMontage = DamagedActorHitComp->GetDamagedMontageOrNull(StunMontageNum);
 	if (StunMontage != nullptr)
@@ -87,7 +90,7 @@ void UCDamageType_Stun::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	UpsetStun->SetDamageEvent(DamageEvent); //@Set
 
 	//@Take Damage
-	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 
 	//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
 	const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());

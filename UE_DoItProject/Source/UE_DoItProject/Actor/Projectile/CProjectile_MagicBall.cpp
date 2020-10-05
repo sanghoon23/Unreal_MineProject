@@ -245,7 +245,7 @@ void ACProjectile_MagicBall::CheckSettingTarget()
 					HitComp->SetHitMoveSpeed(0.3f);
 
 					// 1.2 Hit Delegate - Air(DamageType)
-					HitComp->OnHit(this, DT_Normal, 10.0f);
+					HitComp->OnHit(GetOwner(), DT_Normal, 10.0f);
 				}
 				else
 					UE_LOG(LogTemp, Warning, L"ACProjectile MagicBall CallAttack - HitComp Null!!");

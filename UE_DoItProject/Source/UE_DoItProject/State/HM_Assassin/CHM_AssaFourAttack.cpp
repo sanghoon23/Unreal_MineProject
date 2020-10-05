@@ -59,22 +59,29 @@ void UCHM_AssaFourAttack::BeginPlay()
 	//@IC_Charactor
 	I_Charactor = Cast<IIC_Charactor>(HM_Assassin);
 	check(I_Charactor);
+
+	//@Get StartSectionLength, EndSectionLength -->> 느리게 시작된 몽타주 다시 원래 속도로.
+	const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
+	AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
+
+	CLog::Print(StartSectionLength);
+	CLog::Print(EndSectionLength);
 }
 
 void UCHM_AssaFourAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	CLog::Print(L"FourAttack Tick IN!!");
+
 	UAnimInstance* OwnerAnimInst = HM_Assassin->GetMesh()->GetAnimInstance();
-	if (OwnerAnimInst != nullptr && bAttacking == true) //@공격이 실행됐을 때,
+	if (OwnerAnimInst != nullptr && bAttacking == true && bSettingPlayRate == false) //@공격이 실행됐을 때,
 	{
 		float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
-		float StartSectionLength, EndSectionLength = 0.0f;
-		const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
-		AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
-
+		CLog::Print(CurrentMonPos);
 		if (CurrentMonPos >= StartSectionLength) //@다음 섹션(NextAction)
 		{
+			bSettingPlayRate = true;
 			OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
 		}
 	}
@@ -99,8 +106,10 @@ void UCHM_AssaFourAttack::BeginAttack(AActor * DoingActor)
 		HM_Assassin->ActorAnimMonPlay
 		(
 			AttackMontages[0], /* @FirstMontage == Combo1 */
-			0.2f, false
+			0.2f, true
 		);
+
+		bSettingPlayRate = false;
 	}
 }
 

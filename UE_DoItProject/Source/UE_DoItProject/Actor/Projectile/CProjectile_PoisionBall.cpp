@@ -75,6 +75,7 @@ ACProjectile_PoisionBall::ACProjectile_PoisionBall()
 	DamageType_Normal = NewObject<UCDamageType_Normal>();
 
 	DamageType_Poision = NewObject<UCDamageType_Poision>();
+	DamageType_Poision->SetDamageImpulse(10.0f);
 	DamageType_Poision->SetSecondDamageValue(3.0f);
 	DamageType_Poision->SetPoisioningTime(5.0f);
 
@@ -194,7 +195,8 @@ void ACProjectile_PoisionBall::CheckSettingTarget()
 				HitComp->SetHitMoveSpeed(0.0f);
 
 				// 1.2 Hit Delegate - Normal(DamageType)
-				HitComp->OnHit(this, DamageType_Poision, 10.0f);
+				CLog::Print(GetOwner()->GetName());
+				HitComp->OnHit(GetOwner(), DamageType_Poision, DamageType_Poision->DamageImpulse);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"Projectile Poisionball OnBeginOverlap - HitComp Null!!");

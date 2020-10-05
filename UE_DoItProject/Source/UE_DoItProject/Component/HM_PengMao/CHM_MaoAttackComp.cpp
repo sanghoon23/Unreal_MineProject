@@ -49,7 +49,7 @@ IIC_BaseAttack * UCHM_MaoAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 {
 	IfTrueRetResult
 	(
-		Type >= static_cast<uint8>(HM_PengMaoAttackType::END),
+		Type >= static_cast<uint8>(EHM_PengMaoAttackType::END),
 		nullptr
 	);
 
@@ -57,7 +57,7 @@ IIC_BaseAttack * UCHM_MaoAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	uint8 BeforeTypeNum = static_cast<uint8>(AttackType);
 
 	// @µé¾î¿Â Type
-	HM_PengMaoAttackType SetType = static_cast<HM_PengMaoAttackType>(Type);
+	EHM_PengMaoAttackType SetType = static_cast<EHM_PengMaoAttackType>(Type);
 	if (AttackType == SetType)
 	{
 		// @Tick true

@@ -19,4 +19,5 @@ class UE_DOITPROJECT_API IIC_ActionComp
 public:
 	/* Action Component 에 속한 IBaseAction Interface 를 가져옴 */
 	virtual IIC_BaseAction* GetIBaseAction(uint8 Type) = 0;
+
 };

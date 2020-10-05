@@ -40,7 +40,10 @@ private:
 		class UCMeshParticleComp* MeshParticleComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Particle")
-		class UParticleSystem* P_Shaman_DeathSmoke;
+		class UParticleSystem* P_Shaman_BurnDeathSmoke;
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+		class UParticleSystem* P_Shaman_PoisionDeathSmoke;
 
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		TArray<class UMaterialInstanceDynamic*> MatInstDynamicArray;
@@ -124,9 +127,16 @@ public:
 	virtual void OnCollision() override;
 	virtual void OffCollision() override;
 
+	/* Function */
 private:
 	void OnDelegateCharactorDestroy();
 	void CallDestory();
+
+	/* 재가 되는 Death 에 적합한 DamageType 인지 판별 */
+	void CheckDamageTypeForDeath();
+
+	/* 재가 되는 Death 를 만들기 위해 동적 Material 생성 후, Container Add */
+	void InsertMatInstDynamic(const enum class ECharactorMeshSort Sort, FLinearColor Color);
 
 	#pragma region Member
 private:

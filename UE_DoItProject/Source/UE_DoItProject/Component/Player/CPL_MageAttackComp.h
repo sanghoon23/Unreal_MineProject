@@ -45,6 +45,8 @@ public:
 	IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
 	IIC_BaseAttack* GetCurrentIBaseAttack() override;
 
+	virtual void GetBaseAttackList(TArray<class UC_BaseAttackState*>& Out) override {};
+
 	#pragma	region Member
 public:
 

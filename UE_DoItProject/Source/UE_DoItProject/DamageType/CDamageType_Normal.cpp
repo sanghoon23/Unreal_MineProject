@@ -37,11 +37,21 @@ void UCDamageType_Normal::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	{
 		APawn* DamagedPawn = Cast<APawn>(DamagedActor);
 		check(DamagedPawn);
-		AController* PawnController = Cast<AController>(Cast<APawn>(DamagedActor));
+
+		AController* PawnController = Cast<APawn>(Subject)->GetController();
+		check(PawnController);
+
+		//Test Code
+		//if (PawnController != nullptr)
+		//{
+		//	CLog::Print(L"PawnController NOT NULL!!");
+		//}
+		//else CLog::Print(L"PawnController NULL!!");
+
 
 		FDamageEvent DamageEvent;
 		DamageEvent.DamageTypeClass = GetClass();
-		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 	}
 
 	//@Motage

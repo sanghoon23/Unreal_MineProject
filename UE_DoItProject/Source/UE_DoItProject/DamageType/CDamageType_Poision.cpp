@@ -44,7 +44,7 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 	APawn* const DamagedPawn = Cast<APawn>(DamagedActor);
 	check(DamagedPawn);
 
-	AController* const PawnController = DamagedPawn->GetController();
+	AController* PawnController = Cast<APawn>(Subject)->GetController();
 	check(PawnController);
 
 	//@예외처리
@@ -53,6 +53,7 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 	//@Create ConditionData
 	UCUpset_Poision* PoisionConditionData = NewObject<UCUpset_Poision>();
 	check(PoisionConditionData);
+	PoisionConditionData->SetCauser(Subject); //@주체자 설정
 	PoisionConditionData->ApplyTime = GetPoisioningTime();
 	PoisionConditionData->SetDamageSubjectController(PawnController);
 	PoisionConditionData->SetSecondDamage(GetSecondDamageValue());
@@ -63,7 +64,7 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 	PoisionConditionData->SetDamageEvent(DamageEvent);
 
 	//@TakeDamage
-	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 
 	//@죽음 확인
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);

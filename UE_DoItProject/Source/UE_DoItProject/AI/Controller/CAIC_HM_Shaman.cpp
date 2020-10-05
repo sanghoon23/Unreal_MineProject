@@ -5,9 +5,17 @@
 #include "NavigationSystem.h"
 
 #include "Interface/IC_Charactor.h"
+#include "Interface/IC_AttackComp.h"
+#include "Interface/IC_BaseAttack.h"
+
+#include "Charactor/Monster/CHM_Shaman.h"
 
 ACAIC_HM_Shaman::ACAIC_HM_Shaman()
 {
+	PatrolRadius = 400.0f;
+	DetectRadius = 900.0f;
+	AttackRange = 500.0f;
+
 	FString path = L"";
 
 	path = L"BlackboardData'/Game/_Mine/_MyBlueprint/AI/Blackboard/BB_HM_Shaman.BB_HM_Shaman'";
@@ -37,6 +45,15 @@ void ACAIC_HM_Shaman::OnPossess(APawn * InPawn)
 
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(InPawn);
 	IfNullRet(Charactor);
+
+	//@Pattern Attack
+	{
+		int FirstAttack = static_cast<int>(EHM_ShamanAttackType::FIRSTATTACK);
+		PatternAttackTypeList.Add(FirstAttack);
+
+		int SecondAttack = static_cast<int>(EHM_ShamanAttackType::SECONDATTACK);
+		PatternAttackTypeList.Add(SecondAttack);
+	}
 
 	if (UseBlackboard(BB, Blackboard))
 	{

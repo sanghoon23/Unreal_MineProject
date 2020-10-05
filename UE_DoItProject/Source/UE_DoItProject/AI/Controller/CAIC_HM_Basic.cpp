@@ -10,6 +10,10 @@ ACAIC_HM_Basic::ACAIC_HM_Basic()
 {
 	//SetGenericTeamId(FGenericTeamId(1));
 
+	PatrolRadius = 400.0f;
+	DetectRadius = 800.0f;
+	AttackRange = 220.0f;
+
 	FString path = L"";
 
 	path = L"BlackboardData'/Game/_Mine/_MyBlueprint/AI/Blackboard/BB_HM_Basic.BB_HM_Basic'";

@@ -7,7 +7,7 @@
 #include "CHM_BasicAttackComp.generated.h"
 
 UENUM()
-enum class HM_BasicAttackType
+enum class EHM_BasicAttackType : uint8
 {
 	BASIC = 0,
 	END = 1,
@@ -39,9 +39,11 @@ public:
 	IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
 	IIC_BaseAttack* GetCurrentIBaseAttack() override;
 
+	virtual void GetBaseAttackList(TArray<class UC_BaseAttackState*>& Out) override {};
+
 #pragma	region Member
 private:
-	HM_BasicAttackType AttackType = HM_BasicAttackType::BASIC;
+	EHM_BasicAttackType AttackType = EHM_BasicAttackType::BASIC;
 
 #pragma endregion
 };

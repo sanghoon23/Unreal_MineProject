@@ -5,7 +5,7 @@
 #include "CHM_AssassinAttackComp.generated.h"
 
 UENUM()
-enum class HM_AssassinAttackType
+enum class EHM_AssassinAttackType : uint8
 {
 	FIRSTATTACK = 0, //@Test
 	SECONDATTACK = 1,
@@ -42,9 +42,12 @@ public:
 	IIC_BaseAttack* SetAttackTypeRetIBaseAttack(uint8 Type) override;
 	IIC_BaseAttack* GetCurrentIBaseAttack() override;
 
+	virtual void GetBaseAttackList(TArray<class UC_BaseAttackState*>& Out) override;
+	virtual UC_BaseAttackState* GetBaseAttack(uint8 Type) override;
+
 #pragma	region Member
 private:
-	HM_AssassinAttackType AttackType = HM_AssassinAttackType::FIRSTATTACK;
+	EHM_AssassinAttackType AttackType = EHM_AssassinAttackType::FIRSTATTACK;
 
 #pragma endregion
 

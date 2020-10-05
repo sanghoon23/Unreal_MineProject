@@ -255,7 +255,7 @@ void ACProjectile_FreezeBall::CheckSettingTarget()
 				HitComp->SetHitMoveSpeed(0.0f);
 
 				// 1.2 Hit Delegate - BeginPlay(DT_Freeze ADD Delegate)
-				HitComp->OnHit(this, DT_Freeze, 20.0f);
+				HitComp->OnHit(GetOwner(), DT_Freeze, 20.0f);
 			}
 			else
 				UE_LOG(LogTemp, Warning, L"Projectile FreezeBall OnBeginOverlap - HitComp Null!!");

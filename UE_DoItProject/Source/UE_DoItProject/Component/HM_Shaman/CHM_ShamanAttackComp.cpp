@@ -42,7 +42,7 @@ IIC_BaseAttack * UCHM_ShamanAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 {
 	IfTrueRetResult
 	(
-		Type >= static_cast<uint8>(HM_ShamanAttackType::END),
+		Type >= static_cast<uint8>(EHM_ShamanAttackType::END),
 		nullptr
 	);
 
@@ -50,7 +50,7 @@ IIC_BaseAttack * UCHM_ShamanAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type)
 	uint8 BeforeTypeNum = static_cast<uint8>(AttackType);
 
 	// @µé¾î¿Â Type
-	HM_ShamanAttackType SetType = static_cast<HM_ShamanAttackType>(Type);
+	EHM_ShamanAttackType SetType = static_cast<EHM_ShamanAttackType>(Type);
 	if (AttackType == SetType)
 	{
 		// @Tick true

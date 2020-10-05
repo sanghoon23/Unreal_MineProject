@@ -5,6 +5,8 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
+#include "Interface/IC_Player.h"
+
 #include "AI/Controller/CAIC_HM_PengMao.h"
 #include "UI/Widget/WG_FloatingCombo.h"
 
@@ -266,24 +268,34 @@ float ACHM_PengMao::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 
 	//@UI
 	{
-		UWorld* const World = GetWorld();
-
-		FVector InsertPos = GetActorLocation();
-
-		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
-		if (FloatingComboUI != nullptr)
+		IIC_Player* IC_Player = Cast<IIC_Player>(DamageCauser);
+		if (IC_Player != nullptr)
 		{
-			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
-			if (PC != nullptr && bUsingFloatingComboUI)
+			APawn* PlayerTarget = IC_Player->GetFindAttackTarget();
+			if (this == PlayerTarget && PlayerTarget != nullptr)
 			{
-				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
-				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+				UWorld* const World = GetWorld();
 
-				FloatingComboUI->AddToViewport();
-			}
-			else
-			{
-				bUsingFloatingComboUI = true;
+				FVector InsertPos = GetActorLocation();
+				InsertPos.Z += GetDefaultHalfHeight() + 100.0f;
+
+				UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+				if (FloatingComboUI != nullptr)
+				{
+					APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
+					if (PC != nullptr && bUsingFloatingComboUI)
+					{
+						FloatingComboUI->SetOwner(this);
+						FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
+						FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+						FloatingComboUI->AddToViewport();
+					}
+					else
+					{
+						bUsingFloatingComboUI = true;
+					}
+				}
 			}
 		}
 	}

@@ -54,7 +54,7 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	APawn* const DamagedPawn = Cast<APawn>(DamagedActor);
 	check(DamagedPawn);
 
-	AController* const PawnController = DamagedPawn->GetController();
+	AController* PawnController = Cast<APawn>(Subject)->GetController();
 	check(PawnController);
 
 	//@예외처리 - Damage 를 받지 않는 상황
@@ -63,8 +63,10 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	//@Create ConditionData
 	UCUpset_Burn* BurnConditionData = NewObject<UCUpset_Burn>();
 	check(BurnConditionData);
+	BurnConditionData->SetCauser(Subject); //@주체자 설정
 	BurnConditionData->ApplyTime = GetBurnTime();
 	BurnConditionData->SetDamageSubjectController(PawnController);
+
 	UParticleSystem* HitCompBurnParticle = DamagedActorHitComp->GetBurnParticleOrNull();
 	if (HitCompBurnParticle != nullptr)
 	{
@@ -83,7 +85,7 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	BurnConditionData->SetDamageEvent(DamageEvent);
 
 	//@TakeDamage
-	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 
 	//@죽음 확인
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);

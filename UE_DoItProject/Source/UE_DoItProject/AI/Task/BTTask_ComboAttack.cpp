@@ -24,12 +24,8 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MonsterPawn);
 	IfNullRetResult(Charactor, EBTNodeResult::Failed);
 
-	CLog::Print(L"I_Charactor NOT NULL!!");
-
 	IIC_AttackComp* I_AttackComp = Charactor->GetIAttackComp();
 	IfNullRetResult(I_AttackComp, EBTNodeResult::Failed);
-
-	CLog::Print(L"I_AttackComp NOT NULL!!");
 
 	UNavigationSystemV1* Nav = UNavigationSystemV1::GetNavigationSystem(MonsterPawn->GetWorld());
 	IfNullRetResult(Nav, EBTNodeResult::Failed);
@@ -40,7 +36,7 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 		IIC_BaseAttack* BaseAttack = I_AttackComp->SetAttackTypeRetIBaseAttack(AttackTypeNum);
 		if (BaseAttack != nullptr)
 		{
-			CLog::Print(L"BaseAttack NOT NULL!!");
+			//CLog::Print(L"BaseAttack NOT NULL!!");
 			BaseAttack->BeginAttack(MonsterPawn);
 		}
 	}
@@ -48,12 +44,12 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	{
 		//@·£´ý Attack Type - BeginAttack
 		int Input = UKismetMathLibrary::RandomIntegerInRange(MinAttackRange, MaxAttackRange);
-		CLog::Print(Input);
+		//CLog::Print(Input);
 		IIC_BaseAttack* BaseAttack = I_AttackComp->SetAttackTypeRetIBaseAttack(Input);
 		check(BaseAttack);
 		if (BaseAttack != nullptr)
 		{
-			CLog::Print(L"Using Range BaseAttack NOT NULL!!");
+			//CLog::Print(L"Using Range BaseAttack NOT NULL!!");
 			BaseAttack->BeginAttack(MonsterPawn);
 		}
 	}

@@ -5,6 +5,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
+#include "Interface/IC_Player.h"
 #include "Interface/IC_HitComp.h"
 
 #include "DamagedConditionType/Base/CBaseConditionType.h"
@@ -256,28 +257,45 @@ float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 	IfFalseRetResult(CanBeDamaged(), MonsterInfo.CurrentHP);
 	IfTrueRetResult(bDeath == true, MonsterInfo.CurrentHP);
 
+	//CLog::Print(EventInstigator->GetOwner()->GetName());
+	//APawn* TestPawn = Cast<APawn>(EventInstigator->GetOwner());
+	//if (TestPawn != nullptr)
+	//{
+	//	CLog::Print(TestPawn->GetName());
+	//}
+
 	//@UI
 	{
-		UWorld* const World = GetWorld();
-
-		FVector InsertPos = GetActorLocation();
-
-		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
-		if (FloatingComboUI != nullptr)
+		IIC_Player* IC_Player = Cast<IIC_Player>(DamageCauser);
+		if (IC_Player != nullptr)
 		{
-			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
-			if (PC != nullptr && bUsingFloatingComboUI)
+			APawn* PlayerTarget = IC_Player->GetFindAttackTarget();
+			if (this == PlayerTarget && PlayerTarget != nullptr)
 			{
-				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
-				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+				UWorld* const World = GetWorld();
 
-				FloatingComboUI->AddToViewport();
+				FVector InsertPos = GetActorLocation();
+				InsertPos.Z += GetDefaultHalfHeight() + 100.0f;
+
+				UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
+				if (FloatingComboUI != nullptr)
+				{
+					APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
+					if (PC != nullptr && bUsingFloatingComboUI)
+					{
+						FloatingComboUI->SetOwner(this);
+						FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
+						FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+
+						FloatingComboUI->AddToViewport();
+					}
+					else
+					{
+						bUsingFloatingComboUI = true;
+					}
+				}
 			}
-			else
-			{
-				bUsingFloatingComboUI = true;
-			}
-		}
+		}//(IC_Player)
 	}
 
 	MonsterInfo.CurrentHP -= DamageAmount;
@@ -306,7 +324,7 @@ void ACHM_Basic::CheckDamageTypeForDeath()
 	//@Burn 이나 Poision 이 적용되어 있다면,
 	//이 때, 둘 다 적용되어있다면?? -> 나중에 적용되어있는 쪽으로..
 	//둘 다 없을 땐 실행 안함
-	int BurnTypeIndex, PoisionTypeIndex = -1;
+	int BurnTypeIndex = -1, PoisionTypeIndex = -1;
 	bool bApplyMatInstDynamic = false;
 	FLinearColor InsertColor = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	FLinearColor BurnColor = FLinearColor(0.88f, 0.072f, 0.0f, 0.0f);
@@ -334,6 +352,8 @@ void ACHM_Basic::CheckDamageTypeForDeath()
 		InsertMatInstDynamic(ECharactorMeshSort::FORDEATH, InsertColor);
 
 		UParticleSystem* DoingParticle = nullptr;
+		check(P_BurnDeathSmoke);
+		check(P_PoisionDeathSmoke);
 		(InsertColor == BurnColor)
 			? DoingParticle = P_BurnDeathSmoke
 			: DoingParticle = P_PoisionDeathSmoke;

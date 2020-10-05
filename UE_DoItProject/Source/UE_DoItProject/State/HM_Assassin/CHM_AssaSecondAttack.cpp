@@ -67,6 +67,9 @@ void UCHM_AssaSecondAttack::BeginAttack(AActor * DoingActor)
 	Super::BeginAttack(DoingActor);
 	check(DoingActor);
 
+	HM_Assassin = Cast<ACHM_Assassin>(GetOwner());
+	check(HM_Assassin);
+
 	// @IF TRUE RETURN
 	IfTrueRet(HM_Assassin->GetCharacterMovement()->IsFalling()); //@Jump Check
 	/* EquipComp 없다 */
@@ -78,7 +81,7 @@ void UCHM_AssaSecondAttack::BeginAttack(AActor * DoingActor)
 		HM_Assassin->ActorAnimMonPlay
 		(
 			AttackMontages[0], /* @FirstMontage == Combo1 */
-			0.9f, false
+			0.9f, true
 		);
 
 		//@이동

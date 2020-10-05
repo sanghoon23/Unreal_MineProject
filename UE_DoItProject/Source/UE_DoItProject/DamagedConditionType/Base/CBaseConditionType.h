@@ -92,10 +92,14 @@ public:
 	/* 해당 상태가 중첩되었을 때, */
 	virtual void ConditionOverlap(UCBaseConditionType* OverlappedCondition) {}
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Function */
 public:
 	class UTexture2D* GetTextureUI() { return TextureUI; }
 	void SetTextureUI(class UTexture2D* Texture);
+
+	/* ConditionType Damage 를 일으킨 주체자 설정 */
+	void SetCauser(AActor* InCauser) { Causer = InCauser; }
 
 protected:
 	/* UI Texture Opacity 초기화 */
@@ -104,6 +108,7 @@ protected:
 	/* UI Texture Opacity 를 이용한 깜빡거림 */
 	void UpdateUIColorAndOpacity(UCBaseConditionType* ConditionData);
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Member */
 public:
 	EHitUpset GetState() const { return State; }
@@ -121,4 +126,7 @@ protected:
 
 	// @Target Info UI 에 깜빡임의 정도
 	float OpacityLinearSpeed = 0.01f;
+
+	//@Damage 를 준 Causer (주체자)
+	AActor* Causer;
 };

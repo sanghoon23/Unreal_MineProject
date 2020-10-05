@@ -40,11 +40,12 @@ void UCDamageType_AirAttack::OnHittingProcess(AActor * Subject, AActor * Damaged
 		APawn* DamagedPawn = Cast<APawn>(DamagedActor);
 		if (DamagedPawn != nullptr)
 		{
-			AController* PawnController = Cast<AController>(Cast<APawn>(DamagedActor));
+			AController* PawnController = Cast<APawn>(Subject)->GetController();
+			check(PawnController);
 
 			FDamageEvent DamageEvent;
 			DamageEvent.DamageTypeClass = GetClass();
-			DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, DamagedActor);
+			DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 		}
 	}
 

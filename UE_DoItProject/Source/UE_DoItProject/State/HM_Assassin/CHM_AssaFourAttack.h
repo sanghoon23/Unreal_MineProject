@@ -71,6 +71,10 @@ private:
 
 	float AttackRadius = 200.0f;
 
+	bool bSettingPlayRate = false;
+	float StartSectionLength = 0.0f;
+	float EndSectionLength = 0.0f;
+
 #pragma endregion
 
 };

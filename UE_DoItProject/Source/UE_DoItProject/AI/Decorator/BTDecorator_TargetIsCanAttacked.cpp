@@ -28,6 +28,6 @@ bool UBTDecorator_TargetIsCanAttacked::CalculateRawConditionValue(UBehaviorTreeC
 	IIC_HitComp* I_HitComp = I_TargetCharactor->GetIHitComp();
 	IfNullRetResult(I_TargetCharactor, false);
 
-	return I_HitComp->IsCanAttackedFromOther();
+	return I_HitComp->IsCanAttackedFromOther(); //@Player ¹«Àû ½Ã,
 }
 

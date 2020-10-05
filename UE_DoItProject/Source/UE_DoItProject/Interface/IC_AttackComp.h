@@ -28,5 +28,11 @@ public:
 	// 리턴된 IC_BaseAttack 은 현재 값이거나 그 이전의 값일 수 있음.
 	// 값을 바꾸고 싶다면, SetAttackTypeRetIBaseAttack 을 써야함.
 	virtual IIC_BaseAttack* GetCurrentIBaseAttack() = 0;
+
+	/* @해당 Charactor 의 AttackComponent 에서 IBaseAttack ArrayData 를 가져옴 */
+	//@param -
+	virtual void GetBaseAttackList(TArray<class UC_BaseAttackState*>& Out) = 0;
+
+	virtual class UC_BaseAttackState* GetBaseAttack(uint8 Type) = 0;
 };
 

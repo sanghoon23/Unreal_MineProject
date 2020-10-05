@@ -82,7 +82,8 @@ void UCHM_MaoFourAttack::BeginPlay()
 
 	//@Create Ability
 	{
-		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+		//TODO :
+		//AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
 	}
 
 	//@Create SkillRangeDisplay
@@ -283,6 +284,7 @@ void UCHM_MaoFourAttack::DelSkillRangeAttackOtherPawn(AActor * Subject)
 						BodyTrans
 					);
 
+					UCPLAbility_SpeedDown* AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
 					AbilitySpeedDowner->OnDelStartTimerAbility.AddLambda([PTComp_SlowerRoot, PTComp_SlowerBody](AActor*)
 					{
 						PTComp_SlowerRoot->SetActive(false);

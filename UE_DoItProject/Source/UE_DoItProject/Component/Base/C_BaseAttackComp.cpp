@@ -20,4 +20,3 @@ void UC_BaseAttackComp::BeginPlay()
 
 	
 }
-
