@@ -162,6 +162,16 @@ void UCPL_ActionPullActorWithCable::BeginActionState()
 	//AActor* Target = Player->GetFindAttackTarget();
 	//check(Target);
 
+	if(Target->GetMovementComponent()->IsFalling())		//@Falling Check
+	{
+		check(MainHUD); //@UI
+		MainHUD->VisibleUITextNotify
+		(
+			FString(L"대상이 공중에 있습니다.."),
+			3.0f
+		);
+	}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//@'Action' Block
@@ -274,7 +284,7 @@ void UCPL_ActionPullActorWithCable::PullingTargetLocation(AActor * PulledTarget)
 	//PlayerLocation.Z = 0.0f;
 
 	PulledDirection = PlayerLocation - TargetLocation;
-	PulledDirection.Z = 0.0f;
+	//PulledDirection.Z = 0.0f; <<-- TODO : 지금은 이게 최선이다..
 	PulledDirection.Normalize();
 	float Distance = Player->GetDistanceTo(PulledTarget);
 	if (Distance > PullRange)

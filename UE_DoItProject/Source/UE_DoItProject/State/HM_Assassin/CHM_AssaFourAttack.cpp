@@ -72,7 +72,7 @@ void UCHM_AssaFourAttack::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	CLog::Print(L"FourAttack Tick IN!!");
+	//CLog::Print(L"FourAttack Tick IN!!");
 
 	UAnimInstance* OwnerAnimInst = HM_Assassin->GetMesh()->GetAnimInstance();
 	if (OwnerAnimInst != nullptr && bAttacking == true && bSettingPlayRate == false) //@공격이 실행됐을 때,

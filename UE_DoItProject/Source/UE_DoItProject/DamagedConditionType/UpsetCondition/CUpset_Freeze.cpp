@@ -146,13 +146,12 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 		FActorSpawnParameters Params;
 		Params.Owner = Owner;
 
-		DM_FreezenBroken = World->SpawnActor<ACDM_FreezingBroken>(ACDM_FreezingBroken::StaticClass(), Transform, Params);
+		ACDM_FreezingBroken* DM_FreezenBroken = World->SpawnActor<ACDM_FreezingBroken>(ACDM_FreezingBroken::StaticClass(), Transform, Params);
 		check(DM_FreezenBroken);
 
 		DM_FreezenBroken->SetActorLocation(Owner->GetActorLocation());
 
-		UDestructibleComponent* Destructible
-			= DM_FreezenBroken->GetDestructibleComponent();
+		UDestructibleComponent* Destructible = DM_FreezenBroken->GetDestructibleComponent();
 		if (Destructible != nullptr)
 		{
 			//FVector HitLocation

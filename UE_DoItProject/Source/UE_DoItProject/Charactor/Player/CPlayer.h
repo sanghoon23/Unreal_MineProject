@@ -31,6 +31,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 		float ZoomSpeed = 20.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+		float MinWheel = 800.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+		float MaxWheel = 1200.0f;
+
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 		class USpringArmComponent* SpringArmComp;
 

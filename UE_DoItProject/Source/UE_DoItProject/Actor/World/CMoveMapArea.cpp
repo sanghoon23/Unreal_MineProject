@@ -18,6 +18,9 @@ ACMoveMapArea::ACMoveMapArea()
 
 		SM_WarpDisplay = CreateDefaultSubobject<UStaticMeshComponent>("SM_Dispaly");
 		SM_WarpDisplay->SetupAttachment(RootComponent);
+
+		TextRender = CreateDefaultSubobject<UTextRenderComponent>("TextRender");
+		TextRender->SetupAttachment(RootComponent);
 	}
 
 	//@Setting
@@ -32,6 +35,12 @@ ACMoveMapArea::ACMoveMapArea()
 		SM_WarpDisplay->SetGenerateOverlapEvents(false);
 		SM_WarpDisplay->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SM_WarpDisplay->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+
+		TextRender->SetRelativeLocation(FVector(0.0f, 0.0f, 70.0f));
+		TextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+		TextRender->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+		TextRender->WorldSize = 30.0f;
+		TextRender->SetHorizSpacingAdjust(2.5f);
 	}
 
 	FString strPath = L"";
@@ -62,7 +71,6 @@ ACMoveMapArea::ACMoveMapArea()
 			LoadingBackgroundClass = LoadingClass.Class;
 		}
 	}
-
 }
 
 void ACMoveMapArea::BeginPlay()
@@ -76,6 +84,11 @@ void ACMoveMapArea::BeginPlay()
 void ACMoveMapArea::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	//@글자 회전
+	FRotator TextCompRot = TextRender->GetRelativeRotation();
+	TextCompRot.Yaw += (TextRotationSpeed * DeltaTime);
+	TextRender->SetRelativeRotation(FQuat(TextCompRot));
 }
 
 void ACMoveMapArea::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -96,7 +109,7 @@ void ACMoveMapArea::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AA
 		UWorld* const World = OtherActor->GetWorld();
 
 		//@Loading...
-		UUserWidget* LoadBackground = CreateWidget<UUserWidget>(GetWorld(), LoadingBackgroundClass);
+		UUserWidget* LoadBackground = CreateWidget<UUserWidget>(World, LoadingBackgroundClass);
 		if (LoadBackground != nullptr)
 		{
 			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
@@ -111,12 +124,19 @@ void ACMoveMapArea::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AA
 			TimerDelegate.BindLambda([LoadBackground, World, LambdaInsertLoadMapName]()
 			{
 				//@Remove
-				LoadBackground->RemoveFromViewport();
+				//LoadBackground->RemoveFromViewport();
 
 				//@Open Level(MapName)
-				UGameplayStatics::OpenLevel(World, LambdaInsertLoadMapName);
+				if (LambdaInsertLoadMapName != "")
+				{
+					UGameplayStatics::OpenLevel(World, LambdaInsertLoadMapName);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, L"LoadMapName NULL!!");
+				}
 			});
-			GetWorldTimerManager().SetTimer(OpenLevelTimerHandle, TimerDelegate, 3.0f, false);
+			GetWorldTimerManager().SetTimer(OpenLevelTimerHandle, TimerDelegate, LoadingTime, false);
 		}
 	}
 }

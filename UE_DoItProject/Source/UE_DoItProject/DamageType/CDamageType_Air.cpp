@@ -85,7 +85,9 @@ void UCDamageType_Air::OnHittingProcess(AActor * Subject, AActor * DamagedActor,
 
 			//
 			FVector Location = DamagedActor->GetActorLocation();
-			Location.Z = HeightAfterAirAttack;
+			Location.Z += HeightAfterAirAttack;
+			CLog::Print(HeightAfterAirAttack);
+			CLog::Print(Location);
 			DamagedActor->SetActorLocation(Location);
 
 			// @속력 줄이기 - 중력끄고 바로 해줘야함

@@ -17,6 +17,9 @@ ACMovePositionArea::ACMovePositionArea()
 
 		SM_WarpDisplay = CreateDefaultSubobject<UStaticMeshComponent>("SM_Dispaly");
 		SM_WarpDisplay->SetupAttachment(RootComponent);
+
+		TextRender = CreateDefaultSubobject<UTextRenderComponent>("TextRender");
+		TextRender->SetupAttachment(RootComponent);
 	}
 
 	//@Setting
@@ -31,6 +34,12 @@ ACMovePositionArea::ACMovePositionArea()
 		SM_WarpDisplay->SetGenerateOverlapEvents(false);
 		SM_WarpDisplay->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SM_WarpDisplay->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+
+		TextRender->SetRelativeLocation(FVector(0.0f, 0.0f, 70.0f));
+		TextRender->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+		TextRender->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+		TextRender->WorldSize = 30.0f;
+		TextRender->SetHorizSpacingAdjust(2.5f);
 	}
 
 	FString strPath = L"";
@@ -67,6 +76,11 @@ void ACMovePositionArea::BeginPlay()
 void ACMovePositionArea::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//@글자 회전
+	FRotator TextCompRot = TextRender->GetRelativeRotation();
+	TextCompRot.Yaw += (TextRotationSpeed * DeltaTime);
+	TextRender->SetRelativeRotation(FQuat(TextCompRot));
 }
 
 void ACMovePositionArea::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

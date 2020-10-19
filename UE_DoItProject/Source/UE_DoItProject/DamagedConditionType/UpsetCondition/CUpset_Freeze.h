@@ -29,8 +29,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystemComponent* FreezeUnderParticleComp;
 
-	UPROPERTY(VisibleAnywhere, Category = "DestructibleActor")
-		class ACDM_FreezingBroken* DM_FreezenBroken;
+	//UPROPERTY(VisibleAnywhere, Category = "DestructibleActor")
+	//	class ACDM_FreezingBroken* DM_FreezenBroken;
 
 	#pragma endregion
 

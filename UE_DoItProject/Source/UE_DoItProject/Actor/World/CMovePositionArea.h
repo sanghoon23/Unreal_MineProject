@@ -26,7 +26,13 @@ private:
 		class UBoxComponent* BoxComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UTextRenderComponent* TextRender;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UStaticMeshComponent* SM_WarpDisplay;
+
+	UPROPERTY(EditAnywhere, Category = "Text")
+		float TextRotationSpeed = 30.0f;
 
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);

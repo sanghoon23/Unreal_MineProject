@@ -229,6 +229,9 @@ void ACSkillRangeDisplay::OnBeginOverlap(UPrimitiveComponent * OverlappedCompone
 	{
 		OnDelOverlapSkillRange.Broadcast(OtherActor);
 	}
+
+	//@Collision
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ACSkillRangeDisplay::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)

@@ -72,13 +72,13 @@ void UCHM_MaoFourAttack::BeginPlay()
 	I_Charactor = Cast<IIC_Charactor>(HM_PengMao);
 	check(I_Charactor);
 
-#pragma region Create DamageType
-
-	DT_Freeze = NewObject<UCDamageType_Freeze>();
-	DT_Freeze->SetDamageImpulse(10.0f);
-	DT_Freeze->SetFreezingTime(2.0f);
-
-#pragma endregion
+//#pragma region Create DamageType
+//
+//	DT_Freeze = NewObject<UCDamageType_Freeze>();
+//	DT_Freeze->SetDamageImpulse(10.0f);
+//	DT_Freeze->SetFreezingTime(2.0f);
+//
+//#pragma endregion
 
 	//@Create Ability
 	{
@@ -99,7 +99,7 @@ void UCHM_MaoFourAttack::BeginPlay()
 			check(InsertActor);
 			if (InsertActor != nullptr) //@위치 지정
 			{
-				InsertActor->AttachToComponent
+				InsertActor->GetRootComponent()->AttachToComponent
 				(
 					HM_PengMao->GetMesh(),
 					FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
@@ -107,7 +107,7 @@ void UCHM_MaoFourAttack::BeginPlay()
 				);
 
 				FVector OwnerLocation = HM_PengMao->GetActorLocation();
-				OwnerLocation.Z = 20.0f;
+				OwnerLocation.Z = HM_PengMao->GetActorLocation().Z - HM_PengMao->GetDefaultHalfHeight() + SkillAttackRangeDisplayHeight;
 				FVector OwnerForward = HM_PengMao->GetActorForwardVector();
 				FRotator Rotate = FRotator(0.0f, 60.0f * i, 0.0f);
 				FVector Dir = Rotate.RotateVector(OwnerForward);
@@ -123,6 +123,9 @@ void UCHM_MaoFourAttack::BeginPlay()
 				//@Timer Particle
 				FTransform ParticleTransform;
 				ParticleTransform.SetLocation(FVector(0.0f, 0.0f, 400.0f));
+				//FVector ParticleLocation = InsertLocation;
+				//ParticleLocation.Z += 400.0f;
+				//ParticleTransform.SetLocation(ParticleLocation);
 				InsertActor->SetParticleSystem(P_AttackCloud, ParticleTransform);
 
 				//@Set
@@ -246,10 +249,13 @@ void UCHM_MaoFourAttack::DelSkillRangeAttackOtherPawn(AActor * Subject)
 					//I_HitComp->SetHitMoveSpeed(0.3f);
 
 					//@Set Delegate - OnKeyInputBlock 시키기 위해
-					DT_Freeze->OnLinkStartUpsetCondition.RemoveAll(DT_Freeze);
+					UCDamageType_Freeze* DT_Freeze = NewObject<UCDamageType_Freeze>();
+					DT_Freeze->SetDamageImpulse(10.0f);
+					DT_Freeze->SetFreezingTime(2.0f);
+					//DT_Freeze->OnLinkStartUpsetCondition.RemoveAll(DT_Freeze);
 					DT_Freeze->OnLinkStartUpsetCondition.AddUObject(this, &UCHM_MaoFourAttack::DelStartFreezeConditionType);
 
-					DT_Freeze->OnLinkEndUpsetCondition.RemoveAll(DT_Freeze);
+					//DT_Freeze->OnLinkEndUpsetCondition.RemoveAll(DT_Freeze);
 					DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoFourAttack::DelEndFreezeConditionType);
 
 					I_HitComp->OnHit(HM_PengMao, DT_Freeze, DT_Freeze->DamageImpulse);

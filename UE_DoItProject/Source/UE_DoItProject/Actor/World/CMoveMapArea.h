@@ -19,10 +19,19 @@ private:
 		class UBoxComponent* BoxComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
+		class UTextRenderComponent* TextRender;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UStaticMeshComponent* SM_WarpDisplay;
+
+	UPROPERTY(EditAnywhere, Category = "Text")
+		float TextRotationSpeed = 30.0f;
 
 	UPROPERTY(EditAnywhere, Category = "MapData")
 		FName LoadMapName = "";
+
+	UPROPERTY(EditAnywhere, Category = "MapData")
+		float LoadingTime = 3.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Component")
 		TSubclassOf<class UUserWidget> LoadingBackgroundClass;

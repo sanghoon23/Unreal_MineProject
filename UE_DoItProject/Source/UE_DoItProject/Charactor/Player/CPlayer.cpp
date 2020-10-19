@@ -293,8 +293,8 @@ void ACPlayer::OnBlockKeyInput()
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController != nullptr)
 	{
-		DisableInput(PlayerController);
-		//PlayerController->SetInputMode(FInputModeDataBase)
+		//DisableInput(PlayerController);
+		PlayerController->SetIgnoreMoveInput(true);
 	}
 }
 
@@ -304,7 +304,16 @@ void ACPlayer::OffBlockKeyInput()
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController != nullptr)
 	{
-		EnableInput(PlayerController);
+		//EnableInput(PlayerController);
+		//PlayerController->SetIgnoreMoveInput(false);
+		//#1019_
+		/*
+		ex) 빙결 시, 이동은 안되지만 카메라는 움직일 수 있도록 하기 위해서.
+		Reset 해줘야함. 그렇지 않으면 기존의 함수원상복귀 시키고, 또 다시 Delegate 를 돌아서 
+		PlayerController->SetIgnoreMoveInput(false) 가 두번 실행됨. 즉, 0 이 되지않고 - 되어버림.
+		IgnoreMoveInput = 0 이어야지만 MoveInput 값이 들어가는 듯.
+		*/
+		PlayerController->ResetIgnoreMoveInput();
 	}
 }
 
@@ -390,7 +399,10 @@ void ACPlayer::OnLookUp(float Value)
 
 void ACPlayer::OnZoom(float Value)
 {
-	SpringArmComp->TargetArmLength += (ZoomSpeed * Value);
+	float Length = SpringArmComp->TargetArmLength += (ZoomSpeed * Value);
+	Length = FMath::Clamp(Length, MinWheel, MaxWheel);
+	SpringArmComp->TargetArmLength = Length;
+	//CLog::Print(SpringArmComp->TargetArmLength);
 }
 
 void ACPlayer::OnJump()

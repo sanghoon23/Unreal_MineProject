@@ -41,11 +41,14 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SlowerParticle_Body;
 
-	UPROPERTY(VisibleAnywhere, Category = "Ability")
-		class UCPLAbility_SpeedDown* AbilitySpeedDowner;
+	//UPROPERTY(VisibleAnywhere, Category = "Ability")
+	//	class UCPLAbility_SpeedDown* AbilitySpeedDowner;
 
 	UPROPERTY(VisibleAnywhere, Category = "Skill")
 		TArray<class ACSkillRangeDisplay*> SkillRangeDisplayArray;
+
+	UPROPERTY(EditAnywhere, Category = "AttackData")
+		float SkillAttackRangeDisplayHeight = 7.0f;
 
 #pragma endregion
 
