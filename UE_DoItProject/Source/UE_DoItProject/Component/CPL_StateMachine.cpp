@@ -243,6 +243,7 @@ void UCPL_StateMachine::OnDash()
 		{
 			UCFL_ActorAgainst::SetAngleWithControlRot(Player, 0.0f);
 			Player->SetEvadeDirection(ControlQuat.GetForwardVector());
+			Player->AddMovementInput(ControlQuat.GetForwardVector());
 
 			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);
@@ -275,7 +276,6 @@ void UCPL_StateMachine::OnDash()
 
 	// @Set Evade
 	Player->SetEvade(true);
-	Player->SetEvadeSpeed(5.0f);
 
 	//@ÀÜ»ó È¿°ú
 	//@Case1

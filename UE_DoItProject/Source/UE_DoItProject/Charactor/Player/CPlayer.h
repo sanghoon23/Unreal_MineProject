@@ -163,7 +163,6 @@ public:
 	virtual void OffCollision() override;
 
 	virtual void OffEvade() override;
-	virtual float GetEvadeSpeed() { return EvadeSpeed; } // 회피
 	virtual FVector GetEvadeDirection() override { return EvadeDirection; } // 회피 방향
 
 public:
@@ -271,7 +270,6 @@ public:
 	bool GetEvade() const { return bEvade; }
 	void SetEvade(bool bValue) { bEvade = bValue; }
 	void SetEvadeDirection(FVector Direction) { EvadeDirection = Direction; }
-	void SetEvadeSpeed(float Speed) { EvadeSpeed = Speed; }
 
 private:
 	// Type

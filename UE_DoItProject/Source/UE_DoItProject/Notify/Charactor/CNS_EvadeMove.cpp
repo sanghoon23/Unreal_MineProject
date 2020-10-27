@@ -1,6 +1,9 @@
 #include "CNS_EvadeMove.h"
 #include "Global.h"
 
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_BaseAttack.h"
 
@@ -8,12 +11,18 @@ void UCNS_EvadeMove::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSequenc
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
-	IfNullRet(Charactor);
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
+	IfNullRet(I_Charactor);
 
-	Charactor->CanNotMove();
-	Speed = Charactor->GetEvadeSpeed();
-	Direction = Charactor->GetEvadeDirection();
+	I_Charactor->CanNotMove();
+	Direction = I_Charactor->GetEvadeDirection();
+
+	ACharacter* Charactor = Cast<ACharacter>(MeshComp->GetOwner());
+	if (Charactor != nullptr)
+	{
+		CharMovementMaxSpeedValue = Charactor->GetCharacterMovement()->MaxWalkSpeed;
+		CharMovementMaxSpeedValue *= 0.001f;
+	}
 }
 
 void UCNS_EvadeMove::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, float FrameDeltaTime)
@@ -22,14 +31,13 @@ void UCNS_EvadeMove::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequence
 
 	AActor* Actor = MeshComp->GetOwner();
 	IfNullRet(Actor);
-	
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
-	IfNullRet(Charactor);
-	Speed = Charactor->GetEvadeSpeed();
 
-	// @Evade Tick
+	/*
+	CharacterMovement 기준값,
+	ex) AbilitySpeedUpper 로 최대속력이 늘어났을 때, 대쉬기의 속도도 같이 늘어나기 위해 상관관계 형성.
+	*/
 	FVector Vec = Actor->GetActorLocation();
-	Vec = Vec + (Direction * Speed);
+	Vec = Vec + (Direction * Speed * CharMovementMaxSpeedValue);
 	Actor->SetActorLocation(Vec);
 }
 
@@ -37,11 +45,11 @@ void UCNS_EvadeMove::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequenceB
 {
 	Super::NotifyEnd(MeshComp, Animation);
 
-	IIC_Charactor* Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
-	IfNullRet(Charactor);
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(MeshComp->GetOwner());
+	IfNullRet(I_Charactor);
 
-	Charactor->CanMove();
-	Charactor->OffEvade();
-	Charactor->OnCollision();
+	I_Charactor->CanMove();
+	I_Charactor->OffEvade();
+	I_Charactor->OnCollision();
 }
 

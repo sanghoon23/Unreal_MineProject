@@ -10,12 +10,16 @@ class UE_DOITPROJECT_API UCNS_EvadeMove : public UAnimNotifyState
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditAnywhere, Category = "Movements")
+		float Speed = 5.0f; /* defualt */
+
+private:
 	void NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, float TotalDuration) override;
 	void NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, float FrameDeltaTime) override;
 	void NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation) override;
 
 private:
-	float	Speed;
+	float CharMovementMaxSpeedValue = 1.0f;
 	FVector Direction;
 	// float Distance = 300.0f;
 };

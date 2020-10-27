@@ -24,15 +24,18 @@ private:
 		/* Ex) Player 가 스킬을 쓸 때, 범위를 나타낼 Decal */
 		class ACDecalActor_WithMouse* DecalActor;
 
+	UPROPERTY(EditAnywhere, Category = "Actor")
+		/*
+		DecalActor 가 HitResult 를 구할 객체의 이름의 일부분.
+		Ex) Floor가 들어간 이름(ex.바닥) 에 사용
+		*/
+		FString HitFloorContainName = "Floor";
+
 	UPROPERTY(EditAnywhere, Category = "Material")
 		class UMaterialInterface* DecalMatCanUsingRange;
 
 	UPROPERTY(EditAnywhere, Category = "Material")
 		class UMaterialInterface* DecalMatCanNotUsingRange;
-
-	//UPROPERTY(VisibleAnywhere, Category = "Actor")
-	//	/* Ex) Player 가 스킬을 쓸 때, 범위를 나타낼 Decal */
-	//	class ACDecalActor_WithMouse* TargetDecalActor;
 
 	#pragma endregion
 
@@ -77,7 +80,7 @@ private:
 	int32 ControllerIndex = 0;
 	bool bUsingDecalMouseControl = false;
 
-	bool bDebug = false;
+	bool bDebug = true;
 	EMouseState MouseState = EMouseState::NONE;
 	FVector ClickPoint = FVector(0.0f);
 

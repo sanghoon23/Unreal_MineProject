@@ -41,8 +41,6 @@ void UCS_MouseController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	bDebug = true;
-
 	//@Player
 	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
@@ -218,16 +216,16 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 	FVector RetLocation = FVector(0.0f);
 	for (FHitResult HitResult : HitResults)
 	{
-		if (Cast<APawn>(HitResult.GetActor()) != nullptr)
-		{
-			//@Set Other DecalMaterial
-			DecalActor->SetDecalCompMat(DecalMatCanNotUsingRange);
-			continue;
-		}
+		//if (Cast<APawn>(HitResult.GetActor()) != nullptr) //@HitResultActor °¡ Pawn ÀÌ¶ó¸é
+		//{
+		//	//@Set Other DecalMaterial
+		//	DecalActor->SetDecalCompMat(DecalMatCanNotUsingRange);
+		//	continue;
+		//}
 
 		//#Temp ÀÓ½Ã
 		//@¹Ù´ÚÀÌ¶û ´êÀ» ¶§,
-		if (HitResult.GetActor()->GetName().Contains("Floor"))
+		if (HitResult.GetActor()->GetName().Contains(HitFloorContainName))
 		{
 			RetLocation = HitResult.Location;
 			RetLocation.Z += 0.1;
@@ -238,7 +236,6 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 				FVector CheckRangeVec = TargetMouseStandard->GetActorLocation() - RetLocation;
 				if (CheckRangeVec.Size() > MouseRangeWithTarget)
 				{
-					float temp = CheckRangeVec.Size() - MouseRangeWithTarget;
 					CheckRangeVec.Normalize();
 					CheckRangeVec *= (-1);
 					RetLocation =
@@ -254,6 +251,7 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 
 			return true;
 		}
+		else continue;
 	}
 
 	return false;

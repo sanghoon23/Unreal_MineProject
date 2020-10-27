@@ -1,18 +1,11 @@
 #include "CPL_SwordActionComp.h"
 #include "Global.h"
 
-#include "State/Player/Sword/CPL_SDActionRoll.h"
 #include "State/Player/Sword/CPL_SDActionJump.h"
 
 UCPL_SwordActionComp::UCPL_SwordActionComp()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// Create Roll Action
-	{
-		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_SDActionRoll>("SD_RollAction");
-		SD_ActionArray.Emplace(RollAction);
-	}
 
 	// Create Jump Action
 	{

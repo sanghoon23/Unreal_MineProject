@@ -71,7 +71,7 @@ protected:
 		float FeetAdjustOffset = 0.1f; // 발과 땅 사이의 간격.
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "InverseKinematics")
-		float FeetInterpSpeed = 22.0f;
+		float FeetInterpSpeed = 1.0f;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ protected:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HandInverseKinematics")
-		bool bDebugDraw = false;
+		bool bDebugDraw = true;
 
 private:
 

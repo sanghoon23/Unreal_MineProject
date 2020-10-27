@@ -20,9 +20,6 @@ void UCInverseKinematics::BeginPlay()
 
 	// @CapsuleHeight
 	CapsuleHalfHeight = Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-
-	// @LineTrace Debug
-	bDebugDraw = false;
 }
 
 
@@ -55,6 +52,11 @@ void UCInverseKinematics::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		FeetIk.HipOffset = UKismetMathLibrary::FInterpTo(FeetIk.HipOffset, offset, DeltaTime, HipsInterpSpeed);
 
 		// FootOffset
+		//leftTraceDistance = FMath::FloorToFloat(leftTraceDistance * 10.0f) * 0.1f; //@소수점 자리수 유지하기
+		//leftTraceDistance = FMath::FloorToFloat(leftTraceDistance); //@소수점 버리기
+		//leftTraceDistance = FMath::CeilToFloat(leftTraceDistance); //@소수점 버리고 정수부 1 더하기
+		leftTraceDistance = FMath::RoundToFloat(leftTraceDistance); //@소수점 버리고 반올림
+		rightTraceDistance = FMath::RoundToFloat(rightTraceDistance);
 		FeetIk.Location_Left = UKismetMathLibrary::FInterpTo(FeetIk.Location_Left, leftTraceDistance - offset, DeltaTime, FeetInterpSpeed);
 		FeetIk.Location_Right = UKismetMathLibrary::FInterpTo(FeetIk.Location_Right, -(rightTraceDistance - offset), DeltaTime, FeetInterpSpeed);
 
@@ -107,12 +109,13 @@ float UCInverseKinematics::FeetTrace(FName Socket, FVector & OutImpactNormal)
 	ignore.Add(GetOwner());
 
 	FHitResult hit;
-	EDrawDebugTrace::Type debug = bDebugDraw ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
+	EDrawDebugTrace::Type Debug
+		= (bDebugDraw == true) ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingle
 	(
-		GetWorld(), start, end, UEngineTypes::ConvertToTraceType(ECC_Visibility),
-		false, ignore, debug, hit, true
+		GetWorld(), start, end, UEngineTypes::ConvertToTraceType(ECC_Pawn),
+		false, ignore, Debug, hit, true
 	);
 
 	OutImpactNormal = hit.ImpactNormal;
@@ -147,7 +150,7 @@ void UCInverseKinematics::LeftHandTrace()
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingle
 	(
-		GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_Pawn),
 		false, Ignore, Debug, HitResult, true
 	);
 
@@ -180,7 +183,7 @@ void UCInverseKinematics::RightHandTrace()
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingle
 	(
-		GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_Pawn),
 		true, Ignore, Debug, HitResult, true
 	);
 

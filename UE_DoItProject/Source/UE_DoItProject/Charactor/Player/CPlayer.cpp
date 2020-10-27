@@ -672,12 +672,14 @@ void ACPlayer::ActorAnimMonPause()
 
 void ACPlayer::OnCollision()
 {
+	GetCapsuleComponent()->SetCollisionProfileName("Charactor");
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ACPlayer::OffCollision()
 {
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionProfileName("Spectator");
 }
 
 float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)

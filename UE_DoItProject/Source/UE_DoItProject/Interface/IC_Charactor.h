@@ -92,7 +92,6 @@ public:
 	virtual void OffCollision() {}
 
 	virtual void OffEvade() {} // 회피 해제
-	virtual float GetEvadeSpeed() { return 0.0f; } // 회피 동작의 ActorLocation 속도
 	virtual FVector GetEvadeDirection() { return FVector(1.f, 0.0f, 0.0f); } // 회피방향
 
 public:
