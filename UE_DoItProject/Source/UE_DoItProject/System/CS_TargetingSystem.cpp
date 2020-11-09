@@ -34,14 +34,21 @@ void UCS_TargetingSystem::BeginPlay()
 
 	//@Set Player
 	Player = Cast<ACPlayer>(GetOwner());
-
-	//@UI
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC != nullptr)
+	if (Player != nullptr)
 	{
-		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
-		check(MainHUD);
-		TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+		//@UI
+		//APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		APlayerController* PC = Cast<APlayerController>(Player->GetController());
+		if (PC != nullptr)
+		{
+			//AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+			AHUD_Main* MainHUD = PC->GetHUD<AHUD_Main>();
+			//check(MainHUD);
+			if (MainHUD != nullptr)
+			{
+				TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+			}
+		}
 	}
 
 	//@Spawn PlaneActor & Set Material

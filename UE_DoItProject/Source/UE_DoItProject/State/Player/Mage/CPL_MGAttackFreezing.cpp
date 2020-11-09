@@ -100,8 +100,12 @@ void UCPL_MGAttackFreezing::BeginPlay()
 	//	SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
 	//}
 
-	check(MainHUD);
-	SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	//check(MainHUD);
+	//@ºÎ¸ð (Super)
+	if (MainHUD != nullptr)
+	{
+		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	}
 
 	//@Notify Reference
 	TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;

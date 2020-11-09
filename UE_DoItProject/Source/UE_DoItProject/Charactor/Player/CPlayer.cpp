@@ -4,11 +4,14 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PlayerState.h"
 #include "Camera/CameraComponent.h"
 
 #include "WidgetComponent.h"
 
+#include "_GameInst/CGameInst.h"
 #include "_GameMode/CBaseGameMode.h"
+#include "_GameMode/MyPlayerState.h"
 #include "System/CS_MouseController.h"
 #include "System/CS_TargetingSystem.h"
 #include "Component/CPL_StateMachine.h"
@@ -119,29 +122,32 @@ ACPlayer::ACPlayer()
 	#pragma region Create Other Component / Difference To Charactor
 	// Create Component
 	{
+		TargetSystem			= CreateDefaultSubobject<UCS_TargetingSystem>("TargetingSystem");
 		BlendCameraComp			= CreateDefaultSubobject<UCPL_BlendCameraComp>("BlendCameraComp");
-		StateManager			= CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
+		IneverseKinematics		= CreateDefaultSubobject<UCInverseKinematics>("IKComp");
 		HitComp					= CreateDefaultSubobject<UCPL_HitComp>("HitComp");
 		EquipComp				= CreateDefaultSubobject<UCPL_EquipComp>("PlayerEquipComp");
-		TargetSystem			= CreateDefaultSubobject<UCS_TargetingSystem>("TargetingSystem");
-		IneverseKinematics		= CreateDefaultSubobject<UCInverseKinematics>("IKComp");
 		InteractSystem			= CreateDefaultSubobject<UCPL_ActionInteractSystem>("InteractSystem");
-		MouseController			= CreateDefaultSubobject<UCS_MouseController>("MouseController");
 		MeshParticleComp		= CreateDefaultSubobject<UCMeshParticleComp>("MeshParticleComp");
 		AbilityComponent		= CreateDefaultSubobject<UC_BaseAbilityComp>("AbilityComp");
+
+		MouseControl			= CreateDefaultSubobject<UCS_MouseController>(TEXT("MouseControllerComp"));
+
+		StateManager			= CreateDefaultSubobject<UCPL_StateMachine>("PlayerStateManager");
 	}
 	#pragma endregion
 
 	#pragma region Player Info Setting
 
+	//@1029_PlayerState 로 옮김
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 10000.0f;
-	Info.CurrentHP = 10000.0f;
+	//Info.MaxHP = 1000.0f;
+	//Info.CurrentHP = 1000.0f;
 
-	Info.MaxMP = 100.0f;
-	Info.CurrentMP = 50.0f;
+	//Info.MaxMP = 100.0f;
+	//Info.CurrentMP = 50.0f;
 
-	Info.Name = FName(L"PlayerName");
+	//Info.Name = FName(L"PlayerName");
 	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
@@ -161,6 +167,11 @@ void ACPlayer::BeginPlay()
 	//		CLog::Print(L"Call GameMode Succeed!!");
 	//	}
 	//}
+
+	if (MouseControl == nullptr)
+	{
+		CLog::Print(L"MouseController NULL!!");
+	}
 
 	#pragma region Player Setting
 	//Player Setting
@@ -201,9 +212,9 @@ void ACPlayer::BeginPlay()
 		{
 			bEvade = false;		//@Evade
 			bJumping = false;	//@Jumping
-			CanMove();
+			bCanMove = true;
 			OnGravity();
-			OffBlockAction();	//@OFF Block 'Action'
+			bBlockAction = false; //@OFF Block 'Action'
 			OffBlockKeyInput();	//@OFF Block 'KeyInput'
 		});
 
@@ -221,6 +232,16 @@ void ACPlayer::BeginPlay()
 		});
 	}
 	#pragma endregion
+
+	//CLog::Print(L"Load And BeginPlay");
+
+	AMyPlayerState* PSta = GetPlayerState<AMyPlayerState>();
+	if (PSta != nullptr)
+	{
+		GetGameInstance<UCGameInst>()->GetPlayerInfoFromId(Info, PSta->PlayerId);
+		CLog::Print(L"GetPlayerInfo!!");
+		CLog::Print(PSta->PlayerId);
+	}
 }
 
 // #Edit * 0219
@@ -228,6 +249,18 @@ void ACPlayer::BeginPlay()
 void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//@#1104_UGameInst 사용, PlayerState
+	{
+		AMyPlayerState* PState = GetPlayerState<AMyPlayerState>();
+		if (PState != nullptr)
+		{
+			GetGameInstance<UCGameInst>()->SetPlayerInfoFromId(Info, PState->PlayerId);
+			//PState->SetPlayerInfo(Info);
+		}
+	}
+
+	//CLog::Print(GetPlayerState()->GetName());
 
 	// @StateMachine 에서 StateType 값 받아옴.
 	//CurrentStateType = StateManager->GetCurrentAttackStateType();
@@ -293,8 +326,8 @@ void ACPlayer::OnBlockKeyInput()
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController != nullptr)
 	{
-		//DisableInput(PlayerController);
-		PlayerController->SetIgnoreMoveInput(true);
+		DisableInput(PlayerController);
+		//PlayerController->SetIgnoreMoveInput(true);
 	}
 }
 
@@ -304,7 +337,7 @@ void ACPlayer::OffBlockKeyInput()
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController != nullptr)
 	{
-		//EnableInput(PlayerController);
+		EnableInput(PlayerController);
 		//PlayerController->SetIgnoreMoveInput(false);
 		//#1019_
 		/*
@@ -313,8 +346,20 @@ void ACPlayer::OffBlockKeyInput()
 		PlayerController->SetIgnoreMoveInput(false) 가 두번 실행됨. 즉, 0 이 되지않고 - 되어버림.
 		IgnoreMoveInput = 0 이어야지만 MoveInput 값이 들어가는 듯.
 		*/
-		PlayerController->ResetIgnoreMoveInput();
+		//#1029_
+		//그냥 이동과 행동을 제약시키면 됨.
+		//PlayerController->ResetIgnoreMoveInput();
 	}
+}
+
+void ACPlayer::OnBlockAction()
+{
+	bBlockAction = true;
+}
+
+void ACPlayer::OffBlockAction()
+{
+	bBlockAction = false;
 }
 
 void ACPlayer::OnParticleInPlayer()
@@ -353,12 +398,12 @@ void ACPlayer::OffHandIK(uint8 HandNumber)
 
 void ACPlayer::OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange)
 {
-	MouseController->OnUsingDecalMouseControl(DecalCircleSize, StandardTarget, StandardRange);
+	MouseControl->OnUsingDecalMouseControl(DecalCircleSize, StandardTarget, StandardRange);
 }
 
 void ACPlayer::OffUsingDecalMouseControl()
 {
-	MouseController->OffUsingDecalMouseControl();
+	MouseControl->OffUsingDecalMouseControl();
 }
 
 void ACPlayer::OnMoveForward(float Value)
@@ -486,6 +531,8 @@ void ACPlayer::OnInteractAction()
 void ACPlayer::OnBasicAttack()
 {
 	IfTrueRet(bBlockAction);
+
+	CLog::Print(L"OnBasicAttack IN!!");
 
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_BaseAttack* SwitchBaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(0);
@@ -666,8 +713,9 @@ void ACPlayer::ActorAnimMonPause()
 {
 	GetMesh()->GetAnimInstance()->Montage_Pause(CurrentMontage);
 
+	//#1030_이걸 왜 막았을까?..
 	//@On Block Key Input
-	OnBlockKeyInput();
+	//OnBlockKeyInput();
 }
 
 void ACPlayer::OnCollision()

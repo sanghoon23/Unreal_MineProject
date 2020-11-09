@@ -130,7 +130,7 @@ void UCHM_MaoFourAttack::BeginPlay()
 
 				//@Set
 				InsertActor->SetBackGroundDecalSize(6.0f);
-				InsertActor->SetCollisionBoxExtent(FVector2D(168.0f));
+				InsertActor->SetCollisionBoxExtent(FVector2D(80.0f));
 				InsertActor->SetActorLocation(InsertLocation);
 				InsertActor->SetVisibility(false);
 
@@ -240,6 +240,9 @@ void UCHM_MaoFourAttack::DelSkillRangeAttackOtherPawn(AActor * Subject)
 				IIC_HitComp* I_HitComp = HitI_Charactor->GetIHitComp();
 				if (I_HitComp != nullptr)
 				{
+					//#1029_이미 맞은 액터라면,
+
+
 					// 1.1 Set Hit Attribute
 					//@맞은 애의 뒤쪽으로 HitDir
 					FVector HitDirection = OverlapResult.GetActor()->GetActorLocation() - HM_PengMao->GetActorLocation();
@@ -333,7 +336,7 @@ void UCHM_MaoFourAttack::DelStartFreezeConditionType(AActor * Subject)
 	IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Subject);
 	if (SubjectPlayerInterface != nullptr)
 	{
-		SubjectPlayerInterface->OnBlockKeyInput();
+		SubjectPlayerInterface->OnBlockAction();
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFourAttack StartBeatedFunc, I_Player NULL!!");
 }
@@ -350,7 +353,8 @@ void UCHM_MaoFourAttack::DelEndFreezeConditionType(AActor * Subject)
 	IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Subject);
 	if (SubjectPlayerInterface != nullptr)
 	{
-		SubjectPlayerInterface->OffBlockKeyInput();
+		SubjectPlayerInterface->OffBlockAction();
+		CLog::Print(L"Call MaoFourAttack DelEndFreezeConditionType!!");
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFourAttack EndBeatedFunc, I_Player NULL!!");
 }

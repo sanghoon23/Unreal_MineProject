@@ -102,8 +102,11 @@ void UCPL_MGAttackPoisioning::BeginPlay()
 	//}
 
 	//@UI
-	check(MainHUD);
-	SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	//check(MainHUD);
+	if (MainHUD != nullptr)
+	{
+		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	}
 
 	//@Notify Reference
 	TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;

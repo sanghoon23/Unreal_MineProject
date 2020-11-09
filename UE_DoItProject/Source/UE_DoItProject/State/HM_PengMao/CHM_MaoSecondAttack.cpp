@@ -69,9 +69,9 @@ void UCHM_MaoSecondAttack::BeginPlay()
 
 #pragma region Create DamageType
 
-	DT_Freeze = NewObject<UCDamageType_Freeze>();
-	DT_Freeze->SetDamageImpulse(10.0f);
-	DT_Freeze->SetFreezingTime(2.0f);
+	//DT_Freeze = NewObject<UCDamageType_Freeze>();
+	//DT_Freeze->SetDamageImpulse(10.0f);
+	//DT_Freeze->SetFreezingTime(2.0f);
 
 #pragma endregion
 
@@ -198,14 +198,25 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					if ((IsLastCombo() == true)) //마지막 일격
 					{
 						//@Set Delegate - OnKeyInputBlock 시키기 위해
-						I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
+						//I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
 						I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
 
+						//#1030 -
+						/*
+						Freeze 시 OnBlockAction,
+						EndBeated 에 OffBlockAction
+						*/
 						//@Set Timer - Freeze Timer
+						UCDamageType_Freeze* DT_Freeze = NewObject<UCDamageType_Freeze>();
+						DT_Freeze->SetDamageImpulse(10.0f);
+						DT_Freeze->SetFreezingTime(2.0f);
+
+						DT_Freeze->OnLinkStartUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
 						//DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
+
 						FTimerHandle FreezeTimerHandle;
-						FreezeTimerDelegate = FTimerDelegate::CreateUObject(this, &UCHM_MaoSecondAttack::TimerFreezeHittedActor, HitResult.GetActor());
-						HitResult.GetActor()->GetWorldTimerManager().SetTimer
+						FreezeTimerDelegate = FTimerDelegate::CreateUObject(this, &UCHM_MaoSecondAttack::TimerFreezeHittedActor, HitResult.GetActor(), DT_Freeze);
+						(HitResult.GetActor())->GetWorldTimerManager().SetTimer
 						(
 							FreezeTimerHandle,
 							FreezeTimerDelegate,
@@ -266,12 +277,10 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 						}
 					}//else(첫번째 공격)
 				}
-				else
-					UE_LOG(LogTemp, Warning, L"CHM_MaoSecondAttack CallAttack - HitComp Null!!");
+				else UE_LOG(LogTemp, Warning, L"CHM_MaoSecondAttack CallAttack - HitComp Null!!");
 
 			}//(Charactor)
-			else
-				UE_LOG(LogTemp, Warning, L"CHM_MaoSecondAttack CallAttack - Charactor Null!!");
+			else UE_LOG(LogTemp, Warning, L"CHM_MaoSecondAttack CallAttack - Charactor Null!!");
 		}
 	}
 }
@@ -288,7 +297,8 @@ void UCHM_MaoSecondAttack::BeginBeatedFunction(AActor * Subject)
 	IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Subject);
 	if (SubjectPlayerInterface != nullptr)
 	{
-		SubjectPlayerInterface->OnBlockKeyInput();
+		SubjectPlayerInterface->OnBlockAction();
+		CLog::Print(L"MaoSecondAttack OnBlockAction");
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack BeginBetedFunc, I_Player NULL!!")
 }
@@ -305,12 +315,12 @@ void UCHM_MaoSecondAttack::EndBeatedFunction(AActor * Subject)
 	IIC_Player* SubjectPlayerInterface = Cast<IIC_Player>(Subject);
 	if (SubjectPlayerInterface != nullptr)
 	{
-		SubjectPlayerInterface->OffBlockKeyInput();
+		SubjectPlayerInterface->OffBlockAction();
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBetedFunc, I_Player NULL!!");
 }
 
-void UCHM_MaoSecondAttack::TimerFreezeHittedActor(AActor * Subject)
+void UCHM_MaoSecondAttack::TimerFreezeHittedActor(AActor * Subject, UCDamageType_Freeze* DT_Freeze)
 {
 	IIC_Charactor* SubjectI_Charactor = Cast<IIC_Charactor>(Subject);
 	if (SubjectI_Charactor != nullptr)

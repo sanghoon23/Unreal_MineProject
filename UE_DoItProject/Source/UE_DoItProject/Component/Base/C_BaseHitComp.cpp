@@ -128,8 +128,8 @@ bool UC_BaseHitComp::AddConditionData(UCBaseConditionType* ConditionData)
 	}
 
 	//@다 돌았는데도 없다면,
-	UpsetData->StartCondition(Cast<APawn>(GetOwner()));
-	ConditionDatas.Add(UpsetData);
+	ConditionData->StartCondition(Cast<APawn>(GetOwner()));
+	ConditionDatas.Add(ConditionData);
 	return true; //@Ret
 }
 

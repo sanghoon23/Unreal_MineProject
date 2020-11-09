@@ -33,8 +33,8 @@ private:
 		TArray<class UAnimMontage*> AttackMontages;
 
 	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Freeze*	DT_Freeze;
+	//UPROPERTY(VisibleAnywhere, Category = "DamageType")
+	//	UCDamageType_Freeze*	DT_Freeze;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SlowerParticle_Root;
@@ -47,7 +47,7 @@ private:
 
 public:
 	UFUNCTION()
-		void TimerFreezeHittedActor(AActor* Subject);
+		void TimerFreezeHittedActor(AActor* Subject, UCDamageType_Freeze* DT_Freeze);
 
 #pragma endregion
 

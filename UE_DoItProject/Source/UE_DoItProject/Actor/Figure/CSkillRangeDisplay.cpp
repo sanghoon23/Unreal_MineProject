@@ -1,6 +1,8 @@
 #include "CSkillRangeDisplay.h"
 #include "Global.h"
 
+#include "Interface/IC_Charactor.h"
+
 ACSkillRangeDisplay::ACSkillRangeDisplay()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -90,7 +92,7 @@ void ACSkillRangeDisplay::BeginPlay()
 		OnDelEndSkillCall.BindLambda([&]()
 		{
 			////@Particle OFF
-			CLog::Print(L"Particle OFF!!");
+			//CLog::Print(L"Particle OFF!!");
 			PTComp->SetActive(false);
 
 			//@Init
@@ -125,7 +127,7 @@ void ACSkillRangeDisplay::Tick(float DeltaTime)
 			//ForwardStaticMesh->SetVisibility(false);
 			SetVisibility(false);
 
-			CLog::Print(L"Particle ON!!");
+			//CLog::Print(L"Particle ON!!");
 			PTComp->SetActive(true);
 
 			//@Set Timer
@@ -138,6 +140,7 @@ void ACSkillRangeDisplay::Tick(float DeltaTime)
 				false
 			);
 
+			CLog::Print(L"Fill == true");
 			return;
 		}
 
@@ -153,6 +156,11 @@ void ACSkillRangeDisplay::SetVisibility(bool bValue)
 {
 	BackGroundStaticMesh->SetVisibility(bValue);
 	ForwardStaticMesh->SetVisibility(bValue);
+}
+
+void ACSkillRangeDisplay::CollisionOff()
+{
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ACSkillRangeDisplay::SetDecalCompMat(UMaterialInterface * Material, ESortType Type)
@@ -223,12 +231,16 @@ void ACSkillRangeDisplay::OnBeginOverlap(UPrimitiveComponent * OverlappedCompone
 	IfTrueRet(OtherActor == this);
 	IfTrueRet(OtherActor == GetOwner());
 
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(OtherActor);
+	IfNullRet(I_Charactor);
+
 	CLog::Print(L"SkillRangeDisplay BeginOverlap!!");
 
-	if (OnDelOverlapSkillRange.IsBound())
-	{
-		OnDelOverlapSkillRange.Broadcast(OtherActor);
-	}
+	//if (OnDelOverlapSkillRange.IsBound())
+	//{
+	//	OnDelOverlapSkillRange.Broadcast(OtherActor);
+	//}
+	OnDelOverlapSkillRange.Broadcast(OtherActor);
 
 	//@Collision
 	BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);

@@ -48,8 +48,8 @@ void ACPL_CableObject::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Player = Cast<ACPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	check(Player);
+	//Player = Cast<ACPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	//check(Player);
 
 	//@BeginOverlap
 	//CableComp->OnComponentBeginOverlap.AddDynamic(this, &ACPL_CableObject::OnBeginOverlap);

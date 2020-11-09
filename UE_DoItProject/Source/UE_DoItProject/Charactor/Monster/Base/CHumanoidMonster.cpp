@@ -35,6 +35,9 @@ void ACHumanoidMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//TODO : 몬스터 리스트 저장.
+	//@등록한다.
+
 }
 
 void ACHumanoidMonster::Tick(float DeltaTime)

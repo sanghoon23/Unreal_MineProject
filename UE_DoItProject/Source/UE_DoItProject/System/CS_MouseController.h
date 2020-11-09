@@ -55,7 +55,7 @@ public:
 	@param - StandardTarget Unproject 의 기준점이 되는 Target 설정 Default = nullptr
 	@param - StandardRange 기준점의 반경 Default = 0.0f
 	*/
-	void OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
+	void OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f, ECollisionChannel Channel = ECollisionChannel::ECC_Visibility);
 	void OffUsingDecalMouseControl();
 
 	//Temp(임시)
@@ -63,10 +63,10 @@ public:
 
 private:
 	/* Ex) Mouse 클릭 시 Monster 타겟 설정 */
-	bool TargetMouseRayAndHit(APlayerController* PC);
+	bool TargetMouseRayAndHit(APlayerController* PC, ECollisionChannel Channel);
 
 	/* Ex) 스킬 사용 시 범위 설정 */
-	bool UsingDecalMouseRayAndHit(APlayerController* PC, FVector& HitedLocation);
+	bool UsingDecalMouseRayAndHit(APlayerController* PC, FVector& HitedLocation, ECollisionChannel Channel);
 
 	/* Member */
 public:
@@ -81,8 +81,10 @@ private:
 	bool bUsingDecalMouseControl = false;
 
 	bool bDebug = true;
-	EMouseState MouseState = EMouseState::NONE;
-	FVector ClickPoint = FVector(0.0f);
+
+	ECollisionChannel MouseCollisionChannel = ECollisionChannel::ECC_Visibility;
+	EMouseState MouseState = EMouseState::NONE; //@마우스 상태
+	FVector ClickPoint = FVector(0.0f); //@LeftButton 클릭 시, 그 위치
 
 	/* DecalActor 의 원 반경 */
 	FVector DecalActorCircleSize = FVector(200.0f);

@@ -24,12 +24,12 @@ private:
 		/* FireRainActor 에서 BeginOverlap 으로 Monster Attacking */
 		class ACParticle_FireRain* FireRainActor;
 
-	// @DamageType
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Normal*	DT_Normal;
+	//// @DamageType
+	//UPROPERTY(VisibleAnywhere, Category = "DamageType")
+	//	UCDamageType_Normal*	DT_Normal;
 
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Burn*	DT_Burn;
+	//UPROPERTY(VisibleAnywhere, Category = "DamageType")
+	//	UCDamageType_Burn*	DT_Burn;
 
 	#pragma endregion
 
@@ -65,7 +65,7 @@ private:
 	FVector AttackPosition = FVector(0.0f);
 
 	//@MouseControl
-	class UCS_MouseController* MouseController;
+	//class UCS_MouseController* MouseController;
 	bool bMouseWaiting = false;
 
 	//@Skill Casting

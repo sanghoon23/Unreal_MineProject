@@ -55,12 +55,17 @@ void UCS_MouseController::BeginPlay()
 	DecalActor->GetRootComponent()->SetVisibility(false);
 
 	//@UI
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerController* PC = Cast<APlayerController>(Player->GetController());
 	if (PC != nullptr)
 	{
-		AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
-		check(MainHUD);
-		TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+		//AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+		AHUD_Main* MainHUD = PC->GetHUD<AHUD_Main>();
+		//check(MainHUD);
+		if (MainHUD != nullptr)
+		{
+			TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+		}
 	}
 }
 
@@ -69,61 +74,58 @@ void UCS_MouseController::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//@Using Decal
-	if (bUsingDecalMouseControl == true)
+
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	check(Character);
+	APlayerController* PC = Cast<APlayerController>(Character->GetController());
+
+	//@Using Decal - 캐릭터의 스킬이 켜졌을 때,
+	if (bUsingDecalMouseControl == true && PC != nullptr)
 	{
-		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), ControllerIndex);
-		if (PC != nullptr)
+		FVector HitLocation;
+		bool bRay = UsingDecalMouseRayAndHit(PC, HitLocation, MouseCollisionChannel);
+		if (bRay == true)
 		{
-			FVector HitLocation;
-			bool bRay = UsingDecalMouseRayAndHit(PC, HitLocation);
-			if (bRay == true)
+			//@Set Visibility
+			DecalActor->GetRootComponent()->SetVisibility(true);
+
+			//@Set Material
+			DecalActor->SetDecalCompMat(DecalMatCanUsingRange);
+
+			if (PC->IsInputKeyDown(EKeys::LeftMouseButton))
 			{
-				//@Set Visibility
-				DecalActor->GetRootComponent()->SetVisibility(true);
-
-				//@Set Material
-				DecalActor->SetDecalCompMat(DecalMatCanUsingRange);
-
-				if (PC->IsInputKeyDown(EKeys::LeftMouseButton))
-				{
-					//@좌표 넘겨주기.
-					ClickPoint = HitLocation;
-					MouseState = EMouseState::CHECKINGPOINT;
-					OffUsingDecalMouseControl();
-				}
-
-			}//(bRay == true)
-
-			//@오른쪽 Mouse 버튼 누르면 해제
-			if (PC->IsInputKeyDown(EKeys::RightMouseButton))
-			{
-				MouseState = EMouseState::NONE;
+				//@좌표 넘겨주기.
+				ClickPoint = HitLocation;
+				MouseState = EMouseState::CHECKINGPOINT;
 				OffUsingDecalMouseControl();
 			}
 
-		}//(PC != nullptr)
+		}//(bRay == true)
+
+		//@오른쪽 Mouse 버튼 누르면 해제
+		if (PC->IsInputKeyDown(EKeys::RightMouseButton))
+		{
+			MouseState = EMouseState::NONE;
+			OffUsingDecalMouseControl();
+		}
 	}
-	//@몬스터 선택
-	else if (bUsingDecalMouseControl == false)
+	//@마우스로 몬스터 선택을 할 수 있는 상태
+	else if (bUsingDecalMouseControl == false && PC != nullptr)
 	{
 		DecalActor->GetRootComponent()->SetVisibility(false);
-
-		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), ControllerIndex);
-		if (PC != nullptr)
+		if (PC->IsInputKeyDown(EKeys::LeftMouseButton))
 		{
-			if (PC->IsInputKeyDown(EKeys::LeftMouseButton))
-			{
-				TargetMouseRayAndHit(PC);
-			}
+			TargetMouseRayAndHit(PC, ECollisionChannel::ECC_Visibility);
 		}
 	}
 }
 
-void UCS_MouseController::OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange)
+void UCS_MouseController::OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget, float StandardRange, ECollisionChannel Channel)
 {
-	MouseState = EMouseState::WAIT;
 	bUsingDecalMouseControl = true;
+
+	MouseCollisionChannel = Channel;
+	MouseState = EMouseState::WAIT;
 
 	//@Set Decal Size
 	DecalActorCircleSize = DecalCircleSize;
@@ -139,6 +141,7 @@ void UCS_MouseController::OnUsingDecalMouseControl(FVector DecalCircleSize, AAct
 	{
 		TargetMouseStandard = nullptr;
 		MouseRangeWithTarget = 0.0f;
+		UE_LOG(LogTemp, Warning, L"CS_MouseController OnUsingDecalMouseControlFunc Target NULL!!");
 	}
 }
 
@@ -146,13 +149,16 @@ void UCS_MouseController::OffUsingDecalMouseControl()
 {
 	bUsingDecalMouseControl = false;
 
+	MouseCollisionChannel = ECollisionChannel::ECC_Visibility;
+	/* EMouseState 는 OffUsingDecal 에서 CheckPoint 때문에 따로 지정하지않음. */
+
 	DecalActorCircleSize = FVector(0.0f);
 
 	TargetMouseStandard = nullptr;
 	MouseRangeWithTarget = 0.0f;
 }
 
-bool UCS_MouseController::TargetMouseRayAndHit(APlayerController * PC)
+bool UCS_MouseController::TargetMouseRayAndHit(APlayerController * PC, ECollisionChannel LineTraceChannel)
 {
 	check(PC);
 
@@ -172,7 +178,7 @@ bool UCS_MouseController::TargetMouseRayAndHit(APlayerController * PC)
 	bool bHit = UKismetSystemLibrary::LineTraceSingle
 	(
 		GetWorld(), RayStart, RayEnd, 
-		UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility),
+		UEngineTypes::ConvertToTraceType(LineTraceChannel),
 		false, Ignore, Debug, HitResult, true
 	);
 
@@ -188,7 +194,7 @@ bool UCS_MouseController::TargetMouseRayAndHit(APlayerController * PC)
 	return true;
 }
 
-bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVector& HitedLocation)
+bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVector& HitedLocation, ECollisionChannel LineTraceChannel)
 {
 	check(PC);
 
@@ -208,7 +214,7 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 	bool bHit = UKismetSystemLibrary::LineTraceMulti
 	(
 		GetWorld(), RayStart, RayEnd,
-		UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		UEngineTypes::ConvertToTraceType(LineTraceChannel),
 		false, Ignore, Debug, HitResults, true
 	);
 
@@ -223,14 +229,25 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 		//	continue;
 		//}
 
-		//#Temp 임시
+		CLog::Print(HitResult.GetActor()->GetName());
+
+		//#1105_Temp 임시
 		//@바닥이랑 닿을 때,
 		if (HitResult.GetActor()->GetName().Contains(HitFloorContainName))
 		{
 			RetLocation = HitResult.Location;
-			RetLocation.Z += 0.1;
+			RetLocation.Z += 1.0f;
+			CLog::Print(HitResult.Location);
+			//@캐릭터일 경우 높이를 더해줌.
+			//ACharacter* CHR_TagetMouseStandard = Cast<ACharacter>(TargetMouseStandard);
+			//if (CHR_TagetMouseStandard != nullptr)
+			//	RetLocation.Z += CHR_TagetMouseStandard->GetDefaultHalfHeight();
+			//else
+			//	RetLocation.Z += 0.1;
 
-			//@Mouse 거리가 있을 때,
+			//CLog::Print(RetLocation);
+
+			//@Mouse 거리가 있을 때, (범위를 넘어가지 않게 하기 위함)
 			if (TargetMouseStandard != nullptr)
 			{
 				FVector CheckRangeVec = TargetMouseStandard->GetActorLocation() - RetLocation;
@@ -243,16 +260,15 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 				}
 			}
 
-			//@Set DecalActor
-			DecalActor->SetActorLocation(RetLocation);
-
-			//@HitedLocation
 			HitedLocation = RetLocation;
+
+			//RetLocation.Z += 300.0f;
+			DecalActor->SetActorLocation(RetLocation);
 
 			return true;
 		}
 		else continue;
-	}
+	}//for(HitResult)
 
 	return false;
 }

@@ -45,35 +45,39 @@ void UCPL_ActionPullActorWithCable::BeginPlay()
 	//@Get Player Pointer
 	Player = Cast<ACPlayer>(GetOwner());
 	check(Player);
-
-#pragma region UI
-	//@UI
-	PlayerController = Cast<APlayerController>(Player->GetController());
-	check(PlayerController);
-	if (PlayerController != nullptr)
+	if (Player != nullptr)
 	{
-		MainHUD = Cast<AHUD_Main>(PlayerController->GetHUD());
-		check(MainHUD);
-	}
+#pragma region UI
+		//@UI
+		PlayerController = Cast<APlayerController>(Player->GetController());
+		//check(PlayerController);
+		if (PlayerController != nullptr)
+		{
+			MainHUD = Cast<AHUD_Main>(PlayerController->GetHUD());
+			//check(MainHUD);
+		}
 
 #pragma endregion
+	}
 
 #pragma region Set Delegate
 	//@Set Delegate "OnActionReset" - IIC_Charactor
 	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
-	check(IC_Charactor);
-
-	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
+	//check(IC_Charactor);
+	if (IC_Charactor != nullptr)
 	{
-		//@Target Init
-		//Target = nullptr;
+		IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
+		{
+			//@Target Init
+			//Target = nullptr;
 
-		//@Montage
-		bNextMontage = false;
+			//@Montage
+			bNextMontage = false;
 
-		////@CableObject Reset
-		//CableObject->ResetState();
-	});
+			////@CableObject Reset
+			//CableObject->ResetState();
+		});
+	}
 #pragma endregion
 
 }

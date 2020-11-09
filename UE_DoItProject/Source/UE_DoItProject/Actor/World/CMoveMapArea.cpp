@@ -129,6 +129,8 @@ void ACMoveMapArea::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AA
 				//@Open Level(MapName)
 				if (LambdaInsertLoadMapName != "")
 				{
+					World->GetAuthGameMode()->bUseSeamlessTravel = true;
+					World->ServerTravel(FString("/Game/_Mine/_Maps/"), true);
 					UGameplayStatics::OpenLevel(World, LambdaInsertLoadMapName);
 				}
 				else

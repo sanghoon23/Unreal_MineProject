@@ -50,6 +50,16 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AttackData")
 		float SkillAttackRangeDisplayHeight = 7.0f;
 
+	UFUNCTION()
+	//@Warning - AttackOtherPawn 을 대신할 SkillRangeDisplay 에 Bind 될 함수.
+	void DelSkillRangeAttackOtherPawn(AActor* Subject);
+
+	UFUNCTION()
+	void DelStartFreezeConditionType(AActor* Subject);
+
+	UFUNCTION()
+	void DelEndFreezeConditionType(AActor* Subject);
+
 #pragma endregion
 
 public:
@@ -69,11 +79,6 @@ public:
 	//virtual void AttackOtherPawn() override;
 
 private:
-	//@Warning - AttackOtherPawn 을 대신할 SkillRangeDisplay 에 Bind 될 함수.
-	void DelSkillRangeAttackOtherPawn(AActor* Subject);
-
-	void DelStartFreezeConditionType(AActor* Subject);
-	void DelEndFreezeConditionType(AActor* Subject);
 
 #pragma region Member
 private:

@@ -6,6 +6,9 @@
 
 #include "CBaseConditionType.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelStartCondition, AActor*)
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelEndCondition, AActor*)
+
 UENUM()
 /* 상태 이상 종류 */
 enum class EHitUpset : uint8
@@ -18,10 +21,7 @@ enum class EHitUpset : uint8
 	SLEEP		= 5, //수면
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FDelStartCondition, AActor*)
-DECLARE_MULTICAST_DELEGATE_OneParam(FDelEndCondition, AActor*)
-
-UCLASS(BlueprintType, ClassGroup = (Custom))
+UCLASS()
 class UE_DOITPROJECT_API UCBaseConditionType 
 	: public UObject
 {
@@ -63,9 +63,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 		FDamageEvent DamageEvent;
 
-private:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
-		AController* DamageSubjectController;
+		class AController* DamageSubjectController;
 
 	#pragma endregion
 
@@ -117,7 +116,7 @@ public:
 	const FDamageEvent& GetDamageEvent() const { return DamageEvent; }
 	void SetDamageEvent(const FDamageEvent& Event) { DamageEvent = Event; }
 
-	AController* GetDamageSubjectController() { return DamageSubjectController; }
+	class AController* GetDamageSubjectController() { return DamageSubjectController; }
 	void SetDamageSubjectController(class AController* InputController);
 
 protected:

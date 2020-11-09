@@ -29,11 +29,12 @@ void UCPL_SwordBaseAttack::BeginPlay()
 #pragma region UI
 	//@UI
 	PlayerController = Cast<APlayerController>(Player->GetController());
-	check(PlayerController);
+	//check(PlayerController);
 	if (PlayerController != nullptr)
 	{
-		MainHUD = Cast<AHUD_Main>(PlayerController->GetHUD());
-		check(MainHUD);
+		//MainHUD = Cast<AHUD_Main>(PlayerController->GetHUD());
+		MainHUD = PlayerController->GetHUD<AHUD_Main>();
+		//check(MainHUD);
 	}
 
 #pragma endregion

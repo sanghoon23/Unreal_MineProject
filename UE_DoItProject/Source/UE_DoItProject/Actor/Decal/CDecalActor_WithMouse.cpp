@@ -11,6 +11,9 @@ ACDecalActor_WithMouse::ACDecalActor_WithMouse()
 	DecalComp = CreateDefaultSubobject<UDecalComponent>("DecalComp");
 	RootComponent = DecalComp;
 
+	/* #1109_ 바닥보다 위에 그려지도록, */
+	DecalComp->SortOrder = 1;
+
 	//@Warning - 회전 해주어야 Material 이 나옴
 	DecalComp->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 }

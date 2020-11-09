@@ -92,14 +92,18 @@ void UCPL_MGAttackMagicBall::BeginPlay()
 
 #pragma endregion
 
-	//@UI
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC != nullptr)
+	//@UI - ºÎ¸ð(Super)
+	if (MainHUD != nullptr)
 	{
-		MainHUD = Cast<AHUD_Main>(PC->GetHUD());
-		check(MainHUD);
 		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
 	}
+	//APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//if (PC != nullptr)
+	//{
+	//	MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+	//	check(MainHUD);
+	//	SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+	//}
 
 	//@Notify Reference
 	TArray<FAnimNotifyEventReference> NotifyEvent_Mon_0;

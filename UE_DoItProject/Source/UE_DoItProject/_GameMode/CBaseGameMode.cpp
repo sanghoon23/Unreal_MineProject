@@ -1,5 +1,9 @@
 #include "CBaseGameMode.h"
 #include "Global.h"
+#include "GameFramework/GameStateBase.h"
+#include "_GameMode/_GameState/CBaseGameState.h"
+#include "_GameMode/MyPlayerState.h"
+
 #include "Charactor/Player/CPlayer.h"
 #include "Charactor/Player/CPlayerController.h"
 #include "UI/HUD_Main.h"
@@ -40,6 +44,21 @@ void ACBaseGameMode::BeginPlay()
 void ACBaseGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	ACBaseGameState* GameState = GetGameState<ACBaseGameState>();
+	if (GameState != nullptr)
+	{
+		//UPlayer* Player = GameState->GetNetOwningPlayer();
+		//if (Player != nullptr)
+		//{
+		//	CLog::Print(Player->GetName());
+		//}
+		AMyPlayerState* PS = Cast<AMyPlayerState>(GameState->PlayerArray[0]);
+		if (PS != nullptr)
+		{
+			//CLog::Print(PlayerState->GetPlayerHealth());
+		}
+	}
 }
 
 //void ACBaseGameMode::SetCurrentWidget(TSubclassOf<UUserWidget> InputWidget)

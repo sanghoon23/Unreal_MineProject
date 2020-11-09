@@ -98,6 +98,7 @@ public:
 	//@param fSkillTimer - (원이 채워지고난 후) 스킬이 시전될 시간
 	void FillStart(AActor* SettingOwner, float fFillTimer, float fSkillTimer);
 
+	void CollisionOff();
 	void SetDecalCompMat(class UMaterialInterface* Material, ESortType Type);
 	void SetBackGroundDecalSize(float fSize);
 	void SetBackGroundDecalSize(FVector2D vSize);

@@ -41,8 +41,8 @@ void UCPL_MGActionTeleprot::BeginPlay()
 	check(Player);
 	
 	// @Set MouseController
-	MouseController = Player->GetPlayerCSMouseController();
-	check(MouseController);
+	//MouseController = Player->GetPlayerCSMouseController();
+	//check(MouseController);
 }
 
 void UCPL_MGActionTeleprot::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -51,10 +51,10 @@ void UCPL_MGActionTeleprot::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if (bStartWaiting == true)
 	{
-		//UCS_MouseController* MC = Player->GetPlayerCSMouseController();
-		if (MouseController != nullptr)
+		UCS_MouseController* MC = Player->GetPlayerCSMouseController();
+		if (MC != nullptr)
 		{
-			EMouseState MCState = MouseController->GetMouseState();
+			EMouseState MCState = MC->GetMouseState();
 			if (MCState == EMouseState::CHECKINGPOINT)
 			{
 				//@Play
@@ -114,7 +114,9 @@ void UCPL_MGActionTeleprot::StartWaiting()
 	// @이동 키를 제외한 Action Key Block 하기.
 	Player->OnBlockAction();
 
-	MouseController->OnUsingDecalMouseControl(FVector(100.0f), Player, 2500.0f);
+	UCS_MouseController* MC = Player->GetPlayerCSMouseController();
+	check(MC);
+	MC->OnUsingDecalMouseControl(FVector(100.0f), Player, 2500.0f, ECollisionChannel::ECC_Pawn);
 	bStartWaiting = true;
 }
 
@@ -143,9 +145,10 @@ void UCPL_MGActionTeleprot::PlayAfterMouseControl()
 	}
 
 	//@Position 받아와서, SetPosition
-	FVector ClickedPosition = MouseController->GetClickPoint();
-	ClickedPosition.Z = 0.0f;
-	ClickedPosition.Z += Player->GetDefaultHalfHeight();
+	UCS_MouseController* MC = Player->GetPlayerCSMouseController();
+	check(MC);
+	FVector ClickedPosition = MC->GetClickPoint();
+	ClickedPosition.Z += Player->GetDefaultHalfHeight() + 5.0f;
 	Player->SetActorLocation(ClickedPosition);
 
 	//@Particle Spawn - ClickedPosition

@@ -69,9 +69,12 @@ void UCPL_SDAttackFinish::BeginPlay()
 
 
 #pragma region UI
-	//@UI
-	check(MainHUD);
-	TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+	//@UI - 부모(Super)
+	//check(MainHUD);
+	if (MainHUD != nullptr)
+	{
+		TargetInfoWidget = MainHUD->GetWidgetTargetInfo();
+	}
 
 #pragma endregion
 

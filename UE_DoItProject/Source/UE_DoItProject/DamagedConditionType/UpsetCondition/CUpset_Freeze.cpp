@@ -76,6 +76,7 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 void UCUpset_Freeze::UpdateCondition(APawn * Owner, float DeltaTime)
 {
 	Super::UpdateCondition(Owner, DeltaTime);
+	check(Owner);
 
 	//@Particle Freeze Update
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);

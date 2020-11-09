@@ -19,11 +19,11 @@ public:
 		TArray<FViewConditionState> InfoConditionDataArray;
 
 public:
-	float MaxHP				= 0.0f;
-	float CurrentHP			= 0.0f;
+	float MaxHP				= 500.0f;
+	float CurrentHP			= 400.0f;
 
-	float MaxMP				= 0.0f;
-	float CurrentMP			= 0.0f;
+	float MaxMP				= 100.0f;
+	float CurrentMP			= 50.0f;
 
 	float BarrierAmount		= 0.0f;
 
@@ -31,7 +31,7 @@ public:
 	float ATK_Coefficient	= 1.0f; //@공격 지수
 	float DEF_Coefficient	= 1.0f; //@방어 지수
 
-	FName Name			= "";
+	FName Name			= "PlayerName";
 
 	//# 상태 추가..
 	//class 

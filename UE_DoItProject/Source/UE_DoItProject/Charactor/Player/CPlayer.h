@@ -77,7 +77,7 @@ private:
 		class UCS_TargetingSystem* TargetSystem;
 
 	UPROPERTY(VisibleAnywhere, Category = "Controller")
-		class UCS_MouseController* MouseController;
+		class UCS_MouseController* MouseControl;
 
 	UPROPERTY(VisibleAnywhere, Category = "AttachActor")
 		class ACPL_CableObject* CableObject;
@@ -88,11 +88,31 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 		TSubclassOf<class UWG_FloatingCombo> FloatingComboClass;
 
-	// Test Code
-	//UPROPERTY(Category = MapsAndSets, EditAnywhere)
-	//	TMap<int32, FString> FruitMap;
-	//UPROPERTY(Category = "Asset")
-	//	TMultiMap<int32, FString> AttributeMultiMap;
+	//@value
+	//.....
+	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
+	bool bDeath = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
+	bool bBlockAction = false;
+
+	// State
+	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
+	bool bChangeStateSwap = false;
+
+	// Move
+	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
+	bool bCanMove = true;
+	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
+	bool bAxisTurn = false;
+
+	// Jump
+	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
+	bool bJumping = false;
+
+	// Evade
+	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
+	bool bEvade = false;
 
 	#pragma endregion
 
@@ -142,8 +162,8 @@ public:
 	virtual void OffBlockKeyInput() override;
 
 	// Block Action
-	virtual void OnBlockAction() override { bBlockAction = true; }
-	virtual void OffBlockAction()override { bBlockAction = false; }
+	virtual void OnBlockAction() override;
+	virtual void OffBlockAction()override;
 
 	/* Player 안에 기본적 내장되어있는 Paritlce 켜기 */
 	virtual void OnParticleInPlayer() override;
@@ -242,7 +262,7 @@ public:
 	class UCS_TargetingSystem* GetTargetingSystem() { return TargetSystem; }
 
 	// @CS MouseController
-	class UCS_MouseController* GetPlayerCSMouseController() { return MouseController; }
+	class UCS_MouseController* GetPlayerCSMouseController() { return MouseControl; }
 
 	// @Blend Camera
 	class UCPL_BlendCameraComp* GetBlendCameraComp() { return BlendCameraComp; }
@@ -278,23 +298,7 @@ private:
 	// Info
 	FPlayerInfo Info;
 
-	bool bDeath				= false;
-
-	// Block
-	bool bBlockAction		= false;
-
-	// State
-	bool bChangeStateSwap	= false;
-
-	// Move
-	bool bCanMove			= true;
-	bool bAxisTurn			= false;
-
-	// Jump
-	bool bJumping			= false;
-
 	// Evade
-	bool bEvade				= false;
 	float EvadeSpeed		= 15.0f; //@Default
 	FVector EvadeDirection;
 

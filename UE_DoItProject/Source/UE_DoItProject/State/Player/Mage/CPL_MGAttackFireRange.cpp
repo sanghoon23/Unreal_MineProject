@@ -42,18 +42,6 @@ UCPL_MGAttackFireRange::UCPL_MGAttackFireRange()
 	}
 		
 	#pragma endregion
-
-	#pragma region DamageType
-
-	DT_Normal = NewObject<UCDamageType_Normal>();
-	DT_Normal->SetDamageImpulse(10.0f);
-
-	DT_Burn = NewObject<UCDamageType_Burn>();
-	DT_Burn->SetDamageImpulse(0.0f);
-	DT_Burn->SetSecondDamageValue(3.0f);
-	DT_Burn->SetBurnTime(10.0f);
-
-	#pragma endregion
 }
 
 void UCPL_MGAttackFireRange::BeginPlay()
@@ -63,6 +51,13 @@ void UCPL_MGAttackFireRange::BeginPlay()
 	//@Running Tick
 	IsRunTick(false);
 
+
+	if (Player != nullptr)
+	{
+		CLog::Print(L"FireRange Player NOT NULL!!");
+		CLog::Print(Player->GetName());
+	}
+
 	#pragma region Super
 
 	//@UNABLE - Auto AttackDecision System 
@@ -71,6 +66,14 @@ void UCPL_MGAttackFireRange::BeginPlay()
 	#pragma endregion
 
 	#pragma region Spawn Particle Object
+
+	UCDamageType_Normal* DT_Normal = NewObject<UCDamageType_Normal>();
+	DT_Normal->SetDamageImpulse(10.0f);
+
+	UCDamageType_Burn* DT_Burn = NewObject<UCDamageType_Burn>();
+	DT_Burn->SetDamageImpulse(0.0f);
+	DT_Burn->SetSecondDamageValue(3.0f);
+	DT_Burn->SetBurnTime(10.0f);
 
 	FTransform Transform = FTransform::Identity;
 	FActorSpawnParameters Params;
@@ -120,19 +123,24 @@ void UCPL_MGAttackFireRange::BeginPlay()
 
 	#pragma region UI
 	//@UI
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerController* PC = Cast<APlayerController>(Player->GetController());
 	if (PC != nullptr)
 	{
-		MainHUD = Cast<AHUD_Main>(PC->GetHUD());
-		check(MainHUD);
-		SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+		//MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+		AHUD_Main* MainHUD = PC->GetHUD<AHUD_Main>();
+		//check(MainHUD);
+		if (MainHUD != nullptr)
+		{
+			SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();
+		}
 	}
 
 	#pragma endregion
 
 	// @Set MouseController
-	MouseController = Player->GetPlayerCSMouseController();
-	check(MouseController);
+	//MouseController = Player->GetPlayerCSMouseController();
+	//check(MouseController);
 }
 
 void UCPL_MGAttackFireRange::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -142,9 +150,10 @@ void UCPL_MGAttackFireRange::TickComponent(float DeltaTime, ELevelTick TickType,
 	// @마우스 대기상태
 	if (bMouseWaiting == true)
 	{
-		if (MouseController != nullptr)
+		UCS_MouseController* MC = Player->GetPlayerCSMouseController();
+		if (MC != nullptr)
 		{
-			EMouseState MCState = MouseController->GetMouseState();
+			EMouseState MCState = MC->GetMouseState();
 			if (MCState == EMouseState::CHECKINGPOINT)
 			{
 				//@Play
@@ -282,7 +291,9 @@ void UCPL_MGAttackFireRange::CheckProcedural()
 void UCPL_MGAttackFireRange::SetPlayAfterMouseControl()
 {
 	//@Mouse Position
-	AttackPosition = MouseController->GetClickPoint();
+	UCS_MouseController* MC = Player->GetPlayerCSMouseController();
+	check(MC);
+	AttackPosition = MC->GetClickPoint();
 
 	//@클릭 지점 바라보기.
 	UCFL_ActorAgainst::LookAtPoint(Player, AttackPosition);
@@ -319,11 +330,15 @@ void UCPL_MGAttackFireRange::SetPlayAfterMouseControl()
 
 void UCPL_MGAttackFireRange::MouseStartWaiting()
 {
+	// @Mouse Controller
+	UCS_MouseController* MC = Player->GetPlayerCSMouseController();
+	check(MC);
+
 	// @이동 키를 제외한 Action Key Block 하기.
 	Player->OnBlockAction();
 
-	// @Mouse Controller
-	MouseController->OnUsingDecalMouseControl(FVector(400.0f), Player, 2000.0f);
+	//check(MC);
+	MC->OnUsingDecalMouseControl(FVector(400.0f), Player, 2000.0f, ECollisionChannel::ECC_Pawn);
 	bMouseWaiting = true;
 
 	bFillingReadyGauge = false;

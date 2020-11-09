@@ -86,10 +86,10 @@ void ACHM_Basic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (GetCharacterMovement()->IsFalling())
-	{
-		CLog::Print(L"IsAir!!");
-	}
+	//if (GetCharacterMovement()->IsFalling())
+	//{
+	//	CLog::Print(L"IsAir!!");
+	//}
 
 	//@Death (재가 되어 사라져라..) - OnDeathDelegate 에서 Mesh Change
 	{
