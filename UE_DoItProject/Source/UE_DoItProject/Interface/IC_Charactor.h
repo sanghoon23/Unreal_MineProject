@@ -29,6 +29,7 @@ class UIC_Charactor : public UInterface
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnActionResetState, AActor*)
+DECLARE_MULTICAST_DELEGATE(FOnInit)
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
 DECLARE_MULTICAST_DELEGATE(FOnCharactorDestroy)
 
@@ -41,6 +42,9 @@ public:
 	// @param AActor - 주체 객체
 	FOnActionResetState		OnActionResetState;
 
+	// @Init - Charactor 초기화를 위한, ex)-Respawn
+	FOnInit					OnInitDelegate;
+
 	// @Death - 죽음 상태 실행 시작할 때
 	FOnDeath				OnDeathDelegate;
 
@@ -52,6 +56,8 @@ public:
 public:
 	virtual ECollisionChannel GetCharactorUsingAttackChannel() const = 0;
 	virtual ECharactorType GetCharactorType() const = 0;
+
+	virtual void OnInit()		= 0;
 
 	virtual bool IsDeath()		= 0;
 	virtual void OnDeath()		= 0;

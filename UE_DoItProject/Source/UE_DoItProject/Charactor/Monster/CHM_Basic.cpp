@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
 #include "Interface/IC_Player.h"
@@ -86,42 +87,10 @@ void ACHM_Basic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//if (GetCharacterMovement()->IsFalling())
-	//{
-	//	CLog::Print(L"IsAir!!");
-	//}
-
 	//@Death (재가 되어 사라져라..) - OnDeathDelegate 에서 Mesh Change
 	{
 		if (bDeath == true)
 		{
-			//InsertTimer += DeltaTime;
-			//if (bInsertForDeathMesh == false && InsertTimer > 3.0f)
-			//{
-			//	bInsertForDeathMesh = true;
-
-			//	GetIHitComp()->SettingCustomCharactorMesh(ECharactorMeshSort::FORDEATH);
-
-			//	//@죽어서 재가 되는 Material, Dynamic 으로 집어넣기
-			//	int32 MatCount = GetMesh()->GetNumMaterials();
-			//	for (int i = 0; i < MatCount; ++i)
-			//	{
-			//		UMaterialInterface* MInst = GetMesh()->GetMaterial(i);
-			//		if (MInst != nullptr)
-			//		{
-			//			CLog::Print(MInst->GetName());
-			//			UMaterialInstanceDynamic* TargetMat = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this->GetWorld(), MInst);
-			//			if (TargetMat != nullptr)
-			//			{
-			//				//CLog::Print(TargetMat->GetName());
-
-			//				GetMesh()->SetMaterial(i, TargetMat); //@Set
-			//				MatInstDynamicArray.Add(TargetMat);
-			//			}
-			//		}
-			//	}
-			//}//(bInsertForDeathMesh)
-
 			for (UMaterialInstanceDynamic* Inst : MatInstDynamicArray)
 			{
 				FMaterialParameterInfo MatInfo;
@@ -167,15 +136,19 @@ void ACHM_Basic::OnDeath()
 	//@현 Charactor 에 관해 최종적으로 호출함.
 	//그렇지 않으면 Delegate 는 순서를 따지지 않아서 죽었는데도, AI 가 돌고 있음
 
+	//@현재 실행되고 있는 몽타주가 있다면 멈추기.
+	GetMesh()->GetAnimInstance()->StopAllMontages(5.0f);
+
 	//@띄워졌을 때 사망할 때의 예외,
 	OnGravity();
 
-	//@Monster 라면, AI 꺼주기
+	//@AI 꺼주기
 	SetAIRunningPossible(false);
 
 	//@Collision OFF 가 아니라 "Spectator" 로 설정한다.
 	GetCapsuleComponent()->SetCollisionProfileName("Spectator");
 
+	//@Destory Delegate TimeHandler
 	OnDelegateCharactorDestroy();
 }
 
@@ -261,13 +234,6 @@ float ACHM_Basic::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 
 	IfFalseRetResult(CanBeDamaged(), MonsterInfo.CurrentHP);
 	IfTrueRetResult(bDeath == true, MonsterInfo.CurrentHP);
-
-	//CLog::Print(EventInstigator->GetOwner()->GetName());
-	//APawn* TestPawn = Cast<APawn>(EventInstigator->GetOwner());
-	//if (TestPawn != nullptr)
-	//{
-	//	CLog::Print(TestPawn->GetName());
-	//}
 
 	//@UI
 	{

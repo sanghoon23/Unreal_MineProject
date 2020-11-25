@@ -63,16 +63,12 @@ bool UBTDecorator_ExistOtherFrontRange::CalculateRawConditionValue(UBehaviorTree
 			FVector RightVec = ControlPawn->GetActorRightVector();
 			FVector CrossVec = FVector::CrossProduct(RightVec, Dir);
 
-			//CLog::Print(Result.GetActor()->GetName());
-			//CLog::Print(CrossVec);
-
 			float RidAngle = FVector::DotProduct(RightVec, Dir);
 			RidAngle = acosf(RidAngle);
 			float DegAngle = FMath::RadiansToDegrees(RidAngle);
 
 			if (CrossVec.Z < 0.0f)
 			{
-				//CLog::Print(ControlPawn->GetName());
 				if (DegAngle >= 45.0f && DegAngle < 135.0f)
 				{
 					return false;

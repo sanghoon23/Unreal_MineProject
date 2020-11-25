@@ -47,6 +47,9 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 	AController* PawnController = Cast<APawn>(Subject)->GetController();
 	check(PawnController);
 
+	IIC_Charactor* const I_Charactor = Cast<IIC_Charactor>(DamagedPawn);
+	check(I_Charactor);
+
 	//@예외처리
 	IfFalseRet(DamagedActorHitComp->IsDamagedFromOther());
 
@@ -65,13 +68,9 @@ void UCDamageType_Poision::OnHittingProcess(AActor * Subject, AActor * DamagedAc
 
 	//@TakeDamage
 	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
-
-	//@죽음 확인
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-	if (I_Charactor != nullptr)
-	{
-		IfTrueRet(I_Charactor->IsDeath() == true);
-	}
+	
+	//@캐릭터가 죽었다면,
+	IfTrueRet(I_Charactor->IsDeath());
 
 	//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
 	const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());

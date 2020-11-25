@@ -147,6 +147,15 @@ void UCPL_StateMachine::BeginPlay()
 	{
 		Player->ActorAnimMonPlay(MageStateCastMontage, 1.5f, false);
 	});
+
+	Player->OnInitDelegate.AddLambda([&]()
+	{
+		//CurrentStateType = EPlayerStateType::MAGE;
+		if (CurrentStateType == EPlayerStateType::SWORD)
+		{
+			OnSwapState();
+		}
+	});
 }
 
 

@@ -64,13 +64,6 @@ IIC_BaseAttack * UCHM_AssassinAttackComp::SetAttackTypeRetIBaseAttack(uint8 Type
 	EHM_AssassinAttackType SetType = static_cast<EHM_AssassinAttackType>(Type);
 	if (AttackType == SetType)
 	{
-		//// @Tick true
-		//IIC_Component* IC_Comp = Cast<IIC_Component>(BasicAttackStateArray[Type]);
-		//if (IC_Comp != nullptr)
-		//{
-		//	IC_Comp->IsRunTick(true);
-		//}
-
 		return Cast<IIC_BaseAttack>(BasicAttackStateArray[Type]); //@return
 	}
 	else if (AttackType != SetType)

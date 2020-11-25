@@ -242,7 +242,6 @@ void UCHM_MaoFirstAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 				IIC_AbilityComp* I_AbilityComp = HitIneterfaceCharactor->GetIAbilityComp();
 				if (I_AbilityComp != nullptr)
 				{
-					//CLog::Print(L"AbilityComp Not NULL!!");
 					FAbilityValue InputValue;
 					InputValue.Sort = EAbilitySort::SAVEARRAY;
 					InputValue.bTimer = true;

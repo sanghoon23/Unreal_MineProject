@@ -338,15 +338,11 @@ void UCPL_SDAttackBasic::ImpulseAttack(float intensity)
 				if (destructible != nullptr)
 				{
 					destructible->ApplyDamage(5.0f, Hit.GetActor()->GetActorLocation(), ActorForward, 1.0f);
-
-					// Test Code
-					CLog::Print(Hit.GetActor()->GetName());
 				}
 				continue;
 			}
 
-			CLog::Print(L"SDAttackBasic _ DamageEvnet In!!");
-
+			//ex) ItemBox_MediumWood..
 			FDamageEvent DamageEvent;
 			Hit.GetActor()->TakeDamage(1.0f, DamageEvent, Player->GetController(), Hit.GetActor());
 		}

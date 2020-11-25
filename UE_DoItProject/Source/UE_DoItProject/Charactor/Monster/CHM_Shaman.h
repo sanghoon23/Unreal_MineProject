@@ -21,6 +21,10 @@ class UE_DOITPROJECT_API ACHM_Shaman
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(EditAnywhere, Category = "Data")
+		/* IC_Monster Member */
+		FMonsterInfo MonsterInfo;
+
 	UPROPERTY(EditAnywhere, Category = "AI")
 		bool bAIRunningPossible = true;
 
@@ -76,6 +80,7 @@ public:
 	}
 	virtual ECharactorType GetCharactorType() const override { return CharactorType; }
 
+	virtual void OnInit() override {}; //TODO : InitRespawn, Delegate
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void OnDeath() override; //Á×À½
 	virtual void CanMove() override { bCanMove = true; }
@@ -104,7 +109,7 @@ public:
 public:
 	virtual AActor* GetTargetInAI() override;
 
-	virtual const FMonsterInfo& GetMonsterInfo() const override { return Info; };
+	virtual const FMonsterInfo& GetMonsterInfo() const override { return MonsterInfo; };
 
 	void SetAIRunningPossible(bool bValue) { bAIRunningPossible = bValue; }
 	bool GetAIRunningPossible() const { return bAIRunningPossible; }
@@ -142,9 +147,6 @@ private:
 private:
 	// Type
 	ECharactorType CharactorType = ECharactorType::MONSTER;
-
-	/* IC_Monster Member */
-	FMonsterInfo Info;
 
 	bool bInsertForDeathMesh = false;
 	float InsertTimer = 0.0f;

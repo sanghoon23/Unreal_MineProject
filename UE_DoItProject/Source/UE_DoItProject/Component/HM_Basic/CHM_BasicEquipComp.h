@@ -25,6 +25,14 @@ private:
 
 	#pragma endregion
 
+private:
+	UFUNCTION()
+		void CompActivated(UActorComponent* Component, bool bReset);
+
+	UFUNCTION()
+		void CompDeActivated(UActorComponent* Component);
+
+
 public:
 	UCHM_BasicEquipComp();
 

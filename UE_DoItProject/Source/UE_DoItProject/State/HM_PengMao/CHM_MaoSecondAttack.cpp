@@ -263,7 +263,6 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 							IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
 							if (HitI_AbilityComp != nullptr && (IsLastCombo() == false))
 							{
-								//CLog::Print(L"AbilityComp Not NULL!!");
 								FAbilityValue InputValue;
 								InputValue.Sort = EAbilitySort::SAVEARRAY;
 								InputValue.bTimer = true;
@@ -298,7 +297,6 @@ void UCHM_MaoSecondAttack::BeginBeatedFunction(AActor * Subject)
 	if (SubjectPlayerInterface != nullptr)
 	{
 		SubjectPlayerInterface->OnBlockAction();
-		CLog::Print(L"MaoSecondAttack OnBlockAction");
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack BeginBetedFunc, I_Player NULL!!")
 }

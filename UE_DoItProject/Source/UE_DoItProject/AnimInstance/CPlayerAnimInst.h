@@ -23,6 +23,12 @@ public:
 		float Direction;
 
 	UPROPERTY(BlueprintReadOnly)
+		bool bDeath = false;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bIsRunningMontage;
+
+	UPROPERTY(BlueprintReadOnly)
 		int CurrentStateType;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -33,10 +39,6 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bCharactorJumping;
-
-	// @착지에 필요한 땅과의 거리
-	UPROPERTY(BlueprintReadOnly)
-		float FindFloorDistance;
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bInAir;
@@ -67,7 +69,7 @@ private:
 	// Member
 private:
 	ACPlayer* Player;
-	IIC_Charactor* Charactor;
+	IIC_Charactor* I_Charactor;
 	class UCInverseKinematics* FootIK;
 
 };

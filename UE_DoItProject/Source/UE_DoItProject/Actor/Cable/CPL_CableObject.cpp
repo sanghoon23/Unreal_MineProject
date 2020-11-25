@@ -1,5 +1,7 @@
 #include "CPL_CableObject.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 #include "CableComponent.h"
 #include "Charactor/Player/CPlayer.h"

@@ -29,6 +29,16 @@ void UC_BaseHitComp::BeginPlay()
 
 	I_Charactor = Cast<IIC_Charactor>(GetOwner());
 	check(I_Charactor);
+
+	//@DeathDelegate Delete Value Container
+	I_Charactor->OnDeathDelegate.AddLambda([&]()
+	{
+		for (int i = 0; i < ConditionDatas.Num(); ++i)
+		{
+			ConditionDatas[i]->EndCondition(Cast<APawn>(GetOwner()));
+		}
+		ConditionDatas.Empty();
+	});
 }
 
 void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -38,19 +48,12 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	check(OwnerPawn);
 
-	//@죽었다면 Return
+	//#1112_
+	//죽었다면 Return - 지우는 부분 (Charactor Delegate Lamda)
 	IIC_Charactor* OwnerCharactor = Cast<IIC_Charactor>(OwnerPawn);
 	if (OwnerCharactor != nullptr)
 	{
-		if (OwnerCharactor->IsDeath() == true)
-		{
-			for (int i = 0; i < ConditionDatas.Num(); ++i)
-			{
-				ConditionDatas[i]->EndCondition(OwnerPawn);
-			}
-			ConditionDatas.Empty();
-			return;
-		}
+		IfTrueRet(OwnerCharactor->IsDeath() == true);
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,17 +149,13 @@ void UC_BaseHitComp::SettingCustomCharactorMesh(ECharactorMeshSort MeshSort, boo
 	if (SortNum >= CharactorMeshArray.Num() || SortNum < 0)
 	{
 		UE_LOG(LogTemp, Warning, L"SettingCustomCharactorMesh Func SortNum Exccess!!");
-		CLog::Print(L"CustomMesh SortNum Exccess!!");
 		return;
 	}
 	if (CharactorMeshArray[SortNum] == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, L"SettingCustomCharactorMesh Func SortNum NULLPTR!!");
-		CLog::Print(L"CustomMesh NULLPTR!!");
 		return;
 	}
-
-	CLog::Print(L"Call CustomMesh IN!!");
 
 	if (bNoneRestartAnimation == false)
 	{

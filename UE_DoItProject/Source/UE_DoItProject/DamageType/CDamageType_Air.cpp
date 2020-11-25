@@ -31,44 +31,25 @@ void UCDamageType_Air::OnHittingProcess(AActor * Subject, AActor * DamagedActor,
 {
 	Super::OnHittingProcess(Subject, DamagedActor, DamagedActorHitComp, InitialDamageAmount);
 
-	//@때린 대상 바라보기
-	//UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
+	APawn* DamagedPawn = Cast<APawn>(DamagedActor);
+	check(DamagedPawn);
 
-	//ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
-	//if (Charactor != nullptr)
-	//{
-	//	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-	//	check(I_Charactor);
+	AController* PawnController = Cast<APawn>(Subject)->GetController();
+	check(PawnController);
 
-	//	//@Montage 를 실행할 수 있는 상황이 아닐 때에는 Ex) - 결빙 상황이 아닐 때,
-	//	if (I_Charactor->IsDontMontagePlay() == false)
-	//	{
-	//		FVector Location = DamagedActor->GetActorLocation();
-	//		Location.Z = HeightAfterAirAttack;
-	//		DamagedActor->SetActorLocation(Location);
-
-	//		// @속력 줄이기 - 중력끄고 바로 해줘야함
-	//		Charactor->GetCharacterMovement()->Velocity = FVector(0.0f);
-
-	//		// @중력 끄기.
-	//		I_Charactor->OffGravity();
-	//	}
-	//}
+	IIC_Charactor* const I_Charactor = Cast<IIC_Charactor>(DamagedPawn);
+	check(I_Charactor);
 
 	//@Take Damage
 	if (DamagedActorHitComp->IsDamagedFromOther() == true)
 	{
-		APawn* DamagedPawn = Cast<APawn>(DamagedActor);
-		if (DamagedPawn != nullptr)
-		{
-			AController* PawnController = Cast<APawn>(Subject)->GetController();
-			check(PawnController);
-
-			FDamageEvent DamageEvent;
-			DamageEvent.DamageTypeClass = GetClass();
-			DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
-		}
+		FDamageEvent DamageEvent;
+		DamageEvent.DamageTypeClass = GetClass();
+		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 	}
+	
+	//@캐릭터가 죽었다면,
+	IfTrueRet(I_Charactor->IsDeath());
 
 	//@Motage
 	{
@@ -76,18 +57,15 @@ void UCDamageType_Air::OnHittingProcess(AActor * Subject, AActor * DamagedActor,
 		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
 		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
 
+		//@Ex) Freeze 상황일 때, return
+		IfTrueRet(I_Charactor->IsDontMontagePlay());
+
 		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
 		if (Charactor != nullptr)
 		{
-			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-			check(I_Charactor);
-			IfTrueRet(I_Charactor->IsDontMontagePlay()); //@Ex) Freeze 상황일 때, return
-
 			//
 			FVector Location = DamagedActor->GetActorLocation();
 			Location.Z += HeightAfterAirAttack;
-			CLog::Print(HeightAfterAirAttack);
-			CLog::Print(Location);
 			DamagedActor->SetActorLocation(Location);
 
 			// @속력 줄이기 - 중력끄고 바로 해줘야함

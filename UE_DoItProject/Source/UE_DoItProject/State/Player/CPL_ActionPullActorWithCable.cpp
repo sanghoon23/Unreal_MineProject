@@ -208,6 +208,7 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 	//check(Target);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	//@끌어 당겨질 때,
 	IfFalseRet(CableObject->GetPulling());
 
@@ -220,11 +221,11 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 	const uint8 MontageTypeNum = static_cast<uint8>(DT_Stun->GetConditionType());
 	IfFalseRet(I_HitComp->IsUsingDamageTypeEffect(MontageTypeNum));
 
+
+
 	//@Once
 	if (bNextMontage == false)
 	{
-		CLog::Print(L"TickActionState!!");
-
 		//@JumpToSection
 		Player->GetMesh()->GetAnimInstance()->Montage_JumpToSection
 		(
@@ -236,8 +237,11 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 		I_HitComp->SetHitMoveSpeed(0.0f);
 
 		//1.2 DT_Stun Delegate
+		DT_Stun->SetStunTime(10.0f); //@Stun 시간 지정
 		DT_Stun->OnLinkStartUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunStartDel);
 		DT_Stun->OnLinkEndUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunEndDel);
+
+		CLog::Print(L"ActionPullActorWithCable bNextMontage IN!!");
 
 		// 1.3 OnHit
 		I_HitComp->OnHit(Player, DT_Stun, 5.0f);
@@ -315,6 +319,6 @@ void UCPL_ActionPullActorWithCable::StunEndDel(AActor * Subject)
 	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
 	if (SubjectI_Monster != nullptr)
 	{
-		SubjectI_Monster->SetAIRunningPossible(false);
+		SubjectI_Monster->SetAIRunningPossible(true);
 	}
 }

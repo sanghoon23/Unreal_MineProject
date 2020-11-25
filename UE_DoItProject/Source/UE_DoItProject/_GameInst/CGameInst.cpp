@@ -1,14 +1,24 @@
 #include "CGameInst.h"
 #include "Global.h"
 
+#include "Interface/IC_Charactor.h"
+#include "Interface/IC_Monster.h"
+
 void UCGameInst::Init()
 {
 	//...
+	//@Spectator Camera 생성
+
+}
+
+void UCGameInst::OnInitForMapChange()
+{
+	ExistWorldMonsterList.Empty();
 }
 
 void UCGameInst::GetPlayerInfoFromId(FPlayerInfo & Info, int PlayerID)
 {
-	auto It = MapPlayerInfo.Find(PlayerID);
+	auto It = PlayerInfoMap.Find(PlayerID);
 	if (It != nullptr)
 	{
 		Info.MaxHP = It->MaxHP;
@@ -24,8 +34,6 @@ void UCGameInst::GetPlayerInfoFromId(FPlayerInfo & Info, int PlayerID)
 
 		Info.Name = It->Name;
 
-		//CLog::Print(L"Inst PlayerInfoMap NOT NULL!!");
-
 		/*#1104_
 		우선 따로 넣지 않음
 		상태이상 부분은 해제
@@ -33,14 +41,13 @@ void UCGameInst::GetPlayerInfoFromId(FPlayerInfo & Info, int PlayerID)
 	}
 	else
 	{
-		MapPlayerInfo.Add(PlayerID, Info);
-		//CLog::Print(L"Inst PlayerInfoMap NULL!!");
+		PlayerInfoMap.Add(PlayerID, Info);
 	}
 }
 
 void UCGameInst::SetPlayerInfoFromId(FPlayerInfo & Info, int PlayerID)
 {
-	auto It = MapPlayerInfo.Find(PlayerID);
+	auto It = PlayerInfoMap.Find(PlayerID);
 	if (It != nullptr)
 	{
 		It->MaxHP = Info.MaxHP;
@@ -62,5 +69,14 @@ void UCGameInst::SetPlayerInfoFromId(FPlayerInfo & Info, int PlayerID)
 void UCGameInst::AddExistWorldMonster(ACHumanoidMonster * InsertMon)
 {
 	check(InsertMon);
-}
+	ExistWorldMonsterList.Add(InsertMon);
 
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(InsertMon);
+	check(I_Charactor);
+
+	I_Charactor->OnDeathDelegate.AddLambda([&]()
+	{
+		int Index = ExistWorldMonsterList.Find(InsertMon);
+		ExistWorldMonsterList.RemoveAt(Index);
+	});
+}

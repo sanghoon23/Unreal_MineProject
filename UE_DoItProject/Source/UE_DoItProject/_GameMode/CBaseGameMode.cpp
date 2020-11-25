@@ -4,6 +4,7 @@
 #include "_GameMode/_GameState/CBaseGameState.h"
 #include "_GameMode/MyPlayerState.h"
 
+#include "_GameInst/CGameInst.h"
 #include "Charactor/Player/CPlayer.h"
 #include "Charactor/Player/CPlayerController.h"
 #include "UI/HUD_Main.h"
@@ -45,19 +46,10 @@ void ACBaseGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ACBaseGameState* GameState = GetGameState<ACBaseGameState>();
-	if (GameState != nullptr)
+
+	//TODO : 
+	if (GetWorld()->GetGameInstance<UCGameInst>()->IsExistWorldMonster() == false)
 	{
-		//UPlayer* Player = GameState->GetNetOwningPlayer();
-		//if (Player != nullptr)
-		//{
-		//	CLog::Print(Player->GetName());
-		//}
-		AMyPlayerState* PS = Cast<AMyPlayerState>(GameState->PlayerArray[0]);
-		if (PS != nullptr)
-		{
-			//CLog::Print(PlayerState->GetPlayerHealth());
-		}
 	}
 }
 

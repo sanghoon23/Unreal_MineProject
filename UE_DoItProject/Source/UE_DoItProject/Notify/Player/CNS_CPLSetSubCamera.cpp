@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Charactor/Player/CPlayer.h"
 #include "Component/Player/CPL_BlendCameraComp.h"

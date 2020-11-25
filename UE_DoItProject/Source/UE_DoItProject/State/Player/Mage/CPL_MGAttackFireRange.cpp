@@ -1,5 +1,6 @@
 #include "CPL_MGAttackFireRange.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -50,13 +51,6 @@ void UCPL_MGAttackFireRange::BeginPlay()
 
 	//@Running Tick
 	IsRunTick(false);
-
-
-	if (Player != nullptr)
-	{
-		CLog::Print(L"FireRange Player NOT NULL!!");
-		CLog::Print(Player->GetName());
-	}
 
 	#pragma region Super
 
@@ -116,9 +110,6 @@ void UCPL_MGAttackFireRange::BeginPlay()
 		Player->OffBlockAction();
 	});
 
-	// Set Delegate "End Attack" - IIC_BaseAttack
-	//EndAttackDeleFunc.AddUObject(this, &UCPL_MGAttackFireRange::EndAttack);
-
 	#pragma endregion
 
 	#pragma region UI
@@ -128,8 +119,8 @@ void UCPL_MGAttackFireRange::BeginPlay()
 	if (PC != nullptr)
 	{
 		//MainHUD = Cast<AHUD_Main>(PC->GetHUD());
-		AHUD_Main* MainHUD = PC->GetHUD<AHUD_Main>();
-		//check(MainHUD);
+		//AHUD_Main* MainHUD = PC->GetHUD<AHUD_Main>();
+		check(MainHUD); //@Super
 		if (MainHUD != nullptr)
 		{
 			SkillCastWidget = MainHUD->GetWidgetSkillCastingBar();

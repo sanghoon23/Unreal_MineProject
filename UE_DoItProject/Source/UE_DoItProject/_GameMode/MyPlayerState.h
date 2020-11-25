@@ -21,14 +21,6 @@ private:
 
 
 	#pragma endregion
-
-public:
-	//TODO : 상태도 가져와야 한다.
-	virtual void PostInitializeComponents() override;
-
-protected:
-	virtual void CopyProperties(APlayerState* PlayerState) override;
-
 public:
 	void GetPlayerInfo(FPlayerInfo& Out);
 	void SetPlayerInfo(FPlayerInfo& Info);

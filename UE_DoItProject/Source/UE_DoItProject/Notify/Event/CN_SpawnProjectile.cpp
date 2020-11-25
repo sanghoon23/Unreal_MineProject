@@ -68,7 +68,6 @@ void UCN_SpawnProjectile::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 
 		if (Target != nullptr) //@타겟이 지정되어있다면,
 		{
-			//CLog::Print(Target->GetName());
 			SpawnProjectile->SettingTargetActor(Target);
 		}
 	}

@@ -1,7 +1,9 @@
 #include "CMoveMapArea.h"
 #include "Global.h"
-
 #include "UMG.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "_GameInst/CGameInst.h"
 #include "Interface/IC_Player.h"
 
 ACMoveMapArea::ACMoveMapArea()
@@ -103,9 +105,6 @@ void ACMoveMapArea::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AA
 	if (I_Player != nullptr)
 	{
 		//@LOAD MAP
-		CLog::Print(L"MoveMapAreaActor BeginOverlap!!");
-		CLog::Print(LoadMapName);
-
 		UWorld* const World = OtherActor->GetWorld();
 
 		//@Loading...
@@ -131,6 +130,12 @@ void ACMoveMapArea::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AA
 				{
 					World->GetAuthGameMode()->bUseSeamlessTravel = true;
 					World->ServerTravel(FString("/Game/_Mine/_Maps/"), true);
+
+					/*
+					#1111 - MonsterList 지워야함
+					전역 함수 호출 후, OpenLevel (UCGameInst)
+					*/
+					World->GetGameInstance<UCGameInst>()->OnInitForMapChange();
 					UGameplayStatics::OpenLevel(World, LambdaInsertLoadMapName);
 				}
 				else

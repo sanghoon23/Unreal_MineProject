@@ -155,10 +155,6 @@ void UCPL_HitComp::BeginPlay()
 void UCPL_HitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// Test Code
-	//bool bBeated = Super::IsBeated();
-	//CLog::Print(bBeated);
 }
 
 void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, float DamageAmount)
@@ -168,12 +164,15 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 	check(Type);
 
 	IfFalseRet(bCanAttackFromOther);
+	IfTrueRet(Player->IsDeath());
 
 	if (Type->GetConditionType() == FDamageType::END)
 	{
 		UE_LOG(LogTemp, Warning, L"HM_BasicHitComp OnHit - ConditionType END!!");
 		verify(Type->GetConditionType() == FDamageType::END);
 	}
+
+	CLog::Print(L"CPL_HitComp ActionResetState Before");
 
 	//@Delegate ½ÇÇà.
 	Player->OnActionResetState.Broadcast(Player);

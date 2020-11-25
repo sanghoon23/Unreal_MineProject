@@ -46,8 +46,6 @@ EBTNodeResult::Type UBTTask_RandomAttack::ExecuteTask(UBehaviorTreeComponent & O
 		= I_AttackComp->SetAttackTypeRetIBaseAttack(TypeNum);
 	I_BaseAttack->BeginAttack(MonsterPawn);
 
-	CLog::Print(L"Task RandomAttack IN!!");
-
 	return EBTNodeResult::Succeeded;
 }
 

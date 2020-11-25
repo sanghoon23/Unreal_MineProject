@@ -166,6 +166,7 @@ void UCHM_AssassinHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Ty
 	check(Type);
 
 	IfFalseRet(bCanAttackFromOther);
+	IfTrueRet(HM_Assassin->IsDeath());
 
 	if (Type->GetConditionType() == FDamageType::END)
 	{

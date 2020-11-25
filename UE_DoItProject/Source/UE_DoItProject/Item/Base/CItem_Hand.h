@@ -51,6 +51,8 @@ public:
 	virtual void OnEquip();
 	virtual void UnEquip();
 
+	virtual void SetMeshVisible(bool bSet) {};
+
 public:
 	UHandItemType GetHandItemType() const { return HandItemType; }
 

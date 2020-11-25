@@ -16,15 +16,26 @@ struct FMonsterInfo
 	GENERATED_USTRUCT_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Asset")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Value")
 	TArray<FViewConditionState> InfoConditionDataArray;
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float MaxHP = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float CurrentHP = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float Distance = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float ATK_Coefficient = 1.0f; //@공격 지수
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	float DEF_Coefficient = 1.0f; //@방어 지수
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	FName Name = "";
 
 	//# 상태 추가..

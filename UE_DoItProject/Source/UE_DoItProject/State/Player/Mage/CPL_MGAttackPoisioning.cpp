@@ -1,5 +1,6 @@
 #include "CPL_MGAttackPoisioning.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "_GameMode/CBaseGameMode.h"

@@ -21,6 +21,10 @@ class UE_DOITPROJECT_API ACHM_Basic
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(EditAnywhere, Category = "Data")
+		/* IC_Monster Member */
+		FMonsterInfo MonsterInfo;
+
 	UPROPERTY(EditAnywhere, Category = "AI")
 		bool bAIRunningPossible = true;
 
@@ -76,6 +80,7 @@ public:
 	}
 	virtual ECharactorType GetCharactorType() const override { return CharactorType; }
 
+	virtual void OnInit() override {}; //TODO : InitRespawn, Delegate
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void OnDeath() override; //죽음
 	virtual void CanMove() override { bCanMove = true; }
@@ -136,15 +141,12 @@ private:
 	void CheckDamageTypeForDeath();
 
 	/* 재가 되는 Death 를 만들기 위해 동적 Material 생성 후, Container Add */
-	void InsertMatInstDynamic(const enum class ECharactorMeshSort Sort, FLinearColor Color);
+	void InsertMatInstDynamic(const ECharactorMeshSort Sort, FLinearColor Color);
 
 	#pragma region Member
 private:
 	// Type
 	ECharactorType CharactorType = ECharactorType::MONSTER;
-
-	/* IC_Monster Member */
-	FMonsterInfo MonsterInfo;
 
 	bool bInsertForDeathMesh = false;
 	float InsertTimer = 0.0f;

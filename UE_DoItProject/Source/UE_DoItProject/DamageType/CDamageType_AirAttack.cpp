@@ -31,23 +31,25 @@ void UCDamageType_AirAttack::OnHittingProcess(AActor * Subject, AActor * Damaged
 {
 	Super::OnHittingProcess(Subject, DamagedActor, DamagedActorHitComp, InitialDamageAmount);
 
-	//@때린 대상 바라보기
-	//UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
+	APawn* const DamagedPawn = Cast<APawn>(DamagedActor);
+	check(DamagedPawn);
 
-	//@Take Damage
+	AController* PawnController = Cast<APawn>(Subject)->GetController();
+	check(PawnController);
+
+	IIC_Charactor* const I_Charactor = Cast<IIC_Charactor>(DamagedPawn);
+	check(I_Charactor);
+
+	//@DamagedActor 가 공격 당할 수 있다면,
 	if (DamagedActorHitComp->IsDamagedFromOther() == true)
 	{
-		APawn* DamagedPawn = Cast<APawn>(DamagedActor);
-		if (DamagedPawn != nullptr)
-		{
-			AController* PawnController = Cast<APawn>(Subject)->GetController();
-			check(PawnController);
-
-			FDamageEvent DamageEvent;
-			DamageEvent.DamageTypeClass = GetClass();
-			DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
-		}
+		FDamageEvent DamageEvent;
+		DamageEvent.DamageTypeClass = GetClass();
+		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 	}
+
+	//@캐릭터가 죽었다면,
+	IfTrueRet(I_Charactor->IsDeath());
 
 	//@Motage
 	{
@@ -55,13 +57,12 @@ void UCDamageType_AirAttack::OnHittingProcess(AActor * Subject, AActor * Damaged
 		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
 		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
 
+		//@Ex) Freeze 상황일 때, return
+		IfTrueRet(I_Charactor->IsDontMontagePlay());
+
 		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
 		if (Charactor != nullptr)
 		{
-			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-			check(I_Charactor);
-			IfTrueRet(I_Charactor->IsDontMontagePlay());
-
 			// @속력 줄이기 - 중력끄고 바로 해줘야함
 			Charactor->GetCharacterMovement()->Velocity = FVector(0.0f);
 

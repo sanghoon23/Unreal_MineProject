@@ -25,6 +25,6 @@ void UCN_EndAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* 
 	}
 	else
 	{
-		CLog::Print(L"CN_EndAttack Notify EndAttackDeleFunc Not Bound!!");
+		UE_LOG(LogTemp, Warning, L"CN_EndAttack Notify EndAttackDeleFunc Not Bound!!");
 	}
 }

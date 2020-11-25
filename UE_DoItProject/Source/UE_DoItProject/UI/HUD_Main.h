@@ -2,10 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+
 #include "UI/Widget/WG_PlayerInfo.h"
 #include "UI/Widget/WG_TargetInfo.h"
 #include "UI/Widget/WG_SkillCastingBar.h"
 #include "UI/Widget/WG_TextNotify.h"
+#include "UI/Widget/WG_PlayerDeadMenu.h"
 
 #include "HUD_Main.generated.h"
 
@@ -34,6 +36,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Visible")
 		TSubclassOf<class UUserWidget> TextNotifyWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = "Visible")
+		TSubclassOf<class UUserWidget> PlayerDeadMenuWidgetClass;
+
 	#pragma endregion	
 
 public:
@@ -50,8 +55,9 @@ public:
 
 	/* Memeber */
 public:
-	UWG_SkillCastingBar* GetWidgetSkillCastingBar() { return CastingWidget; }
-	UWG_TargetInfo* GetWidgetTargetInfo() { return TargetInfoWidget; }
+	UWG_SkillCastingBar* GetWidgetSkillCastingBar();
+	UWG_TargetInfo* GetWidgetTargetInfo();
+	UWG_PlayerDeadMenu* GetWidgetPlayerDeadMenu();
 
 private:
 	UWG_PlayerInfo*			PlayerInfoWidget;
@@ -61,6 +67,8 @@ private:
 	UWG_SkillCastingBar*	CastingWidget;
 
 	UWG_TextNotify*			TextNotifyWidget;
+
+	UWG_PlayerDeadMenu*		PlayerDeadMenuWidget;
 
 	//Test Code
 	UUserWidget* InputWidget;

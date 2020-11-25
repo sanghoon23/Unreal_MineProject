@@ -34,20 +34,25 @@ void UCDamageType_StrongAttack::OnHittingProcess(AActor * Subject, AActor * Dama
 	//@때린 대상 바라보기
 	//UCFL_ActorAgainst::LookAtTarget(DamagedActor, Subject);
 
-	//@Take Damage
+	APawn* DamagedPawn = Cast<APawn>(DamagedActor);
+	check(DamagedPawn);
+
+	AController* PawnController = Cast<APawn>(Subject)->GetController();
+	check(PawnController);
+
+	IIC_Charactor* const I_Charactor = Cast<IIC_Charactor>(DamagedActor);
+	check(I_Charactor);
+
+	//@DamagedActor 가 공격 당할 수 있다면,
 	if (DamagedActorHitComp->IsDamagedFromOther() == true)
 	{
-		APawn* DamagedPawn = Cast<APawn>(DamagedActor);
-		if (DamagedPawn != nullptr)
-		{
-			AController* PawnController = Cast<APawn>(Subject)->GetController();
-			check(PawnController);
-
-			FDamageEvent DamageEvent;
-			DamageEvent.DamageTypeClass = GetClass();
-			DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
-		}
+		FDamageEvent DamageEvent;
+		DamageEvent.DamageTypeClass = GetClass();
+		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 	}
+
+	//@캐릭터가 죽었다면,
+	IfTrueRet(I_Charactor->IsDeath());
 
 	//@Motage
 	{
@@ -55,13 +60,8 @@ void UCDamageType_StrongAttack::OnHittingProcess(AActor * Subject, AActor * Dama
 		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
 		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
 
-		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
-		if (Charactor != nullptr)
-		{
-			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-			check(I_Charactor);
-			IfTrueRet(I_Charactor->IsDontMontagePlay());
-		}
+		//@Montage 실행 할 수 없는 상태인지 확인.
+		IfTrueRet(I_Charactor->IsDontMontagePlay());
 
 		const uint8 MontageNum = static_cast<uint8>(GetConditionType());
 		DamagedActorHitComp->RunMontageFromAttackType(EComboOrNot::NONE, MontageNum, 0.6f, true);

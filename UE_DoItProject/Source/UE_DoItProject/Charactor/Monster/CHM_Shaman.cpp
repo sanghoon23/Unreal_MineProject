@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
 #include "Interface/IC_Player.h"
@@ -60,9 +61,9 @@ ACHM_Shaman::ACHM_Shaman()
 	#pragma region Monster Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 200.0f;
-	Info.CurrentHP = 200.0f;
-	Info.Name = FName(L"Shaman");
+	MonsterInfo.MaxHP = 200.0f;
+	MonsterInfo.CurrentHP = 200.0f;
+	MonsterInfo.Name = FName(L"Shaman");
 	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
@@ -226,8 +227,8 @@ float ACHM_Shaman::TakeDamage(float DamageAmount, FDamageEvent const & DamageEve
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
-	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+	IfFalseRetResult(CanBeDamaged(), MonsterInfo.CurrentHP);
+	IfTrueRetResult(bDeath == true, MonsterInfo.CurrentHP);
 
 	//@UI
 	{
@@ -263,14 +264,14 @@ float ACHM_Shaman::TakeDamage(float DamageAmount, FDamageEvent const & DamageEve
 		}
 	}
 
-	Info.CurrentHP -= DamageAmount;
+	MonsterInfo.CurrentHP -= DamageAmount;
 
-	if (Info.CurrentHP <= 0.0f)
+	if (MonsterInfo.CurrentHP <= 0.0f)
 	{
 		CheckDamageTypeForDeath();
 		OnDeath();
 	}
-	return Info.CurrentHP;
+	return MonsterInfo.CurrentHP;
 }
 
 void ACHM_Shaman::OnDelegateCharactorDestroy()
@@ -367,7 +368,6 @@ void ACHM_Shaman::InsertMatInstDynamic(const ECharactorMeshSort Sort, FLinearCol
 				MatInfo.Name = "Color";
 				FLinearColor OutColor;
 				TargetMat->GetVectorParameterValue(MatInfo, OutColor);
-				CLog::Print(FVector(OutColor));
 
 				//@Set Material
 				GetMesh()->SetMaterial(i, TargetMat); //@Set

@@ -16,6 +16,7 @@ void UCUpset_Stun::StartCondition(APawn * Owner)
 {
 	Super::StartCondition(Owner);
 	check(Owner);
+	check(StunActionMon); //@몽타주가 설정되어 있어야 함.
 
 	//@Stun Head Particle 머리에 붙이기
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
@@ -44,6 +45,7 @@ void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 	//@ApplyTime -= DeltaTime
 	Super::UpdateCondition(Owner, DeltaTime);
 	check(Owner);
+	check(StunActionMon); //@몽타주가 설정되어 있어야 함.
 
 	ACharacter* Charactor = Cast<ACharacter>(Owner);
 	if (Charactor != nullptr)
@@ -58,13 +60,8 @@ void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 		bool IsPlayingNonAction = AnimInst->Montage_IsPlaying(StunActionMon);
 
 		//@JumpSection - 아직 ApplyTime 이 남아있다면,
-		IIC_Monster* I_Monster = Cast<IIC_Monster>(Charactor);
 		if (ApplyTime > 0.0f && IsOtherMonPlaying == false)
 		{
-			////@AI OFF
-			//if(I_Monster != nullptr)
-			//	I_Monster->SetAIRunningPossible(false);
-
 			//@RUN Montage
 			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Charactor);
 			if (I_Charactor != nullptr)
@@ -79,10 +76,6 @@ void UCUpset_Stun::UpdateCondition(APawn * Owner, float DeltaTime)
 		//@ApplyTime 이 지났다면,
 		else if (ApplyTime <= 0.0f)
 		{
-			////@AI ON
-			//if (I_Monster != nullptr)
-			//	I_Monster->SetAIRunningPossible(true);
-
 			if (IsPlayingNonAction == true)
 			{
 				AnimInst->Montage_Stop(0.5f, StunActionMon);
@@ -95,6 +88,16 @@ void UCUpset_Stun::EndCondition(APawn * Owner)
 {
 	Super::EndCondition(Owner);
 	check(Owner);
+
+	ACharacter* Charactor = Cast<ACharacter>(Owner);
+	check(Charactor);
+
+	UAnimInstance* AnimInst = Charactor->GetMesh()->GetAnimInstance();
+	check(AnimInst);
+
+	AnimInst->Montage_Stop(0.5f, StunActionMon);
+
+	CLog::Print(L"Stun EndCondition!!");
 
 	//@Particle OFF
 	if (StunHeadParticleComp != nullptr)

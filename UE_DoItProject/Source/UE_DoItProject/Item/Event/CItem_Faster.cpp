@@ -276,15 +276,6 @@ void ACItem_Faster::DelegateAbilityEnd(AActor* AppliedActor)
 		I_Player->OnParticleInPlayer();
 	}
 
-	////@Particle OFF
-	//if (ParticleComp_LHand != nullptr)
-	//	ParticleComp_LHand->SetActive(false);
-	//else CLog::Print(L"LHand Particle NULL!!");
-
-	//if (ParticleComp_RHand != nullptr)
-	//	ParticleComp_RHand->SetActive(false);
-	//else CLog::Print(L"RHand Particle NULL!!");
-
 	//@Death Call
 	Death();
 }

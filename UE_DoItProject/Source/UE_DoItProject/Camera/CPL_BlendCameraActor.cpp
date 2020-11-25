@@ -4,9 +4,6 @@
 ACPL_BlendCameraActor::ACPL_BlendCameraActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	//SceneComp = CreateDefaultSubobject<USceneComponent>("Scene");
-	//SceneComp->SetupAttachment(RootComponent);
 }
 
 void ACPL_BlendCameraActor::BeginPlay()

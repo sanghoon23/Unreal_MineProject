@@ -1,5 +1,7 @@
 #include "CS_MouseController.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include "Interface/IC_Monster.h"
 #include "Actor/Decal/CDecalActor_WithMouse.h"
@@ -222,30 +224,12 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 	FVector RetLocation = FVector(0.0f);
 	for (FHitResult HitResult : HitResults)
 	{
-		//if (Cast<APawn>(HitResult.GetActor()) != nullptr) //@HitResultActor 가 Pawn 이라면
-		//{
-		//	//@Set Other DecalMaterial
-		//	DecalActor->SetDecalCompMat(DecalMatCanNotUsingRange);
-		//	continue;
-		//}
-
-		CLog::Print(HitResult.GetActor()->GetName());
-
 		//#1105_Temp 임시
 		//@바닥이랑 닿을 때,
 		if (HitResult.GetActor()->GetName().Contains(HitFloorContainName))
 		{
 			RetLocation = HitResult.Location;
 			RetLocation.Z += 1.0f;
-			CLog::Print(HitResult.Location);
-			//@캐릭터일 경우 높이를 더해줌.
-			//ACharacter* CHR_TagetMouseStandard = Cast<ACharacter>(TargetMouseStandard);
-			//if (CHR_TagetMouseStandard != nullptr)
-			//	RetLocation.Z += CHR_TagetMouseStandard->GetDefaultHalfHeight();
-			//else
-			//	RetLocation.Z += 0.1;
-
-			//CLog::Print(RetLocation);
 
 			//@Mouse 거리가 있을 때, (범위를 넘어가지 않게 하기 위함)
 			if (TargetMouseStandard != nullptr)
@@ -261,8 +245,6 @@ bool UCS_MouseController::UsingDecalMouseRayAndHit(APlayerController* PC, FVecto
 			}
 
 			HitedLocation = RetLocation;
-
-			//RetLocation.Z += 300.0f;
 			DecalActor->SetActorLocation(RetLocation);
 
 			return true;

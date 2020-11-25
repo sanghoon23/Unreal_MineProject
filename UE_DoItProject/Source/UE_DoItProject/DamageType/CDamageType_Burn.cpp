@@ -57,6 +57,9 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 	AController* PawnController = Cast<APawn>(Subject)->GetController();
 	check(PawnController);
 
+	IIC_Charactor* const I_Charactor = Cast<IIC_Charactor>(DamagedPawn);
+	check(I_Charactor);
+
 	//@예외처리 - Damage 를 받지 않는 상황
 	IfFalseRet(DamagedActorHitComp->IsDamagedFromOther());
 
@@ -79,20 +82,14 @@ void UCDamageType_Burn::OnHittingProcess(AActor * Subject, AActor * DamagedActor
 
 	BurnConditionData->SetSecondDamage(GetSecondDamageValue());
 
-	//@Damage Class
+	//@TakeDamage
 	FDamageEvent DamageEvent;
 	DamageEvent.DamageTypeClass = GetClass();
 	BurnConditionData->SetDamageEvent(DamageEvent);
-
-	//@TakeDamage
 	DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
-
-	//@죽음 확인
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-	if (I_Charactor != nullptr)
-	{
-		IfTrueRet(I_Charactor->IsDeath() == true);
-	}
+	
+	//@캐릭터가 죽었다면,
+	IfTrueRet(I_Charactor->IsDeath());
 
 	UTexture2D* Texture = GetUITexture();
 	if (Texture != nullptr)

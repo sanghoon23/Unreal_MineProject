@@ -1,6 +1,7 @@
 #include "CHumanoidMonster.h"
 #include "Global.h"
 
+#include "_GameInst/CGameInst.h"
 #include "AIController.h"
 
 ACHumanoidMonster::ACHumanoidMonster()
@@ -34,10 +35,6 @@ ACHumanoidMonster::ACHumanoidMonster()
 void ACHumanoidMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	//TODO : 몬스터 리스트 저장.
-	//@등록한다.
-
 }
 
 void ACHumanoidMonster::Tick(float DeltaTime)

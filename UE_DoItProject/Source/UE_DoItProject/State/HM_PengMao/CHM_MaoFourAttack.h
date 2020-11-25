@@ -29,9 +29,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		TArray<class UAnimMontage*> AttackMontages;
 
-	UPROPERTY(VisibleAnywhere, Category = "DamageType")
-		UCDamageType_Freeze*	DT_Freeze;
-
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* P_AttackCloud;
 
@@ -40,9 +37,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SlowerParticle_Body;
-
-	//UPROPERTY(VisibleAnywhere, Category = "Ability")
-	//	class UCPLAbility_SpeedDown* AbilitySpeedDowner;
 
 	UPROPERTY(VisibleAnywhere, Category = "Skill")
 		TArray<class ACSkillRangeDisplay*> SkillRangeDisplayArray;

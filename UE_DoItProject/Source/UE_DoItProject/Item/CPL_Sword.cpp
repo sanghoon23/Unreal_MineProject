@@ -63,6 +63,11 @@ void ACPL_Sword::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ACPL_Sword::SetMeshVisible(bool bSet)
+{
+	StaticMesh->SetVisibility(bSet);
+}
+
 void ACPL_Sword::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

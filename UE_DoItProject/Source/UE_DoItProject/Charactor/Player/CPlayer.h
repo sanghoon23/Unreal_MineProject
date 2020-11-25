@@ -21,6 +21,10 @@ class UE_DOITPROJECT_API ACPlayer
 	GENERATED_BODY()
 
 	#pragma	region Reflection
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "_UserID")
+		uint8 UserId = 0;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movements")
 		float OriginMaxSpeed = 600.0f;
@@ -42,6 +46,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 		class UCameraComponent* CameraComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* P_OnRespawnParticle;
 
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystemComponent* LeftParticle;
@@ -138,6 +145,7 @@ public:
 	}
 	virtual ECharactorType GetCharactorType() const override { return CharactorType; }
 
+	virtual void OnInit() override;
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void OnDeath() override; //죽음
 	virtual void CanMove() override { bCanMove = true; } // 이동 가능.
@@ -224,6 +232,9 @@ public:
 	*/
 	void OnUsingDecalMouseControl(FVector DecalCircleSize, AActor* StandardTarget = nullptr, float StandardRange = 0.0f);
 	void OffUsingDecalMouseControl();
+
+	void OnUseSpeatatorMode(); //@관전자 모드 전환.
+	void OnRespawn(); //@리스폰
 
 private:
 	// Axis Mapping

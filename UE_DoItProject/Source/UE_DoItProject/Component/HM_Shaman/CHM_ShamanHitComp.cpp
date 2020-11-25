@@ -200,6 +200,7 @@ void UCHM_ShamanHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type
 	check(Type);
 
 	IfFalseRet(bCanAttackFromOther);
+	IfTrueRet(HM_Shaman->IsDeath());
 
 	if (Type->GetConditionType() == FDamageType::END)
 	{

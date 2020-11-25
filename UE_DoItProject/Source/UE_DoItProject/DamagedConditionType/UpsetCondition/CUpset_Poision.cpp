@@ -78,8 +78,6 @@ void UCUpset_Poision::ConditionOverlap(UCBaseConditionType* OverlappedCondition)
 	//@Damage ÁßÃ¸
 	const float InputConditionDamage = OverlapCondition->GetSecondDamage();
 	SecondDamage += InputConditionDamage;
-
-	CLog::Print(L"Poision Overlap!!");
 }
 
 void UCUpset_Poision::SetOriginMaterial(TMap<int32, class UMaterialInterface*>& In)

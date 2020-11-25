@@ -200,6 +200,7 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type,
 	check(Type);
 
 	IfFalseRet(bCanAttackFromOther);
+	IfTrueRet(HM_Basic->IsDeath());
 
 	if (Type->GetConditionType() == FDamageType::END)
 	{
@@ -210,39 +211,6 @@ void UCHM_BasicHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type,
 	//@Delegate 실행.
 	HM_Basic->OnActionResetState.Broadcast(HM_Basic);
 
-	///DamageType Process
-	//if (IsDamagedFromOther() == true)
-	//{
-	//	Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
-	//}
-
+	//@Virtual Function
 	Type->OnHittingProcess(AttackingActor, HM_Basic, this, DamageAmount);
-
-	////@Montage 실행 - bBlockDamageMontage 변수 여부 ( BaseHitComp )
-	//IfTrueRet(bBlockDamagedMontage);
-
-	////@콤보가 가능한지,
-	//if (bCanHitCombo == true)
-	//{
-	//	if (HitComboMon != nullptr)
-	//	{
-	//		SetCanHittedCombo(false); //@false
-	//		HM_Basic->ActorAnimMonPlay(HitComboMon, 0.6f, true);
-	//		CLog::Print(L"Can Hit Combo!!");
-	//		return; //@return
-	//	}
-	//}
-
-	////@else
-	//const uint8 MontageNum = static_cast<uint8>(Type->GetConditionType());
-	//if (MontageNum >= DamagedMontages.Num())
-	//{
-	//	UE_LOG(LogTemp, Warning, L"HitComp MontageNumber EXCEED!!");
-	//	return;
-	//}
-	//UAnimMontage* const RunMontage = DamagedMontages[MontageNum];
-	//if (RunMontage != nullptr)
-	//{
-	//	HM_Basic->ActorAnimMonPlay(RunMontage, 0.6f, true);
-	//}
 }

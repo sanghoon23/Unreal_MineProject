@@ -18,6 +18,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	virtual void SetMeshVisible(bool bSet) override;
+
+public:
 	FString GetItemAttachName() { return ItemAttachName; }
 
 };

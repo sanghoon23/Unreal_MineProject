@@ -176,8 +176,6 @@ void UCUpset_Freeze::ConditionOverlap(UCBaseConditionType* OverlappedCondition)
 	//@ÃÊ±âÈ­
 	ApplyTime = OverlapCondition->ApplyTime;
 	InitUIColorAndOpacity();
-
-	CLog::Print(L"Freeze Overlap!!");
 }
 
 void UCUpset_Freeze::SetFreezeParticle(UParticleSystem* PT)

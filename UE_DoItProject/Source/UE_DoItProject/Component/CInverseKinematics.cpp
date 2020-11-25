@@ -1,5 +1,7 @@
 #include "CInverseKinematics.h"
 #include "Global.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Character.h"
 
 UCInverseKinematics::UCInverseKinematics()

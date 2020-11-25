@@ -113,7 +113,6 @@ void UCHM_AssaSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 	//@타겟 바라보기
 	AActor* AITarget = HM_Assassin->GetTargetInAI();
 	check(AITarget);
-	CLog::Print(AITarget->GetName());
 	UCFL_ActorAgainst::LookAtTarget(HM_Assassin, AITarget);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

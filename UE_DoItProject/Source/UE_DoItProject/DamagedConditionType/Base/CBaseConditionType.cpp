@@ -33,7 +33,6 @@ void UCBaseConditionType::StartCondition(APawn * Owner)
 		IfTrueRet(OwnerI_Charactor->IsDeath());
 	}
 	OnDelStartCondition.Broadcast(Owner);
-	CLog::Print(L"BaseConditionType Start!!");
 }
 
 void UCBaseConditionType::UpdateCondition(APawn * Owner, float DeltaTime)
@@ -66,8 +65,6 @@ void UCBaseConditionType::EndCondition(APawn * Owner)
 	bLinerColorDir = true;
 	TextureUI = nullptr;
 	ApplyTime = 0.0f;
-
-	CLog::Print(L"BaseConditionType End!!");
 }
 
 void UCBaseConditionType::SetDamageSubjectController(AController * InputController)

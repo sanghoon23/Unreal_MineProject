@@ -96,26 +96,6 @@ void ACItem_Barrier::BeginPlay()
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACItem_Barrier::OnBegin);
 	BoxComp->OnComponentEndOverlap.AddDynamic(this, &ACItem_Barrier::OnEnd);
-
-	//@Create Ability
-	{
-		AbilityBarrier = NewObject<UCPLAbility_Barrier>();
-	}
-
-	//@Setting Delegate
-	{
-		//AbilityBarrier->OnEndTimerAbility.AddUObject(this, &ACItem_Barrier::DelegateAbilityEnd);
-
-		//AbilityBarrier->OnEndTimerAbility.AddLambda([&](AActor*)
-		//{
-		//	CLog::Print(L"ParticleComp_Barrier Lambda IN!!");
-
-		//	//@Particle OFF
-		//	if (ParticleComp_Barrier != nullptr)
-		//		ParticleComp_Barrier->SetActive(false);
-		//	else CLog::Print(L"ParticleComp_Barrier NULL!!");
-		//});
-	}
 }
 
 void ACItem_Barrier::Tick(float DeltaTime)
@@ -153,6 +133,9 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 
 		//@UnVisible
 		SetActorHiddenInGame(true);
+
+		UCPLAbility_Barrier* AbilityBarrier = NewObject<UCPLAbility_Barrier>();
+		check(AbilityBarrier);
 
 		//@파티클 실행
 		{
@@ -202,11 +185,9 @@ void ACItem_Barrier::DelegateAbilityEnd(AActor* AppliedActor)
 	check(AppliedActor);
 
 	//@Particle OFF
-	if (ParticleComp_Barrier != nullptr)
-		ParticleComp_Barrier->SetActive(false);
-	else CLog::Print(L"ParticleComp_Barrier NULL!!");
+	if (ParticleComp_Barrier != nullptr) ParticleComp_Barrier->SetActive(false);
+	else UE_LOG(LogTemp, Warning, L"ParticleComp_Barrier NULL!!");
 
 	//@DeathCall
 	Death();
-
 }

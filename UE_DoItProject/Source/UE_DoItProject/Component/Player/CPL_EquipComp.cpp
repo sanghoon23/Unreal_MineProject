@@ -1,5 +1,6 @@
 #include "CPL_EquipComp.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "GameFramework/Character.h"
 #include "Interface/IC_Charactor.h"
@@ -70,6 +71,25 @@ void UCPL_EquipComp::BeginPlay()
 		DisplayList[0]->GetStaticMeshComp()->SetVisibility(false);
 	});
 
+
+#pragma region Set Delegate - Charactor	
+	//@OnDeath 호출 시, ItemList UnVisible - Death 후 Respawn 될 수 있음.
+	IC_Charactor->OnDeathDelegate.AddLambda([&]()
+	{
+		for (ACItem_Hand* ItemActor : DisplayList)
+		{
+			ItemActor->GetStaticMeshComp()->SetVisibility(false);
+		}
+	});
+
+	IC_Charactor->OnInitDelegate.AddLambda([&]()
+	{
+		bEquiping = false;
+		bArmed = false;
+		CurrentWeaponNum = -1;
+	});
+
+#pragma endregion
 }
 
 void UCPL_EquipComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -96,7 +116,6 @@ void UCPL_EquipComp::WeaponRelease()
 void UCPL_EquipComp::WeaponNextSwap(bool AscendingOrder)
 {
 	TArray<ACItem_Hand*>* HandWeaponArray = DisplayMap.Find(UItemType::HAND);
-	IfNullRetResult(HandWeaponArray, CLog::Print(L"WeaponSwap_HandWeaponArray NULL!!"));
 	check(HandWeaponArray);
 
 	// Calc
@@ -119,7 +138,6 @@ void UCPL_EquipComp::WeaponNextSwap(bool AscendingOrder)
 		CurrentWeaponNum = HandWeaponArray->Num() - 1;
 	}
 
-	//CLog::Print(L"EquipComp Swap In!!");
 	// Setting
 	{
 		// 이전 socket 으로 무기 MeshDetach - GetItemAttachName.

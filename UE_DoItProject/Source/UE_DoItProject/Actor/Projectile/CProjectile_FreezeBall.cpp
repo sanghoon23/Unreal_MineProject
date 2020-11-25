@@ -1,5 +1,6 @@
 #include "CProjectile_FreezeBall.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 
 #include "Interface/IC_Charactor.h"

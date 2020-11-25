@@ -5,6 +5,7 @@
 
 #include "Interface/IC_Player.h"
 #include "Charactor/Monster/Base/CHumanoidMonster.h"
+#include "Camera/CPL_BlendCameraActor.h"
 
 #include "CGameInst.generated.h"
 
@@ -18,15 +19,20 @@ class UE_DOITPROJECT_API UCGameInst
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "GlobalData")
-		TMap<int, FPlayerInfo> MapPlayerInfo;
+		TMap<int, FPlayerInfo> PlayerInfoMap;
 
 	UPROPERTY(VisibleAnywhere, Category = "GlobalData")
 		TArray<ACHumanoidMonster*> ExistWorldMonsterList;
+
 
 #pragma endregion
 
 public:
 	virtual void Init() override;
+
+public:
+	/* LoadMap 시, 초기화 함수 */
+	void OnInitForMapChange();
 
 public:
 	void GetPlayerInfoFromId(FPlayerInfo& Info, int PlayerID);
@@ -35,8 +41,5 @@ public:
 	const bool IsExistWorldMonster() { return (ExistWorldMonsterList.Num() != 0); }
 	const int NumExistWorldMonster() { return ExistWorldMonsterList.Num(); }
 	void AddExistWorldMonster(ACHumanoidMonster* InsertMon);
-
-
-private:
 
 };

@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
 #include "Interface/IC_Player.h"
@@ -53,9 +54,9 @@ ACHM_PengMao::ACHM_PengMao()
 	#pragma region Monster Info Setting
 
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 100.0f;
-	Info.CurrentHP = 100.0f;
-	Info.Name = FName(L"PengMao");
+	MonsterInfo.MaxHP = 100.0f;
+	MonsterInfo.CurrentHP = 100.0f;
+	MonsterInfo.Name = FName(L"PengMao");
 	//Info.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
@@ -263,8 +264,8 @@ float ACHM_PengMao::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	IfFalseRetResult(CanBeDamaged(), Info.CurrentHP);
-	IfTrueRetResult(bDeath == true, Info.CurrentHP);
+	IfFalseRetResult(CanBeDamaged(), MonsterInfo.CurrentHP);
+	IfTrueRetResult(bDeath == true, MonsterInfo.CurrentHP);
 
 	//@UI
 	{
@@ -300,13 +301,13 @@ float ACHM_PengMao::TakeDamage(float DamageAmount, FDamageEvent const & DamageEv
 		}
 	}
 
-	Info.CurrentHP -= DamageAmount;
+	MonsterInfo.CurrentHP -= DamageAmount;
 
-	if (Info.CurrentHP <= 0.0f)
+	if (MonsterInfo.CurrentHP <= 0.0f)
 	{
 		OnDeath();
 	}
-	return Info.CurrentHP;
+	return MonsterInfo.CurrentHP;
 }
 
 void ACHM_PengMao::OnDelegateCharactorDestroy()

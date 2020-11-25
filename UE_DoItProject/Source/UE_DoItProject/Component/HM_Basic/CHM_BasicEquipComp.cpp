@@ -36,6 +36,14 @@ void UCHM_BasicEquipComp::BeginPlay()
 		Sword->SetActorRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
 		Sword->SetActorRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 
+		/*
+		#1125_
+		Sequence Stage_1_MonsterSpawnSeq 에서 EquipComponent
+		Actviate, DeActivate 이벤트 활성화 비활성화로
+		무기를 끄고 키게끔 구현.
+		*/
+		Sword->SetMeshVisible(false);
+
 		DisplayList.Add(Sword);
 	}
 
@@ -53,6 +61,10 @@ void UCHM_BasicEquipComp::BeginPlay()
 	}
 
 	#pragma endregion
+
+	//@#1125_ Cinematic Intro 에서 무기가 보임.....
+	OnComponentActivated.AddDynamic(this, &UCHM_BasicEquipComp::CompActivated);
+	OnComponentDeactivated.AddDynamic(this, &UCHM_BasicEquipComp::CompDeActivated);
 }
 
 
@@ -67,4 +79,16 @@ ACItem_Hand * UCHM_BasicEquipComp::GetDisplayItem(int WeaponArrayNum)
 		return nullptr;
 
 	return DisplayList[WeaponArrayNum];
+}
+
+void UCHM_BasicEquipComp::CompActivated(UActorComponent * Component, bool bReset)
+{
+	CLog::Print(L"EquipComp Activated!!");
+	Sword->SetMeshVisible(true);
+}
+
+void UCHM_BasicEquipComp::CompDeActivated(UActorComponent * Component)
+{
+	CLog::Print(L"EquipComp 'De' Activated!!");
+	Sword->SetMeshVisible(false);
 }

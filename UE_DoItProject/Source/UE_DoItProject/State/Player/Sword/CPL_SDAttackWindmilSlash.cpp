@@ -143,8 +143,6 @@ void UCPL_SDAttackWindmilSlash::AttackOtherPawn(UCDamageType_Base* DamageType)
 			IIC_Charactor* Charactor = Cast<IIC_Charactor>(OverlapResult.GetActor());
 			if (Charactor != nullptr)
 			{
-				//CLog::Print(OverlapResult.GetActor()->GetName());
-
 				// 1. Get Interface HitComp
 				IIC_HitComp* HitComp = Charactor->GetIHitComp();
 				if (HitComp != nullptr)

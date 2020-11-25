@@ -63,22 +63,16 @@ void UCHM_AssaFourAttack::BeginPlay()
 	//@Get StartSectionLength, EndSectionLength -->> 느리게 시작된 몽타주 다시 원래 속도로.
 	const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
 	AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
-
-	CLog::Print(StartSectionLength);
-	CLog::Print(EndSectionLength);
 }
 
 void UCHM_AssaFourAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//CLog::Print(L"FourAttack Tick IN!!");
-
 	UAnimInstance* OwnerAnimInst = HM_Assassin->GetMesh()->GetAnimInstance();
 	if (OwnerAnimInst != nullptr && bAttacking == true && bSettingPlayRate == false) //@공격이 실행됐을 때,
 	{
 		float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
-		CLog::Print(CurrentMonPos);
 		if (CurrentMonPos >= StartSectionLength) //@다음 섹션(NextAction)
 		{
 			bSettingPlayRate = true;

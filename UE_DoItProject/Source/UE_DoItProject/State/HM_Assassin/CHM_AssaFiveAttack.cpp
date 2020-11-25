@@ -5,6 +5,7 @@
 #include "Runtime/LevelSequence/Public/LevelSequence.h"
 #include "Runtime/LevelSequence/Public/LevelSequencePlayer.h"
 #include "Runtime/MovieScene/Public/MovieSceneSequence.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 #include "Interface/IC_Charactor.h"

@@ -24,7 +24,6 @@ bool UBTDecorator_CheckRandPercent::CalculateRawConditionValue(UBehaviorTreeComp
 	Stream.GenerateNewSeed();
 	float fRandom = UKismetMathLibrary::RandomFloatInRangeFromStream(0.000f, 100.000f, Stream);
 
-	CLog::Print(fRandom);
 	return fRandom <= Percentage;
 }
 

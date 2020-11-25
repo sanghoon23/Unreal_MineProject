@@ -103,6 +103,7 @@ void UCHM_MaoHitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, f
 	check(Type);
 
 	IfFalseRet(bCanAttackFromOther);
+	IfTrueRet(HM_PengMao->IsDeath());
 
 	if (Type->GetConditionType() == FDamageType::END)
 	{

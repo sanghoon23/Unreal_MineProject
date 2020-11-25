@@ -2,6 +2,8 @@
 #include "ConstructorHelpers.h"
 #include "DrawDebugHelpers.h"
 
+#include "CLog.h"
+
 AHUD_Main::AHUD_Main()
 {
 	FString strPath = L"";
@@ -37,6 +39,15 @@ AHUD_Main::AHUD_Main()
 	if (TextNotifyClass.Succeeded())
 	{
 		TextNotifyWidgetClass = TextNotifyClass.Class;
+	}
+
+	//TODO :
+	//Player Dead Menu
+	strPath = L"WidgetBlueprint'/Game/_Mine/_MyBlueprint/Widget/BpCWG_PlayerDeadMenu.BpCWG_PlayerDeadMenu_C'";
+	ConstructorHelpers::FClassFinder<UUserWidget> PlayerDeadMenuClass(*strPath);
+	if (PlayerDeadMenuClass.Succeeded())
+	{
+		PlayerDeadMenuWidgetClass = PlayerDeadMenuClass.Class;
 	}
 
 	#pragma endregion
@@ -94,11 +105,40 @@ void AHUD_Main::BeginPlay()
 			TextNotifyWidget->AddToViewport();
 		}
 	}
+
+	//@Player Dead Menu
+	if (PlayerDeadMenuWidgetClass != nullptr)
+	{
+		PlayerDeadMenuWidget = CreateWidget<UWG_PlayerDeadMenu>(GetWorld(), PlayerDeadMenuWidgetClass);
+		if (PlayerDeadMenuWidget)
+		{
+			PlayerDeadMenuWidget->SetVisibility(ESlateVisibility::Hidden);
+			PlayerDeadMenuWidget->AddToViewport();
+		}
+	}
 }
 
 void AHUD_Main::VisibleUITextNotify(const FString& InputText, float fTime)
 {
 	TextNotifyWidget->CallingUITextNotify(InputText, fTime);
+}
+
+UWG_SkillCastingBar * AHUD_Main::GetWidgetSkillCastingBar()
+{
+	check(CastingWidget);
+	return CastingWidget;
+}
+
+UWG_TargetInfo * AHUD_Main::GetWidgetTargetInfo()
+{
+	check(TargetInfoWidget);
+	return TargetInfoWidget;
+}
+
+UWG_PlayerDeadMenu * AHUD_Main::GetWidgetPlayerDeadMenu()
+{
+	check(PlayerDeadMenuWidget);
+	return PlayerDeadMenuWidget;
 }
 
 void AHUD_Main::SetInputWidget(TSubclassOf<UUserWidget> InsertWidget)

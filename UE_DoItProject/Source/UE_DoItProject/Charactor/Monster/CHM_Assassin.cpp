@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
 #include "Interface/IC_Player.h"
@@ -91,18 +92,9 @@ void ACHM_Assassin::Tick(float DeltaTime)
 		IIC_BaseAction* AngerAction = I_ActionComp->GetIBaseAction(static_cast<uint8>(EAssa_ActionType::ANGER));
 		check(AngerAction);
 
-		//bool bMonPlaying = GetMesh()->GetAnimInstance()->Montage_IsPlaying(GetCurrentMontage());
-		//IfTrueRet(bMonPlaying);
-
-		/* 지금 계속 호출된다..? */
-		//CLog::Print(L"OnAction CALL!!");
-
 		ACAIC_HM_Assassin* HM_AssaController = Cast<ACAIC_HM_Assassin>(GetController());
 		if (HM_AssaController != nullptr)
 		{
-			CLog::Print(L"AssaController NOT NULL!!");
-
-			//TODO : 분노되면 스킬 추가.
 			//들어오는거 확인했음, 불러와서 추가하면됨.
 			HM_AssaController->AddTypeRandomAttack(EHM_AssassinAttackType::THIRDATTACK);
 			HM_AssaController->AddTypeRandomAttack(EHM_AssassinAttackType::FIVEATTACK);

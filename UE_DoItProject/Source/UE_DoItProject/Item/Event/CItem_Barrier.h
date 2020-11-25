@@ -28,9 +28,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UStaticMeshComponent* SM_HologramGlow;
 
-	UPROPERTY(VisibleAnywhere, Category = "Ability")
-		class UCPLAbility_Barrier* AbilityBarrier;
-
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* ParticleBarrier;
 

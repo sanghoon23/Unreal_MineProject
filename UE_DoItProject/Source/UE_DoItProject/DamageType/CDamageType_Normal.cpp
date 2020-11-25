@@ -32,27 +32,25 @@ void UCDamageType_Normal::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 {
 	Super::OnHittingProcess(Subject, DamagedActor, DamagedActorHitComp, InitialDamageAmount);
 
-	//@Take Damage
+	APawn* DamagedPawn = Cast<APawn>(DamagedActor);
+	check(DamagedPawn);
+
+	AController* PawnController = Cast<APawn>(Subject)->GetController();
+	check(PawnController);
+
+	IIC_Charactor* const I_Charactor = Cast<IIC_Charactor>(DamagedPawn);
+	check(I_Charactor);
+
+	//@DamagedActor 가 공격 당할 수 있다면,
 	if (DamagedActorHitComp->IsDamagedFromOther() == true)
 	{
-		APawn* DamagedPawn = Cast<APawn>(DamagedActor);
-		check(DamagedPawn);
-
-		AController* PawnController = Cast<APawn>(Subject)->GetController();
-		check(PawnController);
-
-		//Test Code
-		//if (PawnController != nullptr)
-		//{
-		//	CLog::Print(L"PawnController NOT NULL!!");
-		//}
-		//else CLog::Print(L"PawnController NULL!!");
-
-
 		FDamageEvent DamageEvent;
 		DamageEvent.DamageTypeClass = GetClass();
 		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 	}
+
+	//@캐릭터가 죽었다면,
+	IfTrueRet(I_Charactor->IsDeath());
 
 	//@Motage
 	{
@@ -60,13 +58,8 @@ void UCDamageType_Normal::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 		const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());
 		IfFalseRet(DamagedActorHitComp->IsUsingDamageTypeEffect(MontageTypeNum));
 
-		ACharacter* Charactor = Cast<ACharacter>(DamagedActor);
-		if (Charactor != nullptr)
-		{
-			IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-			check(I_Charactor);
-			IfTrueRet(I_Charactor->IsDontMontagePlay());
-		}
+		//@몽타주를 받지 않음.
+		IfTrueRet(I_Charactor->IsDontMontagePlay());
 
 		//@콤보가 가능한지,
 		if (DamagedActorHitComp->IsCanHittedCombo() == true)

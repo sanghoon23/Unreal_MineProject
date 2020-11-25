@@ -52,6 +52,11 @@ void ACHM_MaoBlade::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ACHM_MaoBlade::SetMeshVisible(bool bSet)
+{
+	SkeletalMesh->SetVisibility(bSet);
+}
+
 void ACHM_MaoBlade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

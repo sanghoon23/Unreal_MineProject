@@ -14,18 +14,33 @@ UC_BaseAbilityComp::UC_BaseAbilityComp()
 void UC_BaseAbilityComp::BeginPlay()
 {
 	Super::BeginPlay();
+
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(GetOwner());
+	check(I_Charactor);
+
+	//@DeathDelegate Delete Value Container
+	I_Charactor->OnDeathDelegate.AddLambda([&]()
+	{
+		for (auto& MapValue : AddAbilityMap)
+		{
+			//@End
+			MapValue.Value->EndUseTimerAbility();
+		}
+		AddAbilityMap.Empty();
+	});
 }
 
 void UC_BaseAbilityComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	////@죽었다면 Return
-	//IIC_Charactor* OwnerCharactor = Cast<IIC_Charactor>(GetOwner());
-	//if (OwnerCharactor != nullptr)
-	//{
-	//	IfTrueRet(OwnerCharactor->IsDeath() == true);
-	//}
+	//#1112_
+	//죽었다면 Return - 지우는 부분 (Charactor Delegate Lamda)
+	IIC_Charactor* OwnerCharactor = Cast<IIC_Charactor>(GetOwner());
+	if (OwnerCharactor != nullptr)
+	{
+		IfTrueRet(OwnerCharactor->IsDeath() == true);
+	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,14 +65,12 @@ void UC_BaseAbilityComp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			//@End
 			MapValue.Value->EndUseTimerAbility();
 			RemoveTypes.Add(Type);
-			//CLog::Print(L"TimeOut Add REmove");
 		}
 	}
 
 	//@제거
 	for (EAbilityType& Type : RemoveTypes)
 	{
-		//CLog::Print(L"REmove");
 		AddAbilityMap.Remove(Type);
 	}
 }

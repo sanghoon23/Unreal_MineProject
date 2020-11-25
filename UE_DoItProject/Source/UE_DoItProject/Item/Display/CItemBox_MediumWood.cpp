@@ -1,5 +1,6 @@
 #include "CItemBox_MediumWood.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "_FunctionLibrary/CFL_ItemSpawning.h"
 #include "Interface/IC_Charactor.h"
@@ -102,12 +103,6 @@ void ACItemBox_MediumWood::OnBegin(UPrimitiveComponent* OverlappedComponent, AAc
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
 	if (OtherActor == this) return;
-
-	IIC_Player* I_Player = Cast<IIC_Player>(OtherActor);
-	if (I_Player != nullptr)
-	{
-		CLog::Print(L"OnBegin ItemBox_MediumWood!!");
-	}
 }
 
 void ACItemBox_MediumWood::OnEnd(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
@@ -123,8 +118,6 @@ void ACItemBox_MediumWood::OnHit(UPrimitiveComponent * HitComponent, AActor * Ot
 	IfNullRet(OtherActor);
 	IfNullRet(OtherComp);
 	if (OtherActor == this) return;
-
-	CLog::Print(OtherActor->GetName());
 }
 
 float ACItemBox_MediumWood::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)

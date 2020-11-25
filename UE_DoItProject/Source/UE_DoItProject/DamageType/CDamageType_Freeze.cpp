@@ -71,6 +71,9 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	AController* PawnController = Cast<APawn>(Subject)->GetController();
 	check(PawnController);
 
+	IIC_Charactor* const I_Charactor = Cast<IIC_Charactor>(DamagedPawn);
+	check(I_Charactor);
+
 	//@Create ConditionData
 	UCUpset_Freeze* FreezeConditionData = NewObject<UCUpset_Freeze>();
 	check(FreezeConditionData);
@@ -83,27 +86,17 @@ void UCDamageType_Freeze::OnHittingProcess(AActor * Subject, AActor * DamagedAct
 	FreezeConditionData->SetFreezeParticle(FreezeParticle);
 	FreezeConditionData->SetFreezeUnderParticle(FreezeUnderParticle);
 
-	//@Damage Class
+	//@DamagedActor 가 공격 당할 수 있다면,
 	if (DamagedActorHitComp->IsDamagedFromOther() == true)
 	{
 		FDamageEvent DamageEvent;
 		DamageEvent.DamageTypeClass = GetClass();
 		FreezeConditionData->SetDamageEvent(DamageEvent);
-
-		//@TakeDamage
 		DamagedActor->TakeDamage(InitialDamageAmount, DamageEvent, PawnController, Subject);
 	}
-
-	//@죽음 확인
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(DamagedActor);
-	if (I_Charactor != nullptr)
-	{
-		if (I_Charactor->IsDeath() == true)
-		{
-			CLog::Print(L"deathCheak!!");
-			return;
-		}
-	}
+	
+	//@캐릭터가 죽었다면,
+	IfTrueRet(I_Charactor->IsDeath());
 
 	//@DamageTypeEffet 를 사용하지 않는다면, Damage 만, 들어간다.
 	const uint8 MontageTypeNum = static_cast<uint8>(GetConditionType());

@@ -1,5 +1,6 @@
 #include "CPlayerAnimInst.h"
 #include "Global.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Interface/IC_Charactor.h"
@@ -14,8 +15,8 @@ void UCPlayerAnimInst::NativeBeginPlay()
 	Player = Cast<ACPlayer>(TryGetPawnOwner());
 	IfNullRet(Player);
 
-	Charactor = Cast<IIC_Charactor>(Player);
-	IfNullRet(Charactor);
+	I_Charactor = Cast<IIC_Charactor>(Player);
+	IfNullRet(I_Charactor);
 
 	UActorComponent* ActorComp = Player->GetComponentByClass(UCInverseKinematics::StaticClass());
 	if (ActorComp != nullptr)
@@ -32,20 +33,6 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	// @Move
 	Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
 	Speed = Player->GetVelocity().Size();
-
-	// @FindFloorDistance - Jump 동작 자연스럽게 하기 위해서
-	{
-		// *Case 1
-		//FVector CapsuleLocation = Player->GetActorLocation();
-		//FFindFloorResult FloorResult;
-		//Player->GetCharacterMovement()->FindFloor(CapsuleLocation, FloorResult, true);
-		//FindFloorDistance = FloorResult.GetDistanceToFloor();
-		// FloorResult.GetDistanceToFloor();
-
-		// *Case 2
-		// FindFloorDistance = FootTraceDistance();
-		// CLog::Print(FindFloorDistance);
-	}
 
 	// @Jumping
 	bCharactorJumping = Player->IsJumping();
@@ -64,9 +51,11 @@ void UCPlayerAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-	IfNullRet(Charactor);
+	IfNullRet(I_Charactor);
 	CurrentStateType = Player->GetCurrentAttackStateType();
-	bArmed = Charactor->GetIEquipComp()->GetArmed();
+	bArmed = I_Charactor->GetIEquipComp()->GetArmed();
+	bDeath = I_Charactor->IsDeath();
+	bIsRunningMontage = Montage_IsPlaying(I_Charactor->GetCurrentApplyedMontage());
 
 	//IfNullRet(BaseAttack);
 	//bAttackMode = BaseAttack->GetAttackMode();

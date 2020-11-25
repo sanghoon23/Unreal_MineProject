@@ -8,16 +8,16 @@ UCPL_MageActionComp::UCPL_MageActionComp()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// Create Roll Action
-	{
-		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionTeleprot>("MG_Teleprot");
-		MG_ActionArray.Emplace(RollAction);
-	}
-
 	// Create Jump Action
 	{
 		UC_BaseActionState* JumpAction = CreateDefaultSubobject<UCPL_MGActionJump>("MG_JumpAction");
 		MG_ActionArray.Emplace(JumpAction);
+	}
+
+	// Create Roll Action
+	{
+		UC_BaseActionState* RollAction = CreateDefaultSubobject<UCPL_MGActionTeleprot>("MG_Teleprot");
+		MG_ActionArray.Emplace(RollAction);
 	}
 }
 

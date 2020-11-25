@@ -47,8 +47,6 @@ EBTNodeResult::Type UBTTask_PatternAttack::ExecuteTask(UBehaviorTreeComponent & 
 	IfNullRetResult(I_BaseAttack, EBTNodeResult::Failed);
 	I_BaseAttack->BeginAttack(MonsterPawn);
 
-	CLog::Print(L"Task PatternAttack IN!!");
-
 	return EBTNodeResult::Succeeded;
 }
 

@@ -20,7 +20,5 @@ void UCN_LookAtAttacker::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 	const AActor* Attacker = I_HitComp->GetAttacker();
 	IfNullRet(Attacker);
 
-	//CLog::Print(MeshComp->GetOwner()->GetName());
-
 	UCFL_ActorAgainst::LookAtTarget(MeshComp->GetOwner(), Attacker);
 }

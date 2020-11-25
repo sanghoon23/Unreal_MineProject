@@ -1,5 +1,6 @@
 #include "CS_TargetingSystem.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_Monster.h"

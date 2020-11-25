@@ -9,13 +9,11 @@ UWG_SkillCastingBar::UWG_SkillCastingBar(const FObjectInitializer& ObjectInitial
 
 void UWG_SkillCastingBar::NativeConstruct()
 {
-	// Call the Blueprint "Event Construct" node
 	Super::NativeConstruct();
 }
 
 void UWG_SkillCastingBar::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 {
-	// Make sure to call the base class's NativeTick function
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	//@Forward (Left To Right)

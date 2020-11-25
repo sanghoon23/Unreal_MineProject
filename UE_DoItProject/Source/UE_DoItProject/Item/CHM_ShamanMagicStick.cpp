@@ -49,6 +49,11 @@ void ACHM_ShamanMagicStick::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ACHM_ShamanMagicStick::SetMeshVisible(bool bSet)
+{
+	SkeletalMesh->SetVisibility(bSet);
+}
+
 void ACHM_ShamanMagicStick::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

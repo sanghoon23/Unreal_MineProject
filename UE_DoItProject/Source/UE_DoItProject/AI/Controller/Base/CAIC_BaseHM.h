@@ -42,12 +42,6 @@ public:
 	int GetTypePatternAttackState();
 	int GetTypeRandomAttackState();
 
-	//@Type 으로 받으려고 virtual 선언 안함.
-	//virtual void AddTypePatternAttack(EHM_AssassinAttackType Type) {}
-	////TODO : EraseType
-
-	//virtual void AddTypeRandomAttack(EHM_AssassinAttackType Type) {}
-
 protected:
 	class UBehaviorTree* BT;
 	class UBlackboardData* BB;

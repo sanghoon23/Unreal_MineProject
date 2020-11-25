@@ -1,5 +1,6 @@
 #include "CProjectile_Shuriken.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 
 #include "Interface/IC_Charactor.h"
@@ -152,8 +153,6 @@ void ACProjectile_Shuriken::OnBeginOverlap(UPrimitiveComponent * OverlappedCompo
 
 	IfTrueRet(OtherActor == GetOwner());
 	IfTrueRet(OtherActor == this);
-
-	CLog::Print(L"Shuriken BeginOverlap!!");
 
 	//@Following Target Check
 	if (SettingTarget != nullptr)

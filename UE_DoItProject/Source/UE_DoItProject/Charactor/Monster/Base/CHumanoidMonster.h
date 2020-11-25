@@ -3,8 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
-#include "Custom/CCharactorMovementComp.h"
-
 #include "CHumanoidMonster.generated.h"
 
 UCLASS()

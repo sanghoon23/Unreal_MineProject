@@ -62,6 +62,11 @@ void ACHM_BasicSword::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ACHM_BasicSword::SetMeshVisible(bool bSet)
+{
+	SkeletalMesh->SetVisibility(bSet);
+}
+
 void ACHM_BasicSword::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

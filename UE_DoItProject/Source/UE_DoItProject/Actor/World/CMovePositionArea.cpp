@@ -101,7 +101,6 @@ void ACMovePositionArea::OnBeginOverlap(UPrimitiveComponent * OverlappedComponen
 	}
 	else
 	{
-		CLog::Print(L"MovePositionArea AreaActor NULL!!");
 		UE_LOG(LogTemp, Warning, L"MovePositionArea AreaActor NULL!!");
 	}
 }

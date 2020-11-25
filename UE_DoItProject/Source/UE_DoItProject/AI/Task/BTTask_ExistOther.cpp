@@ -68,16 +68,12 @@ EBTNodeResult::Type UBTTask_ExistOther::ExecuteTask(UBehaviorTreeComponent & Own
 			FVector RightVec = ControlPawn->GetActorRightVector();
 			FVector CrossVec = FVector::CrossProduct(RightVec, Dir);
 
-			//CLog::Print(Result.GetActor()->GetName());
-			//CLog::Print(CrossVec);
-
 			float RidAngle = FVector::DotProduct(RightVec, Dir);
 			RidAngle = acosf(RidAngle);
 			float DegAngle = FMath::RadiansToDegrees(RidAngle);
 
 			if (CrossVec.Z >= 0.0f)
 			{
-				//CLog::Print(ControlPawn->GetName());
 				if (DegAngle >= 45.0f && DegAngle < 135.0f)
 					return EBTNodeResult::Failed;
 			}
@@ -151,16 +147,12 @@ void UBTTask_ExistOther::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * No
 			FVector RightVec = ControlPawn->GetActorRightVector();
 			FVector CrossVec = FVector::CrossProduct(RightVec, Dir);
 
-			CLog::Print(Result.GetActor()->GetName());
-			CLog::Print(CrossVec);
-
 			float RidAngle = FVector::DotProduct(RightVec, Dir);
 			RidAngle = acosf(RidAngle);
 			float DegAngle = FMath::RadiansToDegrees(RidAngle);
 
 			if (CrossVec.Z >= 0.0f)
 			{
-				CLog::Print(ControlPawn->GetName());
 				if (DegAngle >= 45.0f && DegAngle < 135.0f)
 				{
 					OwnerComp.GetBlackboardComponent()->SetValueAsEnum("AIState", 3); //@FINDATTACKPOINT

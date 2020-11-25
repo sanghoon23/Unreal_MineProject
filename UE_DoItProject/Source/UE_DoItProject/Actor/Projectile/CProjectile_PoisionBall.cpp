@@ -1,5 +1,6 @@
 #include "CProjectile_PoisionBall.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
 
 #include "Interface/IC_Charactor.h"
@@ -195,7 +196,6 @@ void ACProjectile_PoisionBall::CheckSettingTarget()
 				HitComp->SetHitMoveSpeed(0.0f);
 
 				// 1.2 Hit Delegate - Normal(DamageType)
-				CLog::Print(GetOwner()->GetName());
 				HitComp->OnHit(GetOwner(), DamageType_Poision, DamageType_Poision->DamageImpulse);
 			}
 			else

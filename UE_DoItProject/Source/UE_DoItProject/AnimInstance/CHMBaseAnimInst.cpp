@@ -29,7 +29,5 @@ void UCHMBaseAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 	bIsRunningMontage = Montage_IsPlaying(I_Charactor->GetCurrentApplyedMontage());
 
 	bDeath = I_Charactor->IsDeath();
-
 	bAttackMode = I_Monster->GetAIAttackMode();
 }
-

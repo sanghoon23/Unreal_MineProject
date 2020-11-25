@@ -28,6 +28,10 @@ class UE_DOITPROJECT_API ACHM_Assassin
 	
 #pragma region Reflection
 private:
+	UPROPERTY(EditAnywhere, Category = "Data")
+		/* IC_Monster Member */
+		FMonsterInfo MonsterInfo;
+
 	UPROPERTY(EditAnywhere, Category = "AI")
 		bool bAIRunningPossible = true;
 
@@ -84,6 +88,7 @@ public:
 	}
 	virtual ECharactorType GetCharactorType() const override { return CharactorType; }
 
+	virtual void OnInit() override {}; //TODO : InitRespawn, Delegate
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void OnDeath() override; //Á×À½
 	virtual void CanMove() override { bCanMove = true; }
@@ -160,9 +165,6 @@ public:
 private:
 	// Type
 	ECharactorType CharactorType = ECharactorType::MONSTER;
-
-	/* IC_Monster Member */
-	FMonsterInfo MonsterInfo;
 
 	EAssa_AngerState AngerState = EAssa_AngerState::NONE;
 

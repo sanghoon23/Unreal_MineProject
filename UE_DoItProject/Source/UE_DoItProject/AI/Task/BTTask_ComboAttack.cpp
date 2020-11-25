@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "NavigationSystem.h"
 #include "AIController.h"
+#include "Kismet/KismetMathLibrary.h"
 
 #include "Interface/IC_Charactor.h"
 #include "Interface/IC_AttackComp.h"
@@ -36,7 +37,6 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 		IIC_BaseAttack* BaseAttack = I_AttackComp->SetAttackTypeRetIBaseAttack(AttackTypeNum);
 		if (BaseAttack != nullptr)
 		{
-			//CLog::Print(L"BaseAttack NOT NULL!!");
 			BaseAttack->BeginAttack(MonsterPawn);
 		}
 	}
@@ -44,12 +44,10 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	{
 		//@·£´ý Attack Type - BeginAttack
 		int Input = UKismetMathLibrary::RandomIntegerInRange(MinAttackRange, MaxAttackRange);
-		//CLog::Print(Input);
 		IIC_BaseAttack* BaseAttack = I_AttackComp->SetAttackTypeRetIBaseAttack(Input);
 		check(BaseAttack);
 		if (BaseAttack != nullptr)
 		{
-			//CLog::Print(L"Using Range BaseAttack NOT NULL!!");
 			BaseAttack->BeginAttack(MonsterPawn);
 		}
 	}

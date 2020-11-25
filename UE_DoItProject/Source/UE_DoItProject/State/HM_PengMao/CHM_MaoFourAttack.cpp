@@ -72,20 +72,6 @@ void UCHM_MaoFourAttack::BeginPlay()
 	I_Charactor = Cast<IIC_Charactor>(HM_PengMao);
 	check(I_Charactor);
 
-//#pragma region Create DamageType
-//
-//	DT_Freeze = NewObject<UCDamageType_Freeze>();
-//	DT_Freeze->SetDamageImpulse(10.0f);
-//	DT_Freeze->SetFreezingTime(2.0f);
-//
-//#pragma endregion
-
-	//@Create Ability
-	{
-		//TODO :
-		//AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
-	}
-
 	//@Create SkillRangeDisplay
 	{
 		FTransform Transform = FTransform::Identity;
@@ -304,7 +290,6 @@ void UCHM_MaoFourAttack::DelSkillRangeAttackOtherPawn(AActor * Subject)
 					IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
 					if (HitI_AbilityComp != nullptr && (IsLastCombo() == false))
 					{
-						//CLog::Print(L"AbilityComp Not NULL!!");
 						FAbilityValue InputValue;
 						InputValue.Sort = EAbilitySort::SAVEARRAY;
 						InputValue.bTimer = true;
@@ -354,7 +339,6 @@ void UCHM_MaoFourAttack::DelEndFreezeConditionType(AActor * Subject)
 	if (SubjectPlayerInterface != nullptr)
 	{
 		SubjectPlayerInterface->OffBlockAction();
-		CLog::Print(L"Call MaoFourAttack DelEndFreezeConditionType!!");
 	}
 	else UE_LOG(LogTemp, Warning, L"MaoFourAttack EndBeatedFunc, I_Player NULL!!");
 }

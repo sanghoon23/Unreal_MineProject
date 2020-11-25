@@ -5,6 +5,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
+#include "Camera/PlayerCameraManager.h"
 #include "Camera/CameraComponent.h"
 
 #include "WidgetComponent.h"
@@ -22,9 +24,12 @@
 #include "Component/CMeshParticleComp.h"
 #include "Component/Base/C_BaseAbilityComp.h"
 #include "Component/Player/CPL_HitComp.h"
+#include "Camera/CPL_WorldSpectatorCam.h"
 
 #include "Actor/Cable/CPL_CableObject.h"
+#include "UI/HUD_Main.h"
 #include "UI/Widget/WG_FloatingCombo.h"
+#include "UI/Widget/WG_PlayerDeadMenu.h"
 
 ACPlayer::ACPlayer()
 {
@@ -39,7 +44,7 @@ ACPlayer::ACPlayer()
 			GetMesh()->SkeletalMesh = skeletalMesh.Object;
 	}
 
-	// Mage State
+	// ParticleSystem
 	{
 		// Left Hand Particle
 		LeftParticle = CreateDefaultSubobject<UParticleSystemComponent>("LeftParticle", true);
@@ -62,6 +67,12 @@ ACPlayer::ACPlayer()
 
 		RightParticle->SetupAttachment(GetMesh(), L"hand_r");
 		RightParticle->SetWorldScale3D(FVector(3.0f));
+
+		// Respawn Particle
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/P_OnRespawn.P_OnRespawn'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> respawnParticle(*strPath);
+		if (respawnParticle.Succeeded())
+			P_OnRespawnParticle = respawnParticle.Object;
 	}
 
 #pragma region Setting Player Value
@@ -141,14 +152,13 @@ ACPlayer::ACPlayer()
 
 	//@1029_PlayerState 로 옮김
 	//# 현재 체력 상태로 갱신해주어야 함.
-	//Info.MaxHP = 1000.0f;
-	//Info.CurrentHP = 1000.0f;
+	Info.MaxHP = 500.0f;
+	Info.CurrentHP = 400.0f;
 
-	//Info.MaxMP = 100.0f;
-	//Info.CurrentMP = 50.0f;
+	Info.MaxMP = 100.0f;
+	Info.CurrentMP = 50.0f;
 
-	//Info.Name = FName(L"PlayerName");
-	//Info.InfoConditionDataArray.Init(nullptr, 5);
+	Info.Name = FName(L"PlayerName");
 
 	#pragma endregion
 }
@@ -156,22 +166,6 @@ ACPlayer::ACPlayer()
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//Test Code
-	//AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
-	//if (GameModeBase != nullptr)
-	//{
-	//	ACBaseGameMode* MyGameMode = Cast<ACBaseGameMode>(GameModeBase);
-	//	if (MyGameMode != nullptr)
-	//	{
-	//		CLog::Print(L"Call GameMode Succeed!!");
-	//	}
-	//}
-
-	if (MouseControl == nullptr)
-	{
-		CLog::Print(L"MouseController NULL!!");
-	}
 
 	#pragma region Player Setting
 	//Player Setting
@@ -233,15 +227,22 @@ void ACPlayer::BeginPlay()
 	}
 	#pragma endregion
 
-	//CLog::Print(L"Load And BeginPlay");
+	//Test
+	CLog::Print(UGameplayStatics::GetPlayerControllerID(Cast<APlayerController>(GetController())));
+	//...
 
-	AMyPlayerState* PSta = GetPlayerState<AMyPlayerState>();
-	if (PSta != nullptr)
-	{
-		GetGameInstance<UCGameInst>()->GetPlayerInfoFromId(Info, PSta->PlayerId);
-		CLog::Print(L"GetPlayerInfo!!");
-		CLog::Print(PSta->PlayerId);
-	}
+
+	UGameplayStatics::SetPlayerControllerID
+	(
+		Cast<APlayerController>(GetController()),
+		UserId //@임시 UserID 값
+	);
+
+	GetGameInstance<UCGameInst>()->GetPlayerInfoFromId
+	(
+		Info,
+		UGameplayStatics::GetPlayerControllerID(Cast<APlayerController>(GetController()))
+	);
 }
 
 // #Edit * 0219
@@ -250,17 +251,14 @@ void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//@#1104_UGameInst 사용, PlayerState
+	//@#1110_UGameInst 사용,
 	{
-		AMyPlayerState* PState = GetPlayerState<AMyPlayerState>();
-		if (PState != nullptr)
-		{
-			GetGameInstance<UCGameInst>()->SetPlayerInfoFromId(Info, PState->PlayerId);
-			//PState->SetPlayerInfo(Info);
-		}
+		GetGameInstance<UCGameInst>()->SetPlayerInfoFromId
+		(
+			Info,
+			UGameplayStatics::GetPlayerControllerID(Cast<APlayerController>(GetController()))
+		);
 	}
-
-	//CLog::Print(GetPlayerState()->GetName());
 
 	// @StateMachine 에서 StateType 값 받아옴.
 	//CurrentStateType = StateManager->GetCurrentAttackStateType();
@@ -328,6 +326,7 @@ void ACPlayer::OnBlockKeyInput()
 	{
 		DisableInput(PlayerController);
 		//PlayerController->SetIgnoreMoveInput(true);
+		CLog::Print(L"'ON' BlockKeyInput In");
 	}
 }
 
@@ -406,6 +405,58 @@ void ACPlayer::OffUsingDecalMouseControl()
 	MouseControl->OffUsingDecalMouseControl();
 }
 
+void ACPlayer::OnUseSpeatatorMode()
+{
+	UWorld* const World = GetWorld();
+	check(World);
+
+	APlayerController* const PC = Cast<APlayerController>(GetController());
+	check(PC);
+
+	//@Create Camera Charactor
+	FTransform Transform = FTransform::Identity;
+	Transform.SetLocation(CameraComp->GetComponentLocation());
+	FActorSpawnParameters Params;
+	ACPL_WorldSpectatorCam* RetCameraCharactor = World->SpawnActor<ACPL_WorldSpectatorCam>
+	(
+		ACPL_WorldSpectatorCam::StaticClass(), Transform, Params
+	);
+	check(RetCameraCharactor);
+
+	//@Player 해제, 관중 카메라 모드.
+	UnPossessed();
+
+	//@해당 Controller 빙의.
+	RetCameraCharactor->SetRespawnPlayer(this);
+	PC->Possess(RetCameraCharactor);
+	PC->SetControlRotation(CameraComp->GetComponentRotation());
+}
+
+void ACPlayer::OnRespawn()
+{
+	UWorld* const World = GetWorld();
+
+	FVector Location = GetActorLocation();
+	Location.Z += 400.0f;
+	SetActorLocation(Location);
+
+	//@부활 파티클 실행
+	FTransform P_Transform;
+	P_Transform.SetLocation(Location);
+	UGameplayStatics::SpawnEmitterAtLocation(World, P_OnRespawnParticle, P_Transform, true);
+
+	UParticleSystemComponent* PTComp = MeshParticleComp->SpawnParticleAtMesh
+	(
+		P_OnRespawnParticle,
+		EAttachPointType::BODY,
+		EAttachPointRelative::RELATIVE,
+		EAttachLocation::SnapToTarget
+	);
+	PTComp->Activate(true);
+
+	OnInit();
+}
+
 void ACPlayer::OnMoveForward(float Value)
 {
 	IfFalseRet(bCanMove);
@@ -457,7 +508,7 @@ void ACPlayer::OnJump()
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_ActionComp* ActionComp = StateManager->GetIActionComp();
 	IfNullRet(ActionComp);
-	IIC_BaseAction* BaseAction = ActionComp->GetIBaseAction(1);
+	IIC_BaseAction* BaseAction = ActionComp->GetIBaseAction(0);
 	IfNullRet(BaseAction);
 	if (BaseAction != nullptr)
 	{
@@ -482,7 +533,7 @@ void ACPlayer::OnEvade()
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_ActionComp* ActionComp = StateManager->GetIActionComp();
 	IfNullRet(ActionComp);
-	IIC_BaseAction* BaseAction = ActionComp->GetIBaseAction(0);
+	IIC_BaseAction* BaseAction = ActionComp->GetIBaseAction(1);
 	IfNullRet(BaseAction);
 	if (BaseAction != nullptr)
 	{
@@ -531,8 +582,6 @@ void ACPlayer::OnInteractAction()
 void ACPlayer::OnBasicAttack()
 {
 	IfTrueRet(bBlockAction);
-
-	CLog::Print(L"OnBasicAttack IN!!");
 
 	// @해당 함수에 IFRet 조건 들어가 있음.
 	IIC_BaseAttack* SwitchBaseAttack = StateManager->GetIAttackComp()->SetAttackTypeRetIBaseAttack(0);
@@ -650,11 +699,58 @@ void ACPlayer::GetViewConditionStateForUI(TArray<FViewConditionState>* OutArray)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //@Interface
 
+void ACPlayer::OnInit()
+{
+	OnActionResetState.Broadcast(this); //@상태값 초기화
+
+	OnInitDelegate.Broadcast(); //@초기화 Delegate
+
+	//@Death
+	bDeath = false;
+
+	//@"Spectator" 로 설정된 값 원래대로
+	GetCapsuleComponent()->SetCollisionProfileName("Charactor");
+
+	//@Player Info
+	{
+		Info.MaxHP = 500.0f;
+		Info.CurrentHP = 500.0f;
+
+		Info.MaxMP = 100.0f;
+		Info.CurrentMP = 100.0f;
+	}
+}
+
 void ACPlayer::OnDeath()
 {
 	bDeath = true;
 
 	OnDeathDelegate.Broadcast();
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	UWorld* const World = GetWorld();
+
+	//@Controller Disable Input
+	APlayerController* const PC = Cast<APlayerController>(GetController());
+	check(PC);
+	DisableInput(PC);
+
+	//@현재 실행되고 있는 몽타주가 있다면 멈추기.
+	GetMesh()->GetAnimInstance()->StopAllMontages(5.0f);
+
+	//@띄워졌을 때 사망할 때의 예외,
+	OnGravity();
+
+	//@Collision OFF 가 아니라 "Spectator" 로 설정한다.
+	GetCapsuleComponent()->SetCollisionProfileName("Spectator");
+
+	//@ON UI
+	AHUD_Main* MainHUD = Cast<AHUD_Main>(PC->GetHUD());
+	check(MainHUD);
+	UWG_PlayerDeadMenu* DeadMenu = MainHUD->GetWidgetPlayerDeadMenu();
+	check(DeadMenu);
+	DeadMenu->StartingDeadMenu();
 }
 
 void ACPlayer::OnGravity()
@@ -794,7 +890,10 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 
 int ACPlayer::GetCurrentAttackStateType()
 {
-	return static_cast<int>(StateManager->GetCurrentStateType());
+	if (StateManager != nullptr)
+		return static_cast<int>(StateManager->GetCurrentStateType());
+	
+	return -1;
 }
 
 /* I_Charactor 에 CurrentBaseAction Setting */
@@ -807,7 +906,10 @@ void ACPlayer::SetCurrentBaseAction(IIC_BaseAction * IBaseAction)
 /* TargetingSystem 에서 Player 가 Tab 을 눌렀을 때, 설정된 Pawn 을 가져옴 */
 APawn * ACPlayer::GetFindAttackTarget()
 {
-	return TargetSystem->GetCurrentFindAttackTarget();
+	if (TargetSystem != nullptr)
+		return TargetSystem->GetCurrentFindAttackTarget();
+
+	return nullptr;
 }
 
 void ACPlayer::AddCurrentHP(float fValue)
@@ -850,36 +952,57 @@ void ACPlayer::AddDEF(float fValue)
 
 IIC_StateManager * ACPlayer::GetIStateManager()
 {
-	return Cast<IIC_StateManager>(StateManager);
+	if (StateManager != nullptr)
+		return Cast<IIC_StateManager>(StateManager);
+
+	return nullptr;
 }
 
 IIC_ActionComp * ACPlayer::GetIActionComp()
 {
-	return StateManager->GetIActionComp();
+	if(StateManager != nullptr)
+		return StateManager->GetIActionComp();
+
+	return nullptr;
 }
 
 /* 현재 CurrentStateType 에 해당하는 Inteface AttackComp 를 가져옴 */
 IIC_AttackComp * ACPlayer::GetIAttackComp()
 {
-	return StateManager->GetIAttackComp();
+	if (StateManager != nullptr)
+		return StateManager->GetIAttackComp();
+
+	return nullptr;
 }
 
 IIC_HitComp * ACPlayer::GetIHitComp()
 {
-	return Cast<IIC_HitComp>(HitComp);
+	if (HitComp != nullptr)
+		return Cast<IIC_HitComp>(HitComp);
+
+	return nullptr;
 }
 
 IIC_EquipComp * ACPlayer::GetIEquipComp()
 {
-	return Cast<IIC_EquipComp>(EquipComp);
+	if (EquipComp != nullptr)
+		return Cast<IIC_EquipComp>(EquipComp);
+
+	return nullptr;
 }
 
 IIC_MeshParticle * ACPlayer::GetIMeshParticle()
 {
-	return Cast<IIC_MeshParticle>(MeshParticleComp);
+	if (MeshParticleComp != nullptr)
+		return Cast<IIC_MeshParticle>(MeshParticleComp);
+
+	return nullptr;
 }
 
 IIC_AbilityComp * ACPlayer::GetIAbilityComp()
 {
-	return Cast<IIC_AbilityComp>(AbilityComponent);
+	if (AbilityComponent != nullptr)
+		return Cast<IIC_AbilityComp>(AbilityComponent);
+
+	return nullptr;
 }
