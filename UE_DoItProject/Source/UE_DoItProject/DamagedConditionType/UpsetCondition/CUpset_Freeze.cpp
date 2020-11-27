@@ -1,5 +1,6 @@
 #include "CUpset_Freeze.h"
 #include "Global.h"
+#include "GameFramework/Character.h"
 #include "DestructibleComponent.h"
 
 #include "Interface/IC_Charactor.h"
@@ -28,6 +29,12 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 
 		//@Montage Pause
 		I_Charactor->ActorAnimMonPause();
+
+		//@Animation Pause
+		ACharacter* CH = Cast<ACharacter>(Owner);
+		check(CH);
+		//CH->GetMesh()->GetAnimInstance()->StopSlotAnimation(0.25f, "DefaultSlot");
+		CH->GetMesh()->GetAnimInstance()->GetOwningComponent()->GlobalAnimRateScale = 0.0f;
 
 		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
 		if (I_MeshParticle != nullptr)
@@ -61,15 +68,6 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 				UE_LOG(LogTemp, Warning, L"CUpset_Freeze FreezeUnderParticleComp NULL!!");
 
 		}
-
-		//@빙결 상황일 땐 다른 Montage 가 들어오지 못하도록 함.
-		//I_Charactor->SetDontMontagePlay(true);
-		//IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
-		//if (I_HitComp != nullptr)
-		//{
-		//	I_HitComp->SetBlockDamagedMontage(true); //@TRUE
-		//}
-
 	}//(I_Charactor != nullptr)
 }
 
@@ -86,7 +84,7 @@ void UCUpset_Freeze::UpdateCondition(APawn * Owner, float DeltaTime)
 		//ApplyTime < 0.0f 만들고, HitComp Tick 에서 EndCondition 을 호출.
 		if (I_Charactor->IsDeath() == true)
 		{
-			ApplyTime = -0.001f;
+			ApplyTime -= DeltaTime;
 		}
 	}
 }
@@ -115,29 +113,19 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 			UE_LOG(LogTemp, Warning, L"CUPset_Freeze EndCondition FreezeUnderParticleComp NULL!!");
 	}
 
-	//IIC_Monster* I_Monster = Cast<IIC_Monster>(Owner);
-	//if (I_Monster != nullptr)
-	//{
-	//	//@AI ON
-	//	I_Monster->SetAIRunningPossible(true);
-	//}
-
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
 	if (I_Charactor != nullptr)
 	{
+		//@Animation Resume
+		ACharacter* CH = Cast<ACharacter>(Owner);
+		check(CH);
+		CH->GetMesh()->GetAnimInstance()->GetOwningComponent()->GlobalAnimRateScale = 1.0f;
+
 		//@Montage DontPlay
 		I_Charactor->SetDontMontagePlay(false);
 
 		//@Montage Resume
 		I_Charactor->ActorPausedAnimMonResume();
-
-
-		//@빙결이 끝났을 땐 Block 해제
-		//IIC_HitComp* I_HitComp = I_Charactor->GetIHitComp();
-		//if (I_HitComp != nullptr)
-		//{
-		//	I_HitComp->SetBlockDamagedMontage(false); //@FALSE
-		//}
 	}
 
 	//@Spawn Destructible Mesh
@@ -155,7 +143,6 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 		UDestructibleComponent* Destructible = DM_FreezenBroken->GetDestructibleComponent();
 		if (Destructible != nullptr)
 		{
-			//FVector HitLocation
 			Destructible->ApplyDamage(50.0f, DM_FreezenBroken->GetActorLocation(), Owner->GetActorForwardVector(), 1.0f);
 		}
 		else

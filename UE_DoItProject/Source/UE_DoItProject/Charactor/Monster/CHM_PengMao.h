@@ -78,7 +78,7 @@ public:
 	}
 	virtual ECharactorType GetCharactorType() const override { return CharactorType; }
 
-	virtual void OnInit() override {}; //TODO : InitRespawn, Delegate
+	virtual void OnInit() override {};
 	virtual bool IsDeath() override { return bDeath; }
 	virtual void OnDeath() override; //Á×À½
 	virtual void CanMove() override { bCanMove = true; }

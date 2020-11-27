@@ -1,5 +1,7 @@
 #include "CMonsterSpawner.h"
 #include "Global.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
 
 #include "_GameInst/CGameInst.h"
 #include "Runtime/LevelSequence/Public/LevelSequence.h"
@@ -12,41 +14,82 @@
 ACMonsterSpawner::ACMonsterSpawner()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	//@LOAD Cinema
-	FString Path = L"";
-	{
-		Path = L"LevelSequence'/Game/_Mine/_MyBlueprint/Sequencer/Stage_1_MonsterSpawnSeq.Stage_1_MonsterSpawnSeq'";
-		ConstructorHelpers::FObjectFinder<ULevelSequence> Sequence(*Path);
-		if (Sequence.Succeeded())
-			SeqMonsterSpawn = Sequence.Object;
-	}
 }
 
 void ACMonsterSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//@LOAD Sequencer
-	ALevelSequenceActor* OutputSequenceActor;
-	FMovieSceneSequencePlaybackSettings PlaybackSettings;
-	LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer
-	(
-		GetWorld(),
-		SeqMonsterSpawn,
-		PlaybackSettings,
-		OutputSequenceActor
-	);
-	check(LevelSequencePlayer);
+	//@LOAD MonsterSpawnSeq
+	{
+		if (SeqMonsterSpawn != nullptr)
+		{
+			ALevelSequenceActor* OutputSequenceActor;
+			FMovieSceneSequencePlaybackSettings PlaybackSettings;
+			MonsterSpawnSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer
+			(
+				GetWorld(),
+				SeqMonsterSpawn,
+				PlaybackSettings,
+				OutputSequenceActor
+			);
+			check(MonsterSpawnSequencePlayer);
+			MonsterSpawnSequencePlayer->OnPlay.AddDynamic(this, &ACMonsterSpawner::SpawnSequencePlay);
+			MonsterSpawnSequencePlayer->OnFinished.AddDynamic(this, &ACMonsterSpawner::SpawnSequenceFinished);
+		}
+	}
+
+	//@LOAD NextStageSeq
+	{
+		if (SeqNextStage != nullptr)
+		{
+			ALevelSequenceActor* OutputSequenceActor;
+			FMovieSceneSequencePlaybackSettings PlaybackSettings;
+			NextStageSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer
+			(
+				GetWorld(),
+				SeqNextStage,
+				PlaybackSettings,
+				OutputSequenceActor
+			);
+			check(NextStageSequencePlayer);
+			NextStageSequencePlayer->OnPlay.AddDynamic(this, &ACMonsterSpawner::DeadSequencePlay);
+			NextStageSequencePlayer->OnFinished.AddDynamic(this, &ACMonsterSpawner::DeadSequenceFinished);
+		}
+	}
 }
 
 void ACMonsterSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	IfTrueRet(bHitting); //@충돌되었다면 Return
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	IfTrueRet(bExit);
 
+	if (bHitting == false)
+	{
+		CheckHittingInDetectRadius();
+	}
+	else
+	{
+		if (GetWorld()->GetGameInstance<UCGameInst>()->IsExistWorldMonster() == false)
+		{
+			if (MonsterSpawnSequencePlayer == nullptr || 
+				(MonsterSpawnSequencePlayer != nullptr && MonsterSpawnSequencePlayer->IsPlaying() == false))
+			{
+				if (NextStageSequencePlayer != nullptr)
+				{
+					FTimerHandle TimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ACMonsterSpawner::TimerFunc, FuncTimerOfNotExistMon);
+					bExit = true;
+				}
+			}
+		}
+	}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
+void ACMonsterSpawner::CheckHittingInDetectRadius()
+{
 	FVector Start = GetActorLocation();
 	FVector End = GetActorLocation() + GetActorForwardVector() * DetectRadius;
 
@@ -75,43 +118,75 @@ void ACMonsterSpawner::Tick(float DeltaTime)
 	if (bHit == true)
 	{
 		IIC_Player* IC_Player = Cast<IIC_Player>(HitResult.GetActor());
-		if(IC_Player != nullptr)
+		if (IC_Player != nullptr)
 		{
-			//@KeyBlock
-			IC_Player->OnBlockKeyInput();
+			//@Register GameInst
+			for (ACHumanoidMonster* Monster : SeqMonsterSpawnList)
+			{
+				IIC_Monster* I_Monster = Cast<IIC_Monster>(Monster);
+				check(I_Monster);
+				I_Monster->SetAIRunningPossible(true);
+
+				//@등록
+				GetWorld()->GetGameInstance<UCGameInst>()->AddExistWorldMonster(Monster);
+			}
 
 			HittingPlayer = HitResult.GetActor();
-			LevelSequencePlayer->OnFinished.AddDynamic(this, &ACMonsterSpawner::SequenceFinished);
-			LevelSequencePlayer->Play();
+			if (MonsterSpawnSequencePlayer != nullptr)
+			{
+				MonsterSpawnSequencePlayer->Play();
+			}
+			else UE_LOG(LogTemp, Warning, L"CMonsterSpawner, SequencePlayer NULL!!");
 
 			bHitting = true;
 		}
 	}
-
 }
 
-void ACMonsterSpawner::SequenceFinished()
+void ACMonsterSpawner::TimerFunc()
 {
-	check(HittingPlayer);
+	NextStageSequencePlayer->Play();
+}
 
-	UWorld* const World = HittingPlayer->GetWorld();
-	check(World);
+void ACMonsterSpawner::SpawnSequencePlay()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	check(PC);
 
-	IIC_Player* I_Player = Cast<IIC_Player>(HittingPlayer);
-	if (I_Player != nullptr)
-	{
-		I_Player->OffBlockKeyInput();
-	}
+	ACharacter* OwnerCH = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	check(OwnerCH);
+	OwnerCH->DisableInput(PC);
+}
 
-	for (ACHumanoidMonster* Monster : SeqMonsterSpawnList)
-	{
-		IIC_Monster* I_Monster = Cast<IIC_Monster>(Monster);
-		check(I_Monster);
-		I_Monster->SetAIRunningPossible(true);
+void ACMonsterSpawner::SpawnSequenceFinished()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	check(PC);
 
-		//@등록
-		GetWorld()->GetGameInstance<UCGameInst>()->AddExistWorldMonster(Monster);
-	}
+	ACharacter* OwnerCH = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	check(OwnerCH);
+	OwnerCH->EnableInput(PC);
+}
 
-	Destroy(); //@삭제
+void ACMonsterSpawner::DeadSequencePlay()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	check(PC);
+
+	ACharacter* OwnerCH = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	check(OwnerCH);
+	OwnerCH->DisableInput(PC);
+}
+
+void ACMonsterSpawner::DeadSequenceFinished()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	check(PC);
+
+	ACharacter* OwnerCH = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	check(OwnerCH);
+	OwnerCH->EnableInput(PC);
+
+	//@삭제
+	Destroy();
 }

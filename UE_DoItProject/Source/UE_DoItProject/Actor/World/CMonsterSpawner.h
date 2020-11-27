@@ -13,25 +13,49 @@ class UE_DOITPROJECT_API ACMonsterSpawner
 	GENERATED_BODY()
 	
 	#pragma	region Reflection
+public:
+	//UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	//	FDeadSpawningMS DelDeadSpawningMS;
+
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Sequencer")
+	UPROPERTY(EditAnywhere, Category = "Sequencer")
 		class ULevelSequence* SeqMonsterSpawn;
 
 	UPROPERTY(EditAnywhere, Category = "Sequencer")
-		class ULevelSequencePlayer* LevelSequencePlayer;
+		class ULevelSequencePlayer* MonsterSpawnSequencePlayer;
+
+	UPROPERTY(EditAnywhere, Category = "Sequencer")
+		class ULevelSequence* SeqNextStage;
+
+	UPROPERTY(EditAnywhere, Category = "Sequencer")
+		class ULevelSequencePlayer* NextStageSequencePlayer;
 
 	UPROPERTY(EditAnywhere, Category = "MonsterList")
 		TArray<ACHumanoidMonster*> SeqMonsterSpawnList;
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float FuncTimerOfNotExistMon = 3.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Data")
 		float DetectRadius = 1000.0f;
 
 private:
 	UFUNCTION()
-		void SequenceFinished();
+		void TimerFunc();
+
+	UFUNCTION()
+		void SpawnSequencePlay();
+
+	UFUNCTION()
+		void SpawnSequenceFinished();
+
+	UFUNCTION()
+		void DeadSequencePlay();
+
+	UFUNCTION()
+		void DeadSequenceFinished();
 
 	#pragma endregion
-
 	
 public:	
 	ACMonsterSpawner();
@@ -42,7 +66,11 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	void CheckHittingInDetectRadius();
+
 private:
+	bool bExit = false;
 	bool bHitting = false;
 	AActor* HittingPlayer = nullptr;
 };

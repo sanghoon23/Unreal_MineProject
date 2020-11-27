@@ -22,7 +22,7 @@ class UE_DOITPROJECT_API ACPlayer
 
 	#pragma	region Reflection
 public:
-	UPROPERTY(EditDefaultsOnly, Category = "_UserID")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "_UserID")
 		uint8 UserId = 0;
 
 private:
@@ -181,9 +181,6 @@ public:
 
 	/* */
 	virtual const FPlayerInfo& GetPlayerInfo() const override { return Info; };
-
-	/* ´É·ÂÄ¡ »ó½Â */
-	//virtual void AddAbility(EAddAttribute KeyType, const FPlayerAddAbility& Ability) override;
 
 /* Virtual - (IC_Charactor) */
 public:

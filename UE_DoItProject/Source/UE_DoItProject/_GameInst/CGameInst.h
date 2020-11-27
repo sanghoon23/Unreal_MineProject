@@ -24,6 +24,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "GlobalData")
 		TArray<ACHumanoidMonster*> ExistWorldMonsterList;
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void GetPlayerInfoFromId(FPlayerInfo& Info, int PlayerID);
 
 #pragma endregion
 
@@ -35,7 +38,6 @@ public:
 	void OnInitForMapChange();
 
 public:
-	void GetPlayerInfoFromId(FPlayerInfo& Info, int PlayerID);
 	void SetPlayerInfoFromId(FPlayerInfo& Info, int PlayerID);
 
 	const bool IsExistWorldMonster() { return (ExistWorldMonsterList.Num() != 0); }

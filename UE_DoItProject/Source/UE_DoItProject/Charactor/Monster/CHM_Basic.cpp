@@ -66,6 +66,12 @@ ACHM_Basic::ACHM_Basic()
 	MonsterInfo.MaxHP = 200.0f;
 	MonsterInfo.CurrentHP = 200.0f;
 	MonsterInfo.Name = FName(L"Basic");
+
+	//TODO : AI 변수 빼고,
+	//OnRespawn 함수 I_Charactor 에 정의하기.
+	MonsterInfo.PatrolRadius = 400.0f;
+	MonsterInfo.DetectRadius = 800.0f;
+	MonsterInfo.AttackRange = 220.0f;
 	//MonsterInfo.InfoConditionDataArray.Init(nullptr, 5);
 
 	#pragma endregion
@@ -137,7 +143,7 @@ void ACHM_Basic::OnDeath()
 	//그렇지 않으면 Delegate 는 순서를 따지지 않아서 죽었는데도, AI 가 돌고 있음
 
 	//@현재 실행되고 있는 몽타주가 있다면 멈추기.
-	GetMesh()->GetAnimInstance()->StopAllMontages(5.0f);
+	GetMesh()->GetAnimInstance()->StopAllMontages(0.25f);
 
 	//@띄워졌을 때 사망할 때의 예외,
 	OnGravity();

@@ -81,6 +81,16 @@ ACItem_Hand * UCHM_BasicEquipComp::GetDisplayItem(int WeaponArrayNum)
 	return DisplayList[WeaponArrayNum];
 }
 
+void UCHM_BasicEquipComp::OnMeshVisible()
+{
+	Sword->SetMeshVisible(true);
+}
+
+void UCHM_BasicEquipComp::OffMeshVisible()
+{
+	Sword->SetMeshVisible(false);
+}
+
 void UCHM_BasicEquipComp::CompActivated(UActorComponent * Component, bool bReset)
 {
 	CLog::Print(L"EquipComp Activated!!");

@@ -37,20 +37,11 @@ void ACBaseGameMode::BeginPlay()
 
 	//@Set GameState
 	CurrentMyGamePlayState = EMyGamePlayState::EPlaying;
-
-	////@Set Widget
-	//SetCurrentWidget(StartWidgetClass);
 }
 
 void ACBaseGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
-	//TODO : 
-	if (GetWorld()->GetGameInstance<UCGameInst>()->IsExistWorldMonster() == false)
-	{
-	}
 }
 
 //void ACBaseGameMode::SetCurrentWidget(TSubclassOf<UUserWidget> InputWidget)

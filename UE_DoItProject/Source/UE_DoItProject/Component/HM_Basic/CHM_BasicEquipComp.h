@@ -25,6 +25,13 @@ private:
 
 	#pragma endregion
 
+public:
+	UFUNCTION(BlueprintCallable)
+		void OnMeshVisible();
+
+	UFUNCTION(BlueprintCallable)
+		void OffMeshVisible();
+
 private:
 	UFUNCTION()
 		void CompActivated(UActorComponent* Component, bool bReset);

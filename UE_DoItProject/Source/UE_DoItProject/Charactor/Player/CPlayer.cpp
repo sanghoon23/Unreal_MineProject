@@ -737,7 +737,7 @@ void ACPlayer::OnDeath()
 	DisableInput(PC);
 
 	//@현재 실행되고 있는 몽타주가 있다면 멈추기.
-	GetMesh()->GetAnimInstance()->StopAllMontages(5.0f);
+	GetMesh()->GetAnimInstance()->StopAllMontages(0.25f);
 
 	//@띄워졌을 때 사망할 때의 예외,
 	OnGravity();

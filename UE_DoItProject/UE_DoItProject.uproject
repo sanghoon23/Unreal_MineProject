@@ -13,7 +13,8 @@
 				"AIModule",
 				"Niagara",
 				"CoreUObject",
-				"UMG"
+				"UMG",
+				"CinematicCamera"
 			]
 		}
 	],

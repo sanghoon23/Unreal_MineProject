@@ -14,10 +14,14 @@ ACDM_FreezingBroken::ACDM_FreezingBroken()
 	{
 		HitAfterLifeTime = 2.5f;
 
-		GetDestructibleComponent()->SetGenerateOverlapEvents(true);
+		GetDestructibleComponent()->SetGenerateOverlapEvents(false);
+		GetDestructibleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 		// 청크를 라지로 처리하는 데 필요한 최소 크기.
-		// - OnFracture CollisionEnabled 로 조정
+		// - OnFracture CollisionEnabled 로 조정 - (의미없음)
+		//#1127_DestructibleMesh 속성창에 RandomSeed 값을 높임으로 해결.
+		//일전에 해결한 방식은 단지 CollisionSetting 을 Overlap 한것일뿐임.
+
 		//GetDestructibleComponent()->LargeChunkThreshold = 2000.0f;
 
 		BoxComp->SetSimulatePhysics(false);
@@ -65,8 +69,8 @@ void ACDM_FreezingBroken::Tick(float DeltaTime)
 void ACDM_FreezingBroken::OnFracture(const FVector & HitPoint, const FVector & HitDirection)
 {
 	//@빠게졌을 때, Charactor 통과하게 하기 위해서
-	// #Edit - 0516
-	// LargeChunkThreshold 를 조정 - CollisionEnabled 로 조정;
+	//#1127_
+	//DestructibleMesh 속성창에 RandomSeed 값을 높임으로 해결.
 
 	GetDestructibleComponent()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 
