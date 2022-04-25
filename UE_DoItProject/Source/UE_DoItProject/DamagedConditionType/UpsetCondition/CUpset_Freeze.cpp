@@ -30,6 +30,9 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 		//@Montage Pause
 		I_Charactor->ActorAnimMonPause();
 
+		//@SetLimitCondition - #220425
+		I_Charactor->SetLimitCondition(true);
+
 		//@Animation Pause
 		ACharacter* CH = Cast<ACharacter>(Owner);
 		check(CH);
@@ -138,6 +141,7 @@ void UCUpset_Freeze::EndCondition(APawn * Owner)
 		ACDM_FreezingBroken* DM_FreezenBroken = World->SpawnActor<ACDM_FreezingBroken>(ACDM_FreezingBroken::StaticClass(), Transform, Params);
 		check(DM_FreezenBroken);
 
+		DM_FreezenBroken->SetActorEnableCollision(false);
 		DM_FreezenBroken->SetActorLocation(Owner->GetActorLocation());
 
 		UDestructibleComponent* Destructible = DM_FreezenBroken->GetDestructibleComponent();

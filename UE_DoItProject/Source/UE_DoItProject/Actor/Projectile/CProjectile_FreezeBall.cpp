@@ -191,10 +191,16 @@ void ACProjectile_FreezeBall::FreezeStartDel(AActor * Subject)
 
 void ACProjectile_FreezeBall::FreezeEndDel(AActor * Subject)
 {
-	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
-	if (SubjectI_Monster != nullptr)
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
+	if (I_Charactor != nullptr)
 	{
-		SubjectI_Monster->SetAIRunningPossible(true);
+		IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+		if (SubjectI_Monster != nullptr 
+			&& I_Charactor->GetLimitCondition())
+		{
+			//#220425 - 행동불능인지 확인하고 켜주기.
+			SubjectI_Monster->SetAIRunningPossible(true);
+		}
 	}
 
 	//@Projectile 파괴.

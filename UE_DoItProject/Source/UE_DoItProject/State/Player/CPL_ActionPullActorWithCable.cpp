@@ -241,8 +241,6 @@ void UCPL_ActionPullActorWithCable::TickActionState()
 		DT_Stun->OnLinkStartUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunStartDel);
 		DT_Stun->OnLinkEndUpsetCondition.AddUObject(this, &UCPL_ActionPullActorWithCable::StunEndDel);
 
-		CLog::Print(L"ActionPullActorWithCable bNextMontage IN!!");
-
 		// 1.3 OnHit
 		I_HitComp->OnHit(Player, DT_Stun, 5.0f);
 
@@ -316,6 +314,13 @@ void UCPL_ActionPullActorWithCable::StunStartDel(AActor * Subject)
 
 void UCPL_ActionPullActorWithCable::StunEndDel(AActor * Subject)
 {
+	//#220425 - 확인하고 SetAIRunningPossible(true) 해주기.
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
+	if (I_Charactor != nullptr)
+	{
+		IfTrueRet(I_Charactor->GetLimitCondition());
+	}
+
 	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
 	if (SubjectI_Monster != nullptr)
 	{

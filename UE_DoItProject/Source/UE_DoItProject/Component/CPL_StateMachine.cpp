@@ -1,11 +1,11 @@
 #include "CPL_StateMachine.h"
 #include "Global.h"
-
 #include "NiagaraActor.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
 #include "Charactor/Player/CPlayer.h"
 
 #include "_FunctionLibrary/CFL_ActorAgainst.h"
@@ -251,8 +251,9 @@ void UCPL_StateMachine::OnDash()
 		if (Controller->IsInputKeyDown(EKeys::W))
 		{
 			UCFL_ActorAgainst::SetAngleWithControlRot(Player, 0.0f);
-			Player->SetEvadeDirection(ControlQuat.GetForwardVector());
-			Player->AddMovementInput(ControlQuat.GetForwardVector());
+			FVector In = ControlQuat.GetForwardVector();
+			In.Normalize();
+			Player->SetEvadeDirection(In);
 
 			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);
@@ -260,7 +261,9 @@ void UCPL_StateMachine::OnDash()
 		else if (Controller->IsInputKeyDown(EKeys::S))
 		{
 			UCFL_ActorAgainst::SetAngleWithControlRot(Player, 180.0f);
-			Player->SetEvadeDirection((-1) * ControlQuat.GetForwardVector());
+			FVector In = (-1) * ControlQuat.GetForwardVector();
+			In.Normalize();
+			Player->SetEvadeDirection(In);
 
 			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);
@@ -268,7 +271,9 @@ void UCPL_StateMachine::OnDash()
 		else if (Controller->IsInputKeyDown(EKeys::A))
 		{
 			UCFL_ActorAgainst::SetAngleWithControlRot(Player, -90.0f);
-			Player->SetEvadeDirection((-1) * ControlQuat.GetRightVector());
+			FVector In = (-1) * ControlQuat.GetRightVector();
+			In.Normalize();
+			Player->SetEvadeDirection(In);
 
 			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);
@@ -276,7 +281,9 @@ void UCPL_StateMachine::OnDash()
 		else if (Controller->IsInputKeyDown(EKeys::D))
 		{
 			UCFL_ActorAgainst::SetAngleWithControlRot(Player, 90.0f);
-			Player->SetEvadeDirection(ControlQuat.GetRightVector());
+			FVector In = ControlQuat.GetRightVector();
+			In.Normalize();
+			Player->SetEvadeDirection(In);
 
 			Player->OffCollision();
 			Player->ActorAnimMonPlay(DashMontages[0], 1.0f, true);

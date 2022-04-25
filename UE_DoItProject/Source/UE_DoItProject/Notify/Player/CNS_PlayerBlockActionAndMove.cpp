@@ -40,16 +40,7 @@ void UCNS_PlayerBlockActionAndMove::NotifyEnd(USkeletalMeshComponent * MeshComp,
 {
 	Super::NotifyEnd(MeshComp, Animation);
 
-	//1.
-	//ACharacter* Charactor = Cast<ACharacter>(MeshComp->GetOwner());
-	//check(Charactor);
-	//APlayerController* PlayerController = Cast<APlayerController>(Charactor->GetController());
-	//if (PlayerController != nullptr)
-	//{
-	//	Charactor->EnableInput(PlayerController);
-	//}
-
-	// 2. INPUT BLOCK OFF
+	// INPUT BLOCK OFF
 	ACharacter* Charactor = Cast<ACharacter>(MeshComp->GetOwner());
 	IfNullRet(Charactor);
 

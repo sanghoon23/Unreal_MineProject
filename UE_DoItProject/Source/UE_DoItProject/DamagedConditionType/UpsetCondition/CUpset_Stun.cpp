@@ -18,10 +18,13 @@ void UCUpset_Stun::StartCondition(APawn * Owner)
 	check(Owner);
 	check(StunActionMon); //@몽타주가 설정되어 있어야 함.
 
-	//@Stun Head Particle 머리에 붙이기
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
 	if (I_Charactor != nullptr)
 	{
+		//@SetLimitCondition - #220425
+		I_Charactor->SetLimitCondition(true);
+
+		//@Stun Head Particle 머리에 붙이기
 		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
 		if (I_MeshParticle != nullptr)
 		{
@@ -89,6 +92,13 @@ void UCUpset_Stun::EndCondition(APawn * Owner)
 	Super::EndCondition(Owner);
 	check(Owner);
 
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
+	if (I_Charactor != nullptr)
+	{
+		//@SetLimitCondition - #220425
+		I_Charactor->SetLimitCondition(false);
+	}
+
 	ACharacter* Charactor = Cast<ACharacter>(Owner);
 	check(Charactor);
 
@@ -96,8 +106,6 @@ void UCUpset_Stun::EndCondition(APawn * Owner)
 	check(AnimInst);
 
 	AnimInst->Montage_Stop(0.5f, StunActionMon);
-
-	CLog::Print(L"Stun EndCondition!!");
 
 	//@Particle OFF
 	if (StunHeadParticleComp != nullptr)

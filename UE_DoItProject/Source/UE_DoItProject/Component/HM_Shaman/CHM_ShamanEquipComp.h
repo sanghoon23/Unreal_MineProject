@@ -25,6 +25,13 @@ private:
 
 	#pragma endregion
 
+public:
+	UFUNCTION(BlueprintCallable)
+		void OnMeshVisible();
+
+	UFUNCTION(BlueprintCallable)
+		void OffMeshVisible();
+
 public:	
 	UCHM_ShamanEquipComp();
 

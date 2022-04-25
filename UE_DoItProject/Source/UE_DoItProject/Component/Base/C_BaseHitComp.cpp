@@ -33,6 +33,9 @@ void UC_BaseHitComp::BeginPlay()
 	//@DeathDelegate Delete Value Container
 	I_Charactor->OnDeathDelegate.AddLambda([&]()
 	{
+		//#220413_죽을 때 틱 끄기.
+		SetComponentTickEnabled(false);
+
 		for (int i = 0; i < ConditionDatas.Num(); ++i)
 		{
 			ConditionDatas[i]->EndCondition(Cast<APawn>(GetOwner()));
@@ -48,7 +51,7 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	check(OwnerPawn);
 
-	//#1112_
+	//#211112_
 	//죽었다면 Return - 지우는 부분 (Charactor Delegate Lamda)
 	IIC_Charactor* OwnerCharactor = Cast<IIC_Charactor>(OwnerPawn);
 	if (OwnerCharactor != nullptr)
@@ -63,7 +66,12 @@ void UC_BaseHitComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	for (int i = 0; i < ConditionDatas.Num(); ++i)
 	{
 		ConditionDatas[i]->UpdateCondition(OwnerPawn, DeltaTime);
-		if (ConditionDatas[i]->ApplyTime < 0.0f)
+		/*
+		#220413_위의 UpdateCondition 도중에 캐릭터가 죽었을 수 있음.
+		ConditionData.IsValidIndex 로 체크.
+		*/
+		if (ConditionDatas.IsValidIndex(i)
+			&& ConditionDatas[i]->ApplyTime <= 0.0f)
 		{
 			ConditionDatas[i]->EndCondition(OwnerPawn);
 			DeleteIndex.Add(i);

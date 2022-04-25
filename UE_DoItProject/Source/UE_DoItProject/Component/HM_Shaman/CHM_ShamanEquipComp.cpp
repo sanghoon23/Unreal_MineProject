@@ -35,6 +35,14 @@ void UCHM_ShamanEquipComp::BeginPlay()
 		MagicStick->SetActorRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
 		MagicStick->SetActorRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 
+		/*
+		#1125_
+		Sequence Stage_1_MonsterSpawnSeq 에서 EquipComponent
+		Actviate, DeActivate 이벤트 활성화 비활성화로
+		무기를 끄고 키게끔 구현.
+		*/
+		MagicStick->SetMeshVisible(true);
+
 		DisplayList.Add(MagicStick);
 	}
 
@@ -68,4 +76,14 @@ ACItem_Hand * UCHM_ShamanEquipComp::GetDisplayItem(int WeaponArrayNum)
 		return nullptr;
 
 	return DisplayList[WeaponArrayNum];
+}
+
+void UCHM_ShamanEquipComp::OnMeshVisible()
+{
+	MagicStick->SetMeshVisible(true);
+}
+
+void UCHM_ShamanEquipComp::OffMeshVisible()
+{
+	MagicStick->SetMeshVisible(false);
 }

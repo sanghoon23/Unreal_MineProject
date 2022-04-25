@@ -25,6 +25,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "_UserID")
 		uint8 UserId = 0;
 
+
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movements")
 		float OriginMaxSpeed = 600.0f;
@@ -107,6 +109,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
 	bool bChangeStateSwap = false;
 
+	// Condition - #220425
+	UPROPERTY(EditAnywhere, Category = "Condition")
+	bool bLimitCondition = false;
+
 	// Move
 	UPROPERTY(VisibleAnywhere, Category = "PlayerData")
 	bool bCanMove = true;
@@ -160,6 +166,9 @@ public:
 	virtual void ActorStopAnimMon(class UAnimMontage* Montage) override;
 	virtual void ActorPausedAnimMonResume() override;
 	virtual void ActorAnimMonPause() override;
+
+	virtual void SetLimitCondition(bool bValue) { bLimitCondition = bValue; }
+	virtual bool GetLimitCondition() const { return bLimitCondition; }
 
 /* Pure Virtual Function - (IIC_Player) */
 public:

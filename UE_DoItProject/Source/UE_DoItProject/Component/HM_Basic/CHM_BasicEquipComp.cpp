@@ -42,7 +42,7 @@ void UCHM_BasicEquipComp::BeginPlay()
 		Actviate, DeActivate 이벤트 활성화 비활성화로
 		무기를 끄고 키게끔 구현.
 		*/
-		Sword->SetMeshVisible(false);
+		Sword->SetMeshVisible(true);
 
 		DisplayList.Add(Sword);
 	}
@@ -93,12 +93,12 @@ void UCHM_BasicEquipComp::OffMeshVisible()
 
 void UCHM_BasicEquipComp::CompActivated(UActorComponent * Component, bool bReset)
 {
-	CLog::Print(L"EquipComp Activated!!");
+	//CLog::Print(L"EquipComp Activated!!");
 	Sword->SetMeshVisible(true);
 }
 
 void UCHM_BasicEquipComp::CompDeActivated(UActorComponent * Component)
 {
-	CLog::Print(L"EquipComp 'De' Activated!!");
+	//CLog::Print(L"EquipComp 'De' Activated!!");
 	Sword->SetMeshVisible(false);
 }

@@ -63,7 +63,10 @@ void ACMonsterSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	IfTrueRet(bExit);
+	if (bExit == true)
+	{
+		return;
+	}
 
 	if (bHitting == false)
 	{
@@ -76,11 +79,12 @@ void ACMonsterSpawner::Tick(float DeltaTime)
 			if (MonsterSpawnSequencePlayer == nullptr || 
 				(MonsterSpawnSequencePlayer != nullptr && MonsterSpawnSequencePlayer->IsPlaying() == false))
 			{
+				bExit = true;
+
 				if (NextStageSequencePlayer != nullptr)
 				{
 					FTimerHandle TimerHandle;
 					GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ACMonsterSpawner::TimerFunc, FuncTimerOfNotExistMon);
-					bExit = true;
 				}
 			}
 		}
@@ -111,7 +115,7 @@ void ACMonsterSpawner::CheckHittingInDetectRadius()
 
 #if  ENABLE_DRAW_DEBUG
 
-	DrawDebugSphere(GetWorld(), End, Sphere.GetSphereRadius(), 40, FColor::Green, false, 1.0f);
+	//DrawDebugSphere(GetWorld(), End, Sphere.GetSphereRadius(), 40, FColor::Green, false, 1.0f);
 
 #endif //  ENABLE_DRAW_DEBUG
 
@@ -120,23 +124,26 @@ void ACMonsterSpawner::CheckHittingInDetectRadius()
 		IIC_Player* IC_Player = Cast<IIC_Player>(HitResult.GetActor());
 		if (IC_Player != nullptr)
 		{
-			//@Register GameInst
-			for (ACHumanoidMonster* Monster : SeqMonsterSpawnList)
-			{
-				IIC_Monster* I_Monster = Cast<IIC_Monster>(Monster);
-				check(I_Monster);
-				I_Monster->SetAIRunningPossible(true);
-
-				//@등록
-				GetWorld()->GetGameInstance<UCGameInst>()->AddExistWorldMonster(Monster);
-			}
-
 			HittingPlayer = HitResult.GetActor();
 			if (MonsterSpawnSequencePlayer != nullptr)
 			{
 				MonsterSpawnSequencePlayer->Play();
 			}
-			else UE_LOG(LogTemp, Warning, L"CMonsterSpawner, SequencePlayer NULL!!");
+			else
+			{
+				//@Register GameInst
+				for (ACHumanoidMonster* Monster : SeqMonsterSpawnList)
+				{
+					IIC_Monster* I_Monster = Cast<IIC_Monster>(Monster);
+					check(I_Monster);
+					I_Monster->SetAIRunningPossible(true);
+
+					//@등록
+					GetWorld()->GetGameInstance<UCGameInst>()->AddExistWorldMonster(Monster);
+				}
+
+				UE_LOG(LogTemp, Warning, L"CMonsterSpawner, SequencePlayer NULL!!");
+			}
 
 			bHitting = true;
 		}
@@ -166,6 +173,17 @@ void ACMonsterSpawner::SpawnSequenceFinished()
 	ACharacter* OwnerCH = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	check(OwnerCH);
 	OwnerCH->EnableInput(PC);
+
+	//@Register GameInst
+	for (ACHumanoidMonster* Monster : SeqMonsterSpawnList)
+	{
+		IIC_Monster* I_Monster = Cast<IIC_Monster>(Monster);
+		check(I_Monster);
+		I_Monster->SetAIRunningPossible(true);
+
+		//@등록
+		GetWorld()->GetGameInstance<UCGameInst>()->AddExistWorldMonster(Monster);
+	}
 }
 
 void ACMonsterSpawner::DeadSequencePlay()

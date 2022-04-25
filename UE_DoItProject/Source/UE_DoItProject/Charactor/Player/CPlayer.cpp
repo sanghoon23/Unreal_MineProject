@@ -227,10 +227,6 @@ void ACPlayer::BeginPlay()
 	}
 	#pragma endregion
 
-	//Test
-	CLog::Print(UGameplayStatics::GetPlayerControllerID(Cast<APlayerController>(GetController())));
-	//...
-
 
 	UGameplayStatics::SetPlayerControllerID
 	(
@@ -262,17 +258,6 @@ void ACPlayer::Tick(float DeltaTime)
 
 	// @StateMachine 에서 StateType 값 받아옴.
 	//CurrentStateType = StateManager->GetCurrentAttackStateType();
-
-	// Test Code
-	//InputComponent->bBlockInput = false;
-	//APlayerController* TestController = Cast<APlayerController>(GetController());
-	//if (TestController != nullptr)
-	//{
-	//	if (TestController->IsInputKeyDown(EKeys::W))
-	//	{
-	//		EnableInput(TestController);
-	//	}
-	//}
 
 	// Test Code
 	//FRotator ControllerRot = GetControlRotation();
@@ -321,34 +306,15 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 /* Player 의 KeyInput 을 Block -  Move & Action 이 실행되지 않도록 */
 void ACPlayer::OnBlockKeyInput()
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController != nullptr)
-	{
-		DisableInput(PlayerController);
-		//PlayerController->SetIgnoreMoveInput(true);
-		CLog::Print(L"'ON' BlockKeyInput In");
-	}
+	OnBlockAction();
+	CanNotMove();
 }
 
 /* Player 의 KeyInput Release */
 void ACPlayer::OffBlockKeyInput()
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController != nullptr)
-	{
-		EnableInput(PlayerController);
-		//PlayerController->SetIgnoreMoveInput(false);
-		//#1019_
-		/*
-		ex) 빙결 시, 이동은 안되지만 카메라는 움직일 수 있도록 하기 위해서.
-		Reset 해줘야함. 그렇지 않으면 기존의 함수원상복귀 시키고, 또 다시 Delegate 를 돌아서 
-		PlayerController->SetIgnoreMoveInput(false) 가 두번 실행됨. 즉, 0 이 되지않고 - 되어버림.
-		IgnoreMoveInput = 0 이어야지만 MoveInput 값이 들어가는 듯.
-		*/
-		//#1029_
-		//그냥 이동과 행동을 제약시키면 됨.
-		//PlayerController->ResetIgnoreMoveInput();
-	}
+	OffBlockAction();
+	CanMove();
 }
 
 void ACPlayer::OnBlockAction()

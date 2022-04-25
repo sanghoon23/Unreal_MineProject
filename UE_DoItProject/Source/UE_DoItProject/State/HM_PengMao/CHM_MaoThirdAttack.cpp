@@ -162,7 +162,7 @@ void UCHM_MaoThirdAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 
 #if  ENABLE_DRAW_DEBUG
 
-	DrawDebugSphere(GetWorld(), Start, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
+	//DrawDebugSphere(GetWorld(), Start, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
 
 #endif //  ENABLE_DRAW_DEBUG
 

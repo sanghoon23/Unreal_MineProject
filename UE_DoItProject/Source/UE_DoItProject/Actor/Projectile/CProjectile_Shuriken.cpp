@@ -189,7 +189,7 @@ void ACProjectile_Shuriken::OnBeginOverlap(UPrimitiveComponent * OverlappedCompo
 
 #if  ENABLE_DRAW_DEBUG
 
-	DrawDebugSphere(GetWorld(), End, Sphere.GetSphereRadius(), 40, FColor::Green, false, 0.1f);
+	//DrawDebugSphere(GetWorld(), End, Sphere.GetSphereRadius(), 40, FColor::Green, false, 0.1f);
 
 #endif //  ENABLE_DRAW_DEBUG
 

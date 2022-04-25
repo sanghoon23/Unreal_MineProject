@@ -142,7 +142,7 @@ void UCS_TargetingSystem::OnFindTargets(FVector CenterPos, float CollisionSphere
 	float DebugLiftTime = 2.0f;
 #if  ENABLE_DRAW_DEBUG
 
-	DrawDebugSphere(GetWorld(), Center, Sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLiftTime);
+	//DrawDebugSphere(GetWorld(), Center, Sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLiftTime);
 
 #endif //  ENABLE_DRAW_DEBUG
 

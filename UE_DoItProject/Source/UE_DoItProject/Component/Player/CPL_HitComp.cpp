@@ -172,7 +172,7 @@ void UCPL_HitComp::OnHit(AActor * AttackingActor, UCDamageType_Base * Type, floa
 		verify(Type->GetConditionType() == FDamageType::END);
 	}
 
-	CLog::Print(L"CPL_HitComp ActionResetState Before");
+	//CLog::Print(L"CPL_HitComp ActionResetState Before");
 
 	//@Delegate ½ÇÇà.
 	Player->OnActionResetState.Broadcast(Player);

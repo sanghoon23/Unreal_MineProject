@@ -61,7 +61,7 @@ void UCPL_ActionInteractSystem::InteractInput()
 
 #if  ENABLE_DRAW_DEBUG
 
-	DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
+	//DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
 
 #endif // ENABLE_DRAW_DEBUG
 

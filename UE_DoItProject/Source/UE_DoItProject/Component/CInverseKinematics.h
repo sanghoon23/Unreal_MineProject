@@ -113,7 +113,7 @@ protected:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HandInverseKinematics")
-		bool bDebugDraw = true;
+		bool bDebugDraw = false;
 
 private:
 

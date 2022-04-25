@@ -91,6 +91,16 @@ public:
 	// @Pause 된 CurrentApplyMonatge 를 다시 실행
 	virtual void ActorPausedAnimMonResume() = 0;
 
+	//#220425
+	/*
+	빙결 보다 스턴이 먼저 풀린다면,
+	ActionPullActorWithCable::StunEndDel 에서 SetAIRunningPossible 이 되어져서
+	빙결 상태로 플레이어를 따라다니게 된다.
+	ex) 스턴이나 빙결이 걸리고 있는 상태라면 true
+	*/
+	virtual void SetLimitCondition(bool bValue) = 0;
+	virtual bool GetLimitCondition() const = 0;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Virtual Function */
 public:

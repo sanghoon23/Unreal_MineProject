@@ -31,6 +31,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI")
 		bool bAIAttackMode = false;
 
+	UPROPERTY(EditAnywhere, Category = "Condition")
+		bool bLimitCondition = false;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UCHM_ShamanAttackComp* AttackComponent;
 
@@ -95,6 +98,9 @@ public:
 	virtual void ActorStopAnimMon(class UAnimMontage* Montage) override;
 	virtual void ActorPausedAnimMonResume() override;
 	virtual void ActorAnimMonPause() override;
+
+	virtual void SetLimitCondition(bool bValue) { bLimitCondition = bValue; }
+	virtual bool GetLimitCondition() const { return bLimitCondition; }
 
 	/* Virtual In Interface - (IC_Charactor) */
 public:

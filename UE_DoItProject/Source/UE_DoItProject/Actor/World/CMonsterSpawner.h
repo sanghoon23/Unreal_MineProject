@@ -13,7 +13,6 @@ class UE_DOITPROJECT_API ACMonsterSpawner
 	GENERATED_BODY()
 	
 	#pragma	region Reflection
-public:
 	//UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	//	FDeadSpawningMS DelDeadSpawningMS;
 
@@ -67,6 +66,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	/* Player 와 맞닿았는지 */
+	const bool IsTouchOurPlayer() const { return bHitting; }
+
+	/* Player 가 이 단계를 끝냈는지 */
+	const bool IsExitingOurPlayer() const { return bExit; }
+
 	void CheckHittingInDetectRadius();
 
 private:

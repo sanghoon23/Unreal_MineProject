@@ -16,6 +16,7 @@ void UCNS_EvadeMove::NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSequenc
 
 	I_Charactor->CanNotMove();
 	Direction = I_Charactor->GetEvadeDirection();
+	Direction.Normalize();
 
 	ACharacter* Charactor = Cast<ACharacter>(MeshComp->GetOwner());
 	if (Charactor != nullptr)
@@ -37,7 +38,8 @@ void UCNS_EvadeMove::NotifyTick(USkeletalMeshComponent * MeshComp, UAnimSequence
 	ex) AbilitySpeedUpper 로 최대속력이 늘어났을 때, 대쉬기의 속도도 같이 늘어나기 위해 상관관계 형성.
 	*/
 	FVector Vec = Actor->GetActorLocation();
-	Vec = Vec + (Direction * Speed * CharMovementMaxSpeedValue);
+	Direction.Normalize();
+	Vec = Vec + (Direction * Speed * CharMovementMaxSpeedValue * FrameDeltaTime);
 	Actor->SetActorLocation(Vec);
 }
 
