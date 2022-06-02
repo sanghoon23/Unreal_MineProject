@@ -17,6 +17,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Montages")
 		class UAnimMontage* ActionMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Ability")
+		class UCHMAbility_ATKUpper* Ability_ATKUpper;
+
 	UPROPERTY(EditAnywhere, Category = "Particle")
 		class UParticleSystem* P_Action;
 
@@ -25,6 +28,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Particle")
 		class UParticleSystemComponent* PT_Background;
+
+	UPROPERTY(EditAnywhere, Category = "Particle")
+		class UParticleSystemComponent* AttachPTComp_SideEft;
 
 #pragma endregion
 

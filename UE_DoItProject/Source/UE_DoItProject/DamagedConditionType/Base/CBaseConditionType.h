@@ -13,12 +13,13 @@ UENUM()
 /* 상태 이상 종류 */
 enum class EHitUpset : uint8
 {
-	SLOWER		= 0, //이동감속
-	STUN		= 1, //스턴
-	BURN		= 2, //화상
-	POISION		= 3, //중독
-	FREEZE		= 4, //빙결
-	SLEEP		= 5, //수면
+	NONE		= 0,
+	SLOWER		= 1, //이동감속
+	STUN		= 2, //스턴
+	BURN		= 3, //화상
+	POISION		= 4, //중독
+	FREEZE		= 5, //빙결
+	SLEEP		= 6, //수면
 };
 
 UCLASS()
@@ -42,7 +43,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 		/* 상태정보 - TintColor 로 UI 긍정적 효과 / 부정적 효과 구분 */
-		FLinearColor TintColor = FLinearColor(FVector4(1.0f, 0.0f, 1.0f, 1.0f));
+		FLinearColor TintColor = FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Data")
 		/* 상태 적용 시간 */
@@ -118,6 +119,8 @@ public:
 
 	class AController* GetDamageSubjectController() { return DamageSubjectController; }
 	void SetDamageSubjectController(class AController* InputController);
+
+	float GetApplyTime() const { return ApplyTime; }
 
 protected:
 	// @Target Info UI 에 깜빡임을 시작할 시간

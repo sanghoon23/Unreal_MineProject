@@ -68,6 +68,14 @@ void UWG_TargetInfo::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 		TargetInfo.InfoConditionDataArray.Empty();
 		I_Widget->GetViewConditionStateForUI(&(TargetInfo.InfoConditionDataArray));
 	}
+
+	//@정렬하자, 시간 순대로.. Opacity 때문에 계속 데이터를 받아야지만 깜빡일 수 있게 해놓음.
+	//=> Opacity , Color 처리를 Ability/Condition 에서 하고 있음. 초기에 잘못 설정
+	TargetInfo.InfoConditionDataArray.StableSort([](const FViewConditionState& A, const FViewConditionState& B )
+	{
+		return A.ApplyTime > B.ApplyTime;
+	});
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

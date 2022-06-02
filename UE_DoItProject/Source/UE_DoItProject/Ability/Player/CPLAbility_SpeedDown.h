@@ -10,6 +10,22 @@ class UE_DOITPROJECT_API UCPLAbility_SpeedDown
 {
 	GENERATED_BODY()
 	
+#pragma region Reflection
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SlowerParticle_Root;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SlowerParticle_Body;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		UParticleSystemComponent* PTComp_SlowerRoot;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		UParticleSystemComponent* PTComp_SlowerBody;
+
+#pragma endregion
+
 public:
 	UCPLAbility_SpeedDown();
 

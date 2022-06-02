@@ -69,7 +69,7 @@ private:
 	// @공격범위, Target과 이 범위 안에 들어와야지만 공격가능 - Default
 	float AttackRange = 200.0f;
 
-	float AttackRadius = 200.0f;
+	float AttackRadius = 350.0f;
 
 	bool bSettingPlayRate = false;
 	float StartSectionLength = 0.0f;

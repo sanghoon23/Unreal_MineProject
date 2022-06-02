@@ -93,6 +93,7 @@ void ACPL_WorldSpectatorCam::SetRespawnPlayer(ACPlayer * RespawnPlayerPtr)
 void ACPL_WorldSpectatorCam::BindRespawnPlayerFunc()
 {
 	UWorld* const World = GetWorld();
+	check(World);
 
 	//@Controller Disable Input
 	APlayerController* const PC = Cast<APlayerController>(GetController());

@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 
+#include "Ability/Base/CBaseAbility.h"
+#include "DamagedConditionType/Base/CBaseConditionType.h"
 #include "IC_WidgetInfo.generated.h"
 
 USTRUCT(BlueprintType)
@@ -11,6 +13,12 @@ struct FViewConditionState
 	GENERATED_USTRUCT_BODY()
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		EHitUpset HitUpsetSort = EHitUpset::NONE;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+		EAbilityType AbilityType = EAbilityType::NONE;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 		/* UI - TargetInfo 표시 Texture */
 		class UTexture2D* TextureUI = nullptr;
@@ -26,6 +34,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Data")
 		/* 상태 적용 시간 */
 		float ApplyTime = 0.0f;
+
+public:
+	FORCEINLINE bool operator==(const FViewConditionState& A) const
+	{
+		if (HitUpsetSort == A.HitUpsetSort) return true;
+		if (AbilityType == A.AbilityType) return true;
+
+		return false;
+	}
+
 };
 
 UINTERFACE(MinimalAPI)

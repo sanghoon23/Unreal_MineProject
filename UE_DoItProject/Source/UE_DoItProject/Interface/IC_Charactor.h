@@ -96,10 +96,15 @@ public:
 	빙결 보다 스턴이 먼저 풀린다면,
 	ActionPullActorWithCable::StunEndDel 에서 SetAIRunningPossible 이 되어져서
 	빙결 상태로 플레이어를 따라다니게 된다.
-	ex) 스턴이나 빙결이 걸리고 있는 상태라면 true
+	
+	#220525
+	Counting 개념 적용
+	=>
+	@( bCount == true ) 추가
+	@( bCount == false ) 빼기
 	*/
-	virtual void SetLimitCondition(bool bValue) = 0;
-	virtual bool GetLimitCondition() const = 0;
+	virtual void CountingLimitCondition(bool bCount) = 0;
+	virtual int GetLimitConditionNum() const = 0;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/* Virtual Function */
@@ -140,4 +145,7 @@ protected:
 
 	//@현재 실행되는 액션 - ex) Player 'E'
 	IIC_BaseAction* CurrentIBaseAction;
+
+	//@상태이상 적용된 갯수
+	int LimitConditionNum = 0;
 };

@@ -410,7 +410,7 @@ AActor * ACHM_Shaman::GetTargetInAI()
 	check(AIController);
 
 	AActor* RetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("Target"));
-	check(RetActor);
+	//check(RetActor);
 
 	return RetActor;
 }

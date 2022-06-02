@@ -60,25 +60,25 @@ void UCHM_AssaFourAttack::BeginPlay()
 	I_Charactor = Cast<IIC_Charactor>(HM_Assassin);
 	check(I_Charactor);
 
-	//@Get StartSectionLength, EndSectionLength -->> 느리게 시작된 몽타주 다시 원래 속도로.
-	const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
-	AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
+	////@Get StartSectionLength, EndSectionLength -->> 느리게 시작된 몽타주 다시 원래 속도로.
+	//const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
+	//AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
 }
 
 void UCHM_AssaFourAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	UAnimInstance* OwnerAnimInst = HM_Assassin->GetMesh()->GetAnimInstance();
-	if (OwnerAnimInst != nullptr && bAttacking == true && bSettingPlayRate == false) //@공격이 실행됐을 때,
-	{
-		float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
-		if (CurrentMonPos >= StartSectionLength) //@다음 섹션(NextAction)
-		{
-			bSettingPlayRate = true;
-			OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
-		}
-	}
+	//UAnimInstance* OwnerAnimInst = HM_Assassin->GetMesh()->GetAnimInstance();
+	//if (OwnerAnimInst != nullptr && bAttacking == true && bSettingPlayRate == false) //@공격이 실행됐을 때,
+	//{
+	//	float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
+	//	if (CurrentMonPos >= StartSectionLength) //@다음 섹션(NextAction)
+	//	{
+	//		bSettingPlayRate = true;
+	//		OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
+	//	}
+	//}
 }
 
 void UCHM_AssaFourAttack::IsRunTick(bool bRunning)
@@ -100,7 +100,7 @@ void UCHM_AssaFourAttack::BeginAttack(AActor * DoingActor)
 		HM_Assassin->ActorAnimMonPlay
 		(
 			AttackMontages[0], /* @FirstMontage == Combo1 */
-			0.2f, true
+			0.3f, true
 		);
 
 		bSettingPlayRate = false;
@@ -157,6 +157,14 @@ void UCHM_AssaFourAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 	//DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
 
 #endif //  ENABLE_DRAW_DEBUG
+
+	if (ComboNum == static_cast<uint8>(EHM_AssaFourComboType::COMBO_ONE))
+	{
+		HM_Assassin->GetMesh()->GetAnimInstance()->Montage_SetPlayRate
+		(
+			HM_Assassin->GetCurrentMontage(), 0.9f
+		);
+	}
 
 	if (bHit == true)
 	{

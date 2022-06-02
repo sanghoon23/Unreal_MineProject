@@ -118,38 +118,6 @@ void ACItem_Faster::BeginPlay()
 
 	//@Setting Ability
 	{
-		//TODO : 이렇게 하면 댕글링 포인터가 되는데 왜 될까..
-		////@Set Delegate - Start
-		//AbilitySpeedUpper->OnDelStartTimerAbility.AddLambda([&](AActor* AppliedActor)
-		//{
-		//	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
-		//	if (I_Player != nullptr)
-		//	{
-		//		//@기존 Player Particle OFF
-		//		I_Player->OffParticleInPlayer();
-		//	}
-		//});
-
-		////@Set Delegate - End
-		//AbilitySpeedUpper->OnEndTimerAbility.AddLambda([&](AActor* AppliedActor)
-		//{
-		//	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
-		//	if (I_Player != nullptr)
-		//	{
-		//		//@기존 Player Particle ON
-		//		I_Player->OnParticleInPlayer();
-		//	}
-
-		//	//@Particle OFF
-		//	if (ParticleComp_LHand != nullptr)
-		//		ParticleComp_LHand->SetActive(false);
-		//	else CLog::Print(L"LHand Particle NULL!!");
-
-		//	if (ParticleComp_RHand != nullptr)
-		//		ParticleComp_RHand->SetActive(false);
-		//	else CLog::Print(L"RHand Particle NULL!!");
-		//});
-
 		AbilitySpeedUpper->OnDelStartTimerAbility.AddUObject(this, &ACItem_Faster::DelegateAbilityStart);
 		AbilitySpeedUpper->OnEndTimerAbility.AddUObject(this, &ACItem_Faster::DelegateAbilityEnd);
 	}
@@ -195,44 +163,6 @@ void ACItem_Faster::ApplyEvent(AActor * EventedActor)
 
 		//@UnVisible
 		SetActorHiddenInGame(true);
-
-		//@파티클 실행
-		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
-		check(I_MeshParticle);
-
-		//@Faster Effect
-		I_MeshParticle->SpawnParticleAtMesh
-		(
-			FasterParticle,
-			EAttachPointType::ROOT,
-			EAttachPointRelative::NONE,
-			EAttachLocation::SnapToTarget
-		);
-
-		//@LHand ParticleComp
-		UParticleSystemComponent* const PTComp_LHand = I_MeshParticle->SpawnParticleAtMesh
-		(
-			SpeedUp_LHand,
-			EAttachPointType::LHAND,
-			EAttachPointRelative::RELATIVE,
-			EAttachLocation::SnapToTarget
-		);
-
-		//@RHand ParticleComp
-		UParticleSystemComponent* const PTComp_RHand = I_MeshParticle->SpawnParticleAtMesh
-		(
-			SpeedUp_RHand,
-			EAttachPointType::RHAND,
-			EAttachPointRelative::RELATIVE,
-			EAttachLocation::SnapToTarget
-		);
-
-		//@Add Lambda - Particle 꺼주는 기능
-		AbilitySpeedUpper->OnEndTimerAbility.AddLambda([PTComp_LHand, PTComp_RHand](AActor*)
-		{
-			PTComp_LHand->SetActive(false);
-			PTComp_RHand->SetActive(false);
-		});
 
 		//@Ability 추가
 		IIC_AbilityComp* I_AbilityComp = I_Charactor->GetIAbilityComp();

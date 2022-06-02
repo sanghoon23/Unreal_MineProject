@@ -86,10 +86,7 @@ void ACHM_Assassin::Tick(float DeltaTime)
 		&& AngerState == EAssa_AngerState::NONE
 		&& bDeath == false) //HP반 이하
 	{
-		IIC_ActionComp* I_ActionComp = GetIActionComp();
-		check(I_ActionComp);
-
-		IIC_BaseAction* AngerAction = I_ActionComp->GetIBaseAction(static_cast<uint8>(EAssa_ActionType::ANGER));
+		IIC_BaseAction* AngerAction = GetIActionComp()->GetIBaseAction(static_cast<uint8>(EAssa_ActionType::ANGER));
 		check(AngerAction);
 
 		ACAIC_HM_Assassin* HM_AssaController = Cast<ACAIC_HM_Assassin>(GetController());
@@ -170,6 +167,7 @@ void ACHM_Assassin::GetViewConditionStateForUI(TArray<FViewConditionState>* OutA
 	for (UCBaseConditionType* ConditionType : ConditionTypes)
 	{
 		FViewConditionState Insert;
+		Insert.HitUpsetSort = ConditionType->GetState();
 		Insert.TextureUI = ConditionType->GetTextureUI();
 		Insert.ColorAndOpacity = ConditionType->ColorAndOpacity;
 		Insert.TintSlateColor = FSlateColor(ConditionType->TintColor);
@@ -184,6 +182,7 @@ void ACHM_Assassin::GetViewConditionStateForUI(TArray<FViewConditionState>* OutA
 	for (UCBaseAbility* Ability : Abilities)
 	{
 		FViewConditionState Insert;
+		Insert.AbilityType = Ability->GetAbilityType();
 		Insert.TextureUI = Ability->GetTextureUI();
 		Insert.ColorAndOpacity = Ability->ColorAndOpacity;
 		Insert.TintSlateColor = FSlateColor(Ability->TintColor);
@@ -319,6 +318,7 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 	IfTrueRetResult(bDeath == true, MonsterInfo.CurrentHP);
 
 	//TODO : '방어계수' 는 여기서 계산 해주면됨. Ex) DamageAmount/DEF_Coefficient
+	float ResultDamageAmount = DamageAmount;
 
 	//@UI
 	{
@@ -341,7 +341,7 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 					{
 						FloatingComboUI->SetOwner(this);
 						FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::WHITE);
-						FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+						FloatingComboUI->SetDisplayDamageValue(ResultDamageAmount);
 
 						FloatingComboUI->AddToViewport();
 					}
@@ -354,7 +354,7 @@ float ACHM_Assassin::TakeDamage(float DamageAmount, FDamageEvent const & DamageE
 		}
 	}
 
-	MonsterInfo.CurrentHP -= DamageAmount;
+	MonsterInfo.CurrentHP -= ResultDamageAmount;
 
 	if (MonsterInfo.CurrentHP <= 0.0f)
 	{
@@ -420,7 +420,7 @@ AActor * ACHM_Assassin::GetTargetInAI()
 	check(AIController);
 
 	AActor* RetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("Target"));
-	check(RetActor);
+	//check(RetActor);
 
 	return RetActor;
 }

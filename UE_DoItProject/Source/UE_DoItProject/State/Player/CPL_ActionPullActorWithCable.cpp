@@ -310,15 +310,23 @@ void UCPL_ActionPullActorWithCable::StunStartDel(AActor * Subject)
 	{
 		SubjectI_Monster->SetAIRunningPossible(false);
 	}
+
+	//#220525 - 상태이상 적용 횟수 추가.
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
+	if (I_Charactor != nullptr)
+	{
+		I_Charactor->CountingLimitCondition(true);
+	}
 }
 
 void UCPL_ActionPullActorWithCable::StunEndDel(AActor * Subject)
 {
-	//#220425 - 확인하고 SetAIRunningPossible(true) 해주기.
+	//#220525 - 상태이상 적용 횟수 빼준 다음 확인
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
 	if (I_Charactor != nullptr)
 	{
-		IfTrueRet(I_Charactor->GetLimitCondition());
+		I_Charactor->CountingLimitCondition(false);
+		IfTrueRet(I_Charactor->GetLimitConditionNum() > 0);
 	}
 
 	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);

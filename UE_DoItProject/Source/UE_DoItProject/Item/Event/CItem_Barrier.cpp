@@ -69,16 +69,6 @@ ACItem_Barrier::ACItem_Barrier()
 		}
 	}
 
-	//@LOAD Particle
-	{
-		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_BarrierEffect.PS_BarrierEffect'";
-		ConstructorHelpers::FObjectFinder<UParticleSystem> P_Barrier(*strPath);
-		if (P_Barrier.Succeeded())
-		{
-			ParticleBarrier = P_Barrier.Object;
-		}
-	}
-
 	//@LOAD Material
 	{
 		strPath = L"MaterialInstanceConstant'/Game/_Mine/UseMaterial/Item/Mat_HologramGlowGreen.Mat_HologramGlowGreen'";
@@ -137,27 +127,6 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 		UCPLAbility_Barrier* AbilityBarrier = NewObject<UCPLAbility_Barrier>();
 		check(AbilityBarrier);
 
-		//@파티클 실행
-		{
-			IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
-			check(I_MeshParticle);
-
-			//@Barrier Effect
-			UParticleSystemComponent* PTComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
-			(
-				ParticleBarrier,
-				EAttachPointType::BODY,
-				EAttachPointRelative::NONE,
-				EAttachLocation::SnapToTarget
-			);
-
-			//@Add Lambda - Particle 꺼주는 기능
-			AbilityBarrier->OnEndTimerAbility.AddLambda([PTComp_Barrier](AActor*)
-			{
-				PTComp_Barrier->SetActive(false);
-			});
-		}
-
 		//@Ability 추가
 		IIC_AbilityComp* I_AbilityComp = I_Charactor->GetIAbilityComp();
 		if (I_AbilityComp != nullptr)
@@ -178,16 +147,4 @@ void ACItem_Barrier::ApplyEvent(AActor * EventedActor)
 		Death();
 
 	}//(Charactor != nullptr)
-}
-
-void ACItem_Barrier::DelegateAbilityEnd(AActor* AppliedActor)
-{
-	check(AppliedActor);
-
-	//@Particle OFF
-	if (ParticleComp_Barrier != nullptr) ParticleComp_Barrier->SetActive(false);
-	else UE_LOG(LogTemp, Warning, L"ParticleComp_Barrier NULL!!");
-
-	//@DeathCall
-	Death();
 }

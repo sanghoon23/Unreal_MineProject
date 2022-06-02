@@ -11,7 +11,7 @@ ACAIC_HM_Basic::ACAIC_HM_Basic()
 	//SetGenericTeamId(FGenericTeamId(1));
 
 	PatrolRadius = 800.0f;
-	DetectRadius = 800.0f;
+	DetectRadius = 1500.0f;
 	AttackRange = 220.0f;
 
 	FString path = L"";

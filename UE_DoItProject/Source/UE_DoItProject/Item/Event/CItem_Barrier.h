@@ -28,12 +28,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 		class UStaticMeshComponent* SM_HologramGlow;
 
-	UPROPERTY(VisibleAnywhere, Category = "Particle")
-		class UParticleSystem* ParticleBarrier;
-
-	UPROPERTY(VisibleAnywhere, Category = "ReturnValue")
-		class UParticleSystemComponent* ParticleComp_Barrier;
-
 private:
 	UFUNCTION()
 		void OnBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
@@ -57,7 +51,6 @@ public:
 	virtual void ApplyEvent(AActor* EventedActor) override;
 
 private:
-	void DelegateAbilityEnd(AActor* AppliedActor);
 
 	/* Member */
 public:

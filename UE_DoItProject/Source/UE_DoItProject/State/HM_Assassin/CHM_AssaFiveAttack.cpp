@@ -29,14 +29,25 @@ UCHM_AssaFiveAttack::UCHM_AssaFiveAttack()
 
 	//@LOAD Montage
 	{
+		//UAnimMontage* Assa_FiveAttack_First = nullptr;
+
+		//Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Attack/HM_Assassin_Mon_FiveAttack_First_Montage.HM_Assassin_Mon_FiveAttack_First_Montage'";
+		//ConstructorHelpers::FObjectFinder<UAnimMontage> Mon_FiveAttack_First(*Path);
+		//if (Mon_FiveAttack_First.Succeeded())
+		//	Assa_FiveAttack_First = Mon_FiveAttack_First.Object;
+
+		//AttackMontages.Emplace(Assa_FiveAttack_First);
+
+
 		UAnimMontage* Assa_FiveAttack = nullptr;
 
-		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Attack/HM_Assassin_Anim_FiveAttack_First_Montage.HM_Assassin_Anim_FiveAttack_First_Montage'";
+		Path = L"AnimMontage'/Game/_Mine/Montages/HM_Assassin/Attack/HM_Assassin_Mon_FiveAttack_Montage.HM_Assassin_Mon_FiveAttack_Montage'";
 		ConstructorHelpers::FObjectFinder<UAnimMontage> Mon_FiveAttack(*Path);
 		if (Mon_FiveAttack.Succeeded())
 			Assa_FiveAttack = Mon_FiveAttack.Object;
 
 		AttackMontages.Emplace(Assa_FiveAttack);
+
 	}
 
 	//@LOAD Cinema
@@ -63,34 +74,34 @@ void UCHM_AssaFiveAttack::BeginPlay()
 	I_Charactor = Cast<IIC_Charactor>(HM_Assassin);
 	check(I_Charactor);
 
-	//@LOAD Sequencer
-	ALevelSequenceActor* OutputSequenceActor;
-	FMovieSceneSequencePlaybackSettings PlaybackSettings;
-	LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
-		GetWorld(),
-		LevelSequenForAttack,
-		PlaybackSettings,
-		OutputSequenceActor
-	);
+	////@LOAD Sequencer
+	//ALevelSequenceActor* OutputSequenceActor;
+	//FMovieSceneSequencePlaybackSettings PlaybackSettings;
+	//LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+	//	GetWorld(),
+	//	LevelSequenForAttack,
+	//	PlaybackSettings,
+	//	OutputSequenceActor
+	//);
 }
 
 void UCHM_AssaFiveAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	UAnimInstance* OwnerAnimInst = HM_Assassin->GetMesh()->GetAnimInstance();
-	if (OwnerAnimInst != nullptr && bAttacking == true) //@공격이 실행됐을 때,
-	{
-		float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
-		float StartSectionLength, EndSectionLength = 0.0f;
-		const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
-		AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
+	//UAnimInstance* OwnerAnimInst = HM_Assassin->GetMesh()->GetAnimInstance();
+	//if (OwnerAnimInst != nullptr && bAttacking == true) //@공격이 실행됐을 때,
+	//{
+	//	float CurrentMonPos = OwnerAnimInst->Montage_GetPosition(AttackMontages[0]);
+	//	float StartSectionLength, EndSectionLength = 0.0f;
+	//	const int32 NextActionSectionIndex = AttackMontages[0]->GetSectionIndex(FName("NextAction"));
+	//	AttackMontages[0]->GetSectionStartAndEndTime(NextActionSectionIndex, StartSectionLength, EndSectionLength);
 
-		if (CurrentMonPos >= StartSectionLength) //@다음 섹션(NextAction)
-		{
-			OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
-		}
-	}
+	//	if (CurrentMonPos >= StartSectionLength) //@다음 섹션(NextAction)
+	//	{
+	//		OwnerAnimInst->Montage_SetPlayRate(AttackMontages[0], NextSectionPlayRate);
+	//	}
+	//}
 }
 
 void UCHM_AssaFiveAttack::IsRunTick(bool bRunning)
@@ -110,13 +121,12 @@ void UCHM_AssaFiveAttack::BeginAttack(AActor * DoingActor)
 	if (bAttacking == false)
 	{
 		//LevelSequencePlayer->Play();
-
-		HM_Assassin->SetAIRunningPossible(false);
+		//HM_Assassin->SetAIRunningPossible(false);
 
 		HM_Assassin->ActorAnimMonPlay
 		(
 			AttackMontages[0], /* @FirstMontage == Combo1 */
-			0.2f, false
+			0.4f, true
 		);
 
 		//@이동
@@ -164,12 +174,22 @@ void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 		, CollisionQueryParm
 	);
 
+
 #if  ENABLE_DRAW_DEBUG
 
 	//DrawDebugSphere(GetWorld(), End, sphere.GetSphereRadius(), 40, FColor::Green, false, DebugLifeTime);
 
 #endif //  ENABLE_DRAW_DEBUG
 
+	if (ComboNum == static_cast<uint8>(EHM_AssaFiveComboType::COMBO_ONE))
+	{
+		HM_Assassin->GetMesh()->GetAnimInstance()->Montage_SetPlayRate
+		(
+			HM_Assassin->GetCurrentMontage(), 0.9f
+		);
+	}
+
+	//@SingleByChannel
 	if (bHit == true)
 	{
 		IIC_Charactor* HitIneterfaceCharactor = Cast<IIC_Charactor>(HitResult.GetActor());
@@ -179,6 +199,7 @@ void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 		check(I_HitComp);
 
 		I_HitComp->BeginBeatedFunc.AddUObject(this, &UCHM_AssaFiveAttack::BeginBeatedFunction);
+		I_HitComp->EndBeatedFunc.AddUObject(this, &UCHM_AssaFiveAttack::EndBeatedFunction);
 
 		//@맞는 방향
 		FVector HitDirection = HitResult.GetActor()->GetActorLocation() - HM_Assassin->GetActorLocation();
@@ -189,74 +210,8 @@ void UCHM_AssaFiveAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 		I_HitComp->SetHitMoveSpeed(DamageType->GetHitMoveSpeed());
 		I_HitComp->OnHit(HM_Assassin, DamageType, DamageType->DamageImpulse);
 
-		if (ComboNum == static_cast<uint8>(EHM_AssaFiveComboType::COMBO_ONE))
-		{
-			//@캐릭터 앞에 놓기 & 바라보기
-			FVector OwnerFwdVec = HM_Assassin->GetActorForwardVector();
-			FVector OwnerLocation = HM_Assassin->GetActorLocation();
-			HitResult.GetActor()->SetActorLocation(OwnerLocation + (OwnerFwdVec * AttackRange));
-			UCFL_ActorAgainst::LookAtTarget(HM_Assassin, HitResult.GetActor());
-
-			//@Sequencer Play
-			LevelSequencePlayer->Play();
-		}
-		else
-		{
-			if ((IsLastCombo() == true)) //마지막 일격
-			{
-				//@Player Block InputKey
-				{
-					FTimerDelegate EndBeatedTimerDelegate;
-					EndBeatedTimerDelegate = FTimerDelegate::CreateUObject(this, &UCHM_AssaFiveAttack::EndBeatedFunction, HitResult.GetActor());
-
-					FTimerHandle EndBeatedTimerHandle;
-					HitResult.GetActor()->GetWorldTimerManager().SetTimer
-					(
-						EndBeatedTimerHandle,
-						EndBeatedTimerDelegate,
-						SequenceDelayToFinish,
-						false
-					);
-				}
-
-				//@For Sequence MonsterAI Setting
-				{
-					FTimerDelegate EndAttackMotionDelegate;
-					EndAttackMotionDelegate = FTimerDelegate::CreateUObject(this, &UCHM_AssaFiveAttack::EndSequencerMotion, GetOwner());
-
-					FTimerHandle EndAttackMotionHandle;
-					HM_Assassin->GetWorldTimerManager().SetTimer
-					(
-						EndAttackMotionHandle,
-						EndAttackMotionDelegate,
-						SequenceDelayToFinish,
-						false
-					);
-				}
-			}
-		}
 	}//if(Hit==true)
-	else
-	{
-		HM_Assassin->SetAIRunningPossible(true);
-		EndAttack();
-	}//(Hit==false)
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//@Test Code
-	//FTimerHandle OpenLevelTimerHandle;
-	//FTimerDelegate TimerDelegate;
-	//FName LambdaInsertLoadMapName = LoadMapName;
-	//TimerDelegate.BindLambda([LoadBackground, World, LambdaInsertLoadMapName]()
-	//{
-	//	//@Remove
-	//	LoadBackground->RemoveFromViewport();
-
-	//	//@Open Level(MapName)
-	//	UGameplayStatics::OpenLevel(World, LambdaInsertLoadMapName);
-	//});
-	//GetWorldTimerManager().SetTimer(OpenLevelTimerHandle, TimerDelegate, 3.0f, false);
 }
 
 void UCHM_AssaFiveAttack::EndSequencerMotion(AActor * Subject)

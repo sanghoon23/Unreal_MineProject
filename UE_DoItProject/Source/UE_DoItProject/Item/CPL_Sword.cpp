@@ -42,7 +42,7 @@ ACPL_Sword::ACPL_Sword()
 			StaticMesh->SetStaticMesh(mesh.Object);
 	}
 
-	// @Montage
+	//@Montage
 	{
 		// AttachMontage
 		FString path = L"AnimMontage'/Game/_Mine/Montages/Player/Sword/Sword_Equip_Montage.Sword_Equip_Montage'";

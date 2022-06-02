@@ -152,11 +152,11 @@ ACPlayer::ACPlayer()
 
 	//@1029_PlayerState 로 옮김
 	//# 현재 체력 상태로 갱신해주어야 함.
-	Info.MaxHP = 500.0f;
-	Info.CurrentHP = 400.0f;
+	Info.MaxHP = 700.0f;
+	Info.CurrentHP = 10.0f;
 
 	Info.MaxMP = 100.0f;
-	Info.CurrentMP = 50.0f;
+	Info.CurrentMP = 10.0f;
 
 	Info.Name = FName(L"PlayerName");
 
@@ -378,6 +378,7 @@ void ACPlayer::OnUseSpeatatorMode()
 
 	APlayerController* const PC = Cast<APlayerController>(GetController());
 	check(PC);
+	EnableInput(PC);
 
 	//@Create Camera Charactor
 	FTransform Transform = FTransform::Identity;
@@ -401,6 +402,11 @@ void ACPlayer::OnUseSpeatatorMode()
 void ACPlayer::OnRespawn()
 {
 	UWorld* const World = GetWorld();
+	check(World);
+
+	APlayerController* const PC = Cast<APlayerController>(GetController());
+	check(PC);
+	EnableInput(PC);
 
 	FVector Location = GetActorLocation();
 	Location.Z += 400.0f;
@@ -679,11 +685,11 @@ void ACPlayer::OnInit()
 
 	//@Player Info
 	{
-		Info.MaxHP = 500.0f;
-		Info.CurrentHP = 500.0f;
+		//Info.MaxHP = Info.MaxHP;
+		Info.CurrentHP = Info.MaxHP;
 
-		Info.MaxMP = 100.0f;
-		Info.CurrentMP = 100.0f;
+		//Info.MaxMP = Info.MaxMP;
+		Info.CurrentMP = Info.MaxMP;
 	}
 }
 
@@ -801,18 +807,29 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 
 	UWorld* const World = GetWorld();
 
+	IIC_Monster* IC_Monster = Cast<IIC_Monster>(DamageCauser);
+	check(IC_Monster);
+	float Mon_ATK_Coefficient = IC_Monster->GetMonsterInfo().ATK_Coefficient;
+	float Mon_DEF_Coefficient = IC_Monster->GetMonsterInfo().DEF_Coefficient;
+
+	float ResultDamage = DamageAmount * Mon_ATK_Coefficient;
+
 	//@UI
 	{
 		FVector InsertPos = GetActorLocation();
+		InsertPos.X += FMath::FRandRange(-200.0f, 200.0f);
+		InsertPos.Y += FMath::FRandRange(-200.0f, 200.0f);
+		InsertPos.Z += GetDefaultHalfHeight() + 100.0f;
 
 		UWG_FloatingCombo* FloatingComboUI = CreateWidget<UWG_FloatingCombo>(GetWorld(), FloatingComboClass);
-		if (FloatingComboUI != nullptr && bUsingFloatingComboUI)
+		if (FloatingComboUI != nullptr)
 		{
 			APlayerController* PC = UGameplayStatics::GetPlayerController(World, 0); //@주체자.
-			if (PC != nullptr)
+			if (PC != nullptr && bUsingFloatingComboUI)
 			{
+				FloatingComboUI->SetOwner(this);
 				FloatingComboUI->SetInitial(PC, InsertPos, EFloatingComboColor::RED);
-				FloatingComboUI->SetDisplayDamageValue(DamageAmount);
+				FloatingComboUI->SetDisplayDamageValue(ResultDamage);
 
 				FloatingComboUI->AddToViewport();
 			}
@@ -825,7 +842,7 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	float InputDamageAmount = DamageAmount;
+	float InputDamageAmount = ResultDamage;
 	if (Info.BarrierAmount > 0.0f) //@Barrier
 	{
 		if (Info.BarrierAmount > InputDamageAmount) //@방어막 값보다 작으면

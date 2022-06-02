@@ -68,7 +68,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 		/* 상태정보 - TintColor 로 UI 긍정적 효과 / 부정적 효과 구분 */
-		FLinearColor TintColor = FLinearColor(FVector4(1.0f, 0.0f, 1.0f, 1.0f));
+		FLinearColor TintColor = FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widget")
@@ -150,6 +150,9 @@ public:
 	void SetAbilityValue(EAbilitySort Sort, float Val, bool bUsingTimer = false, float TimerVal = 0.0f);
 	void SetAbilityValue(const FAbilityValue& Input);
 	void SetAppliedActor(AActor* Actor);
+
+	/* Test Code */
+	bool IsNullAppliedActor() const { return (AppliedActor != nullptr) ? false : true; }
 
 protected:
 	EAbilityType AbilityType;

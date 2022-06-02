@@ -80,23 +80,23 @@ void UCPL_SDAttackFinish::BeginPlay()
 
 #pragma region Set Delegate
 	// Set Delegate "OnActionReset" - IIC_Charactor
-	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
-	check(IC_Charactor);
+	//IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(GetOwner());
+	//check(IC_Charactor);
 
-	IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
-	{
-		//@ON AI - Target
-		if (Target != nullptr)
-		{
-			IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
-			if (I_Monster != nullptr)
-			{
-				I_Monster->SetAIRunningPossible(true);
-			}
+	//IC_Charactor->OnActionResetState.AddLambda([&](AActor*)
+	//{
+	//	//@ON AI - Target
+	//	if (Target != nullptr)
+	//	{
+	//		//IIC_Monster* I_Monster = Cast<IIC_Monster>(Target);
+	//		//if (I_Monster != nullptr)
+	//		//{
+	//		//	I_Monster->SetAIRunningPossible(true);
+	//		//}
 
-			Target = nullptr;
-		}
-	});
+	//		Target = nullptr;
+	//	}
+	//});
 
 	//BeginAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::DelegateBeginAttack);
 	EndAttackDeleFunc.AddUObject(this, &UCPL_SDAttackFinish::EndAttack);

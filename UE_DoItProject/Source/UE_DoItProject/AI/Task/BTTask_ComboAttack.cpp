@@ -31,6 +31,26 @@ EBTNodeResult::Type UBTTask_ComboAttack::ExecuteTask(UBehaviorTreeComponent & Ow
 	UNavigationSystemV1* Nav = UNavigationSystemV1::GetNavigationSystem(MonsterPawn->GetWorld());
 	IfNullRetResult(Nav, EBTNodeResult::Failed);
 
+	//@순서대로 공격하기
+	//@MinAttackRange / MaxAttackRange 사용
+	{
+		if (bUsingInOrder == true)
+		{
+			IIC_BaseAttack* BaseAttack = I_AttackComp->SetAttackTypeRetIBaseAttack(StartingOrderAttackType);
+			check(BaseAttack);
+			if (BaseAttack != nullptr)
+			{
+				BaseAttack->BeginAttack(MonsterPawn);
+			}
+
+			++StartingOrderAttackType;
+			StartingOrderAttackType %= MaxAttackRange + 1;
+			if(StartingOrderAttackType == 0) StartingOrderAttackType += MinAttackRange;
+
+			return EBTNodeResult::Succeeded;
+		}
+	}
+
 	// BaseAttack
 	if (bUsingRange == false)
 	{

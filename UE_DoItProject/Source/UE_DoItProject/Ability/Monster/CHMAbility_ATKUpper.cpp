@@ -25,7 +25,8 @@ UCHMAbility_ATKUpper::UCHMAbility_ATKUpper()
 	//@Set UI Color
 	{
 		//@긍정적 효과
-		ColorAndOpacity = FLinearColor(FVector4(0.0f, 1.0f, 1.0f, 1.0f));
+		ColorAndOpacity = FLinearColor(FVector4(0.0f, 1.0f, 0.0f, 1.5f));
+		TintColor = FLinearColor(FVector4(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 }
 
@@ -46,8 +47,7 @@ void UCHMAbility_ATKUpper::StartUseTimerAbility()
 			HumanoidMonster->AddATK(ATKUpperCoefficient);
 		}
 	}
-	else
-		UE_LOG(LogTemp, Warning, L"UCHMAbility_ATKUpper I_Monster NULL!!");
+	else UE_LOG(LogTemp, Warning, L"UCHMAbility_ATKUpper I_Monster NULL!!");
 
 }
 
@@ -68,12 +68,9 @@ void UCHMAbility_ATKUpper::EndUseTimerAbility()
 			HumanoidMonster->AddATK(ATKUpperCoefficient);
 		}
 	}
-	else
-		UE_LOG(LogTemp, Warning, L"UCHMAbility_ATKUpper I_Monster NULL!!");
+	else UE_LOG(LogTemp, Warning, L"UCHMAbility_ATKUpper I_Monster NULL!!");
 }
 
-//#Edit 0703 - 
-/* 기존의 Ability 는 지운다.. */
 void UCHMAbility_ATKUpper::OverlapAbility(UCBaseAbility * Ability)
 {
 	Super::OverlapAbility(Ability);
@@ -87,7 +84,24 @@ void UCHMAbility_ATKUpper::OverlapAbility(UCBaseAbility * Ability)
 
 	EndUseTimerAbility();
 
-	Copy(Ability); //@Copy - DelegateRemove 수행
+	StartUseTimerAbility();
+}
 
-	Ability->StartUseTimerAbility();
+void UCHMAbility_ATKUpper::ApplyAbility()
+{
+	check(AppliedActor);
+
+	IIC_Monster* I_Monster = Cast<IIC_Monster>(AppliedActor);
+	if (I_Monster != nullptr)
+	{
+		//@공격 계수 증가 '+'
+		{
+			ACHumanoidMonster* HumanoidMonster = Cast<ACHumanoidMonster>(AppliedActor);
+			check(HumanoidMonster);
+
+			//@더하기
+			HumanoidMonster->AddATK(ATKUpperCoefficient);
+		}
+	}
+	else UE_LOG(LogTemp, Warning, L"UCHMAbility_ATKUpper I_Monster NULL!!");
 }

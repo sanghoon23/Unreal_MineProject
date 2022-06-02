@@ -29,6 +29,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* HealingParticle;
 
+	UPROPERTY(EditAnywhere, Category = "Data")
+		float RecoveryHPValue = 50.0f;
+
 private:
 	UFUNCTION()
 		void OnBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
@@ -56,6 +59,4 @@ public:
 	const float GetHPValue() const { return RecoveryHPValue; }
 	void SetHPValue(float fValue) { RecoveryHPValue = fValue; }
 
-private:
-	float RecoveryHPValue = 10.0f;
 };

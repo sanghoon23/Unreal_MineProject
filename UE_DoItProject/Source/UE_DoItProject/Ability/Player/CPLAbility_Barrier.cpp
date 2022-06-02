@@ -27,6 +27,16 @@ UCPLAbility_Barrier::UCPLAbility_Barrier()
 		//@긍정적 효과
 		ColorAndOpacity = FLinearColor(FVector4(0.0f, 1.0f, 1.0f, 1.0f));
 	}
+
+	//@LOAD Particle
+	{
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_BarrierEffect.PS_BarrierEffect'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_Barrier(*strPath);
+		if (P_Barrier.Succeeded())
+		{
+			ParticleBarrier = P_Barrier.Object;
+		}
+	}
 }
 
 void UCPLAbility_Barrier::StartUseTimerAbility()
@@ -47,6 +57,21 @@ void UCPLAbility_Barrier::StartUseTimerAbility()
 	}
 	else
 		UE_LOG(LogTemp, Warning, L"UCPLAbility_Barrier I_Player NULL!!");
+
+	//@Create Particle
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(AppliedActor);
+	check(I_Charactor);
+
+	IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
+	check(I_MeshParticle);
+
+	PTComp_Barrier = I_MeshParticle->SpawnParticleAtMesh
+	(
+		ParticleBarrier,
+		EAttachPointType::BODY,
+		EAttachPointRelative::NONE,
+		EAttachLocation::SnapToTarget
+	);
 }
 
 void UCPLAbility_Barrier::TickUseTimerAbility(float DeltaTime)
@@ -85,6 +110,8 @@ void UCPLAbility_Barrier::EndUseTimerAbility()
 			Player->AddBarrierAmount(BarrierAmount);
 		}
 	}
+
+	PTComp_Barrier->SetActive(false);
 }
 
 void UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
@@ -103,21 +130,16 @@ void UCPLAbility_Barrier::OverlapAbility(UCBaseAbility * Ability)
 		ACPlayer* Player = Cast<ACPlayer>(AppliedActor);
 		check(Player);
 		float InputValue = Ability->GetAbilityValue().Value;
-		Player->AddBarrierAmount(InputValue); //@Add Barrier Amount
+		Player->AddBarrierAmount(InputValue);
 	}
 
-	EndUseTimerAbility();
+	float BarrierAmount = Ability->GetAbilityValue().Value;
+	float BarrierTimer = Ability->GetAbilityValue().Timer;
 
-	//@Copy
+	AbilityValue.Value += BarrierAmount;
+
+	if (BarrierTimer > AbilityValue.Timer)
 	{
-		float BeforeBarrierAmount = GetAbilityValue().Value;
-		float BeforeBarrierTimer = GetAbilityValue().Timer;
-
-		Copy(Ability); //@Copy - DelegateRemove 수행
-
-		AbilityValue.Value += BeforeBarrierAmount;
-		AbilityValue.Timer += BeforeBarrierTimer;
+		AbilityValue.Timer = BarrierTimer;
 	}
-
-	StartUseTimerAbility();
 }

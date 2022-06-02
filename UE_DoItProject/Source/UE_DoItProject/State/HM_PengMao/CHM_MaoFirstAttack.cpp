@@ -197,51 +197,13 @@ void UCHM_MaoFirstAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 				else
 					UE_LOG(LogTemp, Warning, L"MaoFirstAttack CallAttack - HitComp Null!!");
 
-				//@Slower Delegate
-				{
-					//@파티클 실행
-					IIC_MeshParticle* I_MeshParticle = HitIneterfaceCharactor->GetIMeshParticle();
-					check(I_MeshParticle);
-
-					FTransform RootTrans = FTransform::Identity;
-					RootTrans.SetScale3D(FVector(2.0f));
-					UParticleSystemComponent* SlowerParticleComp_Root = I_MeshParticle->SpawnParticleAtMesh
-					(
-						SlowerParticle_Root,
-						EAttachPointType::ROOT,
-						EAttachPointRelative::NONE,
-						EAttachLocation::SnapToTarget,
-						RootTrans
-					);
-
-					FTransform BodyTrans = FTransform::Identity;
-					BodyTrans.SetScale3D(FVector(2.0f));
-					UParticleSystemComponent* SlowerParticleComp_Body = I_MeshParticle->SpawnParticleAtMesh
-					(
-						SlowerParticle_Body,
-						EAttachPointType::ROOT,
-						EAttachPointRelative::NONE,
-						EAttachLocation::SnapToTarget,
-						BodyTrans
-					);
-
-
-					//@Create Ability
-					{
-						AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
-					}
-
-					AbilitySpeedDowner->OnEndTimerAbility.AddLambda([SlowerParticleComp_Root, SlowerParticleComp_Body](AActor*)
-					{
-						SlowerParticleComp_Root->SetActive(false);
-						SlowerParticleComp_Body->SetActive(false);
-					});
-				}
-
 				//@Ability Insert
 				IIC_AbilityComp* I_AbilityComp = HitIneterfaceCharactor->GetIAbilityComp();
 				if (I_AbilityComp != nullptr)
 				{
+					class UCPLAbility_SpeedDown* AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+					check(AbilitySpeedDowner);
+
 					FAbilityValue InputValue;
 					InputValue.Sort = EAbilitySort::SAVEARRAY;
 					InputValue.bTimer = true;
@@ -252,7 +214,6 @@ void UCHM_MaoFirstAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					InputValue.Value = AbilityDownSpeedValue;
 					AbilitySpeedDowner->SetAbilityValue(InputValue);
 
-					AbilitySpeedDowner->SetAppliedActor(HitResult.GetActor());
 					HitIneterfaceCharactor->GetIAbilityComp()->AddAbility(AbilitySpeedDowner);
 				}
 

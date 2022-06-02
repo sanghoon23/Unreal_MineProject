@@ -52,15 +52,8 @@ void UC_BaseAbilityComp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		//@Tick
 		MapValue.Value->TickUseTimerAbility(DeltaTime);
 
-		bool bTimeOut = false;
-		if (MapValue.Value->GetUsingTimer() == true)
-		{
-			MapValue.Value->TimerRunning(DeltaTime);
-			bTimeOut = (MapValue.Value)->IsTimeOut();
-		}
-
 		//@Time Check
-		if (bTimeOut == true)
+		if ((MapValue.Value)->IsTimeOut()== true)
 		{
 			//@End
 			MapValue.Value->EndUseTimerAbility();
@@ -91,15 +84,17 @@ void UC_BaseAbilityComp::AddAbility(UCBaseAbility* Ability)
 		{
 			//@Overlap
 			(*Origin)->OverlapAbility(Ability);
+			//CLog::Print(L"OverlapAbility");
 			//AddAbilityMap.Remove(Type);
 		}
 		else
 		{
+			//CLog::Print(L"StartUseTimerAbility");
 			Ability->StartUseTimerAbility();
 			AddAbilityMap.Add(Type, Ability);
 		}
 	}
-	if (Sort == EAbilitySort::IMMEDITATEAPPLY)
+	else if (Sort == EAbilitySort::IMMEDITATEAPPLY)
 	{
 		Ability->ApplyAbility();
 	}

@@ -80,7 +80,7 @@ private:
 	int32 ControllerIndex = 0;
 	bool bUsingDecalMouseControl = false;
 
-	bool bDebug = true;
+	bool bDebug = false;
 
 	ECollisionChannel MouseCollisionChannel = ECollisionChannel::ECC_Visibility;
 	EMouseState MouseState = EMouseState::NONE; //@마우스 상태

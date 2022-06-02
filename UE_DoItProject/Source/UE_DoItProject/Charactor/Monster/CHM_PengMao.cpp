@@ -354,7 +354,7 @@ AActor * ACHM_PengMao::GetTargetInAI()
 	check(AIController);
 
 	AActor* RetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("Target"));
-	check(RetActor);
+	//check(RetActor);
 
 	return RetActor;
 }

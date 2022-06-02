@@ -67,13 +67,6 @@ ACHM_Basic::ACHM_Basic()
 	MonsterInfo.CurrentHP = 200.0f;
 	MonsterInfo.Name = FName(L"Basic");
 
-	//TODO : AI 변수 빼고,
-	//OnRespawn 함수 I_Charactor 에 정의하기.
-	MonsterInfo.PatrolRadius = 400.0f;
-	MonsterInfo.DetectRadius = 800.0f;
-	MonsterInfo.AttackRange = 220.0f;
-	//MonsterInfo.InfoConditionDataArray.Init(nullptr, 5);
-
 	#pragma endregion
 }
 
@@ -418,7 +411,7 @@ AActor * ACHM_Basic::GetTargetInAI()
 	check(AIController);
 
 	AActor* RetActor = Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("Target"));
-	check(RetActor);
+	//check(RetActor);
 
 	return RetActor;
 }

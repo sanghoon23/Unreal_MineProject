@@ -8,16 +8,16 @@ UCBaseAbility::UCBaseAbility()
 
 void UCBaseAbility::Copy(const UCBaseAbility * const In)
 {
-	OnDelStartTimerAbility.RemoveAll(this);
-	OnEndTimerAbility.RemoveAll(this); //기존의 것 제거
+	//OnDelStartTimerAbility.RemoveAll(this);
+	//OnEndTimerAbility.RemoveAll(this); //기존의 것 제거
+	//OnDelStartTimerAbility = In->OnDelStartTimerAbility;
+	//OnEndTimerAbility = In->OnEndTimerAbility;
 
-	OnDelStartTimerAbility = In->OnDelStartTimerAbility;
-	OnEndTimerAbility = In->OnEndTimerAbility;
 	ColorAndOpacity = In->ColorAndOpacity;
 	TintColor = In->TintColor;
 	bLinerColorDir = In->bLinerColorDir;
-
 	AbilityType = In->GetAbilityType();
+
 	SetAbilityValue(In->GetAbilityValue());
 	SetAppliedActor(In->AppliedActor);
 
@@ -40,6 +40,9 @@ void UCBaseAbility::TickUseTimerAbility(float DeltaTime)
 	{
 		UpdateUIColorAndOpacity();
 	}
+
+	/* 220506_ */
+	TimerRunning(DeltaTime);
 }
 
 void UCBaseAbility::EndUseTimerAbility()
@@ -54,6 +57,8 @@ void UCBaseAbility::OverlapAbility(class UCBaseAbility* Ability)
 {
 	check(Ability);
 	InitUIColorAndOpacity(); //@Init Opacity
+
+	Copy(Ability);
 }
 
 void UCBaseAbility::TimerRunning(float DeltaTime)
@@ -85,10 +90,9 @@ void UCBaseAbility::UpdateUIColorAndOpacity()
 
 const bool UCBaseAbility::IsTimeOut() const
 {
-	if (AbilityValue.Timer <= 0.0f)
-		return true;
-	else
-		return false;
+	if (AbilityValue.Timer <= 0.0f) return true;
+	
+	return false;
 }
 
 void UCBaseAbility::SetAbilityValue(EAbilitySort Sort, float Val, bool bUsingTimer, float TimerVal)

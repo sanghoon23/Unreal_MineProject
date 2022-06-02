@@ -167,13 +167,13 @@ void UCHM_AssaActionAnger::EndActionState()
 	if (I_AbilityComp != nullptr)
 	{
 		//@ADD Ability
-		UCHMAbility_ATKUpper* Ability_ATKUpper = NewObject<UCHMAbility_ATKUpper>();
+		Ability_ATKUpper = NewObject<UCHMAbility_ATKUpper>();
 
 		//@Create Ability
 		FAbilityValue InputValue;
 		InputValue.Sort = EAbilitySort::SAVEARRAY;
-		InputValue.bTimer = false;
-		InputValue.Timer = 0.0f;
+		InputValue.bTimer = true;
+		InputValue.Timer = 9999.0f; //Test Сп
 		InputValue.Value = 0.0f;
 		Ability_ATKUpper->SetAbilityValue(InputValue);
 		Ability_ATKUpper->SetUsingColorOpacity(false);
@@ -187,7 +187,7 @@ void UCHM_AssaActionAnger::EndActionState()
 	IIC_MeshParticle* I_MeshParticle = HM_Assassin->GetIMeshParticle();
 	if (I_MeshParticle != nullptr)
 	{
-		UParticleSystemComponent* AttachPTComp_SideEft = I_MeshParticle->SpawnParticleAtMesh
+		AttachPTComp_SideEft = I_MeshParticle->SpawnParticleAtMesh
 		(
 			P_Action_SideEffect,
 			EAttachPointType::ROOT,
@@ -205,7 +205,7 @@ void UCHM_AssaActionAnger::EndActionState()
 			Transform.SetScale3D(FVector(2.0f));
 			AttachPTComp_SideEft->SetRelativeTransform(Transform);
 
-			HM_Assassin->OnDeathDelegate.AddLambda([AttachPTComp_SideEft]()
+			HM_Assassin->OnDeathDelegate.AddLambda([&]()
 			{
 				AttachPTComp_SideEft->SetActive(false);
 			});

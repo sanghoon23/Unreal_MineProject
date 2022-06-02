@@ -12,6 +12,20 @@ class UE_DOITPROJECT_API UCPLAbility_SpeedUpper
 	
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* FasterParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SpeedUp_LHand;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* SpeedUp_RHand;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		UParticleSystemComponent* PTComp_LHand;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		UParticleSystemComponent* PTComp_RHand;
 
 	#pragma endregion
 

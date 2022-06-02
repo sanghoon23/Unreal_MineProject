@@ -38,14 +38,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Value")
 	FName Name = "";
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
-	float PatrolRadius = 0.0f;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
+	//float PatrolRadius = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
-	float DetectRadius = 0.0f;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
+	//float DetectRadius = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
-	float AttackRange = 0.0f;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
+	//float AttackRange = 0.0f;
 
 	//# 상태 추가..
 	//class 

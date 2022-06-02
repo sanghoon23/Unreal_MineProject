@@ -22,6 +22,21 @@ UCPLAbility_SpeedDown::UCPLAbility_SpeedDown()
 		}
 	}
 
+	//@LOAD Particle - SlowerDamage
+	{
+		//@Root
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_Slower_FromFreeze_Root.PS_Slower_FromFreeze_Root'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> SlowerPT_1(*strPath);
+		if (SlowerPT_1.Succeeded())
+			SlowerParticle_Root = SlowerPT_1.Object;
+
+		//@Body
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Damaged/PS_Slower_FromFreeze_Body.PS_Slower_FromFreeze_Body'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> SlowerPT_2(*strPath);
+		if (SlowerPT_2.Succeeded())
+			SlowerParticle_Body = SlowerPT_2.Object;
+	}
+
 	//@Set UI Color
 	{
 		//@부정적 효과
@@ -51,15 +66,42 @@ void UCPLAbility_SpeedDown::StartUseTimerAbility()
 	else
 		UE_LOG(LogTemp, Warning, L"UCPLAblilitySpeedDonwer I_Player NULL!!");
 
+
+	//@Spawn Particle
+	IIC_Charactor* IC_Charactor = Cast<IIC_Charactor>(AppliedActor);
+	check(IC_Charactor);
+
+	IIC_MeshParticle* I_MeshParticle = IC_Charactor->GetIMeshParticle();
+	check(I_MeshParticle);
+
+	FTransform RootTrans = FTransform::Identity;
+	RootTrans.SetScale3D(FVector(2.0f));
+	PTComp_SlowerRoot = I_MeshParticle->SpawnParticleAtMesh
+	(
+		SlowerParticle_Root,
+		EAttachPointType::ROOT,
+		EAttachPointRelative::NONE,
+		EAttachLocation::SnapToTarget,
+		RootTrans
+	);
+
+	FTransform BodyTrans = FTransform::Identity;
+	BodyTrans.SetScale3D(FVector(2.0f));
+	PTComp_SlowerBody = I_MeshParticle->SpawnParticleAtMesh
+	(
+		SlowerParticle_Body,
+		EAttachPointType::ROOT,
+		EAttachPointRelative::NONE,
+		EAttachLocation::SnapToTarget,
+		BodyTrans
+	);
+
 }
 
 void UCPLAbility_SpeedDown::EndUseTimerAbility()
 {
 	Super::EndUseTimerAbility();
 	check(AppliedActor);
-
-	//@Onwer 가 다를 수 있음
-	OnEndTimerAbility.Broadcast(AppliedActor);
 
 	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
 	if (I_Player != nullptr)
@@ -74,6 +116,10 @@ void UCPLAbility_SpeedDown::EndUseTimerAbility()
 	}
 	else
 		UE_LOG(LogTemp, Warning, L"UCPLAblilitySpeedDown I_Player NULL!!");
+
+	//@Disable ParticleComponent
+	PTComp_SlowerRoot->SetActive(false);
+	PTComp_SlowerBody->SetActive(false);
 }
 
 void UCPLAbility_SpeedDown::OverlapAbility(UCBaseAbility * Ability)
@@ -89,10 +135,5 @@ void UCPLAbility_SpeedDown::OverlapAbility(UCBaseAbility * Ability)
 
 	EndUseTimerAbility();
 
-	//@Copy
-	{
-		Copy(Ability); //@Copy - DelegateRemove 수행
-	}
-
-	Ability->StartUseTimerAbility();
+	StartUseTimerAbility();
 }

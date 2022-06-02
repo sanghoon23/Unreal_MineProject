@@ -21,9 +21,6 @@ void UCUpset_Stun::StartCondition(APawn * Owner)
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
 	if (I_Charactor != nullptr)
 	{
-		//@SetLimitCondition - #220425
-		I_Charactor->SetLimitCondition(true);
-
 		//@Stun Head Particle 머리에 붙이기
 		IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
 		if (I_MeshParticle != nullptr)
@@ -91,13 +88,6 @@ void UCUpset_Stun::EndCondition(APawn * Owner)
 {
 	Super::EndCondition(Owner);
 	check(Owner);
-
-	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Owner);
-	if (I_Charactor != nullptr)
-	{
-		//@SetLimitCondition - #220425
-		I_Charactor->SetLimitCondition(false);
-	}
 
 	ACharacter* Charactor = Cast<ACharacter>(Owner);
 	check(Charactor);

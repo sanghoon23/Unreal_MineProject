@@ -12,6 +12,11 @@ class UE_DOITPROJECT_API UCPLAbility_Barrier
 
 	#pragma region Reflection
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystem* ParticleBarrier;
+
+	UPROPERTY(VisibleAnywhere, Category = "Particle")
+		class UParticleSystemComponent* PTComp_Barrier;
 
 	#pragma endregion
 

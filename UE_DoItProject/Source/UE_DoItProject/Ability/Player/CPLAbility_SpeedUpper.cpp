@@ -27,15 +27,36 @@ UCPLAbility_SpeedUpper::UCPLAbility_SpeedUpper()
 		//@긍정적 효과
 		ColorAndOpacity = FLinearColor(FVector4(0.0f, 1.0f, 1.0f, 1.0f));
 	}
+
+	//@LOAD Particle
+	{
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_FasterEffect.PS_FasterEffect'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> PS_Faster(*strPath);
+		if (PS_Faster.Succeeded())
+		{
+			FasterParticle = PS_Faster.Object;
+		}
+
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_ApplyFasterWithHand.PS_ApplyFasterWithHand'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_LHandSpeedUp(*strPath);
+		if (P_LHandSpeedUp.Succeeded())
+		{
+			SpeedUp_LHand = P_LHandSpeedUp.Object;
+		}
+
+		strPath = L"ParticleSystem'/Game/_Mine/UseParticle/Charactor/Action/PS_ApplyFasterWithHand.PS_ApplyFasterWithHand'";
+		ConstructorHelpers::FObjectFinder<UParticleSystem> P_RHandSpeedUp(*strPath);
+		if (P_RHandSpeedUp.Succeeded())
+		{
+			SpeedUp_RHand = P_RHandSpeedUp.Object;
+		}
+	}
 }
 
 void UCPLAbility_SpeedUpper::StartUseTimerAbility()
 {
 	Super::StartUseTimerAbility();
 	check(AppliedActor);
-
-	////@Onwer 가 다를 수 있음
-	//OnDelStartTimerAbility.Broadcast(AppliedActor);
 
 	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
 	if (I_Player != nullptr)
@@ -50,15 +71,46 @@ void UCPLAbility_SpeedUpper::StartUseTimerAbility()
 	}
 	else
 		UE_LOG(LogTemp, Warning, L"UCPLAblilitySpeedUpper I_Player NULL!!");
+
+
+	//@파티클 실행
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(AppliedActor);
+	check(I_Charactor);
+
+	IIC_MeshParticle* I_MeshParticle = I_Charactor->GetIMeshParticle();
+	check(I_MeshParticle);
+
+	I_MeshParticle->SpawnParticleAtMesh
+	(
+		FasterParticle,
+		EAttachPointType::ROOT,
+		EAttachPointRelative::NONE,
+		EAttachLocation::SnapToTarget
+	);
+
+	//@LHand ParticleComp
+	PTComp_LHand = I_MeshParticle->SpawnParticleAtMesh
+	(
+		SpeedUp_LHand,
+		EAttachPointType::LHAND,
+		EAttachPointRelative::RELATIVE,
+		EAttachLocation::SnapToTarget
+	);
+
+	//@RHand ParticleComp
+	PTComp_RHand = I_MeshParticle->SpawnParticleAtMesh
+	(
+		SpeedUp_RHand,
+		EAttachPointType::RHAND,
+		EAttachPointRelative::RELATIVE,
+		EAttachLocation::SnapToTarget
+	);
 }
 
 void UCPLAbility_SpeedUpper::EndUseTimerAbility()
 {
 	Super::EndUseTimerAbility();
 	check(AppliedActor);
-
-	////@Onwer 가 다를 수 있음
-	//OnEndTimerAbility.Broadcast(AppliedActor);
 
 	IIC_Player* I_Player = Cast<IIC_Player>(AppliedActor);
 	if (I_Player != nullptr)
@@ -73,6 +125,9 @@ void UCPLAbility_SpeedUpper::EndUseTimerAbility()
 	}
 	else
 		UE_LOG(LogTemp, Warning, L"UCPLAblilitySpeedUpper I_Player NULL!!");
+
+	PTComp_LHand->SetActive(false);
+	PTComp_RHand->SetActive(false);
 }
 
 //#Edit 0703 - 
@@ -90,7 +145,5 @@ void UCPLAbility_SpeedUpper::OverlapAbility(UCBaseAbility * Ability)
 
 	EndUseTimerAbility();
 
-	Copy(Ability); //@Copy - DelegateRemove 수행
-
-	Ability->StartUseTimerAbility();
+	StartUseTimerAbility();
 }

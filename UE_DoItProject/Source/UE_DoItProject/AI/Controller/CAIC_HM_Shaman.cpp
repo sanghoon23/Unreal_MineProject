@@ -12,8 +12,8 @@
 
 ACAIC_HM_Shaman::ACAIC_HM_Shaman()
 {
-	PatrolRadius = 400.0f;
-	DetectRadius = 900.0f;
+	PatrolRadius = 800.0f;
+	DetectRadius = 1500.0f;
 	AttackRange = 500.0f;
 
 	FString path = L"";

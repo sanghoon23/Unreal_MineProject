@@ -33,9 +33,6 @@ void UC_BaseHitComp::BeginPlay()
 	//@DeathDelegate Delete Value Container
 	I_Charactor->OnDeathDelegate.AddLambda([&]()
 	{
-		//#220413_Á×À» ¶§ Æ½ ²ô±â.
-		SetComponentTickEnabled(false);
-
 		for (int i = 0; i < ConditionDatas.Num(); ++i)
 		{
 			ConditionDatas[i]->EndCondition(Cast<APawn>(GetOwner()));

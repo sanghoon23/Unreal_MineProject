@@ -30,9 +30,6 @@ void UCUpset_Freeze::StartCondition(APawn * Owner)
 		//@Montage Pause
 		I_Charactor->ActorAnimMonPause();
 
-		//@SetLimitCondition - #220425
-		I_Charactor->SetLimitCondition(true);
-
 		//@Animation Pause
 		ACharacter* CH = Cast<ACharacter>(Owner);
 		check(CH);

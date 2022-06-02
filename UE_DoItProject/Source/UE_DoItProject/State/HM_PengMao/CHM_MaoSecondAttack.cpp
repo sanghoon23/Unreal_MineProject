@@ -67,19 +67,6 @@ void UCHM_MaoSecondAttack::BeginPlay()
 	I_Charactor = Cast<IIC_Charactor>(HM_PengMao);
 	check(I_Charactor);
 
-#pragma region Create DamageType
-
-	//DT_Freeze = NewObject<UCDamageType_Freeze>();
-	//DT_Freeze->SetDamageImpulse(10.0f);
-	//DT_Freeze->SetFreezingTime(2.0f);
-
-#pragma endregion
-
-	//@Create Ability
-	{
-		AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
-	}
-
 	//@Setting Value
 	{
 		OffSetAttackRangeForStart = 50.0f; //@Range - 100.0f
@@ -93,6 +80,13 @@ void UCHM_MaoSecondAttack::BeginPlay()
 		AttackRadiusVec[2] = 300.0f;
 	}
 
+	//@Create DT_Freeze
+	DT_Freeze = NewObject<UCDamageType_Freeze>();
+	check(DT_Freeze);
+
+	DT_Freeze->SetDamageImpulse(10.0f);
+	DT_Freeze->SetFreezingTime(2.0f);
+	DT_Freeze->OnLinkStartUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
 }
 
 void UCHM_MaoSecondAttack::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -207,11 +201,11 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 						EndBeated 에 OffBlockAction
 						*/
 						//@Set Timer - Freeze Timer
-						UCDamageType_Freeze* DT_Freeze = NewObject<UCDamageType_Freeze>();
-						DT_Freeze->SetDamageImpulse(10.0f);
-						DT_Freeze->SetFreezingTime(2.0f);
+						//UCDamageType_Freeze* DT_Freeze = NewObject<UCDamageType_Freeze>();
+						//DT_Freeze->SetDamageImpulse(10.0f);
+						//DT_Freeze->SetFreezingTime(2.0f);
 
-						DT_Freeze->OnLinkStartUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
+						//DT_Freeze->OnLinkStartUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::BeginBeatedFunction);
 						//DT_Freeze->OnLinkEndUpsetCondition.AddUObject(this, &UCHM_MaoSecondAttack::EndBeatedFunction);
 
 						FTimerHandle FreezeTimerHandle;
@@ -228,41 +222,13 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 					{
 						//@Slower 느려지게 하기.
 						{
-							IIC_MeshParticle* I_MeshParticle = HitI_Charactor->GetIMeshParticle();
-							check(I_MeshParticle);
-
-							FTransform RootTrans = FTransform::Identity;
-							RootTrans.SetScale3D(FVector(2.0f));
-							UParticleSystemComponent* PTComp_SlowerRoot = I_MeshParticle->SpawnParticleAtMesh
-							(
-								SlowerParticle_Root,
-								EAttachPointType::ROOT,
-								EAttachPointRelative::NONE,
-								EAttachLocation::SnapToTarget,
-								RootTrans
-							);
-
-							FTransform BodyTrans = FTransform::Identity;
-							BodyTrans.SetScale3D(FVector(2.0f));
-							UParticleSystemComponent* PTComp_SlowerBody = I_MeshParticle->SpawnParticleAtMesh
-							(
-								SlowerParticle_Body,
-								EAttachPointType::ROOT,
-								EAttachPointRelative::NONE,
-								EAttachLocation::SnapToTarget,
-								BodyTrans
-							);
-
-							AbilitySpeedDowner->OnEndTimerAbility.AddLambda([PTComp_SlowerRoot, PTComp_SlowerBody](AActor*)
-							{
-								PTComp_SlowerRoot->SetActive(false);
-								PTComp_SlowerBody->SetActive(false);
-							});
-
 							//@Ability Insert - 부정적 효과 넣기
 							IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
 							if (HitI_AbilityComp != nullptr && (IsLastCombo() == false))
 							{
+								class UCPLAbility_SpeedDown* AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+								check(AbilitySpeedDowner);
+
 								FAbilityValue InputValue;
 								InputValue.Sort = EAbilitySort::SAVEARRAY;
 								InputValue.bTimer = true;
@@ -270,7 +236,6 @@ void UCHM_MaoSecondAttack::AttackOtherPawn(UCDamageType_Base* DamageType)
 								InputValue.Value = AbilityDownSpeedValue;
 								AbilitySpeedDowner->SetAbilityValue(InputValue);
 
-								AbilitySpeedDowner->SetAppliedActor(HitResult.GetActor());
 								HitI_Charactor->GetIAbilityComp()->AddAbility(AbilitySpeedDowner);
 							}
 						}
@@ -318,7 +283,7 @@ void UCHM_MaoSecondAttack::EndBeatedFunction(AActor * Subject)
 	else UE_LOG(LogTemp, Warning, L"MaoFirstAttack EndBetedFunc, I_Player NULL!!");
 }
 
-void UCHM_MaoSecondAttack::TimerFreezeHittedActor(AActor * Subject, UCDamageType_Freeze* DT_Freeze)
+void UCHM_MaoSecondAttack::TimerFreezeHittedActor(AActor * Subject, UCDamageType_Freeze* Param_Freeze)
 {
 	IIC_Charactor* SubjectI_Charactor = Cast<IIC_Charactor>(Subject);
 	if (SubjectI_Charactor != nullptr)
@@ -326,7 +291,7 @@ void UCHM_MaoSecondAttack::TimerFreezeHittedActor(AActor * Subject, UCDamageType
 		IIC_HitComp* SubjectI_HitComp = SubjectI_Charactor->GetIHitComp();
 		if (SubjectI_HitComp != nullptr)
 		{
-			SubjectI_HitComp->OnHit(HM_PengMao, DT_Freeze, DT_Freeze->DamageImpulse);
+			SubjectI_HitComp->OnHit(HM_PengMao, Param_Freeze, Param_Freeze->DamageImpulse);
 		}
 	}
 }

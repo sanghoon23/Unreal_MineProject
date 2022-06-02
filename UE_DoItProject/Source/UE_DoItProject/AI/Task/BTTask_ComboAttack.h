@@ -15,6 +15,12 @@ private:
 		uint8 AttackTypeNum = 0;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")
+		bool bUsingInOrder = false;
+
+	UPROPERTY(EditAnywhere, Category = "AIControl")
+		uint8 StartingOrderAttackType = 0;
+
+	UPROPERTY(EditAnywhere, Category = "AIControl")
 		bool bUsingRange = false;
 
 	UPROPERTY(EditAnywhere, Category = "AIControl")

@@ -254,42 +254,38 @@ void UCHM_MaoFourAttack::DelSkillRangeAttackOtherPawn(AActor * Subject)
 
 				//@느려지게 하기
 				{
-					IIC_MeshParticle* I_MeshParticle = HitI_Charactor->GetIMeshParticle();
-					check(I_MeshParticle);
+					//IIC_MeshParticle* I_MeshParticle = HitI_Charactor->GetIMeshParticle();
+					//check(I_MeshParticle);
 
-					FTransform RootTrans = FTransform::Identity;
-					RootTrans.SetScale3D(FVector(2.0f));
-					UParticleSystemComponent* PTComp_SlowerRoot = I_MeshParticle->SpawnParticleAtMesh
-					(
-						SlowerParticle_Root,
-						EAttachPointType::ROOT,
-						EAttachPointRelative::NONE,
-						EAttachLocation::SnapToTarget,
-						RootTrans
-					);
+					//FTransform RootTrans = FTransform::Identity;
+					//RootTrans.SetScale3D(FVector(2.0f));
+					//UParticleSystemComponent* PTComp_SlowerRoot = I_MeshParticle->SpawnParticleAtMesh
+					//(
+					//	SlowerParticle_Root,
+					//	EAttachPointType::ROOT,
+					//	EAttachPointRelative::NONE,
+					//	EAttachLocation::SnapToTarget,
+					//	RootTrans
+					//);
 
-					FTransform BodyTrans = FTransform::Identity;
-					BodyTrans.SetScale3D(FVector(2.0f));
-					UParticleSystemComponent* PTComp_SlowerBody = I_MeshParticle->SpawnParticleAtMesh
-					(
-						SlowerParticle_Body,
-						EAttachPointType::ROOT,
-						EAttachPointRelative::NONE,
-						EAttachLocation::SnapToTarget,
-						BodyTrans
-					);
-
-					UCPLAbility_SpeedDown* AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
-					AbilitySpeedDowner->OnDelStartTimerAbility.AddLambda([PTComp_SlowerRoot, PTComp_SlowerBody](AActor*)
-					{
-						PTComp_SlowerRoot->SetActive(false);
-						PTComp_SlowerBody->SetActive(false);
-					});
+					//FTransform BodyTrans = FTransform::Identity;
+					//BodyTrans.SetScale3D(FVector(2.0f));
+					//UParticleSystemComponent* PTComp_SlowerBody = I_MeshParticle->SpawnParticleAtMesh
+					//(
+					//	SlowerParticle_Body,
+					//	EAttachPointType::ROOT,
+					//	EAttachPointRelative::NONE,
+					//	EAttachLocation::SnapToTarget,
+					//	BodyTrans
+					//);
 
 					//@Ability Insert - 부정적 효과 넣기
 					IIC_AbilityComp* HitI_AbilityComp = HitI_Charactor->GetIAbilityComp();
 					if (HitI_AbilityComp != nullptr && (IsLastCombo() == false))
 					{
+						class UCPLAbility_SpeedDown* AbilitySpeedDowner = NewObject<UCPLAbility_SpeedDown>();
+						check(AbilitySpeedDowner);
+
 						FAbilityValue InputValue;
 						InputValue.Sort = EAbilitySort::SAVEARRAY;
 						InputValue.bTimer = true;

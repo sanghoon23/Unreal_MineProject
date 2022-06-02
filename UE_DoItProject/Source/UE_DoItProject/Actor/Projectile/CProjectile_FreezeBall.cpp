@@ -187,20 +187,29 @@ void ACProjectile_FreezeBall::FreezeStartDel(AActor * Subject)
 	{
 		SubjectI_Monster->SetAIRunningPossible(false);
 	}
+
+	//#220525 - 상태이상 적용 횟수 추가.
+	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
+	if (I_Charactor != nullptr)
+	{
+		I_Charactor->CountingLimitCondition(true);
+	}
 }
 
 void ACProjectile_FreezeBall::FreezeEndDel(AActor * Subject)
 {
+	//#220525 - 상태이상 적용 횟수 빼준 다음 확인
 	IIC_Charactor* I_Charactor = Cast<IIC_Charactor>(Subject);
 	if (I_Charactor != nullptr)
 	{
-		IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
-		if (SubjectI_Monster != nullptr 
-			&& I_Charactor->GetLimitCondition())
-		{
-			//#220425 - 행동불능인지 확인하고 켜주기.
-			SubjectI_Monster->SetAIRunningPossible(true);
-		}
+		I_Charactor->CountingLimitCondition(false);
+		IfTrueRet(I_Charactor->GetLimitConditionNum() > 0);
+	}
+
+	IIC_Monster* SubjectI_Monster = Cast<IIC_Monster>(Subject);
+	if (SubjectI_Monster != nullptr)
+	{
+		SubjectI_Monster->SetAIRunningPossible(true);
 	}
 
 	//@Projectile 파괴.

@@ -29,7 +29,7 @@ public:
 	virtual void OverlapAbility(class UCBaseAbility* Ability) override;
 
 	/* Timer 를 사용하지 않고 영구적으로 능력치 적용 */
-	//virtual void ApplyAbility();
+	virtual void ApplyAbility() override;
 	
 	/* Member */
 public:

@@ -39,8 +39,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Particle")
 		class UParticleSystem* SlowerParticle_Body;
 
-	UPROPERTY(VisibleAnywhere, Category = "Ability")
-		class UCPLAbility_SpeedDown* AbilitySpeedDowner;
+	//UPROPERTY(VisibleAnywhere, Category = "Ability")
+	//	class UCPLAbility_SpeedDown* AbilitySpeedDowner;
 
 #pragma endregion
 

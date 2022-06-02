@@ -107,8 +107,8 @@ public:
 	virtual void ActorPausedAnimMonResume() override;
 	virtual void ActorAnimMonPause() override;
 
-	virtual void SetLimitCondition(bool bValue) { bLimitCondition = bValue; }
-	virtual bool GetLimitCondition() const { return bLimitCondition; }
+	virtual void CountingLimitCondition(bool bCount) override { (bCount) ? ++LimitConditionNum : --LimitConditionNum; }
+	virtual int GetLimitConditionNum() const override { return LimitConditionNum; }
 
 	/* Virtual In Interface - (IC_Charactor) */
 public:
