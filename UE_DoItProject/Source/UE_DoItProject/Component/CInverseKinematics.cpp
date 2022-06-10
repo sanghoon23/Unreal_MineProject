@@ -26,7 +26,6 @@ void UCInverseKinematics::BeginPlay()
 
 
 // @For Feets
-// 1. Kinematic 을 위한 Left, Right Foot 회전 값을 계산 - FFeetInverseKinematics
 void UCInverseKinematics::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -34,37 +33,32 @@ void UCInverseKinematics::TickComponent(float DeltaTime, ELevelTick TickType, FA
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// @Feet IK Calc
 	{
-		FVector leftNormal, rightNormal;
-		float leftTraceDistance = FeetTrace(LeftFootSocket, leftNormal);
-		float rightTraceDistance = FeetTrace(RightFootSocket, rightNormal);
+		FVector LeftNormal, RightNormal;
+		float LeftTraceDistance = FeetTrace(LeftFootSocket, LeftNormal);
+		float RightTraceDistance = FeetTrace(RightFootSocket, RightNormal);
 
-		float offset = UKismetMathLibrary::Min(leftTraceDistance, rightTraceDistance);
-		offset = (offset > 0.0f) ? 0.0f : offset;
+		float Offset = UKismetMathLibrary::Min(LeftTraceDistance, RightTraceDistance);
+		Offset = (Offset > 0.0f) ? 0.0f : Offset;
 
 		// Capsule
-		float half = CapsuleHalfHeight - FMath::Abs(offset) * 0.5f;
-		UCapsuleComponent* capsule = Character->GetCapsuleComponent();
-		IfNullRet(capsule);
+		float Half = CapsuleHalfHeight - FMath::Abs(Offset) * 0.5f;
+		UCapsuleComponent* Capsule = Character->GetCapsuleComponent();
+		IfNullRet(Capsule);
 
-		float scaleHalf = capsule->GetScaledCapsuleHalfHeight();
-		float interpValue = UKismetMathLibrary::FInterpTo(scaleHalf, half, DeltaTime, HipsInterpSpeed);
-		capsule->SetCapsuleHalfHeight(interpValue);
+		float ScaleHalf = Capsule->GetScaledCapsuleHalfHeight();
+		float InterpValue = UKismetMathLibrary::FInterpTo(ScaleHalf, Half, DeltaTime, HipsInterpSpeed);
+		Capsule->SetCapsuleHalfHeight(InterpValue);
 
 		// HipOffset
-		FeetIk.HipOffset = UKismetMathLibrary::FInterpTo(FeetIk.HipOffset, offset, DeltaTime, HipsInterpSpeed);
+		FeetIk.HipOffset = UKismetMathLibrary::FInterpTo(FeetIk.HipOffset, Offset, DeltaTime, HipsInterpSpeed);
 
 		// FootOffset
-		//leftTraceDistance = FMath::FloorToFloat(leftTraceDistance * 10.0f) * 0.1f; //@소수점 자리수 유지하기
-		//leftTraceDistance = FMath::FloorToFloat(leftTraceDistance); //@소수점 버리기
-		//leftTraceDistance = FMath::CeilToFloat(leftTraceDistance); //@소수점 버리고 정수부 1 더하기
-		leftTraceDistance = FMath::RoundToFloat(leftTraceDistance); //@소수점 버리고 반올림
-		rightTraceDistance = FMath::RoundToFloat(rightTraceDistance);
-		FeetIk.Location_Left = UKismetMathLibrary::FInterpTo(FeetIk.Location_Left, leftTraceDistance - offset, DeltaTime, FeetInterpSpeed);
-		FeetIk.Location_Right = UKismetMathLibrary::FInterpTo(FeetIk.Location_Right, -(rightTraceDistance - offset), DeltaTime, FeetInterpSpeed);
+		FeetIk.Location_Left = UKismetMathLibrary::FInterpTo(FeetIk.Location_Left, LeftTraceDistance, DeltaTime, FeetInterpSpeed);
+		FeetIk.Location_Right = UKismetMathLibrary::FInterpTo(FeetIk.Location_Right, -(RightTraceDistance), DeltaTime, FeetInterpSpeed);
 
 		// Rotator
-		FeetIk.Rotation_Left = UKismetMathLibrary::RInterpTo(FeetIk.Rotation_Left, NormalToRotator(leftNormal), DeltaTime, FeetInterpSpeed);
-		FeetIk.Rotation_Right = UKismetMathLibrary::RInterpTo(FeetIk.Rotation_Right, NormalToRotator(rightNormal), DeltaTime, FeetInterpSpeed);
+		FeetIk.Rotation_Left = UKismetMathLibrary::RInterpTo(FeetIk.Rotation_Left, NormalToRotator(LeftNormal), DeltaTime, FeetInterpSpeed);
+		FeetIk.Rotation_Right = UKismetMathLibrary::RInterpTo(FeetIk.Rotation_Right, NormalToRotator(RightNormal), DeltaTime, FeetInterpSpeed);
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,34 +92,37 @@ void UCInverseKinematics::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 }
 
-/* Feet Line Trace For FeetSocket */
 float UCInverseKinematics::FeetTrace(FName Socket, FVector & OutImpactNormal)
 {
-	FVector location = Character->GetMesh()->GetSocketLocation(Socket);
-	FVector start = FVector(location.X, location.Y, Character->GetActorLocation().Z);
+	float Scale = Character->GetTransform().GetScale3D().Z;
+	FVector ActorLocation = Character->GetActorLocation();
 
-	float z = start.Z - CapsuleHalfHeight - FeetTraceDistance;
-	FVector end = FVector(location.X, location.Y, z);
+	FVector SocketLocation = Character->GetMesh()->GetSocketLocation(Socket);
+	FVector Start = FVector(SocketLocation.X, SocketLocation.Y, ActorLocation.Z);
 
-	TArray<AActor *> ignore;
-	ignore.Add(GetOwner());
+	float Z = ActorLocation.Z - CapsuleHalfHeight - FeetTraceDistance;
+	FVector End = FVector(SocketLocation.X, SocketLocation.Y, Z);
 
-	FHitResult hit;
+
+	TArray<AActor *> Ignore;
+	Ignore.Add(GetOwner());
+
+	FHitResult Hit;
 	EDrawDebugTrace::Type Debug
 		= (bDebugDraw == true) ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingle
 	(
-		GetWorld(), start, end, UEngineTypes::ConvertToTraceType(ECC_Pawn),
-		false, ignore, Debug, hit, true
+		GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel9),
+		true, Ignore, Debug, Hit, true
 	);
 
-	OutImpactNormal = hit.ImpactNormal;
-	if (hit.IsValidBlockingHit())
+	OutImpactNormal = Hit.ImpactNormal;
+	if (Hit.IsValidBlockingHit())
 	{
-		float length = (hit.ImpactPoint - hit.TraceEnd).Size();
+		float Length = (End - Hit.Location).Size() / Scale;
 
-		return FeetAdjustOffset + length - FeetTraceDistance;
+		return Length - FeetTraceDistance + FeetAdjustOffset;
 	}
 
 	return 0.0f;

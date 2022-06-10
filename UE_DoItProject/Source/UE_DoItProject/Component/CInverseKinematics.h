@@ -68,7 +68,7 @@ protected:
 		float FeetTraceDistance = 55.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "InverseKinematics")
-		float FeetAdjustOffset = 0.1f; // 발과 땅 사이의 간격.
+		float FeetAdjustOffset = 3.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "InverseKinematics")
 		float FeetInterpSpeed = 1.0f;
